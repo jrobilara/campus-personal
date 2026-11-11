@@ -48,3 +48,7 @@
   --color-area: var(--area-oscuro);
   --sombra: 0 1px 0 rgba(0, 0, 0, 0.4), 0 10px 28px -14px rgba(0, 0, 0, 0.8);
 }
+
+/* El color del área se resuelve en cada elemento que lo declara (var() hereda el valor ya calculado). */
+[style*='--area-claro'] { --color-area: var(--area-claro); }
+:root[data-theme='dark'] [style*='--area-claro'] { --color-area: var(--area-oscuro); }

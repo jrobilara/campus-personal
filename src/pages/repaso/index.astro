@@ -1,8 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Repaso from '../../islas/Repaso';
 ---
 <Base titulo="Repaso de hoy · Campus personal" activo="repaso" noindex>
-  <main id="contenido" class="angosto">
-    <header class="pagina-cab"><h1>Repaso de hoy</h1><p>Las tarjetas que te tocan hoy.</p></header>
+  <main id="contenido" data-pagefind-ignore>
+    <header class="pagina-cab"><h1>Repaso de hoy</h1></header>
+    <Repaso client:only="react"><p class="meta" slot="fallback">Cargando…</p></Repaso>
+    <noscript><p>El repaso necesita JavaScript.</p></noscript>
   </main>
 </Base>

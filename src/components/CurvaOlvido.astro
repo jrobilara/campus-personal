@@ -30,7 +30,6 @@ for (let k = 1; k <= 60; k++) {
 const puntos = reviews.slice(0, -1).map((t, i) => ({
   x: sx(t), y: sy(1), etiqueta: i === 0 ? 'hoy' : `${Math.round(t)} d`, retraso: 0.3 + 2.3 * (sx(t) - X0) / (X1 - X0),
 }));
-const dosPuntos = (reviews.at(-1)!);
 ---
 <figure class="curva">
   <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="curva-t curva-d">

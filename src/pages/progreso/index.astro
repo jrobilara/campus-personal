@@ -1,8 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PanelProgreso from '../../islas/PanelProgreso';
 ---
 <Base titulo="Tu progreso · Campus personal" activo="progreso" noindex>
-  <main id="contenido" class="angosto">
-    <header class="pagina-cab"><h1>Tu progreso</h1><p>Cuánto dominás cada área y cuándo estudiaste.</p></header>
+  <main id="contenido" data-pagefind-ignore>
+    <header class="pagina-cab"><h1>Tu progreso</h1><p>Cuánto dominás cada área, qué te toca repasar y qué días estudiaste.</p></header>
+    <PanelProgreso client:only="react"><p class="meta" slot="fallback">Cargando…</p></PanelProgreso>
   </main>
 </Base>
