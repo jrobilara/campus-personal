@@ -26,3 +26,15 @@ pnpm-debug.log*
 # claude code (locales, no van al repo)
 settings.local.json
 launch.json
+.env.*
+*.pem
+*.key
+secrets/
+/.claude/worktrees/
+/.claude/settings.local.json
+/.claude/launch.json
+/.kit-rol
+/.kit-noche
+/.claude/paquetes/
+.venv/
+!/.claude/frenos.log
