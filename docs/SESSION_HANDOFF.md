@@ -3,21 +3,23 @@
 > Foto de dónde quedamos. `/cierre` lo SOBREESCRIBE ENTERO: acá no se apila historia (eso es el CHANGELOG). Tope 5.000 bytes, secciones fijas y en este orden. Si no entra: el detalle va al CHANGELOG, las trampas a `referencia/trampas.md` y los pendientes al TODO.
 
 ## Estado
-- Rama · entorno: [completar: RAMA] · [completar: ENTORNO]
-- Accesos temporales a producción: [completar: ninguno, o cuál y la fecha en que se borra]
-- Producción: no hay
+- Rama · entorno: main · local (sin entornos reales; el sitio va a GitHub Pages)
+- Accesos temporales a producción: ninguno
+- Producción: no hay (se publica en F6)
 
 ## Próximo paso
-[completar: una acción ejecutable, nunca "seguir avanzando"]
+`inicio — ejecutá docs/modulos/v1/SPEC.md (está READY)` — arranca F1 (plan de contenido con Opus medio), según la ficha `docs/modulos/v1/README.md`.
 
 ## Bloqueos
-- [completar: ninguno, o qué traba y quién lo destraba]
+- ninguno
 
 ## Te espera
-- [completar: lo que tiene que decidir o hacer el dueño; o "nada"]
+- Vetar o ajustar la lista de temas de v1 (SPEC-0, "Temas de v1") cuando vuelvas.
 
 ## En curso
-- [completar: lo que quedó a medias; o "nada"]
+- nada: montaje terminado, la construcción arranca dirigida desde la sesión del Arquitecto.
 
 ## Contexto
-- [completar: lo que no está en otro doc: decisiones de la sesión, avisos para el próximo chat]
+- La sesión del Arquitecto pasa a director por pedido del dueño: lanza subagentes (Opus medio planifica, Sonnet alto ejecuta) y no escribe código ni contenido.
+- Repo público `jrobilara/campus-personal` autorizado; `gh` ya autenticado con `repo` y `workflow`.
+- Trampas del stack (Astro 7 sin remark por defecto, ts-fsrs 6 con API nueva, @vite-pwa/astro con export nombrado, TS ^6, katex 0.16.47): `docs/investigacion/stack-verificado.md`.
