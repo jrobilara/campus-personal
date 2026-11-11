@@ -1,0 +1,12 @@
+---
+import { errorDeComponente } from '../../lib/errores';
+const { titulo } = Astro.props;
+if (typeof titulo !== 'string' || titulo.trim() === '' || titulo.length > 90) {
+  throw errorDeComponente(Astro.url.pathname, 'CasoReal', 'titulo', 'es obligatoria y tiene que ser un texto de hasta 90 caracteres');
+}
+---
+<section id="caso-real" class="seccion seccion-caso-real">
+  <h2>El caso</h2>
+  <p class="titular">{titulo}</p>
+  <slot />
+</section>

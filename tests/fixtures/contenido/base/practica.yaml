@@ -1,0 +1,115 @@
+tarjetas:
+  - id: t-media-definicion
+    frente: ¿Cómo se calcula la media muestral?
+    dorso: Sumás todos los datos y dividís por la cantidad de datos.
+    fuente: ross
+  - id: t-mediana-definicion
+    frente: ¿Qué es la mediana de un conjunto de datos?
+    dorso: El valor que queda en el medio cuando ordenás los datos de menor a mayor.
+    fuente: ross
+  - id: t-mediana-par
+    frente: Si tenés una cantidad **par** de datos, ¿cuál es la mediana?
+    dorso: El promedio de los dos valores centrales, una vez ordenados.
+    fuente: ross
+  - id: t-mediana-robusta
+    frente: ¿Qué medida de centro casi no se mueve si aparece un valor extremo?
+    dorso: La **mediana**, porque solo depende del valor del medio una vez ordenados los datos.
+    fuente: nist-eda
+  - id: t-cola-derecha
+    frente: En datos con cola larga a la derecha (como latencias), ¿quién suele quedar más arriba, la media o la mediana?
+    dorso: La media, porque los valores grandes de la cola la arrastran hacia arriba.
+  - id: t-robusta-definicion
+    frente: ¿Qué significa que una medida sea **robusta** (*robust*)?
+    dorso: Que un valor atípico (*outlier*) no la cambia mucho.
+    fuente: nist-eda
+
+ejercicios:
+  - id: e-media-con-cuelgue
+    tipo: numerico
+    enunciado: |
+      Cinco pedidos tardaron 120, 130, 125, 135 y 2000 ms. ¿Cuál es la latencia **media**?
+    respuesta: 502
+    tolerancia:
+      absoluta: 0.5
+    unidad: ms
+    explicacion: |
+      Sumás todo: $120+130+125+135+2000 = 2510$ ms, y dividís por 5: 502 ms. Un solo pedido colgado arrastra el promedio.
+    erroresComunes:
+      - valor: 130
+        explicacion: Eso es la mediana (el valor del medio al ordenar), no la media.
+      - valor: 627.5
+        explicacion: Dividiste por 4. Son 5 datos, así que se divide por 5.
+  - id: e-elegir-medida
+    tipo: opcion-multiple
+    enunciado: Querés informar cuánto tarda "un pedido típico" de tu API, que tiene unos pocos pedidos colgados de 30 s. ¿Qué número mostrás?
+    opciones:
+      - texto: La media de todas las latencias.
+        explicacion: Los pocos pedidos de 30 s la inflan y deja de describir al pedido típico.
+      - texto: La mediana de las latencias.
+        correcta: true
+        explicacion: |
+          Es robusta: los pedidos colgados no la mueven, así que describe al pedido típico.
+      - texto: El valor máximo.
+        explicacion: El máximo describe al peor caso, no al típico.
+  - id: e-vf-media-mediana-iguales
+    tipo: verdadero-falso
+    enunciado: Si la media y la mediana de un conjunto de datos son muy distintas, es señal de asimetría o de valores extremos.
+    respuesta: true
+    justificacion: En datos simétricos y sin outliers las dos quedan cerca; una diferencia grande indica cola larga o valores extremos.
+
+casos:
+  - id: c-tablero-miente
+    titulo: El tablero dice verde y el usuario dice rojo
+    rol: Sos quien atiende la guardia de la API de turnos.
+    contexto: |
+      Lunes 9:10. Tres usuarios reportan que "la app tarda una eternidad".
+      El tablero muestra latencia **promedio** de 180 ms, igual que siempre.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Qué hacés primero?
+        opciones:
+          - texto: Abro la distribución de latencias de la última hora (mediana y p95).
+            va: ver-p95
+            consecuencia: El p95 está en 4 s y la mediana en 120 ms. Hay una cola larga que el promedio tapa.
+          - texto: Les contesto que el tablero está en verde, así que es la red de ellos.
+            va: final-mal
+            consecuencia: Los reclamos se triplican en media hora y escala tu jefe.
+      - id: ver-p95
+        tipo: decision
+        texto: Ya sabés que un 5 % de los pedidos tarda más de 4 s. ¿Y ahora?
+        opciones:
+          - texto: Filtro los pedidos lentos y busco qué tienen en común (endpoint, cliente, horario).
+            va: final-bien
+            consecuencia: Todos los lentos son del endpoint de reportes, que arrancó a hacer una consulta sin índice.
+          - texto: Reinicio todos los servidores por las dudas.
+            va: final-regular
+            consecuencia: La cola desaparece diez minutos y vuelve. No sabés por qué.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: Abrís un incidente con la causa acotada y el equipo de reportes lo corrige en una hora. Sumás el p95 al tablero.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Ganaste diez minutos de calma, pero el problema sigue ahí y perdiste la evidencia en memoria.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: El incidente se descubre dos horas tarde y el usuario aprendió que la mesa de ayuda no le cree.
+    leccion: |
+      Un promedio verde no prueba que todos estén bien: mirá la distribución (mediana y p95) antes de descartar un reclamo.
+
+problemas:
+  - id: p-ross-cap2
+    enunciado: Resolvé los problemas del capítulo 2 que piden media y mediana muestral, y en cada uno decí cuál de las dos describe mejor el valor típico y por qué.
+    fuente: ross
+    ubicacion: cap. 2, problemas del final del capítulo
+    dificultad: basico
+  - id: p-nist-robustez
+    enunciado: Tomá las latencias de un día de algún servicio tuyo (o inventá 50 con unos pocos valores enormes). Calculá media, mediana y la media recortada al 10 % que describe el handbook, y compará cuánto se mueve cada una si duplicás el valor máximo.
+    fuente: nist-eda
+    ubicacion: §1.3.5.1 (media, mediana y media recortada)
+    url: https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm
+    dificultad: intermedio

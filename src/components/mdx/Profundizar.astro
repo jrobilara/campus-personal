@@ -1,0 +1,11 @@
+---
+import { errorDeComponente } from '../../lib/errores';
+const { titulo } = Astro.props;
+if (typeof titulo !== 'string' || titulo.trim() === '') {
+  throw errorDeComponente(Astro.url.pathname, 'Profundizar', 'titulo', 'es obligatoria');
+}
+---
+<details class="profundizar">
+  <summary>{titulo}</summary>
+  <slot />
+</details>

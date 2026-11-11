@@ -1,16 +1,22 @@
 ---
----
+// Portada provisoria del hito 0: lista las áreas de areas.yaml. La portada real llega en el hito 1.
+import Base from '../layouts/Base.astro';
+import { cargarCampus } from '../contenido/campus';
+import { url } from '../lib/url';
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+const campus = await cargarCampus();
+---
+<Base titulo="Campus personal">
+  <main>
+    <h1>Campus personal</h1>
+    <ul>
+      {campus.areas.map((a) => (
+        <li>
+          <strong>{a.nombre}</strong> — {a.descripcion}
+          <span class="meta"> ({campus.temas.filter((t) => t.area === a.id).length} temas)</span>
+        </li>
+      ))}
+    </ul>
+    <p class="meta"><a href={url('')}>Inicio</a></p>
+  </main>
+</Base>

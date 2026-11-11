@@ -1,0 +1,7 @@
+---
+const { titulo = 'Nota' } = Astro.props;
+---
+<aside class="recuadro nota">
+  <p class="recuadro-titulo">{titulo}</p>
+  <slot />
+</aside>

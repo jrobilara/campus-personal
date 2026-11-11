@@ -1,0 +1,32 @@
+/* Estilos mínimos del hito 0: el diseño real viene en el hito 1. */
+:root {
+  --fondo: #ffffff;
+  --texto: #1b1f24;
+  --suave: #5b6570;
+  --borde: #d7dce1;
+  --recuadro: #f3f6f9;
+  --color-area: #2563eb;
+}
+[data-theme='dark'] {
+  --fondo: #14181d;
+  --texto: #e6e9ec;
+  --suave: #a0aab4;
+  --borde: #2d353d;
+  --recuadro: #1c2229;
+}
+body { margin: 0; background: var(--fondo); color: var(--texto); font: 1rem/1.6 system-ui, sans-serif; }
+main { max-width: 46rem; margin: 0 auto; padding: 1rem; }
+.seccion { margin-block: 2rem; }
+.titular { font-size: 1.15rem; font-weight: 600; }
+.recuadro { border-left: 4px solid var(--color-area); background: var(--recuadro); padding: .5rem 1rem; margin-block: 1rem; }
+.recuadro-titulo { font-weight: 700; margin: 0 0 .25rem; }
+.ojo { border-left-color: #c2410c; }
+.formula-nombre { font-weight: 600; color: var(--suave); }
+.cita a { text-decoration: none; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid var(--borde); padding: .25rem .6rem; }
+.sim { border: 1px solid var(--borde); border-radius: .5rem; padding: .75rem 1rem; margin-block: 1.25rem; }
+.sim-en-construccion { color: var(--suave); font-style: italic; padding: 1rem; border: 1px dashed var(--borde); }
+.meta { color: var(--suave); font-size: .9rem; }
+details { margin-block: .4rem; }
+pre { overflow-x: auto; background: var(--recuadro); padding: .6rem; }

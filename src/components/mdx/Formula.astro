@@ -1,0 +1,20 @@
+---
+import katex from 'katex';
+import { errorDeComponente } from '../../lib/errores';
+const { tex, nombre } = Astro.props;
+if (typeof tex !== 'string' || tex.trim() === '') {
+  throw errorDeComponente(Astro.url.pathname, 'Formula', 'tex', 'es obligatoria y tiene que ser LaTeX');
+}
+let html: string;
+try {
+  html = katex.renderToString(tex, { displayMode: true, throwOnError: true });
+} catch (e) {
+  throw errorDeComponente(Astro.url.pathname, 'Formula', 'tex', `LaTeX inválido: ${(e as Error).message}`);
+}
+const tieneDonde = Astro.slots.has('default');
+---
+<figure class="formula">
+  {nombre && <figcaption class="formula-nombre">{nombre}</figcaption>}
+  <div class="formula-tex" set:html={html} />
+  {tieneDonde && <div class="formula-donde"><slot /></div>}
+</figure>

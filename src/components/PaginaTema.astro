@@ -1,0 +1,122 @@
+---
+// Plantilla de la página de tema (CONTRATO §6.2): encabezado, cuerpo MDX, Práctica y Fuentes.
+// Hito 0: práctica en HTML estático, sin interactividad (llega en el hito 1).
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { componentesMdx } from './mdx';
+import { textoCorto, textoCortoEnLinea } from '../lib/texto-corto';
+import { url } from '../lib/url';
+import type { Area } from '../contenido/esquemas';
+import type { TemaCargado } from '../contenido/campus';
+
+interface Props {
+  tema: TemaCargado;
+  area: Area;
+  ejemplo?: boolean;
+}
+const { tema, area, ejemplo = false } = Astro.props;
+const { Content } = await render(tema.entry);
+const { data, practica } = tema;
+const principales = data.fuentes.filter((f) => !f.verMas);
+const verMas = data.fuentes.filter((f) => f.verMas);
+const fecha = data.fechaVerificacion.toISOString().slice(0, 10);
+
+const describir = (f: (typeof data.fuentes)[number]) =>
+  [f.autor, f.titulo, f.edicion, f.ubicacion].filter(Boolean).join(', ');
+const NIVEL = { basico: 'Básico', intermedio: 'Intermedio', avanzado: 'Avanzado' } as const;
+---
+<Base titulo={`${data.titulo} · Campus personal`} descripcion={data.resumen} noindex={ejemplo} colorArea={area.color}>
+  <main {...(ejemplo ? { 'data-pagefind-ignore': '' } : { 'data-pagefind-body': '', 'data-pagefind-meta': `area:${area.nombre}` })}>
+    <header>
+      <p class="meta">{area.nombre}</p>
+      <h1>{data.titulo}</h1>
+      <p>{data.resumen}</p>
+      <p class="meta">
+        {NIVEL[data.nivel]} · {data.minutos} min
+        {data.materias.length > 0 && <> · UNLaM: {data.materias.map((m) => `${m.codigo} ${m.nombre}`).join('; ')}</>}
+      </p>
+      {data.prerrequisitos.length > 0 && (
+        <p class="meta">
+          Antes conviene ver:{' '}
+          {data.prerrequisitos.map((pr, i) => (<>{i > 0 && ', '}<a href={url(`${pr}/`)}>{pr}</a></>))}
+        </p>
+      )}
+    </header>
+
+    <Content components={componentesMdx} />
+
+    <section id="practica" class="seccion">
+      <h2>Práctica</h2>
+
+      <h3>Tarjetas</h3>
+      <ul class="tarjetas">
+        {practica.tarjetas.map((t) => (
+          <li>
+            <div set:html={textoCortoEnLinea(t.frente)} />
+            <details><summary>Ver respuesta</summary><div set:html={textoCorto(t.dorso)} /></details>
+          </li>
+        ))}
+      </ul>
+      <p><a href={url(`repaso/?tema=${tema.id}`)}>Repasar este tema ahora</a></p>
+
+      <h3>Ejercicios</h3>
+      {practica.ejercicios.map((e) => (
+        <article class="ejercicio" data-tipo={e.tipo} id={e.id}>
+          <div set:html={textoCorto(e.enunciado)} />
+          {e.tipo === 'opcion-multiple' && (
+            <ol type="a">{e.opciones.map((o) => <li set:html={textoCortoEnLinea(o.texto)} />)}</ol>
+          )}
+          {e.tipo === 'numerico' && e.unidad && <p class="meta">Unidad: {e.unidad}</p>}
+        </article>
+      ))}
+
+      {practica.casos.length > 0 && <h3>Casos de guardia</h3>}
+      {practica.casos.map((c) => (
+        <article class="caso" id={c.id}>
+          <h4>{c.titulo}</h4>
+          <p><em>{c.rol}</em></p>
+          <div set:html={textoCorto(c.contexto)} />
+        </article>
+      ))}
+
+      <h3>Problemas para hacer por tu cuenta</h3>
+      <ul class="problemas">
+        {practica.problemas.map((p) => {
+          const f = data.fuentes.find((x) => x.id === p.fuente)!;
+          return (
+            <li id={p.id}>
+              <div set:html={textoCorto(p.enunciado)} />
+              <p class="meta">
+                {f.autor}, {f.titulo} — {p.ubicacion}
+                {p.url && <> · <a href={p.url} rel="noopener">enlace</a></>}
+              </p>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <section id="fuentes" class="seccion">
+      <h2>Fuentes</h2>
+      <ul>
+        {principales.map((f) => (
+          <li id={`fuente-${f.id}`}>
+            {describir(f)}
+            {f.url && <> · <a href={f.url} rel="noopener">{f.url}</a></>}
+          </li>
+        ))}
+      </ul>
+      {verMas.length > 0 && (
+        <>
+          <h3>Para ver más</h3>
+          <ul>
+            {verMas.map((f) => (
+              <li id={`fuente-${f.id}`}>{describir(f)} · <a href={f.url} rel="noopener">{f.url}</a></li>
+            ))}
+          </ul>
+        </>
+      )}
+      <p class="meta">Fuentes verificadas el {fecha}</p>
+    </section>
+  </main>
+</Base>

@@ -1,0 +1,7 @@
+---
+import SimFigura from './SimFigura.astro';
+import { validarPropsSimulador } from '../../simuladores/props';
+import { archivoDeTemaDesdeRuta } from '../../lib/errores';
+const props = validarPropsSimulador('SimDatos', Astro.props, archivoDeTemaDesdeRuta(Astro.url.pathname));
+---
+<SimFigura nombre="SimDatos" titulo={props.titulo as string | undefined} consigna={props.consigna as string} props={props} />

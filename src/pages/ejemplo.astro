@@ -1,0 +1,11 @@
+---
+// Tema de ejemplo (CONTRATO §9): se usa para desarrollar y testear la plantilla. noindex y sin enlaces desde ningún lado.
+import PaginaTema from '../components/PaginaTema.astro';
+import { cargarCampus } from '../contenido/campus';
+
+const campus = await cargarCampus();
+const tema = campus.ejemplo;
+if (!tema) throw new Error('[contenido] src/content/temas/ejemplo/ → falta el tema de ejemplo (ejemplo: true)');
+const area = campus.areas.find((a) => a.id === tema.area)!;
+---
+<PaginaTema tema={tema} area={area} ejemplo />

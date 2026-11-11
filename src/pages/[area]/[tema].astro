@@ -1,0 +1,17 @@
+---
+import PaginaTema from '../../components/PaginaTema.astro';
+import { cargarCampus } from '../../contenido/campus';
+
+export async function getStaticPaths() {
+  const campus = await cargarCampus();
+  // El tema de ejemplo vive en /ejemplo/, nunca bajo su área (regla I14).
+  return campus.todosLosTemas
+    .filter((t) => !t.data.ejemplo)
+    .map((tema) => ({
+      params: { area: tema.id.split('/')[0], tema: tema.slug },
+      props: { tema, area: campus.areas.find((a) => a.id === tema.area)! },
+    }));
+}
+const { tema, area } = Astro.props;
+---
+<PaginaTema tema={tema} area={area} />

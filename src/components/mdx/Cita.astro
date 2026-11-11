@@ -1,0 +1,9 @@
+---
+import { errorDeComponente } from '../../lib/errores';
+const { f, loc } = Astro.props;
+if (typeof f !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(f)) {
+  throw errorDeComponente(Astro.url.pathname, 'Cita', 'f', 'es obligatoria y tiene que ser el id de una fuente del frontmatter (kebab-case)');
+}
+const etiqueta = loc ? `[${f}, ${loc}]` : `[${f}]`;
+---
+<sup class="cita"><a href={`#fuente-${f}`}>{etiqueta}</a></sup>

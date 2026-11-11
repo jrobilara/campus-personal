@@ -1,0 +1,18 @@
+---
+// Marco común de los 12 simuladores: figura con título, consigna en HTML estático e isla.
+import EnConstruccion from '../../simuladores/EnConstruccion';
+interface Props {
+  nombre: string;
+  titulo?: string;
+  consigna: string;
+  props: Record<string, unknown>;
+}
+const { nombre, titulo, consigna, props } = Astro.props;
+const kebab = nombre.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+---
+<figure class="sim" data-testid={`sim-${kebab.replace(/^sim-/, '')}`}>
+  {titulo && <figcaption class="sim-titulo">{titulo}</figcaption>}
+  <p class="sim-consigna">{consigna}</p>
+  <EnConstruccion client:visible nombre={nombre} props={props} />
+  <noscript><p>Este simulador necesita JavaScript.</p></noscript>
+</figure>

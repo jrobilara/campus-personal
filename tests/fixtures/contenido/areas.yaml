@@ -1,0 +1,48 @@
+- id: analisis-datos
+  nombre: Análisis de datos
+  orden: 1
+  color: "#2563eb"
+  colorOscuro: "#60a5fa"
+  icono: barras
+  descripcion: Limpiar, explorar, graficar y consultar datos para sacar conclusiones que aguanten una pregunta incómoda.
+  exigeCasoDeGuardia: false
+- id: arquitecturas
+  nombre: Arquitecturas y microservicios
+  orden: 2
+  color: "#7c3aed"
+  colorOscuro: "#a78bfa"
+  icono: capas
+  descripcion: Cómo se parte un sistema, cómo se hablan sus piezas y qué hacer para que una falla no tire todo abajo.
+  exigeCasoDeGuardia: true
+- id: servidores
+  nombre: Servidores
+  orden: 3
+  color: "#0f766e"
+  colorOscuro: "#2dd4bf"
+  icono: servidor
+  descripcion: Linux, servicios, monitoreo, backups y contenedores, del lado de quien atiende la guardia.
+  exigeCasoDeGuardia: true
+- id: matematica-fisica
+  nombre: Matemática y física aplicadas
+  orden: 4
+  color: "#b45309"
+  colorOscuro: "#fbbf24"
+  icono: funcion
+  descripcion: Derivadas, matrices, grafos y señales, mirados desde lo que resuelven en el laburo.
+  exigeCasoDeGuardia: false
+- id: probabilidad-estadistica
+  nombre: Probabilidad y estadística
+  orden: 5
+  color: "#be123c"
+  colorOscuro: "#fb7185"
+  icono: campana
+  descripcion: Distribuciones, intervalos, pruebas A/B y Bayes para no dejarse engañar por los números.
+  exigeCasoDeGuardia: false
+- id: soporte
+  nombre: Soporte técnico
+  orden: 6
+  color: "#4d7c0f"
+  colorOscuro: "#a3e635"
+  icono: auricular
+  descripcion: Incidentes, troubleshooting con método, prioridades y SLA, y cómo hablar con el usuario.
+  exigeCasoDeGuardia: true

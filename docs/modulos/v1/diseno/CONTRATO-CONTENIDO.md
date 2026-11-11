@@ -489,11 +489,22 @@ export function verificarIntegridad(
 
 Toda página llama a `cargarCampus()` en su frontmatter o en `getStaticPaths`, así que un error rompe `npm run build` (exit ≠ 0).
 
+**Dos formatos de error, según quién lo detecta** (verificado en el hito 0):
+
+- Lo que valida un esquema Zod (campos faltantes, tipos, mínimos, ids, grafo del caso, fuentes) lo imprime Astro, con la ruta del campo y el archivo en `Location`:
+  ```
+  [InvalidContentEntryDataError] practicas → ejemplo/media-y-mediana data does not match collection schema.
+    tarjetas.0.dorso**: **tarjetas.0.dorso: Required
+    Location: …/src/content/temas/ejemplo/media-y-mediana/practica.yaml:0:0
+  ```
+  Ese error frena el build antes de correr las reglas I1-I15 (el escritor corrige y vuelve a correr).
+- Lo que valida `verificarIntegridad` (I1-I15) y las props de los componentes MDX sale con el formato `[contenido] archivo → campo: mensaje (regla Ix)` de arriba; en I6 el campo es `cuerpo (línea N)`, y en los simuladores `<SimDatos> prop "dataset": …`. Si hay varios, salen todos juntos bajo `El contenido no cumple el contrato (N errores):`.
+
 | Regla | Qué verifica | Severidad |
 |---|---|---|
 | I1 | Cada `temas/<area>/<tema>/` tiene `tema.mdx` **y** `practica.yaml` (mismo id en las dos colecciones). | error |
 | I2 | `data.area` existe en `areas.yaml`. La carpeta del área (primer segmento del id) es igual a `data.area`, salvo `ejemplo: true`, que obliga a la carpeta `ejemplo`. Un tema en `temas/ejemplo/` sin `ejemplo: true` es error. | error |
-| I3 | `orden` no se repite entre temas de la misma área. | error |
+| I3 | `orden` no se repite entre temas de la misma área. El tema de ejemplo (`ejemplo: true`, `orden: 1` en `analisis-datos`) no cuenta: convive con un tema real de `orden: 1`. | error |
 | I4 | Cada `prerrequisitos[i]` es un id de tema existente y no es el propio tema. | aviso; **error** en estricto |
 | I5 | Toda `fuente` referenciada en `practica.yaml` (tarjeta, ejercicio, caso, problema) existe en `fuentes` del frontmatter. La de un problema no puede ser `video` ni `blog`. | error |
 | I6 | El cuerpo de `tema.mdx` cumple la forma de la §6.1: sin `import`/`export`; exactamente un `<CasoReal …>`, un `<Intuicion>` y un `<Formal>`, en ese orden, cada uno abierto y cerrado en su propia línea; fuera de esas tres secciones solo puede haber líneas en blanco o comentarios `{/* … */}`; sin encabezados `#` ni `##`. | error |

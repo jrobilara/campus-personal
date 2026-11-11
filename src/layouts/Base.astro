@@ -1,0 +1,29 @@
+---
+import 'katex/dist/katex.min.css';
+import 'mafs/core.css';
+import 'mafs/font.css';
+import '../styles/base.css';
+import { url } from '../lib/url';
+interface Props {
+  titulo: string;
+  descripcion?: string;
+  noindex?: boolean;
+  colorArea?: string;
+}
+const { titulo, descripcion, noindex = false, colorArea } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    {descripcion && <meta name="description" content={descripcion} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+  </head>
+  <body style={colorArea ? `--color-area: ${colorArea}` : undefined}>
+    <slot />
+  </body>
+</html>
