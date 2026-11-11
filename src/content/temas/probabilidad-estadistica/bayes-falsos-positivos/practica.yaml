@@ -1,0 +1,213 @@
+tarjetas:
+  - id: t-p-a-dado-b-vs-b-dado-a
+    frente: ¿Por qué $P(\text{alerta} \mid \text{malware})$ no es lo mismo que $P(\text{malware} \mid \text{alerta})$?
+    dorso: Porque la primera es la sensibilidad del test y la segunda depende además de cuánto malware hay en total.
+    fuente: mit1805
+  - id: t-bayes-formula
+    frente: ¿Cuál es la regla de Bayes para dos eventos $A$ y $B$?
+    dorso: |
+      $P(B \mid A) = P(A \mid B)\,P(B)/P(A)$; sirve para dar vuelta una probabilidad condicional.
+    fuente: soong
+  - id: t-ley-prob-total
+    frente: Conocés prevalencia, sensibilidad y tasa de falsas alarmas. ¿Cómo calculás cuántas alertas esperás en 10.000 archivos?
+    dorso: Sumás las verdaderas (maliciosos por sensibilidad) y las falsas (limpios por tasa de falsas alarmas), como en la ley de probabilidad total.
+    fuente: mendenhall
+  - id: t-falso-positivo
+    frente: ¿Qué es un falso positivo, en términos de probabilidad condicional?
+    dorso: |
+      La probabilidad de que el test dé positivo dado que la condición no está presente: $P(T^+ \mid D^-)$.
+    fuente: mendenhall
+  - id: t-sensibilidad
+    frente: Un antivirus tiene sensibilidad de 98 %. De 200 archivos maliciosos, ¿cuántos esperás que marque?
+    dorso: Unos 196, el 98 % de los maliciosos.
+    fuente: mit1805
+  - id: t-especificidad
+    frente: Un antivirus tiene especificidad de 98 %. De 1000 archivos limpios, ¿cuántas falsas alarmas esperás?
+    dorso: Unas 20, el 2 % de los limpios.
+    fuente: mit1805
+  - id: t-vpp-definicion
+    frente: ¿Qué es el valor predictivo positivo (VPP)?
+    dorso: |
+      La probabilidad de que la condición esté presente dado que el test dio positivo: $P(D^+ \mid T^+)$.
+    fuente: mit1805
+  - id: t-falacia-tasa-base
+    frente: ¿En qué consiste la falacia de la tasa base?
+    dorso: En creer que un test que acierta el 95 % implica que el 95 % de sus positivos son verdaderos, ignorando cuán rara es la condición.
+    fuente: mit1805
+  - id: t-vpp-baja-prevalencia
+    frente: Si lo que buscás es muy raro, ¿qué le pasa al VPP aunque el test sea muy sensible y específico?
+    dorso: Baja mucho, porque las falsas alarmas del enorme grupo de casos limpios superan a las alertas verdaderas.
+    fuente: mit1805
+  - id: t-frecuencias-naturales
+    frente: ¿Qué truco evita errores al aplicar Bayes sin fórmulas?
+    dorso: Imaginar una población de, por ejemplo, 10.000 casos y contar cuántos caen en cada celda de una tabla.
+    fuente: mit1805
+  - id: t-factor-bayes
+    frente: Un antivirus con sensibilidad de 98 % y 2 % de falsas alarmas marca un archivo. ¿Por cuánto multiplica esa alerta los odds de que sea malware?
+    dorso: |
+      Por 49, porque $0{,}98/0{,}02 = 49$ (el factor de Bayes).
+    fuente: mit1805
+  - id: t-evidencia-independiente
+    frente: Dos antivirus que usan las mismas firmas marcan el mismo archivo. ¿Se pueden multiplicar sus factores de Bayes como si fueran evidencias separadas?
+    dorso: No; solo se multiplican las evidencias independientes, y dos motores con las mismas firmas no lo son.
+    fuente: mit1805
+
+ejercicios:
+  - id: e-vpp-antivirus
+    tipo: numerico
+    enunciado: |
+      Un antivirus detecta el 98 % del malware y da falsa alarma en el 2 % de los archivos limpios. En tu red, el 0,5 % de los archivos escaneados es malware. Si el antivirus marca un archivo, ¿qué probabilidad hay de que sea malware? Dala en %, con una cifra decimal.
+    respuesta: 19.8
+    tolerancia:
+      absoluta: 0.2
+    unidad: "%"
+    explicacion: |
+      Por cada 10.000 archivos hay 50 maliciosos (49 detectados) y 9950 limpios (199 falsas alarmas). El VPP es $49/(49+199) = 49/248 = 0{,}198$, o sea 19,8 %.
+    erroresComunes:
+      - valor: 98
+        explicacion: Esa es la sensibilidad, $P(\text{alerta} \mid \text{malware})$. Lo que te piden es la inversa.
+      - valor: 2
+        explicacion: Esa es la tasa de falsos positivos; no es la probabilidad de que una alerta sea falsa.
+    fuente: mit1805
+  - id: e-falsas-alarmas-dia
+    tipo: numerico
+    enunciado: |
+      Con los mismos datos (0,5 % de malware, sensibilidad 98 %, falsa alarma 2 %), si el antivirus escanea 10.000 archivos por día, ¿cuántas de las alertas son **falsas alarmas** (archivos limpios marcados)?
+    respuesta: 199
+    tolerancia:
+      absoluta: 1
+    unidad: alertas
+    explicacion: |
+      Hay $10.000 \cdot 0{,}995 = 9950$ archivos limpios y el 2 % da falsa alarma: $9950 \cdot 0{,}02 = 199$ alertas.
+    erroresComunes:
+      - valor: 49
+        explicacion: Esas son las alertas verdaderas (malware detectado), no las falsas.
+      - valor: 248
+        explicacion: Ese es el total de alertas, verdaderas y falsas juntas.
+    fuente: mit1805
+  - id: e-vpp-prevalencia-alta
+    tipo: numerico
+    enunciado: |
+      El mismo antivirus (sensibilidad 98 %, falsa alarma 2 %) se usa ahora en una carpeta de descargas sospechosas, donde el 10 % de los archivos es malware. Si marca un archivo, ¿qué probabilidad hay de que sea malware? Dala en %, con una cifra decimal.
+    respuesta: 84.5
+    tolerancia:
+      absoluta: 0.2
+    unidad: "%"
+    explicacion: |
+      Por cada 10.000: 1000 maliciosos (980 detectados) y 9000 limpios (180 falsas alarmas). VPP $= 980/(980+180) = 0{,}845$.
+    erroresComunes:
+      - valor: 19.8
+        explicacion: Ese es el valor con la prevalencia anterior, 0,5 %. Acá es 10 %.
+    fuente: mit1805
+  - id: e-prevalencia-minima
+    tipo: numerico
+    enunciado: |
+      Con sensibilidad 98 % y falsa alarma 2 %, ¿a partir de qué prevalencia la mitad de las alertas son verdaderas (VPP del 50 %)? Dala en %, con una cifra decimal.
+    respuesta: 2.0
+    tolerancia:
+      absoluta: 0.05
+    unidad: "%"
+    explicacion: |
+      VPP del 50 % significa odds posteriores de 1. Como el factor de Bayes es $0{,}98/0{,}02 = 49$, los odds previos tienen que ser $1/49$, es decir una prevalencia de $1/(1+49) = 0{,}02$, o sea 2,0 %.
+    erroresComunes:
+      - valor: 50
+        explicacion: Confundiste el VPP con la prevalencia. Lo que se pide es la prevalencia que produce un VPP de 50 %.
+    fuente: mit1805
+  - id: e-mejorar-especificidad
+    tipo: numerico
+    enunciado: |
+      Con 0,5 % de malware y sensibilidad 98 %, el fabricante saca una versión con falsa alarma de solo 0,1 % (especificidad 99,9 %). ¿Cuánto vale ahora el VPP? Dalo en %, con una cifra decimal.
+    respuesta: 83.1
+    tolerancia:
+      absoluta: 0.2
+    unidad: "%"
+    explicacion: |
+      Por cada 10.000: 49 detectados y $9950 \cdot 0{,}001 = 9{,}95$ falsas alarmas. VPP $= 49/(49+9{,}95) = 0{,}831$. Mejorar la especificidad pesa mucho cuando lo buscado es raro.
+    erroresComunes:
+      - valor: 19.8
+        explicacion: Ese es el valor con 2 % de falsas alarmas.
+    fuente: mit1805
+  - id: e-leer-sensibilidad
+    tipo: opcion-multiple
+    enunciado: La ficha de un antivirus dice "sensibilidad 98 %". ¿Qué significa?
+    opciones:
+      - texto: Que si un archivo es malware, hay 98 % de probabilidad de que el antivirus lo marque.
+        correcta: true
+        explicacion: Es $P(\text{alerta} \mid \text{malware})$, la definición de sensibilidad.
+      - texto: Que si el antivirus marca un archivo, hay 98 % de probabilidad de que sea malware.
+        explicacion: Eso es el VPP, que depende de la prevalencia y puede ser mucho menor.
+      - texto: Que el 98 % de los archivos de tu red es malware.
+        explicacion: Eso sería la prevalencia, y es un dato distinto del test.
+    fuente: mit1805
+  - id: e-vf-99-99
+    tipo: verdadero-falso
+    enunciado: Un test con 99 % de sensibilidad y 99 % de especificidad garantiza que un positivo es verdadero con 99 % de probabilidad.
+    respuesta: false
+    justificacion: |
+      El VPP depende de la prevalencia. Si solo 1 de cada 1000 casos es real, el VPP es $0{,}001 \cdot 0{,}99 / (0{,}001 \cdot 0{,}99 + 0{,}999 \cdot 0{,}01) \approx 9\ \%$.
+    fuente: mit1805
+
+casos:
+  - id: c-alerta-del-edr
+    titulo: Alerta en la carpeta de contabilidad
+    rol: Sos analista de seguridad en el primer nivel del SOC de la empresa.
+    contexto: |
+      Martes 11:20, semana de cierre. El antivirus marca como malicioso un archivo de contabilidad. La ficha dice 98 % de detección y 2 % de falsas alarmas, y en tu red solo el 0,5 % de los archivos escaneados es malware.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Cómo reaccionás?
+        opciones:
+          - texto: Calculo cuánto vale la alerta con la tasa base antes de decidir el nivel de respuesta.
+            va: vpp-calculado
+            consecuencia: El VPP da casi 20 %, o sea una de cada cinco alertas como esta es verdadera.
+          - texto: Aíslo toda la red de contabilidad ya, porque el antivirus acierta el 98 %.
+            va: final-mal
+            consecuencia: Contabilidad pierde la mañana del cierre por una alerta que, estadísticamente, es falsa cuatro veces de cinco.
+          - texto: La ignoro; las alertas de este antivirus casi siempre son falsas.
+            va: final-mal
+            consecuencia: Es verdad que cuatro de cinco son falsas, pero la quinta puede ser un ransomware que ya está cifrando archivos.
+      - id: vpp-calculado
+        tipo: decision
+        texto: No es 98 % ni 0 %, es una de cada cinco. ¿Cómo seguís?
+        opciones:
+          - texto: Aíslo solo ese equipo, analizo el archivo en un entorno aislado y pido una segunda opinión de una fuente independiente.
+            va: final-bien
+            consecuencia: El análisis independiente tarda 15 minutos y el resto de contabilidad sigue trabajando.
+          - texto: Vuelvo a pasar el mismo antivirus para confirmar.
+            va: final-regular
+            consecuencia: Da lo mismo que la primera vez, porque usa las mismas firmas; no sumó evidencia nueva.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El análisis independiente muestra que era una macro legítima. Cerrás la alerta con evidencia y la empresa no perdió tiempo.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Sigue la duda y perdiste tiempo; terminás haciendo igual el análisis aislado, pero media hora más tarde.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Una decisión sin mirar la tasa base. O frenaste a toda el área por una falsa alarma, o dejaste pasar una amenaza real.
+    leccion: |
+      Una alerta no vale lo que dice la ficha del producto: vale lo que dice la ficha combinada con cuán común es el problema. Calculá el VPP antes de decidir cuánto reaccionar, y confirmá con una evidencia que sea de verdad independiente.
+    fuente: mit1805
+
+problemas:
+  - id: p-soong-2-31
+    enunciado: Resolvé el problema 2.31 de Soong (test diagnóstico con 95 % de acierto en los dos sentidos y prevalencia de 0,005). Verificá tu resultado armando una tabla de 10.000 personas y explicá por qué el resultado sorprende.
+    fuente: soong
+    ubicacion: cap. 2, problema 2.31, p. 34
+    dificultad: basico
+  - id: p-mit-screening
+    enunciado: Resolvé el problema 1 de la clase 11 (prevalencia 0,005, falsos positivos 2 %, falsos negativos 1 %). Hacelo con árbol, con tabla y con la fórmula, y compará los tres caminos.
+    fuente: mit1805
+    ubicacion: Class 11 in-class problems, Board questions, Problem 1
+    url: https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class11_pset.pdf
+    dificultad: intermedio
+  - id: p-mendenhall-bayes
+    enunciado: Resolvé los ejercicios 4.74 y 4.77 de Mendenhall (regla de Bayes con aeropuertos y con diagnóstico médico). En cada uno, armá primero la tabla de frecuencias para una población de 10.000 y chequeá el resultado con la fórmula.
+    fuente: mendenhall
+    ubicacion: cap. 4 §4.7, ejercicios 4.74 y 4.77, p. 162
+    dificultad: intermedio

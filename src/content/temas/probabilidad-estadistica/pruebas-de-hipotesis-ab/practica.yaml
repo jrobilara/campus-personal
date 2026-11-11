@@ -1,0 +1,218 @@
+tarjetas:
+  - id: t-hipotesis-nula
+    frente: En un test A/B de botones, ¿qué afirma la hipótesis nula?
+    dorso: Que las dos versiones convierten igual, es decir, que el cambio no tiene efecto.
+    fuente: mit1805
+  - id: t-pvalor-definicion
+    frente: ¿Qué es un p-valor?
+    dorso: La probabilidad, suponiendo cierta la hipótesis nula, de ver datos al menos tan extremos como los observados.
+    fuente: mit1805
+  - id: t-pvalor-no-es
+    frente: Un test da p = 0,03. ¿Es correcto decir que hay 3 % de probabilidad de que la hipótesis nula sea cierta?
+    dorso: No; el p-valor es una probabilidad de los datos dada la nula, no una probabilidad de la hipótesis.
+    fuente: mit1805
+  - id: t-nivel-significancia
+    frente: |
+      Fijás $\alpha = 0{,}05$ y A y B son idénticas. Si repetís el test 1000 veces, ¿en cuántas esperás rechazar la nula?
+    dorso: |
+      En unas 50, porque $\alpha$ es la probabilidad de rechazar una nula verdadera.
+    fuente: mit1805
+  - id: t-error-tipo-ii
+    frente: Tu test A/B no detecta una mejora que sí existe. ¿Qué error cometiste?
+    dorso: |
+      Un error tipo II: no rechazar una hipótesis nula que es falsa.
+    fuente: mit1805
+  - id: t-potencia
+    frente: Un test tiene potencia de 24 %. ¿Qué significa en la práctica?
+    dorso: Que si el efecto real existe, lo detectás solo una de cada cuatro veces, aproximadamente.
+    fuente: mit1805
+  - id: t-potencia-n
+    frente: Tu test A/B no encontró diferencia con pocas visitas. ¿Qué te dice la potencia sobre ese resultado?
+    dorso: Que con pocos datos un efecto real puede pasar desapercibido, así que "no significativo" no prueba que sean iguales.
+    fuente: mendenhall
+  - id: t-no-rechazar
+    frente: Cuando el test no rechaza la hipótesis nula, ¿qué conclusión es correcta?
+    dorso: Que no hay evidencia suficiente para rechazarla, no que la nula sea verdadera.
+    fuente: mendenhall
+  - id: t-significativo-importante
+    frente: ¿"Estadísticamente significativo" quiere decir "importante"?
+    dorso: No; solo dice que el resultado probablemente no fue casualidad, aunque la diferencia pueda ser chica.
+    fuente: mendenhall
+  - id: t-condicion-prueba-z
+    frente: ¿Qué condición de tamaño hay que chequear antes de usar la prueba z de dos proporciones?
+    dorso: Que $n\hat{p}$ y $n\hat{q}$ sean mayores que 5 en los dos grupos.
+    fuente: mendenhall
+  - id: t-peeking
+    frente: Mirás el test todos los días y lo cortás cuando p baja de 0,05. ¿Qué le pasa al 5 % de falsos positivos?
+    dorso: Deja de valer; los p-valores habituales no son confiables cuando se elige el tamaño de muestra mirando el test.
+    fuente: johari-peeking
+  - id: t-metricas-multiples
+    frente: Mirás 20 métricas independientes sin efecto real, cada una con $\alpha = 0{,}05$. ¿Cuál es la chance de que al menos una salga significativa?
+    dorso: |
+      Cerca del 64 %, porque $1 - 0{,}95^{20} \approx 0{,}64$.
+    fuente: mit1805
+  - id: t-regla-de-parada
+    frente: ¿Puede cambiar el p-valor de los mismos datos según cuándo hayas decidido parar el experimento?
+    dorso: Sí; el p-valor depende de la regla de parada, porque define qué resultados se consideran "más extremos".
+    fuente: mit1805
+
+ejercicios:
+  - id: e-z-boton-verde
+    tipo: numerico
+    enunciado: |
+      Versión A: 24 compras en 300 visitas. Versión B: 33 compras en 300 visitas. Con la prueba z de dos proporciones (usá la proporción conjunta), ¿cuánto vale el estadístico $z$? Dalo con dos decimales.
+    respuesta: 1.25
+    tolerancia:
+      absoluta: 0.02
+    unidad: ""
+    explicacion: |
+      $\hat{p}_A = 0{,}08$, $\hat{p}_B = 0{,}11$ y $\hat{p} = 57/600 = 0{,}095$. El error estándar es $\sqrt{0{,}095 \cdot 0{,}905 \cdot (2/300)} = 0{,}0239$. Entonces $z = 0{,}03/0{,}0239 = 1{,}25$.
+    erroresComunes:
+      - valor: 1.77
+        explicacion: Usaste el error estándar de un solo grupo, $\sqrt{\hat{p}\hat{q}/n}$, en vez del de la diferencia entre los dos grupos.
+      - valor: 0.03
+        explicacion: Esa es la diferencia de proporciones. Falta dividir por el error estándar.
+    fuente: mendenhall
+  - id: e-pvalor-boton-verde
+    tipo: numerico
+    enunciado: |
+      Con $z = 1{,}25$ de la prueba anterior y una hipótesis alternativa de **dos colas** ($p_A \ne p_B$), ¿cuál es el p-valor? Dalo en %, con una cifra decimal.
+    respuesta: 21.1
+    tolerancia:
+      absoluta: 0.5
+    unidad: "%"
+    explicacion: |
+      Un lado tiene $P(Z > 1{,}25) \approx 0{,}1056$. Como la prueba es de dos colas, se duplica: $2 \cdot 0{,}1056 = 0{,}211$, o sea 21,1 %. No se rechaza $H_0$ al 5 %.
+    erroresComunes:
+      - valor: 10.6
+        explicacion: Ese es el p-valor de una sola cola. Si la alternativa es "distinto", hay que duplicarlo.
+    fuente: mendenhall
+  - id: e-z-test-grande
+    tipo: numerico
+    enunciado: |
+      Otro test en la misma tienda: A tuvo 400 compras en 4000 visitas y B tuvo 480 compras en 4000 visitas. ¿Cuánto vale el estadístico $z$ (proporción conjunta)? Dalo con dos decimales.
+    respuesta: 2.86
+    tolerancia:
+      absoluta: 0.02
+    unidad: ""
+    explicacion: |
+      $\hat{p}_A = 0{,}10$, $\hat{p}_B = 0{,}12$, $\hat{p} = 0{,}11$. El error estándar es $\sqrt{0{,}11 \cdot 0{,}89 \cdot (2/4000)} = 0{,}0070$ y $z = 0{,}02/0{,}0070 = 2{,}86$. El p-valor de dos colas es $\approx 0{,}004$, así que sí se rechaza al 5 %.
+    erroresComunes:
+      - valor: 4.04
+        explicacion: Olvidaste el factor 2 de $(1/n_A + 1/n_B)$, o sea que usaste el error estándar de un solo grupo.
+    fuente: mendenhall
+  - id: e-metricas-multiples
+    tipo: numerico
+    enunciado: |
+      Tu tablero compara A y B en 20 métricas independientes, cada una con $\alpha = 0{,}05$. Suponé que en realidad el cambio no afecta a ninguna. ¿Qué probabilidad hay de que **al menos una** salga significativa? Dala en %, con una cifra decimal.
+    respuesta: 64.2
+    tolerancia:
+      absoluta: 0.5
+    unidad: "%"
+    explicacion: |
+      La chance de que ninguna salga significativa es $0{,}95^{20} = 0{,}358$. Entonces la de que al menos una lo haga es $1 - 0{,}358 = 0{,}642$, o sea 64,2 %.
+    erroresComunes:
+      - valor: 5
+        explicacion: Ese es el error de una sola prueba. Con 20 pruebas se acumulan.
+      - valor: 100
+        explicacion: Sumaste 20 veces el 5 %, pero las probabilidades no se suman así porque los eventos se superponen.
+    fuente: mit1805
+  - id: e-interpretar-pvalor
+    tipo: opcion-multiple
+    enunciado: Tu test A/B da un p-valor de 0,03. ¿Cuál de estas lecturas es correcta?
+    opciones:
+      - texto: Hay un 3 % de probabilidad de que la hipótesis nula sea cierta.
+        explicacion: El p-valor no es la probabilidad de la hipótesis; es una probabilidad de datos, calculada suponiendo la nula.
+      - texto: Si A y B convirtieran igual, ver una diferencia igual o más extrema que la observada ocurriría el 3 % de las veces.
+        correcta: true
+        explicacion: Es la definición correcta del p-valor.
+      - texto: Hay un 97 % de probabilidad de que B sea mejor que A.
+        explicacion: El p-valor tampoco da la probabilidad de la hipótesis alternativa; eso requeriría un enfoque bayesiano.
+      - texto: El efecto de B es chico, porque el p-valor es chico.
+        explicacion: El p-valor no mide el tamaño del efecto; con muchos datos hasta un efecto diminuto da un p-valor chico.
+    fuente: mit1805
+  - id: e-peeking-falsos-positivos
+    tipo: opcion-multiple
+    enunciado: A y B son idénticas, pero mirás el test cada día durante un mes y lo cortás el primer día que el p-valor baja de 0,05. ¿Qué pasa con la fracción de veces que declarás un ganador falso?
+    opciones:
+      - texto: Sigue siendo 5 %, porque $\alpha$ es una constante del test.
+        explicacion: El 5 % vale para una única decisión con tamaño de muestra fijo; con muchas miradas, cada una es una nueva oportunidad de error.
+      - texto: Queda claramente por encima del 5 %.
+        correcta: true
+        explicacion: En una simulación con 30 miradas llegó a cerca de 28 %.
+      - texto: Baja, porque tenés más datos a medida que pasan los días.
+        explicacion: Más datos mejoran la estimación, pero la regla de parar al primer p bajo hace que el ruido te dé un "ganador" más seguido.
+    fuente: johari-peeking
+  - id: e-vf-no-significativo-iguales
+    tipo: verdadero-falso
+    enunciado: Si un test A/B con pocas visitas no es significativo, quedó demostrado que A y B convierten igual.
+    respuesta: false
+    justificacion: |
+      No rechazar la nula significa que no hay evidencia suficiente en contra, no que sea verdadera. Con pocos datos la potencia es baja, así que un efecto real puede pasar desapercibido.
+    fuente: mendenhall
+
+casos:
+  - id: c-cortar-el-test
+    titulo: El PM quiere cortar el test el tercer día
+    rol: Sos analista en el equipo de producto de una tienda online.
+    contexto: |
+      Planificaron un test A/B de 1500 visitas por versión (calculadas para detectar 8 % contra 11 % con 80 % de potencia). El tercer día, con 600 por versión, B va ganando: 70 compras contra 48, con p = 0,033. El PM quiere cortar y lanzar B.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Qué hacés?
+        opciones:
+          - texto: Cortar y lanzar B; el p-valor ya está por debajo de 0,05.
+            va: final-mal
+            consecuencia: Lanzás sin saber cuánto de ese resultado era ruido.
+          - texto: Seguir hasta las 1500 visitas planificadas y mirar el resultado una sola vez.
+            va: resultado-final
+            consecuencia: A los 12 días llegan 1500 por versión. A tuvo 126 compras (8,4 %) y B tuvo 165 (11,0 %).
+          - texto: Mirar el tablero todos los días y cortar el primer día que p baje de 0,05.
+            va: final-regular
+            consecuencia: El tercer día ya cumple la condición, así que cortás ahí.
+      - id: resultado-final
+        tipo: decision
+        texto: El test da z = 2,41 y p = 0,016. ¿Cómo lo informás?
+        opciones:
+          - texto: Reporto la diferencia con su intervalo de confianza (aprox. de 0,5 a 4,7 puntos) y aclaro que el test fue de tamaño fijo.
+            va: final-bien
+            consecuencia: Producto entiende que el efecto probablemente sea positivo, pero que su tamaño es incierto.
+          - texto: Digo que hay 98 % de probabilidad de que B sea mejor.
+            va: final-regular
+            consecuencia: Convertiste el p-valor en una probabilidad de la hipótesis, que no es lo que mide.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: Se lanza B con un efecto esperado de entre medio punto y unos cinco puntos, y se mide en producción. La decisión queda defendible.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Quizás B de verdad era mejor, pero el procedimiento que usaste no lo respalda y la próxima vez no vas a poder defender el número.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Dos semanas después la conversión del sitio no se mueve y nadie sabe si fue ruido o si el efecto era más chico de lo que parecía.
+    leccion: |
+      Decidí de antemano cuántos datos vas a juntar y cuándo vas a mirar. Un p-valor chico en el medio del camino no vale como uno planificado, y el p-valor nunca es la probabilidad de que tu versión sea mejor.
+    fuente: johari-peeking
+
+problemas:
+  - id: p-mendenhall-9-44
+    enunciado: Resolvé los ejercicios 9.42 a 9.44 de Mendenhall. En el 9.44, hacé la prueba con el método del valor p y construí además un intervalo de confianza para la diferencia de proporciones.
+    fuente: mendenhall
+    ubicacion: cap. 9, ejercicios 9.42 a 9.44, p. 376
+    dificultad: basico
+  - id: p-mit-monedas
+    enunciado: Resolvé el problema 1 de la clase 17 (testar monedas con 10 lanzamientos). Calculá la significancia y la potencia de la regla que elijas, y compará qué pasa al achicar la región de rechazo.
+    fuente: mit1805
+    ubicacion: Class 17 in-class problems, Board questions, Problem 1
+    url: https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class17_pset.pdf
+    dificultad: intermedio
+  - id: p-simular-peeking
+    enunciado: Con Python o una planilla, simulá un test A/A (10 % de conversión en las dos versiones, 3000 visitas por grupo). Probá dos reglas, mirar una sola vez al final o mirar cada 100 visitas y cortar con el primer p menor que 0,05, y contá en cuántas de 5000 repeticiones declarás un ganador.
+    fuente: johari-peeking
+    ubicacion: resumen (el fenómeno de la monitorización continua)
+    url: https://arxiv.org/abs/1512.04922
+    dificultad: intermedio

@@ -1,0 +1,166 @@
+---
+titulo: "Variables aleatorias y distribuciones: binomial, Poisson y normal"
+area: probabilidad-estadistica
+orden: 1
+resumen: Cómo modelar cuántos tickets llegan por hora o cuántos servidores fallan por mes, y cómo medir cuánto se desparrama un número aleatorio con la media y la varianza.
+materias:
+  - carrera: ing-informatica
+    codigo: "3651"
+    nombre: Probabilidad y Estadística
+prerrequisitos: []
+nivel: basico
+minutos: 20
+fuentes:
+  - id: mit1805
+    tipo: curso-abierto
+    autor: Jeremy Orloff y Jonathan Bloom (MIT OpenCourseWare)
+    titulo: 18.05 Introduction to Probability and Statistics, lecturas de clase
+    url: https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/pages/readings/
+    ubicacion: Reading 4a (variables discretas) y Reading 5a (varianza)
+    edicion: Spring 2022
+  - id: soong
+    tipo: libro
+    autor: T. T. Soong
+    titulo: Fundamentals of Probability and Statistics for Engineers
+    edicion: ed. de 2004
+    editorial: John Wiley & Sons
+    ubicacion: cap. 4 §4.1.2; cap. 6 §6.1.1 y §6.3; cap. 7 §7.2
+  - id: mendenhall
+    tipo: libro
+    autor: William Mendenhall, Robert J. Beaver y Barbara M. Beaver
+    titulo: Introducción a la probabilidad y estadística
+    edicion: 13.ª ed. (en español), 2010
+    editorial: Cengage Learning
+    ubicacion: cap. 2 §2.3; cap. 4 §4.8; cap. 5 §5.2-5.3; cap. 6 §6.3-6.4
+  - id: nist-distribuciones
+    tipo: doc-oficial
+    autor: NIST/SEMATECH
+    titulo: e-Handbook of Statistical Methods, Gallery of Distributions
+    url: https://www.itl.nist.gov/div898/handbook/eda/section3/eda366.htm
+    ubicacion: §1.3.6.6.18 (binomial) y §1.3.6.6.19 (Poisson)
+fechaVerificacion: 2026-11-11
+ejemplo: false
+---
+
+<CasoReal titulo="Entraron 22 tickets en una hora: ¿mala suerte o hay un incidente?">
+
+Lunes, 10:05. La mesa de ayuda recibe, en promedio, unos 12 tickets por hora durante el horario laboral (número ilustrativo). Hoy, en la última hora, entraron 22. El supervisor dice "es lunes, pasa". Vos sospechás que algo se rompió y que la gente está reclamando por lo mismo.
+
+Para no discutir a ojo hace falta una pregunta con número: si el promedio sigue siendo 12 y los tickets llegan "al azar", ¿qué tan raro es ver 22 o más en una hora? Y hay una pregunta anterior, más sutil: ¿cuánto se aleja normalmente cada hora de ese promedio de 12? Sin esa medida de dispersión, el 12 solo no te dice si el 22 es un susto o un martes cualquiera.
+
+</CasoReal>
+
+<Intuicion>
+
+Una variable aleatoria (*random variable*) es un número que sale de algo que no controlás: tickets por hora, servidores caídos en el mes, milisegundos que tarda un pedido. Lo que importa no es un valor suelto sino cómo se reparte la probabilidad entre los valores posibles, es decir, su distribución (*distribution*). Para resumirla alcanzan dos datos: dónde está el centro (la media) y cuánto se desparrama (la **varianza**, *variance*).
+
+<Analogia titulo="Dos cajeros con el mismo promedio">
+
+Un cajero tarda siempre 5 minutos por cliente. Otro tarda 1 minuto la mitad de las veces y 9 minutos la otra mitad. Los dos promedian 5 minutos, pero en la fila del segundo esperás cosas muy distintas. La varianza es el número que separa a esos dos cajeros: mide qué tan lejos del promedio caen los valores, elevando las distancias al cuadrado para que las de un lado no cancelen las del otro. Para el primero vale 0; para el segundo, 16 minutos cuadrados.
+
+</Analogia>
+
+Hay tres familias que cubren un montón de casos de sistemas:
+
+- **Binomial**: contás éxitos (o fallas) en una cantidad fija de intentos. Ejemplo: de 50 servidores, cuántos fallan este mes.
+- **Poisson**: contás eventos que ocurren en un intervalo, sin tope fijo. Ejemplo: tickets por hora.
+- **Normal**: una medida continua que se agrupa en forma de campana alrededor de un valor típico.
+
+Probá la binomial primero. Fijate cómo la varianza cambia con $p$ aunque $n$ no se mueva.
+
+<SimDistribucion
+  consigna="Con n = 50 y p = 0,02 mirá la media y la varianza. Después subí p hasta 0,5: ¿qué pasa con la varianza y con la forma de las barras? Prendé la normal superpuesta y fijate con qué parámetros se parece más."
+  distribucion="binomial"
+  parametros={{ n: 50, p: 0.02 }}
+  aproximacionNormal
+  permitirCambiarDistribucion
+/>
+
+Ahora el caso de la mesa de ayuda, con Poisson. Acá hay algo para notar: la media y la varianza coinciden.
+
+<SimDistribucion
+  consigna="Poisson con λ = 12. Poné el intervalo desde 22 hasta 40 y leé la probabilidad: ¿cuántas horas de cada 100 esperarías ver algo así si todo sigue normal? Después bajá λ a 4 y compará la media con la varianza."
+  distribucion="poisson"
+  parametros={{ lambda: 12 }}
+  mostrarIntervalo
+/>
+
+<Ojo>
+
+Poisson supone que los eventos ocurren al azar y de forma independiente. Si una sola caída de la VPN dispara 15 tickets en cinco minutos, esos tickets no son independientes entre sí, y el modelo deja de describir bien el conteo.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Variable aleatoria, media y varianza
+
+Una variable aleatoria discreta le asigna un número a cada resultado posible de un experimento y toma valores de un conjunto que se puede listar. Su función de masa de probabilidad (*pmf*) es $p(a) = P(X = a)$<Cita f="mit1805" loc="Reading 4a, §2" />.
+
+La media (*expected value*) es $\mu = E[X] = \sum_i x_i\, p(x_i)$. La varianza mide la dispersión alrededor de esa media<Cita f="mendenhall" loc="§4.8, p. 167" />:
+
+<Formula nombre="Varianza de una variable aleatoria" tex="\operatorname{Var}(X) = E\left[(X-\mu)^2\right] = \sum_i p(x_i)\,(x_i-\mu)^2 = E[X^2]-\mu^2">
+
+donde $x_i$ son los valores posibles, $p(x_i)$ su probabilidad y $\mu$ la media. El desvío estándar (*standard deviation*) es $\sigma = \sqrt{\operatorname{Var}(X)}$.
+
+</Formula>
+
+La varianza queda en unidades al cuadrado (milisegundos al cuadrado si $X$ está en milisegundos), y por eso se mira también $\sigma$, que vuelve a las unidades originales<Cita f="mit1805" loc="Reading 5a, §3" />. Con $a$ y $b$ constantes, $\operatorname{Var}(aX+b) = a^2\operatorname{Var}(X)$; y si $X$ e $Y$ son independientes, $\operatorname{Var}(X+Y) = \operatorname{Var}(X) + \operatorname{Var}(Y)$<Cita f="mit1805" loc="Reading 5a, §3.3" />.
+
+Cuando en vez de la distribución tenés datos, se usa la varianza muestral $s^2 = \sum (x_i-\bar{x})^2/(n-1)$<Cita f="mendenhall" loc="§2.3, p. 62" />. Se divide por $n-1$ para que, en promedio, $s^2$ acierte la varianza verdadera<Cita f="soong" loc="§9.1.2, p. 262" />.
+
+<Profundizar titulo="¿Por qué Var(X) = E[X²] − μ²?">
+
+Desarrollás el cuadrado: $E[(X-\mu)^2] = E[X^2 - 2\mu X + \mu^2] = E[X^2] - 2\mu E[X] + \mu^2$. Como $E[X] = \mu$, queda $E[X^2] - 2\mu^2 + \mu^2 = E[X^2] - \mu^2$<Cita f="mit1805" loc="Reading 5a, §3.5" />.
+
+</Profundizar>
+
+### Binomial
+
+Un experimento binomial son $n$ intentos idénticos, cada uno con dos resultados (éxito o fracaso), con la misma probabilidad de éxito $p$ en todos y de forma independiente<Cita f="mendenhall" loc="§5.2, p. 184" />. Si $X$ cuenta los éxitos<Cita f="soong" loc="§6.1.1, p. 162-164" />:
+
+<Formula nombre="Distribución binomial" tex="P(X=k) = \binom{n}{k}\,p^k\,(1-p)^{n-k}, \qquad E[X]=np, \qquad \operatorname{Var}(X)=np(1-p)">
+
+con $k = 0, 1, \dots, n$. La varianza sale de sumar $n$ intentos independientes, cada uno con varianza $p(1-p)$<Cita f="mit1805" loc="Reading 5a, §3.4" />.
+
+</Formula>
+
+Si sacás sin reposición de una población chica, los intentos dejan de ser independientes y no es binomial<Cita f="mendenhall" loc="§5.2, ejemplo 5.2, p. 185" />. Con los números de la flota (50 servidores, 2 % de falla mensual cada uno, independientes): $\mu = 1$, $\operatorname{Var}(X) = 0{,}98$ y $P(X \ge 3) \approx 7{,}8\ \%$.
+
+### Poisson
+
+La Poisson modela cuántos eventos ocurren en un intervalo de tiempo o espacio, donde en promedio ocurren $\lambda$; los supuestos son que los eventos aparecen al azar y de forma independiente<Cita f="mendenhall" loc="§5.3, p. 198" />. Su media y su varianza valen lo mismo<Cita f="soong" loc="§6.3, ecs. 6.46-6.47, p. 176" />:
+
+<Formula nombre="Distribución de Poisson" tex="P(X=k) = \frac{\lambda^k e^{-\lambda}}{k!}, \qquad E[X]=\lambda, \qquad \operatorname{Var}(X)=\lambda">
+
+con $k = 0, 1, 2, \dots$ y $\lambda$ el promedio de eventos por intervalo<Cita f="nist-distribuciones" loc="§1.3.6.6.19" />.
+
+</Formula>
+
+Con $\lambda = 12$ tickets por hora, $P(X \ge 22) \approx 0{,}0061$: unas 6 horas de cada 1000, una de cada 165 más o menos. Si el promedio sigue en 12 y los tickets son independientes, 22 es muy raro: una señal para buscar una causa común, no una prueba.
+
+Cuando $n$ es grande y $p$ chico, la binomial se aproxima con una Poisson de $\lambda = np$; en la práctica se usa con $n$ mayor que 10 y $p$ menor que 0,1<Cita f="soong" loc="§6.3.2, p. 183" />.
+
+### Normal
+
+La normal tiene dos parámetros, $\mu$ (media) y $\sigma$ (desvío), y su densidad es $f(x) = \frac{1}{\sigma\sqrt{2\pi}}\,e^{-(x-\mu)^2/(2\sigma^2)}$<Cita f="soong" loc="§7.2, ecs. 7.9 y 7.11, p. 196-198" />. Para usar una sola tabla se estandariza<Cita f="mendenhall" loc="§6.3, p. 225" />:
+
+<Formula nombre="Puntaje z (z-score)" tex="z = \frac{x-\mu}{\sigma}">
+
+dice a cuántos desvíos de la media está $x$.
+
+</Formula>
+
+Como regla práctica, una normal deja cerca del 68 % de la probabilidad a menos de 1 desvío de la media, cerca del 95 % a menos de 2 y cerca del 99,7 % a menos de 3<Cita f="mit1805" loc="Reading 6b, §5.3" />. Si suponés que un proceso batch tarda en promedio 120 ms con $\sigma = 20$ ms y distribución normal, $P(X > 160) = P(Z > 2) \approx 2{,}3\ \%$.
+
+La binomial también se aproxima con una normal de $\mu = np$ y $\sigma = \sqrt{np(1-p)}$ cuando $n$ es grande y $p$ no está pegado a 0 ni a 1<Cita f="mendenhall" loc="§6.4, p. 237" />.
+
+| Modelo | Qué cuenta | Media | Varianza |
+|---|---|---|---|
+| Binomial($n$, $p$) | éxitos en $n$ intentos | $np$ | $np(1-p)$ |
+| Poisson($\lambda$) | eventos en un intervalo | $\lambda$ | $\lambda$ |
+| Normal($\mu$, $\sigma^2$) | una medida continua | $\mu$ | $\sigma^2$ |
+
+</Formal>

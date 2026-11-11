@@ -1,0 +1,142 @@
+---
+titulo: "Bayes y los falsos positivos"
+area: probabilidad-estadistica
+orden: 4
+resumen: Por qué un antivirus que acierta el 98 % puede equivocarse en cuatro de cada cinco alertas, y cómo la regla de Bayes y las frecuencias naturales te evitan el error de ignorar cuán raro es lo que buscás.
+materias:
+  - carrera: ing-informatica
+    codigo: "3651"
+    nombre: Probabilidad y Estadística
+  - carrera: ing-informatica
+    codigo: "3656"
+    nombre: Estadística Aplicada
+  - carrera: ing-informatica
+    codigo: "3650"
+    nombre: Seguridad de la Información
+prerrequisitos: []
+nivel: intermedio
+minutos: 25
+fuentes:
+  - id: mit1805
+    tipo: curso-abierto
+    autor: Jeremy Orloff y Jonathan Bloom (MIT OpenCourseWare)
+    titulo: 18.05 Introduction to Probability and Statistics, lecturas de clase
+    url: https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/pages/readings/
+    ubicacion: Reading 3 (§7, falacia de la tasa base) y Reading 12b (odds)
+    edicion: Spring 2022
+  - id: mendenhall
+    tipo: libro
+    autor: William Mendenhall, Robert J. Beaver y Barbara M. Beaver
+    titulo: Introducción a la probabilidad y estadística
+    edicion: 13.ª ed. (en español), 2010
+    editorial: Cengage Learning
+    ubicacion: cap. 4 §4.7 (regla de Bayes)
+  - id: soong
+    tipo: libro
+    autor: T. T. Soong
+    titulo: Fundamentals of Probability and Statistics for Engineers
+    edicion: ed. de 2004
+    editorial: John Wiley & Sons
+    ubicacion: cap. 2 §2.4 (probabilidad condicional y teorema de Bayes)
+fechaVerificacion: 2026-11-11
+ejemplo: false
+---
+
+<CasoReal titulo="El antivirus marcó un archivo: ¿es malware de verdad?">
+
+Martes, 11:20. El antivirus corporativo marca como malicioso un archivo de la carpeta compartida de contabilidad, justo en la semana del cierre. La ficha del producto dice que detecta el 98 % del malware y que da falsa alarma en el 2 % de los archivos limpios. El jefe de seguridad te mira y pregunta: "¿qué probabilidad hay de que sea malware?".
+
+La respuesta que sale sola es "98 %". Si fuera cierta, habría que aislar la máquina, avisarle a contabilidad y frenar el cierre. Pero hay un dato que la ficha no pone y que cambia todo: en esa carpeta, de cada 10.000 archivos que se escanean, solo unos 50 son realmente maliciosos (número ilustrativo). ¿Sigue siendo 98 %?
+
+</CasoReal>
+
+<Intuicion>
+
+La trampa está en mezclar dos preguntas que suenan parecidas. Una es "si el archivo es malware, ¿qué tan probable es que el antivirus lo marque?" (98 %). Otra es "si el antivirus lo marcó, ¿qué tan probable es que sea malware?". No son lo mismo, y la segunda depende de cuánto malware hay en realidad.
+
+La forma más fácil de verlo es contar personas (o archivos) en vez de manipular probabilidades: las frecuencias naturales. Imaginá 10.000 archivos. 50 son maliciosos y el antivirus detecta 49. Los otros 9950 están limpios, y el 2 % da falsa alarma: 199 archivos. Hay 49 + 199 = 248 alertas, y solo 49 son verdaderas. Menos de 1 de cada 5.
+
+<Analogia titulo="El detector de humo de la cocina">
+
+Un detector de humo muy sensible suena con cualquier incendio real, pero también suena cada vez que tostás pan. Si los incendios son rarísimos y las tostadas son todos los días, la mayoría de las alarmas son tostadas, aunque el detector "no falle nunca". Con el antivirus es igual: como lo que buscás es raro, la mayoría de las alertas vienen de la enorme cantidad de archivos limpios.
+
+</Analogia>
+
+Probalo moviendo la prevalencia (la fracción de archivos realmente maliciosos):
+
+<SimBayes
+  consigna="Con prevalencia 0,5 %, sensibilidad 98 % y especificidad 98 %, mirá cuántas de las alertas son verdaderas. Subí la prevalencia hasta 10 %: ¿cómo cambia el VPP? Volvé a 0,5 % y subí la especificidad a 99,9 %."
+  prevalencia={0.005}
+  sensibilidad={0.98}
+  especificidad={0.98}
+  poblacion={10000}
+  contexto="alerta-seguridad"
+/>
+
+Lo que tenés que notar es que, cuando lo que buscás es raro, la especificidad (no dar falsas alarmas) pesa mucho más que la sensibilidad. Y que el mismo test, en un lugar donde el problema es más común, sirve mucho más.
+
+<Ojo>
+
+"El test acierta el 98 %" no dice cuánto vale una alerta: eso depende de la fracción de casos reales. Siempre preguntá por la prevalencia (la tasa base) antes de reaccionar a un positivo.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Probabilidad condicional y regla de Bayes
+
+La probabilidad condicional $P(A \mid B)$ es la probabilidad de $A$ sabiendo que ocurrió $B$. A partir de la regla de multiplicación se obtiene el teorema de Bayes<Cita f="mit1805" loc="Reading 3, §7" />:
+
+$$
+P(B \mid A) = \frac{P(A \mid B)\,P(B)}{P(A)}
+$$
+
+Sirve para "dar vuelta" las condiciones: pasar de $P(A \mid B)$ a $P(B \mid A)$<Cita f="soong" loc="§2.4, Teorema 2.2, p. 25" />. Cuando $B$ es una de varias posibilidades que no se superponen y cubren todo (subpoblaciones), el denominador sale de la ley de probabilidad total<Cita f="mendenhall" loc="§4.7, p. 159-160" />:
+
+$$
+P(S_i \mid A) = \frac{P(S_i)\,P(A \mid S_i)}{\sum_{j=1}^{k} P(S_j)\,P(A \mid S_j)}
+$$
+
+### Vocabulario de los tests
+
+Un falso positivo es que el test dé positivo cuando la condición no está; un falso negativo, que dé negativo cuando sí está. Los dos son probabilidades condicionales<Cita f="mendenhall" loc="§4.7, p. 160" />. Con $D^+$ (hay malware) y $T^+$ (hay alerta):
+
+- Sensibilidad (*sensitivity*, tasa de verdaderos positivos): $P(T^+ \mid D^+)$.
+- Especificidad (*specificity*, tasa de verdaderos negativos): $P(T^- \mid D^-)$, o sea $1$ menos la tasa de falsos positivos<Cita f="mit1805" loc="Reading 3, §7.1" />.
+- Valor predictivo positivo (VPP, *positive predictive value*): $P(D^+ \mid T^+)$, lo que de verdad querés saber con una alerta en la mano.
+
+<Formula nombre="Valor predictivo positivo (Bayes aplicado a un test)" tex="P(D^+ \mid T^+) = \frac{P(T^+ \mid D^+)\,P(D^+)}{P(T^+ \mid D^+)\,P(D^+) + P(T^+ \mid D^-)\,P(D^-)}">
+
+donde $P(D^+)$ es la prevalencia o tasa base, $P(T^+ \mid D^+)$ la sensibilidad y $P(T^+ \mid D^-)$ la tasa de falsos positivos.
+
+</Formula>
+
+Con los datos del caso (prevalencia 0,5 %, sensibilidad 98 %, falsos positivos 2 %): numerador $0{,}98 \cdot 0{,}005 = 0{,}0049$ y denominador $0{,}0049 + 0{,}02 \cdot 0{,}995 = 0{,}0248$, así que el VPP es $\approx 0{,}1976$, casi 20 %. Esto es lo que se llama la falacia de la tasa base (*base rate fallacy*): que el test acierte el 95 % no implica que el 95 % de los positivos sean verdaderos<Cita f="mit1805" loc="Reading 3, §7.1" />. En una tabla de 10.000 archivos:
+
+| | Malware | Limpio | Total |
+|---|---|---|---|
+| Alerta | 49 | 199 | 248 |
+| Sin alerta | 1 | 9751 | 9752 |
+| Total | 50 | 9950 | 10000 |
+
+### La versión con odds
+
+Los odds (*odds*) de un evento son $P(E)/P(E^c)$. Actualizar con un dato es multiplicar los odds previos por el factor de Bayes (*Bayes factor*), el cociente entre la probabilidad del dato si la hipótesis es cierta y si no lo es<Cita f="mit1805" loc="Reading 12b, §4" />:
+
+<Formula nombre="Actualización de odds" tex="\underbrace{\frac{P(H \mid D)}{P(H^c \mid D)}}_{\text{odds posteriores}} = \underbrace{\frac{P(D \mid H)}{P(D \mid H^c)}}_{\text{factor de Bayes}} \times \underbrace{\frac{P(H)}{P(H^c)}}_{\text{odds previos}}">
+
+un factor mayor que 1 indica que el dato apoya a la hipótesis.
+
+</Formula>
+
+Acá: odds previos $0{,}005/0{,}995 \approx 0{,}005$, factor de Bayes $0{,}98/0{,}02 = 49$, odds posteriores $\approx 0{,}246$, que equivalen a 19,8 %. Una alerta multiplica por 49 la sospecha, pero partiendo de una sospecha chiquita.
+
+<Profundizar titulo="Encadenar alertas: ¿y si otro motor también marca el archivo?">
+
+Si una segunda alerta fuera evidencia independiente de la primera, se multiplican los factores de Bayes de cada una<Cita f="mit1805" loc="Reading 12b, §4" />: el VPP pasa de 19,8 % a $\approx 92{,}3\ \%$ (actualizando el 19,8 % como nueva prevalencia, con el mismo test). La palabra clave es independiente: dos productos que se basan en las mismas firmas o en la misma heurística no aportan evidencia nueva, y repetir el mismo escaneo tampoco.
+
+</Profundizar>
+
+</Formal>

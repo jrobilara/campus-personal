@@ -1,0 +1,144 @@
+---
+titulo: "Pruebas de hipótesis y A/B testing"
+area: probabilidad-estadistica
+orden: 3
+resumen: Cómo decidir si el botón verde convirtió más de verdad o fue suerte, qué dice (y qué no dice) un p-valor, por qué importa el tamaño de muestra y qué pasa si mirás el test a cada rato.
+materias:
+  - carrera: ing-informatica
+    codigo: "3651"
+    nombre: Probabilidad y Estadística
+  - carrera: ing-informatica
+    codigo: "3656"
+    nombre: Estadística Aplicada
+  - carrera: ing-informatica
+    codigo: "3670"
+    nombre: Ciencia de Datos
+prerrequisitos:
+  - probabilidad-estadistica/tcl-e-intervalos
+nivel: intermedio
+minutos: 30
+fuentes:
+  - id: mit1805
+    tipo: curso-abierto
+    autor: Jeremy Orloff y Jonathan Bloom (MIT OpenCourseWare)
+    titulo: 18.05 Introduction to Probability and Statistics, lecturas de clase
+    url: https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/pages/readings/
+    ubicacion: Readings 17b (pruebas de significancia), 20 (reglas de parada) y 22
+    edicion: Spring 2022
+  - id: mendenhall
+    tipo: libro
+    autor: William Mendenhall, Robert J. Beaver y Barbara M. Beaver
+    titulo: Introducción a la probabilidad y estadística
+    edicion: 13.ª ed. (en español), 2010
+    editorial: Cengage Learning
+    ubicacion: cap. 9 §9.3, §9.5 y §9.6
+  - id: johari-peeking
+    tipo: doc-oficial
+    autor: Ramesh Johari, Leo Pekelis y David J. Walsh
+    titulo: "Always Valid Inference: Bringing Sequential Analysis to A/B Testing (preprint)"
+    url: https://arxiv.org/abs/1512.04922
+    ubicacion: resumen (abstract)
+    edicion: arXiv:1512.04922, v3, 2019
+fechaVerificacion: 2026-11-11
+ejemplo: false
+---
+
+<CasoReal titulo="El botón verde convirtió más, con 300 visitas por versión">
+
+Viernes, 17:30. El equipo de producto de una tienda online corrió un test A/B (comparación de dos versiones de una página, *A/B test*) del botón de compra. La versión A, con botón azul, tuvo 300 visitas y 24 compras: 8 %. La versión B, con botón verde, tuvo 300 visitas y 33 compras: 11 %. El PM lo resume así: "el verde convierte 37 % más, lo ponemos en producción".
+
+Son 9 compras de diferencia. Si repitieras el experimento con otras 600 personas, ¿volvería a ganar el verde? ¿Y qué pasaría si el lunes alguien abre el tablero, ve que el verde va ganando, y propone cortar el test ahí? Los números son ilustrativos, pero la situación es el pan de cada día.
+
+</CasoReal>
+
+<Intuicion>
+
+Un test de hipótesis (*hypothesis test*) es una forma ordenada de preguntar: si el botón no hiciera nada, ¿qué tan raro sería ver una diferencia tan grande como la que vi? Esa hipótesis de partida, "A y B convierten igual", se llama hipótesis nula (*null hypothesis*). Si lo que viste sería muy raro bajo esa hipótesis, dudás de ella. Si no, no tenés motivo para descartarla.
+
+<Analogia titulo="El juicio con presunción de inocencia">
+
+La hipótesis nula es el acusado inocente: se la sostiene hasta que la evidencia sea muy difícil de explicar si fuera cierta. Un veredicto de "no culpable" no demuestra inocencia; solo dice que la prueba no alcanzó. Con el test pasa lo mismo: si no rechazás la nula, no probaste que A y B sean iguales, solo que tus datos no alcanzan para separarlos. Y así como un tribunal fija de antemano qué cuenta como "más allá de duda razonable", el test fija de antemano su umbral de error.
+
+</Analogia>
+
+Probalo con las tasas del caso:
+
+<SimInferencia
+  consigna="Con tasaB en 11 % y 300 por grupo, corré 200 experimentos: ¿qué % rechaza H0 (la potencia)? Subí n hasta pasar 80 %. Después igualá tasaB a tasaA y corré 200: ¿cuánto da la tasa de rechazo y por qué no es cero?"
+  modo="ab"
+  tasaA={0.08}
+  tasaB={0.11}
+  nPorGrupo={300}
+  alfa={0.05}
+/>
+
+Hay tres cosas para notar. Con pocas visitas, aun cuando el verde sea mejor, la mayoría de los experimentos no lo detecta. Cuando no hay diferencia real, igual algunos experimentos "ganan": ese es el nivel de significancia $\alpha$. Y el p-valor no es la probabilidad de que el verde sea mejor.
+
+<Ojo>
+
+Mirar el tablero todos los días y cortar el test en cuanto el p-valor baja de 0,05 (*peeking*) rompe la garantía del 5 %. El umbral vale para un test con tamaño de muestra decidido de antemano<Cita f="johari-peeking" loc="resumen" />.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Hipótesis y estadístico de prueba
+
+Con dos proporciones $p_A$ y $p_B$ se plantea $H_0: p_A = p_B$ contra $H_a: p_A \ne p_B$ (o una cola, si solo te interesa una dirección). El estadístico usa la proporción conjunta de los dos grupos para estimar el error estándar<Cita f="mendenhall" loc="§9.6, p. 373-374" />:
+
+<Formula nombre="Prueba z para dos proporciones" tex="z = \frac{\hat{p}_B-\hat{p}_A}{\sqrt{\hat{p}\,(1-\hat{p})\left(\frac{1}{n_A}+\frac{1}{n_B}\right)}}, \qquad \hat{p} = \frac{x_A + x_B}{n_A + n_B}">
+
+donde $\hat{p}_A = x_A/n_A$ y $\hat{p}_B = x_B/n_B$ son las proporciones observadas, $x$ las compras y $n$ las visitas de cada versión.
+
+</Formula>
+
+Pide muestras aleatorias e independientes y que $n\hat{p}$ y $n\hat{q}$ sean mayores que 5 en los dos grupos<Cita f="mendenhall" loc="§9.6, p. 374" />. En el caso: $\hat{p} = 57/600 = 0{,}095$, error estándar $\approx 0{,}0239$ y $z \approx 1{,}25$.
+
+### p-valor y decisión
+
+El p-valor es la probabilidad, suponiendo cierta la hipótesis nula, de ver datos al menos tan extremos como los observados<Cita f="mit1805" loc="Reading 17b, §7" />. Si es menor que el nivel de significancia $\alpha$ elegido de antemano, se rechaza $H_0$. Con $z = 1{,}25$ el p-valor de dos colas es $\approx 0{,}21$: una diferencia igual o mayor sale una de cada cinco veces aunque el botón no haga nada.
+
+El p-valor es una probabilidad de datos dada la hipótesis, no una probabilidad de la hipótesis: los métodos frecuentistas no dan la probabilidad de que $H_0$ sea cierta<Cita f="mit1805" loc="Reading 20, §5" />. "Rechazar" tampoco se lee al revés: cuando no se rechaza, lo correcto es decir que no hay evidencia suficiente, no que $H_0$ sea verdadera<Cita f="mendenhall" loc="§9.3, p. 356" />.
+
+### Errores y potencia
+
+El error tipo I es rechazar $H_0$ siendo cierta, y su probabilidad es $\alpha$. El error tipo II es no rechazarla siendo falsa, con probabilidad $\beta$. La potencia (*power*) es $1-\beta$, la probabilidad de detectar un efecto que existe<Cita f="mit1805" loc="Reading 17b, §4.2-4.3" />. La potencia sube con más datos y con efectos más grandes, y por eso el tamaño de muestra se calcula antes del experimento<Cita f="mit1805" loc="Reading 17b, §4.3" />.
+
+Con 8 % contra 11 % y 300 visitas por grupo, la potencia es de unos 24 % (cálculo propio con la aproximación normal): tres de cada cuatro veces el test no detectaría una mejora real de ese tamaño. Para llegar a 80 % hacen falta unas 1500 visitas por grupo.
+
+<Profundizar titulo="¿De dónde salen esas 1500 visitas?">
+
+Es una derivación propia a partir de la definición de potencia y de la aproximación normal del estadístico de la prueba, no una fórmula tomada de un libro. Se busca el $n$ por grupo tal que, bajo $H_a$, la probabilidad de superar el valor crítico sea el 80 %:
+
+$$
+n \approx \frac{\left(z_{\alpha/2}\sqrt{2\bar{p}(1-\bar{p})} + z_{\beta}\sqrt{p_A(1-p_A)+p_B(1-p_B)}\right)^2}{(p_B-p_A)^2}
+$$
+
+Con $p_A = 0{,}08$, $p_B = 0{,}11$, $\bar{p} = 0{,}095$, $z_{\alpha/2} = 1{,}96$ y $z_\beta = 0{,}84$ da $n \approx 1498$. Lo verifiqué con una simulación de Monte Carlo: con 300 por grupo rechaza $H_0$ en 23 % de los experimentos, parecido al 24 % teórico.
+
+</Profundizar>
+
+### Significativo no es importante
+
+Que un resultado sea estadísticamente significativo solo dice que probablemente no ocurrió por casualidad, no que sea grande ni que valga la pena<Cita f="mendenhall" loc="§9.5, p. 370" />. Con millones de visitas, hasta una diferencia diminuta sale significativa, y puede no justificar el costo de cambiar nada; por eso conviene mirar el intervalo de confianza de la diferencia además del p-valor.
+
+### Muchas métricas, muchos falsos positivos
+
+Cada prueba hecha con $\alpha = 0{,}05$ tiene un 5 % de rechazar una nula verdadera<Cita f="mit1805" loc="Reading 17b, §4.3" />. Si mirás 20 métricas independientes y ninguna tiene efecto real, la chance de que al menos una salga "significativa" es $1 - 0{,}95^{20} \approx 0{,}64$.
+
+### Mirar a cada rato
+
+El p-valor depende de cómo se decidió cuándo parar: con los mismos datos, dos reglas de parada distintas pueden dar p-valores de 0,11 y 0,03<Cita f="mit1805" loc="Reading 20, §6" />. Cuando se elige el tamaño de muestra mirando el test de forma continua, los p-valores y los intervalos habituales dejan de ser confiables<Cita f="johari-peeking" loc="resumen" />.
+
+Para dimensionarlo, simulé (resultado propio, 40.000 repeticiones con semilla fija) un test sin diferencia real, con 10 % de conversión en las dos versiones y hasta 3000 visitas por grupo, cortando en la primera mirada con $p < 0{,}05$:
+
+| Cantidad de miradas | Falsos positivos |
+|---|---|
+| 1 (al final) | 4,9 % |
+| 2 | 8,4 % |
+| 5 | 13,8 % |
+| 30 (cada 100 visitas) | 28,1 % |
+
+</Formal>
