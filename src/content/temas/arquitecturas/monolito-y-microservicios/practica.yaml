@@ -1,0 +1,176 @@
+tarjetas:
+  - id: t-monolito-modular-definicion
+    frente: ¿Qué diferencia a un monolito modular de un monolito común?
+    dorso: Sigue siendo un solo despliegue, pero con límites claros entre módulos en las APIs internas y en los datos, así partirlo después es más simple.
+    fuente: fowler-monolith-first
+  - id: t-monolith-first-razon
+    frente: ¿Por qué Fowler recomienda arrancar con un monolito aunque esperes crecer mucho?
+    dorso: Porque al principio no sabés si el producto va a funcionar y los límites entre servicios son difíciles de acertar y caros de corregir.
+    fuente: fowler-monolith-first
+  - id: t-premium-microservicios
+    frente: ¿Qué es el "premium" de los microservicios?
+    dorso: El costo extra de operar un sistema distribuido (despliegue automático, monitoreo, fallas, consistencia eventual), que solo se justifica si la complejidad lo pide.
+    fuente: fowler-premium
+  - id: t-disponibilidad-serie-tres
+    frente: Tres servicios en serie, todos de 99,9 %. ¿Cuánto da aproximadamente la disponibilidad de la operación completa?
+    dorso: |
+      Cerca de 99,7 %, porque se multiplican $0{,}999^3 \approx 0{,}997$.
+    fuente: aws-disponibilidad
+  - id: t-disponibilidad-independencia
+    frente: ¿Qué supuesto esconde multiplicar las disponibilidades de los servicios de una cadena?
+    dorso: Que las fallas son independientes entre sí y que cada dependencia es "dura" (si cae, cae la operación).
+    fuente: aws-disponibilidad
+  - id: t-base-por-servicio-costo
+    frente: Si cada microservicio tiene su propia base, ¿qué perdés respecto de un monolito con una sola base?
+    dorso: Las transacciones ACID entre módulos; lo que cruza servicios queda con consistencia eventual.
+    fuente: azure-microservicios
+  - id: t-charla-excesiva-sintoma
+    frente: Dos servicios se llaman entre sí todo el tiempo. ¿De qué suele ser síntoma?
+    dorso: De un corte mal hecho, con demasiado acoplamiento y poca cohesión entre ellos.
+    fuente: azure-microservicios
+  - id: t-escalar-parte
+    frente: ¿Qué ventaja de escala tienen los microservicios sobre un monolito?
+    dorso: Podés escalar solo el servicio que lo necesita, en vez de duplicar la aplicación entera.
+    fuente: fowler-microservices
+  - id: t-llamada-remota-costo
+    frente: ¿Por qué una conversión "mecánica" de llamadas a métodos en llamadas remotas rinde mal?
+    dorso: Porque cada llamada remota cuesta mucho más que una en memoria y se llega a comunicación charlatana (chatty); hacen falta APIs más gruesas.
+    fuente: fowler-microservices
+
+ejercicios:
+  - id: e-disponibilidad-seis-servicios
+    tipo: numerico
+    enunciado: |
+      Para confirmar una reserva, el flujo pasa por 6 servicios en serie, cada uno con una disponibilidad de 99,9 %. Suponé fallas independientes. ¿Qué disponibilidad tiene el flujo completo? Respondé en %, con dos decimales.
+    respuesta: 99.40
+    tolerancia:
+      absoluta: 0.02
+    unidad: "%"
+    explicacion: |
+      Se multiplican las disponibilidades: $0{,}999^6 \approx 0{,}99401$, o sea 99,40 %. Cada servicio extra le resta casi 0,1 puntos.
+    erroresComunes:
+      - valor: 99.9
+        explicacion: Ese es el valor de un solo servicio. En una cadena en serie hay que multiplicar las seis disponibilidades.
+      - valor: 94
+        explicacion: Restaste 1 punto por servicio. Cada uno pierde 0,1 % (no 1 %), así que son aproximadamente 0,6 puntos en total.
+    fuente: aws-disponibilidad
+  - id: e-horas-caido-cuatro-servicios
+    tipo: numerico
+    enunciado: |
+      El checkout depende de 4 servicios en serie con 99,95 % de disponibilidad cada uno (fallas independientes). Con un año de 8.760 horas, ¿cuántas horas al año estará caído el checkout, aproximadamente?
+    respuesta: 17.5
+    tolerancia:
+      absoluta: 0.5
+    unidad: horas
+    explicacion: |
+      Disponibilidad total: $0{,}9995^4 \approx 0{,}99800$. La indisponibilidad es $1 - 0{,}99800 \approx 0{,}002$, y $0{,}002 \times 8760 \approx 17{,}5$ horas.
+    erroresComunes:
+      - valor: 4.4
+        explicacion: Eso es lo que se cae un solo servicio de 99,95 % en un año. Con cuatro en serie la indisponibilidad se suma casi cuatro veces.
+    fuente: aws-disponibilidad
+  - id: e-elegir-arquitectura-equipo-chico
+    tipo: opcion-multiple
+    enunciado: Un equipo de cuatro personas arranca una app nueva y todavía no sabe si va a tener usuarios. ¿Qué arquitectura inicial es la más sensata según lo que vimos?
+    opciones:
+      - texto: Nueve microservicios desde el día uno, para no tener que migrar después.
+        explicacion: Es justo lo que Fowler desaconseja. Los límites son difíciles de acertar sin conocer el dominio y el costo operativo frena al equipo cuando más necesita velocidad.
+      - texto: Un monolito modular, con límites claros entre módulos y en los datos.
+        correcta: true
+        explicacion: Mantiene la velocidad y la simplicidad, y deja abierta la puerta a extraer servicios después, cuando el dolor sea concreto.
+      - texto: Un monolito sin estructura interna, porque ordenar el código es perder tiempo.
+        explicacion: Sin módulos claros después no se puede partir ni mantener. El consejo de Fowler depende de que el monolito esté bien modularizado.
+      - texto: Cinco microservicios que comparten una sola base de datos.
+        explicacion: Pagás el costo operativo de los servicios sin ganar independencia, porque compartir el esquema de datos los mantiene acoplados.
+    fuente: fowler-monolith-first
+  - id: e-vf-cada-servicio-999
+    tipo: verdadero-falso
+    enunciado: Si cada uno de tus microservicios anda 99,9 % del tiempo, un pedido que necesita pasar por los cinco anda 99,9 % del tiempo.
+    respuesta: false
+    justificacion: |
+      Con dependencias duras en serie y fallas independientes, la disponibilidad se multiplica: $0{,}999^5 \approx 99{,}50$ %. La cadena es menos disponible que su mejor eslabón.
+    fuente: aws-disponibilidad
+
+casos:
+  - id: c-antifraude-cuelga
+    titulo: Antifraude se cuelga y la tienda no cobra
+    rol: Sos quien atiende la guardia de una tienda online hecha con microservicios.
+    contexto: |
+      Sábado 20:15. El gateway deriva a catálogo, carrito, pagos, envíos y usuarios; pagos consulta a un servicio de antifraude antes de cobrar.
+      Te llega la alerta: el checkout devuelve errores 504 y el p95 de pagos está en 30 s. Catálogo y carrito andan bien.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: El síntoma está en pagos. ¿Qué hacés primero?
+        opciones:
+          - texto: Reinicio el servicio de pagos, que es el que tira los errores.
+            va: pagos-reiniciado
+            consecuencia: Pagos vuelve en 40 segundos y en un minuto ya tiene todos sus hilos esperando otra vez. Cada pedido sigue colgado de algo que no contesta.
+          - texto: Miro el mapa de dependencias y la traza de un pedido lento para ver dónde se va el tiempo.
+            va: traza
+            consecuencia: La traza muestra que 29 de los 30 segundos se van esperando a antifraude, que está saturado.
+          - texto: Escalo pagos a más instancias.
+            va: pagos-escalado
+            consecuencia: Ahora hay más instancias de pagos, todas esperando a antifraude, que recibe todavía más pedidos.
+      - id: pagos-reiniciado
+        tipo: decision
+        texto: Pagos se volvió a trabar en un minuto. ¿Y ahora?
+        opciones:
+          - texto: Dejo de mirar pagos y busco en la traza qué hay detrás.
+            va: traza
+            consecuencia: La traza apunta a antifraude. Perdiste unos minutos y un reinicio de más, pero ya sabés dónde está el cuello.
+          - texto: Lo reinicio otra vez, por si quedó algo colgado.
+            va: final-regular
+            consecuencia: Otra vez vuelve y otra vez se traba. Pasan 20 minutos de ventas perdidas.
+      - id: pagos-escalado
+        tipo: decision
+        texto: Con más instancias el p95 sigue en 30 s y antifraude está al límite. ¿Qué hacés?
+        opciones:
+          - texto: Miro la traza de un pedido lento para ver dónde se va el tiempo.
+            va: traza
+            consecuencia: La traza muestra a antifraude como cuello de botella. Escalar pagos no podía ayudar.
+          - texto: Sigo escalando pagos hasta que los errores bajen.
+            va: final-mal
+            consecuencia: Cada instancia nueva agrega pedidos contra antifraude, que termina cayéndose del todo.
+      - id: traza
+        tipo: decision
+        texto: Antifraude es el cuello de botella y pagos espera 30 s por pedido. ¿Cómo protegés al resto del sistema?
+        opciones:
+          - texto: Timeout corto y circuit breaker hacia antifraude; con el circuito abierto, pagos usa una regla simple acordada con el negocio y marca los pedidos a revisar.
+            va: final-bien
+            consecuencia: Los pedidos dejan de esperar 30 s, pagos libera sus hilos y antifraude recibe menos carga para recuperarse.
+          - texto: Apago el checkout completo hasta que antifraude se recupere.
+            va: final-regular
+            consecuencia: Antifraude respira, pero no se vende nada durante el incidente.
+          - texto: Subo el timeout a 60 s para que no se corten los pedidos lentos.
+            va: final-mal
+            consecuencia: Más hilos esperando durante más tiempo; pagos también se queda sin capacidad y el problema se contagia al gateway.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El checkout sigue vendiendo en modo degradado, antifraude se recupera sin presión y el incidente queda acotado a un solo servicio.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Evitaste que el problema se agrandara, pero a costa de frenar las ventas o de perder tiempo. Solucionaste el síntoma sin darle al sistema una forma de seguir andando.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Sumaste carga o tiempo de espera a un sistema ya saturado. La falla de un servicio terminó tirando a los que dependían de él.
+    leccion: |
+      Una dependencia lenta es peor que una caída, porque mantiene a tus hilos esperando. Timeout corto, circuit breaker y un camino degradado acordado de antemano evitan que un servicio caído se lleve puestos a los demás.
+    fuente: azure-microservicios
+
+problemas:
+  - id: p-disponibilidad-tu-sistema
+    enunciado: Dibujá el flujo más largo de un sistema que conozcas (o el de la tienda del simulador) como una cadena de servicios. Asignale a cada uno una disponibilidad realista, calculá la disponibilidad compuesta y compará las horas caído por año con las de un solo componente. Anotá qué dependencias podrían ser blandas y cuánto cambiaría el resultado.
+    fuente: aws-disponibilidad
+    ubicacion: sección "Availability", cálculo con dependencias duras
+    url: https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/availability.html
+    dificultad: basico
+  - id: p-decidir-arquitectura
+    enunciado: Leé "Monolith First" y la sección "Challenges" de la página de microservicios del Azure Architecture Center. Armá una tabla con cinco criterios (tamaño del equipo, madurez de despliegue, claridad del dominio, necesidades de escala, tolerancia a la consistencia eventual) y decidí, con tu criterio y justificándolo, qué arquitectura le corresponde a un sistema real tuyo.
+    fuente: fowler-monolith-first
+    ubicacion: artículo completo, más la sección "Challenges" de azure-microservicios
+    url: https://martinfowler.com/bliki/MonolithFirst.html
+    dificultad: intermedio

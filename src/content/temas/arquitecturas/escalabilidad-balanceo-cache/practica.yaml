@@ -1,0 +1,170 @@
+tarjetas:
+  - id: t-escala-vertical-horizontal
+    frente: ¿Qué diferencia hay entre escalar para arriba y escalar para afuera?
+    dorso: Para arriba es darle más capacidad a un recurso (una instancia más grande); para afuera es sumar más instancias que se reparten el trabajo.
+    fuente: azure-escalado
+  - id: t-sesion-afinidad
+    frente: ¿Por qué guardar la sesión del usuario en la memoria del servidor complica escalar para afuera?
+    dorso: Porque ata al usuario a esa instancia (afinidad); conviene externalizar la sesión a una caché distribuida o a una base.
+    fuente: azure-escalado
+  - id: t-autoscaler-tarda
+    frente: ¿Por qué conviene dejar un colchón de capacidad libre aunque tengas autoscaling?
+    dorso: Porque el escalado automático tarda en completarse, y el pico puede llegar antes de que las instancias nuevas estén listas.
+    fuente: azure-escalado
+  - id: t-nginx-default
+    frente: ¿Qué algoritmo de reparto usa NGINX si no configurás ninguno?
+    dorso: Round-robin, que reparte los pedidos en orden circular.
+    fuente: nginx-balanceo
+  - id: t-least-conn-cuando
+    frente: ¿Cuándo es mejor least_conn que round-robin?
+    dorso: Cuando algunos pedidos tardan mucho más que otros, porque manda cada pedido nuevo al servidor con menos conexiones activas.
+    fuente: nginx-balanceo
+  - id: t-ip-hash-para-que
+    frente: ¿Para qué sirve ip_hash en un balanceador NGINX?
+    dorso: Para que un mismo cliente vaya siempre al mismo servidor (persistencia de sesión) mientras ese servidor esté disponible.
+    fuente: nginx-balanceo
+  - id: t-max-fails-fail-timeout
+    frente: ¿Qué hacen max_fails y fail_timeout en una línea server de NGINX?
+    dorso: Definen cuántas fallas seguidas marcan al servidor como caído y por cuánto tiempo se lo evita.
+    fuente: nginx-balanceo
+  - id: t-cache-miss-pasos
+    frente: En cache-aside, ¿qué hace la aplicación ante un cache miss?
+    dorso: Lee el dato de la base, lo guarda en la caché y lo devuelve.
+    fuente: azure-cache-aside
+  - id: t-cache-orden-escritura
+    frente: Al actualizar un dato con cache-aside, ¿qué va primero, escribir en la base o invalidar la caché?
+    dorso: Primero la base y después invalidar; si fuera al revés, otro pedido puede recargar el valor viejo en la caché.
+    fuente: azure-cache-aside
+  - id: t-carga-base-acierto
+    frente: Llegan 100 pedidos por segundo y la caché acierta el 80 %. ¿Cuántos llegan a la base?
+    dorso: 20 por segundo ($100 \times 0{,}2$).
+  - id: t-cache-fria
+    frente: ¿Por qué una caché vacía es un riesgo justo cuando sumás servidores en un pico?
+    dorso: Porque los primeros pedidos van todos a la base y cuestan más, así que conviene subir la carga de a poco.
+    fuente: sre-cascadas
+
+ejercicios:
+  - id: e-servidores-necesarios
+    tipo: numerico
+    enunciado: |
+      Esperás un pico de 600 pedidos por segundo. Cada servidor resuelve 50 pedidos por segundo y querés que ninguno pase del 70 % de utilización. ¿Cuántos servidores necesitás como mínimo?
+    respuesta: 18
+    tolerancia:
+      absoluta: 0
+    unidad: servidores
+    explicacion: |
+      Cada servidor puede trabajar con $50 \times 0{,}7 = 35$ pedidos/s. Hacen falta $600 / 35 \approx 17{,}1$, y como no existen fracciones de servidor, se redondea para arriba: 18.
+    erroresComunes:
+      - valor: 12
+        explicacion: Calculaste 600 / 50 sin dejar margen. Con 12 servidores cada uno trabajaría al 100 %, sin colchón para picos ni fallas.
+      - valor: 17
+        explicacion: 17,1 se redondea hacia arriba, no hacia abajo; con 17 la utilización pasaría del 70 % objetivo.
+    fuente: azure-escalado
+  - id: e-carga-base-con-cache
+    tipo: numerico
+    enunciado: |
+      Con la caché en funcionamiento, el 85 % de las 600 lecturas por segundo del catálogo se resuelve en la caché. ¿Cuántas lecturas por segundo llegan a la base?
+    respuesta: 90
+    tolerancia:
+      absoluta: 1
+    unidad: lecturas/s
+    explicacion: |
+      Llegan a la base los fallos de caché: $600 \times (1 - 0{,}85) = 90$ lecturas por segundo.
+    erroresComunes:
+      - valor: 510
+        explicacion: Esa es la cantidad que resuelve la caché (85 %), no la que llega a la base.
+    fuente: azure-cache-aside
+  - id: e-servidor-lento
+    tipo: opcion-multiple
+    enunciado: Con round-robin, uno de tus cuatro servidores anda al doble de lento que los otros y el p95 se disparó. ¿Qué cambio tiene más sentido primero?
+    opciones:
+      - texto: Pasar a un algoritmo que mande cada pedido al servidor con menos conexiones activas.
+        correcta: true
+        explicacion: Round-robin le sigue mandando su parte al lento aunque se acumule espera; con menos conexiones, el lento recibe menos pedidos nuevos mientras tiene cola.
+      - texto: Pasar a ip_hash para que cada cliente tenga su servidor.
+        explicacion: ip_hash fija clientes a servidores para persistir sesiones; no corrige que un servidor sea más lento y puede empeorar el reparto.
+      - texto: Subir el TTL de la caché a 24 horas.
+        explicacion: La caché reduce carga en la base, pero no resuelve que un servidor de aplicación esté lento; además arriesga datos viejos.
+    fuente: nginx-balanceo
+  - id: e-vf-cache-consistente
+    tipo: verdadero-falso
+    enunciado: Con cache-aside, el valor guardado en la caché siempre coincide con el de la base.
+    respuesta: false
+    justificacion: |
+      El patrón no garantiza consistencia: un proceso externo puede cambiar la base y la caché sigue mostrando el valor anterior hasta que vence o se invalida.
+    fuente: azure-cache-aside
+
+casos:
+  - id: c-hot-sale-pico
+    titulo: Faltan minutos para el Hot Sale
+    rol: Sos quien está de guardia la noche del Hot Sale de una tienda online.
+    contexto: |
+      Son las 23:55. Tenés tres servidores de aplicación (50 pedidos/s cada uno) detrás de un balanceador y una sola base. Se espera diez veces el tráfico habitual desde las 0:00.
+      El autoscaler tarda unos 4 minutos en dejar lista cada instancia nueva, y la caché de catálogo está vacía porque se redesplegó a la tarde.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Qué hacés con los minutos que quedan?
+        opciones:
+          - texto: Confío en el autoscaler, que escale cuando suba la CPU.
+            va: pico-sin-capacidad
+            consecuencia: A las 0:01 los tres servidores están al 100 % de CPU y las instancias nuevas todavía tardan unos 4 minutos.
+          - texto: Sumo instancias a mano ahora, con margen sobre lo que calculé.
+            va: instancias-listas
+            consecuencia: A las 23:59 hay capacidad de sobra sobre el papel, pero las instancias nuevas arrancaron con la caché vacía.
+          - texto: Cambio a servidores más grandes y los reinicio de a uno.
+            va: final-mal
+            consecuencia: Cada reinicio saca capacidad en el peor momento; justo a las 0:00 quedás con dos servidores atendiendo diez veces el tráfico.
+      - id: pico-sin-capacidad
+        tipo: decision
+        texto: El p95 está en 12 segundos y los servidores no dan abasto. ¿Qué hacés?
+        opciones:
+          - texto: Apago las secciones no críticas (recomendaciones, reseñas) y sumo instancias a mano.
+            va: final-regular
+            consecuencia: Se libera capacidad y las compras vuelven a entrar, pero ya perdiste los primeros minutos del pico.
+          - texto: Reinicio los servidores trabados.
+            va: final-mal
+            consecuencia: Cada reinicio tira las conexiones en curso y los servidores vuelven con la caché vacía a un tráfico que sigue creciendo.
+      - id: instancias-listas
+        tipo: decision
+        texto: Se acercan las 0:00 y las instancias nuevas tienen la caché de catálogo vacía. ¿Cómo dejás entrar el tráfico?
+        opciones:
+          - texto: Precalentar los productos más pedidos y subir el peso de las instancias nuevas en el balanceador de a poco.
+            va: final-bien
+            consecuencia: El p95 se mantiene y la base recibe una carga creciente pero acotada mientras las cachés se llenan.
+          - texto: Que reciban todo el tráfico de golpe, para repartir parejo desde el primer segundo.
+            va: final-regular
+            consecuencia: Los primeros minutos todos los pedidos de las instancias nuevas van a la base, que se satura un rato y el p95 se dispara antes de estabilizarse.
+          - texto: Poner un TTL de 24 horas en stock y precios para ahorrar lecturas a la base.
+            va: final-mal
+            consecuencia: Se alivia la base, pero se venden productos que ya se agotaron y los precios cambiados no se reflejan.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El pico entra sin sobresaltos, con capacidad de sobra, caché calentándose y la base protegida. Registrás qué cantidad de instancias fue suficiente para la próxima.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Zafaste, pero a costa de perder los primeros minutos del pico o de pasar un rato con la base al límite. Funcionó por recuperación, no por preparación.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: La falta de capacidad o la información desactualizada dañaron la experiencia de los clientes en el momento de mayor tráfico del año.
+    leccion: |
+      Para un pico anunciado no esperes al autoscaler: dimensioná con margen antes, calentá las cachés y metele tráfico de a poco. Y recordá que alargar el TTL para ahorrar base se paga con datos viejos.
+    fuente: azure-escalado
+
+problemas:
+  - id: p-nginx-tres-backends
+    enunciado: Levantá tres servidores con "python3 -m http.server" en los puertos 8081, 8082 y 8083, cada uno sirviendo una carpeta cuyo index diga su número. Poné NGINX (instalado o con docker) delante con un upstream de los tres. Hacé 30 pedidos con curl y anotá cómo se reparten con round-robin; después probá least_conn y weight=3 en uno de ellos y compará el reparto.
+    fuente: nginx-balanceo
+    ubicacion: página completa (métodos de balanceo, pesos y chequeos de salud)
+    url: https://nginx.org/en/docs/http/load_balancing.html
+    dificultad: basico
+  - id: p-cache-aside-python
+    enunciado: Implementá el cache-aside del tema en Python contra una función que simule una base lenta (por ejemplo, 50 ms de espera). Hacé 1.000 lecturas con claves repartidas 80/20 y medí el porcentaje de aciertos y el tiempo medio. Después actualizá un dato, invalidá la caché y comprobá que la siguiente lectura trae el valor nuevo.
+    fuente: azure-cache-aside
+    ubicacion: secciones "Solution" y "Problems and considerations"
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside
+    dificultad: intermedio

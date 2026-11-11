@@ -1,0 +1,181 @@
+---
+titulo: "Comunicación síncrona (REST) vs asíncrona (colas y Kafka)"
+area: arquitecturas
+orden: 2
+resumen: Por qué una tarea secundaria lenta puede frenar toda una compra, cómo una cola desacopla y amortigua los picos, y qué hay que cuidar con los duplicados cuando el broker reentrega mensajes.
+materias:
+  - carrera: ing-informatica
+    codigo: "3660"
+    nombre: Sistemas Operativos Avanzados
+  - carrera: ing-informatica
+    codigo: "3653"
+    nombre: Arquitecturas de Sistemas Software
+prerrequisitos:
+  - arquitecturas/monolito-y-microservicios
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: richardson-rpi
+    tipo: doc-oficial
+    autor: Chris Richardson
+    titulo: Remote Procedure Invocation (microservices.io)
+    url: https://microservices.io/patterns/communication-style/rpi.html
+  - id: richardson-mensajeria
+    tipo: doc-oficial
+    autor: Chris Richardson
+    titulo: Messaging (microservices.io)
+    url: https://microservices.io/patterns/communication-style/messaging.html
+  - id: azure-colas
+    tipo: doc-oficial
+    autor: Microsoft
+    titulo: Queue-Based Load Leveling pattern (Azure Architecture Center)
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling
+    edicion: página con fecha 2026-06-09
+  - id: azure-idempotente
+    tipo: doc-oficial
+    autor: Microsoft
+    titulo: Idempotent Consumer pattern (Azure Architecture Center)
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer
+    edicion: página con fecha 2026-08-13
+  - id: kafka-intro
+    tipo: doc-oficial
+    autor: Apache Software Foundation
+    titulo: Apache Kafka — Introduction
+    url: https://kafka.apache.org/intro
+  - id: kafka-diseno
+    tipo: doc-oficial
+    autor: Apache Software Foundation
+    titulo: Apache Kafka — Design (Message Delivery Semantics, Consumer Position, Push vs Pull)
+    url: https://kafka.apache.org/44/design/design/
+    edicion: documentación de Kafka 4.4
+  - id: kafka-quickstart
+    tipo: doc-oficial
+    autor: Apache Software Foundation
+    titulo: Apache Kafka — Quickstart
+    url: https://kafka.apache.org/quickstart
+    edicion: Kafka 4.4.0
+  - id: rabbitmq-confirmaciones
+    tipo: doc-oficial
+    autor: Equipo de RabbitMQ
+    titulo: Consumer Acknowledgements and Publisher Confirms (RabbitMQ)
+    url: https://www.rabbitmq.com/docs/confirms
+    ubicacion: "Consumer Acknowledgements"
+  - id: fowler-microservices
+    tipo: doc-oficial
+    autor: Martin Fowler y James Lewis
+    titulo: Microservices
+    url: https://martinfowler.com/articles/microservices.html
+    edicion: 25 de marzo de 2014
+    ubicacion: "Synchronous calls considered harmful"
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="El mail de confirmación tardó 8 segundos y se cayeron las compras">
+
+Martes, 11:40, en plena promo de una tienda online. Al confirmar una compra, el checkout hace tres cosas en orden y espera cada una: cobra, descuenta el stock y llama al servicio de mails para mandar la confirmación. Normalmente ese mail tarda 150 ms.
+
+Hoy el proveedor de correo anda lento y responde en 8 segundos. El checkout atiende con 200 hilos; con cada compra colgada 8 segundos esperando el mail, a las 11:43 ya están ocupados todos. Ahora no entra ninguna compra nueva, aunque el cobro y el stock funcionan perfecto. (Los números son ilustrativos.)
+
+El mail no es lo que el cliente vino a hacer. ¿Por qué una tarea secundaria se llevó puesta a la principal, y cómo se evita?
+
+</CasoReal>
+
+<Intuicion>
+
+En una llamada síncrona esperás la respuesta con el pedido en la mano y no hacés otra cosa hasta que llega. En una asíncrona dejás el pedido en un buzón y seguís con lo tuyo; alguien lo levanta cuando puede.
+
+<Analogia titulo="El mostrador y la comanda">
+
+En una panadería, un vendedor toma tu pedido de una torta y se queda parado esperando que el pastelero la termine: mientras tanto no atiende a nadie más. Eso es una llamada síncrona. Si en cambio anota el pedido en una comanda que cuelga en la cocina, te da un número y atiende al siguiente, la cocina va sacando comandas a su ritmo.
+
+Si a la cocina se le rompe el horno una hora, las comandas se acumulan en el gancho pero no se pierden. Y si entran más comandas por minuto de las que la cocina saca, el gancho se llena sin parar: no hay buzón que aguante eso, hay que sumar cocineros.
+
+</Analogia>
+
+Primero, quién espera a quién cuando el servicio B se pone lento o se cae.
+
+<SimFlujo
+  modo="sincrono-vs-asincrono"
+  titulo="El carril síncrono contra el asíncrono"
+  consigna="Subí la latencia del servicio B hasta 3000 ms y mirá cuánto espera el cliente en cada carril. Después activá 'B caído' y compará los errores del carril síncrono con los pendientes del asíncrono."
+  latenciaServicioB={200}
+/>
+
+Fijate que al subir la latencia de B la espera del cliente sube en el carril síncrono y no en el asíncrono. Y con B caído, el síncrono suma errores, mientras que el asíncrono suma pendientes que bajan a cero cuando B vuelve.
+
+Ahora el límite de la cola: no hace magia, solo reparte el tiempo.
+
+<SimFlujo
+  modo="cola"
+  etiquetas="mensajes"
+  titulo="Una cola entre el productor y los consumidores"
+  consigna="Con 5 mensajes por segundo y 2 consumidores que tardan 0,5 s cada uno, mirá cómo crece la cola. Sumá un consumidor y fijate si se vacía. Después activá 'consumidor caído' y comprobá si se pierden mensajes."
+  tasaLlegada={5}
+  consumidores={2}
+  tiempoProceso={0.5}
+  capacidadCola={50}
+/>
+
+Dos consumidores de 0,5 s procesan 4 mensajes por segundo, y llegan 5: la cola crece. Con tres procesan 6 y se vacía. Cuando el consumidor cae, los mensajes se acumulan y se drenan al volver.
+
+<Ojo>
+
+No todo se puede volver asíncrono. Si el cliente necesita la respuesta ya (¿hay stock?, ¿se aprobó el pago?), esa llamada tiene que ser síncrona<Cita f="azure-colas" loc="When to use this pattern" />.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Dos estilos de comunicación
+
+En la **invocación remota** (*remote procedure invocation*, REST o gRPC) el cliente manda un pedido y espera la respuesta. Es simple y no necesita un intermediario, pero obliga a que cliente y servicio estén vivos durante toda la interacción: eso es acoplamiento en tiempo de ejecución y baja la disponibilidad<Cita f="richardson-rpi" />. Encadenar muchas llamadas síncronas multiplica las caídas (lo vimos en el tema anterior)<Cita f="fowler-microservices" loc="Synchronous calls considered harmful" />.
+
+En la **mensajería** (*messaging*) los servicios intercambian mensajes asíncronos por canales. El intermediario (*message broker*) retiene los mensajes hasta que el consumidor puede procesarlos, así que emisor y consumidor no tienen que estar disponibles a la vez. A cambio, el broker es una pieza más que tiene que ser altamente disponible, y el patrón pedido-respuesta se complica<Cita f="richardson-mensajeria" />.
+
+### La cola como amortiguador
+
+El patrón de **nivelación de carga con cola** (*queue-based load leveling*) pone una cola entre quien manda trabajo y el servicio que lo hace: la cola guarda los mensajes y el servicio los toma a su ritmo. Los emisores no se demoran si el servicio no está disponible, y alcanza con dimensionar para la carga media y no para el pico<Cita f="azure-colas" loc="Solution" />.
+
+Pero si la tasa media de llegada supera la de consumo, la cola crece sin parar y la latencia sube; hay que monitorear la profundidad de la cola y escalar consumidores con límite, o descartar trabajo en el productor<Cita f="azure-colas" loc="Problems and considerations" />.
+
+<Formula nombre="Cuándo crece una cola" tex="\mu = \frac{c}{t}, \qquad T_{\text{llena}} = \frac{Q_{\max}}{\lambda - \mu} \quad (\lambda > \mu)">
+
+donde $c$ es la cantidad de consumidores, $t$ el tiempo que tarda cada uno por mensaje (s), $\mu$ la tasa de consumo (mensajes/s), $\lambda$ la tasa de llegada, $Q_{\max}$ la capacidad de la cola y $T_{\text{llena}}$ el tiempo hasta llenarla si arranca vacía. Es aritmética de balance, no un modelo estadístico: sirve para el orden de magnitud.
+
+</Formula>
+
+Con los números del simulador: $\mu = 2/0{,}5 = 4$ mensajes/s, $\lambda = 5$, $Q_{\max} = 50$, así que se llena en $50/(5-4) = 50$ segundos.
+
+### Broker de mensajes y log de eventos
+
+Apache Kafka guarda **eventos** (clave, valor, marca de tiempo) en **tópicos** (*topics*), con muchos productores y muchos suscriptores por tópico. Un evento leído no se borra: se descarta recién cuando vence la retención configurada. Cada tópico se reparte en **particiones**; los eventos con la misma clave van a la misma partición, y el orden solo está garantizado dentro de una partición<Cita f="kafka-intro" loc="Main Concepts and Terminology" />. Cada partición la consume un solo consumidor por grupo, la posición es un número (el *offset*) y se puede retroceder para releer; los consumidores tiran (*pull*) de los brokers a su propio ritmo<Cita f="kafka-diseno" loc="Consumer Position y Push vs. Pull" />.
+
+En RabbitMQ, con confirmación manual, las entregas sin confirmar vuelven a la cola si el canal o la conexión se cierran, y el mensaje reentregado viene marcado como tal<Cita f="rabbitmq-confirmaciones" loc="Consumer Acknowledgements" />.
+
+### Duplicados e idempotencia
+
+La mayoría de los brokers (incluidos Kafka y RabbitMQ) entregan **al menos una vez** (*at-least-once*); garantizar *exactly-once* de punta a punta en un sistema distribuido es impracticable, porque el broker solo controla lo que hace él y no los efectos del consumidor en sistemas externos<Cita f="azure-idempotente" loc="Context and problem" />. Kafka lo reconoce: al-menos-una-vez es su modo por defecto, y recomienda procesamiento idempotente<Cita f="kafka-diseno" loc="Message Delivery Semantics" />. La solución es un **consumidor idempotente** (*idempotent consumer*): procesar dos veces el mismo mensaje da el mismo resultado que procesarlo una<Cita f="azure-idempotente" loc="Solution" />.
+
+Dos caminos: elegir operaciones naturalmente idempotentes (un *upsert* por clave de negocio, fijar un valor absoluto en lugar de sumar) o guardar una clave de deduplicación estable y chequearla de forma atómica<Cita f="azure-idempotente" loc="Problems and considerations" />:
+
+```sql
+-- Bandeja de entrada (inbox): una fila por mensaje ya procesado.
+CREATE TABLE mensajes_procesados (
+  mensaje_id   text PRIMARY KEY,
+  procesado_en timestamptz NOT NULL DEFAULT now()
+);
+
+-- Dentro de la MISMA transacción que aplica el efecto de negocio:
+INSERT INTO mensajes_procesados (mensaje_id) VALUES ('orden-8431');
+-- Si falla por clave duplicada, el mensaje ya se procesó: se descarta.
+```
+
+La restricción de unicidad hace que la base sea la única árbitra cuando dos consumidores reciben copias a la vez<Cita f="azure-idempotente" loc="Guard against concurrent duplicates" />.
+
+### Otros cuidados
+
+Un mensaje que no se puede procesar (mal formado, error persistente) debería ir a una cola de mensajes muertos (*dead-letter queue*) en lugar de dar vueltas y bloquear la cola, y esa cola se monitorea. Además, con varios consumidores en paralelo la cola no conserva el orden original en todos los casos<Cita f="azure-colas" loc="Problems and considerations" />. Y como la cola es de una sola vía, si el emisor espera una respuesta hay que armar un mecanismo aparte para devolverla<Cita f="azure-colas" loc="Problems and considerations" />.
+
+</Formal>
