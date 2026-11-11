@@ -1,8 +1,9 @@
 ---
 // Plantilla de la página de tema (CONTRATO §6.2): encabezado, cuerpo MDX, Práctica y Fuentes.
-// Hito 0: práctica en HTML estático, sin interactividad (llega en el hito 1).
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import Ejercicio from '../islas/Ejercicio';
+import CasoGuardia from '../islas/CasoGuardia';
 import { componentesMdx } from './mdx';
 import { textoCorto, textoCortoEnLinea } from '../lib/texto-corto';
 import { url } from '../lib/url';
@@ -19,104 +20,171 @@ const { Content } = await render(tema.entry);
 const { data, practica } = tema;
 const principales = data.fuentes.filter((f) => !f.verMas);
 const verMas = data.fuentes.filter((f) => f.verMas);
-const fecha = data.fechaVerificacion.toISOString().slice(0, 10);
+const fecha = new Intl.DateTimeFormat('es-AR', { dateStyle: 'long', timeZone: 'UTC' }).format(data.fechaVerificacion);
 
 const describir = (f: (typeof data.fuentes)[number]) =>
   [f.autor, f.titulo, f.edicion, f.ubicacion].filter(Boolean).join(', ');
-const NIVEL = { basico: 'Básico', intermedio: 'Intermedio', avanzado: 'Avanzado' } as const;
+const TIPO_FUENTE = { libro: 'Libro', 'doc-oficial': 'Documentación oficial', 'curso-abierto': 'Curso abierto', video: 'Video', blog: 'Blog' } as const;
+const NIVELES = ['basico', 'intermedio', 'avanzado'] as const;
+const NIVEL_TEXTO = { basico: 'Básico', intermedio: 'Intermedio', avanzado: 'Avanzado' } as const;
+const nivelIdx = NIVELES.indexOf(data.nivel);
+const DIFICULTAD = { basico: 'Básico', intermedio: 'Intermedio', avanzado: 'Avanzado' } as const;
+const global = (idLocal: string) => `${tema.id}#${idLocal}`;
+const indice = [
+  ['caso-real', 'El caso'],
+  ['intuicion', 'La intuición'],
+  ['formal', 'Lo formal'],
+  ['practica', 'Práctica'],
+  ['fuentes', 'Fuentes'],
+];
 ---
-<Base titulo={`${data.titulo} · Campus personal`} descripcion={data.resumen} noindex={ejemplo} colorArea={area.color}>
-  <main {...(ejemplo ? { 'data-pagefind-ignore': '' } : { 'data-pagefind-body': '', 'data-pagefind-meta': `area:${area.nombre}` })}>
-    <header>
-      <p class="meta">{area.nombre}</p>
-      <h1>{data.titulo}</h1>
-      <p>{data.resumen}</p>
-      <p class="meta">
-        {NIVEL[data.nivel]} · {data.minutos} min
-        {data.materias.length > 0 && <> · UNLaM: {data.materias.map((m) => `${m.codigo} ${m.nombre}`).join('; ')}</>}
-      </p>
-      {data.prerrequisitos.length > 0 && (
-        <p class="meta">
-          Antes conviene ver:{' '}
-          {data.prerrequisitos.map((pr, i) => (<>{i > 0 && ', '}<a href={url(`${pr}/`)}>{pr}</a></>))}
-        </p>
-      )}
-    </header>
-
-    <Content components={componentesMdx} />
-
-    <section id="practica" class="seccion">
-      <h2>Práctica</h2>
-
-      <h3>Tarjetas</h3>
-      <ul class="tarjetas">
-        {practica.tarjetas.map((t) => (
-          <li>
-            <div set:html={textoCortoEnLinea(t.frente)} />
-            <details><summary>Ver respuesta</summary><div set:html={textoCorto(t.dorso)} /></details>
-          </li>
-        ))}
-      </ul>
-      <p><a href={url(`repaso/?tema=${tema.id}`)}>Repasar este tema ahora</a></p>
-
-      <h3>Ejercicios</h3>
-      {practica.ejercicios.map((e) => (
-        <article class="ejercicio" data-tipo={e.tipo} id={e.id}>
-          <div set:html={textoCorto(e.enunciado)} />
-          {e.tipo === 'opcion-multiple' && (
-            <ol type="a">{e.opciones.map((o) => <li set:html={textoCortoEnLinea(o.texto)} />)}</ol>
+<Base titulo={`${data.titulo} · Campus personal`} descripcion={data.resumen} noindex={ejemplo} colorArea={area.color} colorAreaOscuro={area.colorOscuro}>
+  <main {...(ejemplo ? { 'data-pagefind-ignore': '' } : { 'data-pagefind-body': '', 'data-pagefind-meta': `area:${area.nombre}` })} id="contenido">
+    <div class="tema-grid">
+      <nav class="indice-tema" aria-label="En esta página">
+        <ol>
+          {indice.map(([id, texto]) => <li><a href={`#${id}`} data-seccion={id}>{texto}</a></li>)}
+        </ol>
+      </nav>
+      <div>
+        <header class="tema-cab">
+          <p class="migas">
+            {ejemplo ? <span>Tema de ejemplo</span> : <a href={url(`${area.id}/`)}>{area.nombre}</a>}
+          </p>
+          <h1 data-pagefind-meta="title">{data.titulo}</h1>
+          <p class="resumen">{data.resumen}</p>
+          <div class="chips">
+            <span class="nivel" title={`Nivel ${NIVEL_TEXTO[data.nivel].toLowerCase()}`}>
+              {NIVELES.map((_, i) => <i class:list={{ on: i <= nivelIdx }} />)}
+              <span>{NIVEL_TEXTO[data.nivel]}</span>
+            </span>
+            <span>{data.minutos} min</span>
+            {data.materias.length > 0 && <span>UNLaM: {data.materias.map((m) => `${m.nombre} (${m.codigo})`).join(' · ')}</span>}
+          </div>
+          {data.prerrequisitos.length > 0 && (
+            <p class="meta" style="margin-top:.7rem">
+              Antes conviene ver:{' '}
+              {data.prerrequisitos.map((pr, i) => (<>{i > 0 && ', '}<a href={url(`${pr}/`)}>{pr.split('/')[1]!.replace(/-/g, ' ')}</a></>))}
+            </p>
           )}
-          {e.tipo === 'numerico' && e.unidad && <p class="meta">Unidad: {e.unidad}</p>}
-        </article>
-      ))}
+        </header>
 
-      {practica.casos.length > 0 && <h3>Casos de guardia</h3>}
-      {practica.casos.map((c) => (
-        <article class="caso" id={c.id}>
-          <h4>{c.titulo}</h4>
-          <p><em>{c.rol}</em></p>
-          <div set:html={textoCorto(c.contexto)} />
-        </article>
-      ))}
+        <div class="cuerpo">
+          <Content components={componentesMdx} />
 
-      <h3>Problemas para hacer por tu cuenta</h3>
-      <ul class="problemas">
-        {practica.problemas.map((p) => {
-          const f = data.fuentes.find((x) => x.id === p.fuente)!;
-          return (
-            <li id={p.id}>
-              <div set:html={textoCorto(p.enunciado)} />
-              <p class="meta">
-                {f.autor}, {f.titulo} — {p.ubicacion}
-                {p.url && <> · <a href={p.url} rel="noopener">enlace</a></>}
-              </p>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
+          <section id="practica" class="seccion">
+            <h2>Práctica</h2>
 
-    <section id="fuentes" class="seccion">
-      <h2>Fuentes</h2>
-      <ul>
-        {principales.map((f) => (
-          <li id={`fuente-${f.id}`}>
-            {describir(f)}
-            {f.url && <> · <a href={f.url} rel="noopener">{f.url}</a></>}
-          </li>
-        ))}
-      </ul>
-      {verMas.length > 0 && (
-        <>
-          <h3>Para ver más</h3>
-          <ul>
-            {verMas.map((f) => (
-              <li id={`fuente-${f.id}`}>{describir(f)} · <a href={f.url} rel="noopener">{f.url}</a></li>
-            ))}
-          </ul>
-        </>
-      )}
-      <p class="meta">Fuentes verificadas el {fecha}</p>
-    </section>
+            <div class="practica-bloque">
+              <h3>Tarjetas <small>{practica.tarjetas.length} para memorizar</small></h3>
+              <ul class="fichas">
+                {practica.tarjetas.map((t) => (
+                  <li class="ficha" id={t.id}>
+                    <div class="ficha-frente" set:html={textoCorto(t.frente)} />
+                    <details><summary>Ver respuesta</summary><div set:html={textoCorto(t.dorso)} /></details>
+                  </li>
+                ))}
+              </ul>
+              <a class="btn btn-marca" href={url(`repaso/?tema=${tema.id}`)}>Repasar este tema ahora</a>
+            </div>
+
+            <div class="practica-bloque">
+              <h3>Ejercicios <small>se corrigen solos</small></h3>
+              {practica.ejercicios.map((e) =>
+                e.tipo === 'numerico' ? (
+                  <Ejercicio client:visible id={global(e.id)} tipo="numerico" enunciadoHtml={textoCorto(e.enunciado)}
+                    respuesta={e.respuesta} tolerancia={e.tolerancia} unidad={e.unidad} explicacionHtml={textoCorto(e.explicacion)}
+                    erroresComunes={e.erroresComunes.map((x) => ({ valor: x.valor, explicacionHtml: textoCorto(x.explicacion) }))} />
+                ) : e.tipo === 'opcion-multiple' ? (
+                  <Ejercicio client:visible id={global(e.id)} tipo="opcion-multiple" enunciadoHtml={textoCorto(e.enunciado)}
+                    opciones={e.opciones.map((o) => ({ textoHtml: textoCortoEnLinea(o.texto), correcta: o.correcta, explicacionHtml: textoCorto(o.explicacion) }))} />
+                ) : (
+                  <Ejercicio client:visible id={global(e.id)} tipo="verdadero-falso" enunciadoHtml={textoCorto(e.enunciado)}
+                    respuesta={e.respuesta} justificacionHtml={textoCorto(e.justificacion)} />
+                ),
+              )}
+            </div>
+
+            {practica.casos.length > 0 && (
+              <div class="practica-bloque">
+                <h3>Casos de guardia <small>decidí y mirá qué pasa</small></h3>
+                {practica.casos.map((c) => (
+                  <CasoGuardia client:visible id={global(c.id)} titulo={c.titulo} rolHtml={textoCortoEnLinea(c.rol)}
+                    contextoHtml={textoCorto(c.contexto)} inicio={c.inicio} leccionHtml={textoCorto(c.leccion)}
+                    nodos={c.nodos.map((n) => n.tipo === 'decision'
+                      ? { id: n.id, tipo: 'decision' as const, textoHtml: textoCorto(n.texto), opciones: n.opciones.map((o) => ({ textoHtml: textoCortoEnLinea(o.texto), va: o.va, consecuenciaHtml: textoCortoEnLinea(o.consecuencia) })) }
+                      : { id: n.id, tipo: 'desenlace' as const, resultado: n.resultado, textoHtml: textoCorto(n.texto) })} />
+                ))}
+              </div>
+            )}
+
+            <div class="practica-bloque">
+              <h3>Problemas para hacer por tu cuenta <small>fuera de la app</small></h3>
+              <ul class="problemas">
+                {practica.problemas.map((p) => {
+                  const f = data.fuentes.find((x) => x.id === p.fuente)!;
+                  return (
+                    <li class="problema" id={p.id}>
+                      <span class="dificultad">{DIFICULTAD[p.dificultad]}</span>
+                      <div set:html={textoCorto(p.enunciado)} />
+                      <p class="meta">
+                        {f.autor}, <em>{f.titulo}</em> · {p.ubicacion}
+                        {p.url && <> · <a href={p.url} rel="noopener noreferrer">Abrir el enlace</a></>}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </section>
+
+          <section id="fuentes" class="seccion">
+            <h2>Fuentes</h2>
+            <ul class="lista-fuentes">
+              {principales.map((f) => (
+                <li class="fuente" id={`fuente-${f.id}`}>
+                  <span class="tipo">{TIPO_FUENTE[f.tipo]}</span><span class="clave">{f.id}</span><br />
+                  {describir(f)}
+                  {f.url && <> · <a href={f.url} rel="noopener noreferrer">{f.url}</a></>}
+                </li>
+              ))}
+            </ul>
+            {verMas.length > 0 && (
+              <>
+                <h3>Para ver más</h3>
+                <ul class="lista-fuentes">
+                  {verMas.map((f) => (
+                    <li class="fuente" id={`fuente-${f.id}`}>
+                      <span class="tipo">{TIPO_FUENTE[f.tipo]}</span><br />
+                      {describir(f)} · <a href={f.url} rel="noopener noreferrer">{f.url}</a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <p class="meta verificado">Fuentes verificadas el {fecha}.</p>
+          </section>
+        </div>
+      </div>
+    </div>
   </main>
 </Base>
+
+<script>
+  // Resalta en el índice lateral la sección que se está leyendo.
+  const enlaces = new Map<string, HTMLAnchorElement>();
+  document.querySelectorAll<HTMLAnchorElement>('.indice-tema a').forEach((a) => enlaces.set(a.dataset.seccion!, a));
+  if (enlaces.size && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (es) => {
+        for (const e of es) {
+          if (!e.isIntersecting) continue;
+          enlaces.forEach((a) => a.classList.remove('activo'));
+          enlaces.get(e.target.id)?.classList.add('activo');
+        }
+      },
+      { rootMargin: '-20% 0px -70% 0px' },
+    );
+    enlaces.forEach((_, id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+  }
+</script>

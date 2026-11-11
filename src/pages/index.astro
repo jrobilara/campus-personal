@@ -1,22 +1,46 @@
 ---
-// Portada provisoria del hito 0: lista las áreas de areas.yaml. La portada real llega en el hito 1.
 import Base from '../layouts/Base.astro';
+import Icono from '../components/Icono.astro';
+import CurvaOlvido from '../components/CurvaOlvido.astro';
+import ParaHoy from '../islas/ParaHoy';
+import DominioArea from '../islas/DominioArea';
 import { cargarCampus } from '../contenido/campus';
 import { url } from '../lib/url';
 
 const campus = await cargarCampus();
+const cuenta = (id: string) => campus.temas.filter((t) => t.area === id).length;
 ---
-<Base titulo="Campus personal">
-  <main>
-    <h1>Campus personal</h1>
-    <ul>
-      {campus.areas.map((a) => (
-        <li>
-          <strong>{a.nombre}</strong> — {a.descripcion}
-          <span class="meta"> ({campus.temas.filter((t) => t.area === a.id).length} temas)</span>
-        </li>
-      ))}
-    </ul>
-    <p class="meta"><a href={url('')}>Inicio</a></p>
+<Base titulo="Campus personal" descripcion="Apuntes con gráficos y simuladores, y repaso espaciado para no olvidar lo que cursaste." activo="inicio">
+  <main id="contenido">
+    <section class="hero">
+      <div>
+        <h1>Acordate de lo que ya aprendiste.</h1>
+        <p class="bajada">
+          Apuntes en criollo con gráficos y simuladores, y un repaso que te trae cada tarjeta justo antes de que se te borre.
+        </p>
+        <ParaHoy client:load />
+      </div>
+      <CurvaOlvido />
+    </section>
+
+    <section aria-labelledby="areas-t">
+      <h2 id="areas-t" class="titulo-lista">Las áreas</h2>
+      <ul class="indice">
+        {campus.areas.map((a) => (
+          <li>
+            <a class="area-fila" href={url(`${a.id}/`)} style={`--area-claro:${a.color};--area-oscuro:${a.colorOscuro}`}>
+              <Icono nombre={a.icono} class="area-icono" />
+              <h3>{a.nombre}</h3>
+              <p>{a.descripcion}</p>
+              <div class="area-pie">
+                <span>{cuenta(a.id)} {cuenta(a.id) === 1 ? 'tema' : 'temas'}</span>
+                <DominioArea client:visible areaId={a.id} />
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
   </main>
+  <p class="pie">Tu progreso se guarda en este navegador. Para pasarlo a otro dispositivo, exportalo desde Ajustes.</p>
 </Base>

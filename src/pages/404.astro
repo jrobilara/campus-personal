@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+<Base titulo="No encontré esa página · Campus personal" noindex>
+  <main id="contenido" class="angosto">
+    <div class="vacio">
+      <h1 style="font-size:2rem">Esta página no existe</h1>
+      <p>Puede que el enlace esté mal escrito o que el tema haya cambiado de lugar. Volvé al inicio y buscalo desde ahí.</p>
+      <a class="btn btn-marca" href={url('')}>Ir al inicio</a>
+    </div>
+  </main>
+</Base>

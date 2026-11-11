@@ -2,28 +2,87 @@
 import 'katex/dist/katex.min.css';
 import 'mafs/core.css';
 import 'mafs/font.css';
+import '@fontsource-variable/bricolage-grotesque/wght.css';
 import '../styles/base.css';
+import '../styles/practica.css';
+import '../styles/sim.css';
+import Icono from '../components/Icono.astro';
+import ContadorHoy from '../islas/ContadorHoy';
 import { url } from '../lib/url';
+
+export type ItemNav = 'inicio' | 'repaso' | 'progreso' | 'buscar' | 'ajustes';
 interface Props {
   titulo: string;
   descripcion?: string;
   noindex?: boolean;
+  /** colores del área (claro / oscuro) para --color-area */
   colorArea?: string;
+  colorAreaOscuro?: string;
+  activo?: ItemNav;
 }
-const { titulo, descripcion, noindex = false, colorArea } = Astro.props;
+const { titulo, descripcion, noindex = false, colorArea, colorAreaOscuro, activo } = Astro.props;
+const items: { id: ItemNav; texto: string; ruta: string }[] = [
+  { id: 'inicio', texto: 'Inicio', ruta: '' },
+  { id: 'repaso', texto: 'Repaso', ruta: 'repaso/' },
+  { id: 'progreso', texto: 'Progreso', ruta: 'progreso/' },
+  { id: 'buscar', texto: 'Buscar', ruta: 'buscar/' },
+  { id: 'ajustes', texto: 'Ajustes', ruta: 'ajustes/' },
+];
+const estiloArea = colorArea
+  ? `--area-claro: ${colorArea}; --area-oscuro: ${colorAreaOscuro ?? colorArea}`
+  : undefined;
 ---
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{titulo}</title>
     {descripcion && <meta name="description" content={descripcion} />}
     {noindex && <meta name="robots" content="noindex" />}
+    <meta name="color-scheme" content="light dark" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <link rel="manifest" href={url('manifest.webmanifest')} />
+    <meta name="theme-color" content="#2563eb" />
+    <script is:inline>
+      // Tema claro/oscuro/sistema antes de pintar (sin parpadeo). Lee campus:ajustes de localStorage.
+      (function () {
+        var r = document.documentElement;
+        function aplicar() {
+          var t = 'sistema';
+          try { var a = JSON.parse(localStorage.getItem('campus:ajustes') || '{}'); if (a && a.tema) t = a.tema; } catch (e) {}
+          var oscuro = t === 'oscuro' || (t !== 'claro' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          r.setAttribute('data-theme', oscuro ? 'dark' : 'light');
+        }
+        aplicar();
+        try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', aplicar); } catch (e) {}
+        window.addEventListener('campus:ajustes', aplicar);
+        window.addEventListener('storage', aplicar);
+      })();
+    </script>
   </head>
-  <body style={colorArea ? `--color-area: ${colorArea}` : undefined}>
+  <body style={estiloArea}>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <header class="cab">
+      <div class="cab-in">
+        <a class="marca-sitio" href={url('')} aria-label="Campus personal, ir al inicio">
+          <svg viewBox="0 0 32 22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 3C6 3 8 9 11 15" /><path d="M11 3C15 3 18 9 21 15" opacity=".8" /><path d="M21 3c4 0 6 6 9 12" opacity=".6" /><path d="M2 20h28" stroke-width="1.6" opacity=".5"/>
+          </svg>
+          Campus
+        </a>
+        <nav class="nav" aria-label="Principal">
+          {items.map((i) => (
+            <a href={url(i.ruta)} aria-current={activo === i.id ? 'page' : undefined}>
+              <Icono nombre={i.id} class="nav-icono" />
+              <span>{i.texto}</span>
+              {i.id === 'repaso' && <ContadorHoy client:load />}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
     <slot />
   </body>
 </html>

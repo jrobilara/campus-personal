@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icono from '../../components/Icono.astro';
+import AvanceTema from '../../islas/AvanceTema';
+import DominioArea from '../../islas/DominioArea';
+import { cargarCampus } from '../../contenido/campus';
+import { url } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const campus = await cargarCampus();
+  return campus.areas.filter((a) => a.id !== 'ejemplo').map((area) => ({
+    params: { area: area.id },
+    props: { area, temas: campus.temas.filter((t) => t.area === area.id).sort((a, b) => a.data.orden - b.data.orden) },
+  }));
+}
+const { area, temas } = Astro.props;
+const NIVELES = ['basico', 'intermedio', 'avanzado'] as const;
+const NIVEL_TEXTO = { basico: 'Básico', intermedio: 'Intermedio', avanzado: 'Avanzado' } as const;
+const tituloDe = (id: string) => temas.find((t) => t.id === id)?.data.titulo ?? id.split('/')[1]!.replace(/-/g, ' ');
+---
+<Base titulo={`${area.nombre} · Campus personal`} descripcion={area.descripcion} colorArea={area.color} colorAreaOscuro={area.colorOscuro}>
+  <main id="contenido" class="angosto">
+    <header class="area-cab">
+      <Icono nombre={area.icono} class="area-icono" />
+      <h1>{area.nombre}</h1>
+      <p>{area.descripcion}</p>
+      <div class="area-cab-acciones">
+        <a class="btn btn-marca" href={url(`repaso/?area=${area.id}`)}>Repasar esta área</a>
+        <div style="flex:1;min-width:10rem;display:flex;align-items:center;gap:.7rem" class="meta">
+          <span>Dominio</span><DominioArea client:visible areaId={area.id} />
+        </div>
+      </div>
+    </header>
+
+    {temas.length === 0 ? (
+      <div class="vacio">
+        <h2>Todavía no hay temas acá</h2>
+        <p>Sumá un archivo <code>tema.mdx</code> y su <code>practica.yaml</code> en <code>src/content/temas/{area.id}/</code> y aparece solo.</p>
+      </div>
+    ) : (
+      <ol class="ruta">
+        {temas.map((t, i) => (
+          <li class="paso" data-n={i + 1}>
+            <div class="paso-cuerpo">
+              <h2><a href={url(`${t.id}/`)}>{t.data.titulo}</a></h2>
+              <p>{t.data.resumen}</p>
+              <div class="chips">
+                <span class="nivel">{NIVELES.map((_n, k) => <i class:list={{ on: k <= NIVELES.indexOf(t.data.nivel) }} />)}<span>{NIVEL_TEXTO[t.data.nivel]}</span></span>
+                <span>{t.data.minutos} min</span>
+                {t.data.prerrequisitos.length > 0 && (
+                  <span>Antes: {t.data.prerrequisitos.map((pr, k) => (<>{k > 0 && ', '}<a href={url(`${pr}/`)}>{tituloDe(pr)}</a></>))}</span>
+                )}
+              </div>
+              <AvanceTema client:visible temaId={t.id} />
+            </div>
+          </li>
+        ))}
+      </ol>
+    )}
+  </main>
+</Base>

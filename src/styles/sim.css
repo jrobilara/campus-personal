@@ -1,0 +1,43 @@
+/* Kit visual común de los 12 simuladores. Las islas usan estas clases (ver src/simuladores/ui.tsx). */
+.sim { margin: 1.8rem 0; background: var(--superficie); border: 1px solid var(--linea-fuerte); border-radius: 14px; overflow: hidden; box-shadow: var(--sombra); max-width: 100%; }
+.sim-cab { padding: 0.75rem 1.1rem 0.7rem; border-bottom: 1px solid var(--linea); background: color-mix(in srgb, var(--color-area) 8%, var(--superficie)); }
+.sim-titulo { font: 700 1.02rem/1.2 var(--f-titulo); margin: 0 0 0.25rem; }
+.sim-consigna { margin: 0; font-size: 0.95rem; color: var(--suave); }
+.sim-consigna::before { content: 'Probá: '; font-weight: 700; color: var(--tinta); }
+.sim-cuerpo { padding: 0.9rem 1.1rem 1.1rem; display: grid; gap: 1rem; }
+.sim-lienzo { min-width: 0; width: 100%; }
+.sim-lienzo svg, .sim-lienzo canvas { display: block; width: 100%; height: auto; }
+.sim-lienzo figure { margin: 0; }
+.sim-plot { overflow-x: auto; }
+.sim-plot svg { font-family: var(--f-texto); color: var(--tinta); }
+.sim-controles { display: grid; gap: 0.75rem 1.2rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); align-items: end; }
+.sim-control { display: grid; gap: 0.2rem; min-width: 0; }
+.sim-control > label, .sim-control > .etiqueta { font: 600 0.85rem/1.2 var(--f-titulo); display: flex; justify-content: space-between; gap: 0.5rem; }
+.sim-control output { font-family: var(--f-mono); font-weight: 600; color: var(--color-area); font-size: 0.85rem; }
+.sim input[type='range'] { width: 100%; accent-color: var(--color-area); height: 1.6rem; margin: 0; cursor: pointer; }
+.sim select { font: 500 0.95rem var(--f-texto); padding: 0.45rem 0.6rem; border-radius: 8px; border: 2px solid var(--linea-fuerte); background: var(--papel); color: inherit; min-height: 2.4rem; }
+.sim-toggle { display: flex; gap: 0.55rem; align-items: center; font: 600 0.9rem var(--f-titulo); cursor: pointer; min-height: 2.4rem; }
+.sim-toggle input { width: 1.2rem; height: 1.2rem; accent-color: var(--color-area); }
+.sim-botones { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.sim-btn { font: 650 0.9rem var(--f-titulo); min-height: 2.4rem; padding: 0 0.95rem; border-radius: 999px; border: 2px solid var(--tinta); background: var(--papel); color: var(--tinta); cursor: pointer; transition: background 0.12s; }
+:root[data-theme='dark'] .sim-btn { border-color: var(--linea-fuerte); }
+.sim-btn:hover:not([disabled]) { background: var(--marca); color: var(--marca-tinta); border-color: var(--marca-tinta); }
+.sim-btn[aria-pressed='true'], .sim-btn.activo { background: var(--tinta); color: var(--papel); }
+.sim-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+.sim-lecturas { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.5rem; margin: 0; }
+.lectura { background: var(--papel); border: 1px solid var(--linea); border-radius: 10px; padding: 0.45rem 0.7rem; min-width: 0; }
+.lectura dt { font: 600 0.74rem/1.2 var(--f-titulo); color: var(--suave); }
+.lectura dd { margin: 0.1rem 0 0; font: 700 1.2rem/1.2 var(--f-mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.lectura dd .u { font: 500 0.8rem var(--f-texto); color: var(--suave); margin-left: 0.2rem; }
+.lectura.alerta { border-color: var(--mal); background: var(--mal-fondo); }
+.lectura.buena { border-color: var(--ok); background: var(--ok-fondo); }
+.sim-leyenda { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; font-size: 0.82rem; color: var(--suave); }
+.sim-leyenda i { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 3px; margin-right: 0.35rem; vertical-align: -0.1em; }
+.sim-nota { font-size: 0.82rem; color: var(--suave); margin: 0; }
+.sim-log { font: 0.82rem/1.5 var(--f-mono); background: var(--papel); border: 1px solid var(--linea); border-radius: 8px; padding: 0.5rem 0.7rem; max-height: 9.5rem; overflow-y: auto; margin: 0; list-style: none; }
+.sim-estado { display: inline-block; font: 700 0.95rem var(--f-titulo); padding: 0.15rem 0.7rem; border-radius: 999px; background: var(--marca); color: var(--marca-tinta); }
+.sim-tabla { overflow-x: auto; }
+.sim-tabla table { display: table; margin: 0; font-size: 0.85rem; }
+.sim-tabla td, .sim-tabla th { padding: 0.25rem 0.55rem; white-space: nowrap; }
+.sim-pre-carga { color: var(--suave); padding: 1.2rem; text-align: center; font-size: 0.9rem; }
+@media (prefers-reduced-motion: reduce) { .sim * { transition: none !important; animation: none !important; } }

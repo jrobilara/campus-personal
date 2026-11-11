@@ -1,0 +1,50 @@
+/* Papel cuadriculado de ingeniería: fondo frío, tinta azul-negra y un solo marcador amarillo. */
+:root {
+  color-scheme: light;
+  --papel: #f2f5f8;
+  --superficie: #ffffff;
+  --superficie-2: #e8edf2;
+  --tinta: #0f1b26;
+  --suave: #485767;
+  --linea: #d3dce5;
+  --linea-fuerte: #9fb0c0;
+  --grilla: rgba(30, 90, 150, 0.075);
+  --marca: #ffe14a;
+  --marca-tinta: #0f1b26;
+  --ok: #0f7a43;
+  --ok-fondo: #e1f4e9;
+  --mal: #b3261e;
+  --mal-fondo: #fdebea;
+  --aviso: #8f5300;
+  --aviso-fondo: #fff1d6;
+  --area-claro: #2563eb;
+  --area-oscuro: #60a5fa;
+  --color-area: var(--area-claro);
+  --sombra: 0 1px 0 rgba(15, 27, 38, 0.06), 0 8px 24px -12px rgba(15, 27, 38, 0.25);
+  --f-titulo: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
+  --f-texto: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --f-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  --medida: 40rem;
+  --alto-barra: 3.6rem;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --papel: #0d141b;
+  --superficie: #141d26;
+  --superficie-2: #1c2733;
+  --tinta: #e9eef3;
+  --suave: #9eb0c1;
+  --linea: #263544;
+  --linea-fuerte: #46596b;
+  --grilla: rgba(120, 180, 240, 0.055);
+  --marca: #f5d83a;
+  --marca-tinta: #0d141b;
+  --ok: #4fd88b;
+  --ok-fondo: #11301f;
+  --mal: #ff8a80;
+  --mal-fondo: #3a1815;
+  --aviso: #ffc266;
+  --aviso-fondo: #33260b;
+  --color-area: var(--area-oscuro);
+  --sombra: 0 1px 0 rgba(0, 0, 0, 0.4), 0 10px 28px -14px rgba(0, 0, 0, 0.8);
+}
