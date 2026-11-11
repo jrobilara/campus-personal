@@ -26,6 +26,7 @@ piezas:
   smoke: no
   release: no
   docs-fyd: no
+  portada: sí
 frenos:
   opcionales: []
   quitados: []
