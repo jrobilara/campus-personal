@@ -1,0 +1,195 @@
+---
+titulo: "Backups 3-2-1, RPO/RTO y restauración probada"
+area: servidores
+orden: 3
+resumen: Cuánto dato podés perder (RPO), cuánto podés tardar en volver (RTO), qué dice la regla 3-2-1 y por qué un backup sin una restauración probada es solo una esperanza.
+materias:
+  - carrera: ing-informatica
+    codigo: "3641"
+    nombre: Bases de Datos Aplicada
+  - carrera: ing-informatica
+    codigo: "3650"
+    nombre: Seguridad de la Información
+prerrequisitos: []
+nivel: intermedio
+minutos: 30
+fuentes:
+  - id: nist-800-34
+    tipo: doc-oficial
+    autor: Marianne Swanson, Pauline Bowen, Amy Wohl Phillips, Dean Gallup y David Lynes (NIST)
+    titulo: Contingency Planning Guide for Federal Information Systems (SP 800-34 Rev. 1)
+    url: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-34r1.pdf
+    ubicacion: §3.2.1 (p. 16, MTD, RTO y RPO); §3.4.2 (p. 21, backups, almacenamiento externo y nota 25 sobre probar los backups); §3.5.1 (p. 27, pruebas)
+    edicion: Rev. 1, mayo de 2010
+  - id: cisa-backup
+    tipo: doc-oficial
+    autor: Paul Ruggiero y Matthew A. Heckathorn (para US-CERT, hoy CISA)
+    titulo: Data Backup Options
+    url: https://www.cisa.gov/sites/default/files/publications/data_backup_options.pdf
+    ubicacion: introducción (regla 3-2-1 y su atribución en la nota 1)
+    edicion: "2012"
+  - id: cisa-ransomware
+    tipo: doc-oficial
+    autor: CISA
+    titulo: "#StopRansomware Guide"
+    url: https://www.cisa.gov/stopransomware/ransomware-guide
+    ubicacion: Parte 1 (Preparing for Ransomware and Data Extortion Incidents) y Parte 2 (Recovery and Post Incident Activity)
+    edicion: versión web consultada el 2026-11-11 (la guía completa enlazada es de septiembre de 2023)
+  - id: rsync-man
+    tipo: doc-oficial
+    autor: Equipo de rsync (Samba)
+    titulo: rsync(1)
+    url: https://download.samba.org/pub/rsync/rsync.1
+    ubicacion: opciones -a, -n, -c, -v, --delete y --link-dest
+    edicion: contrastada con rsync 3.2.7 local
+  - id: postgres-dump
+    tipo: doc-oficial
+    autor: PostgreSQL Global Development Group
+    titulo: "PostgreSQL Documentation, cap. 25 Backup and Restore, 25.1 SQL Dump"
+    url: https://www.postgresql.org/docs/current/backup-dump.html
+    ubicacion: §25.1
+    edicion: PostgreSQL 18
+  - id: systemd-timer
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: systemd.timer(5)
+    url: https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html
+    ubicacion: opciones OnCalendar= y Persistent=
+    edicion: versión "latest" consultada el 2026-11-11
+  - id: backblaze-321
+    tipo: blog
+    autor: Backblaze
+    titulo: "Data Backup Strategies: Why the 3-2-1 Backup Strategy is the Best"
+    url: https://www.backblaze.com/blog/the-3-2-1-backup-strategy/
+    verMas: true
+fechaVerificacion: 2026-11-11
+ejemplo: false
+---
+
+<CasoReal titulo="Ransomware un viernes: había backup, pero nadie lo había restaurado jamás">
+
+Viernes, 17:50. En el servidor de archivos de la administración, las carpetas tienen todas una extensión rara y hay un archivo de texto que pide plata. Cifraron todo a partir de la una y media de la madrugada.
+
+"Pero tenemos backup", dice el gerente. Es cierto: todas las noches a las 2:00 un script copia la carpeta de datos a un NAS (un disco de red) que está siempre conectado al servidor. Además, el último viernes de cada mes alguien se lleva un disco USB a la caja fuerte. Nadie sabe cuánto tarda restaurar. Nadie lo probó nunca.
+
+Antes de tocar nada tenés que responder dos cosas: ¿a qué momento del pasado podés volver?, ¿y cuánto vas a tardar en estar de pie otra vez?
+
+</CasoReal>
+
+<Intuicion>
+
+Un backup es una copia de tus datos que te permite volver atrás. Pero "volver atrás" tiene dos medidas que importan más que el tamaño del disco: cuánto trabajo perdés y cuánto tardás en recuperarte.
+
+<Analogia titulo="El documento sin guardar">
+
+Imaginá que escribís un informe y se corta la luz. Lo que perdés es todo lo escrito desde el último guardado: esa es la pérdida de datos aceptable (RPO, *recovery point objective*). Lo que tardás en prender la máquina, abrir el archivo y volver a estar donde estabas es el tiempo de recuperación (RTO, *recovery time objective*). Si guardás cada hora, nunca perdés más de una hora de trabajo. Si guardás una vez por día, podés perder un día entero.
+
+</Analogia>
+
+<SimSerieTemporal
+  consigna="Con respaldo cada 24 horas, movés el momento del incidente a 23 horas después del último respaldo y mirá el RPO real contra el objetivo de 4. Después bajá la frecuencia a 4 horas y comprobá si cumple."
+  modo="respaldo"
+  frecuenciaHoras={24}
+  rpoObjetivoHoras={4}
+  rtoObjetivoHoras={2}
+  duracionRestauracionHoras={3}
+  titulo="Frecuencia de respaldo y pérdida de datos"
+/>
+
+Lo que tenés que notar: el RPO real depende de cuánto pasó desde el último respaldo hasta el incidente, no de la frecuencia solamente. Mismo respaldo, incidente un poco antes, y perdés casi nada. Y el RTO real es el tiempo que el sistema queda caído mientras se restaura: si tarda 3 horas y tu objetivo es 2, no cumplís aunque el dato esté perfecto.
+
+<Analogia titulo="El paracaídas que nunca se abrió">
+
+Un paracaídas que nadie abrió en tierra, plegado hace dos años, puede estar perfecto o no abrirse nunca. Con un backup pasa igual: que el script termine sin error no prueba que los datos se puedan restaurar. Hasta que no lo abrís en tierra (restaurando en un lugar de prueba), no sabés qué tenés.
+
+</Analogia>
+
+<SimSerieTemporal
+  consigna="Apagá 'respaldo probado' y mirá qué pasa con el último respaldo antes del incidente: ¿cuánto sube el RPO real y por qué?"
+  modo="respaldo"
+  frecuenciaHoras={24}
+  rpoObjetivoHoras={4}
+  rtoObjetivoHoras={2}
+  duracionRestauracionHoras={3}
+  respaldoProbado={false}
+  titulo="Un respaldo que nadie probó"
+/>
+
+<Ojo>
+
+Una copia que está siempre conectada al servidor también se puede cifrar. Muchas variantes de ransomware buscan los backups accesibles para borrarlos o cifrarlos. Si tu NAS está montado todo el tiempo, no es una red de seguridad: es otro lugar donde se esparce el daño.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### RPO, RTO y MTD
+
+La guía de planificación de contingencias del NIST define tres tiempos<Cita f="nist-800-34" loc="§3.2.1, p. 16" />:
+
+- **MTD** (*maximum tolerable downtime*): el tiempo total de interrupción que el dueño del sistema está dispuesto a aceptar para un proceso del negocio.
+- **RTO** (*recovery time objective*): el máximo que un recurso puede estar fuera de servicio antes de causar un impacto inaceptable; normalmente tiene que ser menor que el MTD.
+- **RPO** (*recovery point objective*): el punto en el tiempo, antes de la interrupción, al que se pueden recuperar los datos usando la copia más reciente; expresa cuánta pérdida de datos tolera el proceso, y no forma parte del MTD.
+
+Con respaldos periódicos cada $f$ horas, si el último respaldo bueno es el anterior al incidente, la pérdida de datos va de 0 a $f$ horas según cuándo ocurra. Si el último respaldo no sirve y hay que usar el anterior, el peor caso sube hasta $2f$ horas (cuenta derivada de las definiciones). El tiempo de restaurar un volumen de $D$ datos a una velocidad efectiva $v$ es:
+
+<Formula nombre="Tiempo de restauración" tex="t_{rest} = \frac{D}{v}">
+
+donde $D$ son los datos a restaurar (por ejemplo en MB) y $v$ la velocidad sostenida de lectura y escritura (MB/s). Es una cota inferior del RTO: no incluye detectar el problema, preparar el servidor ni verificar.
+
+</Formula>
+
+### La regla 3-2-1
+
+El documento de US-CERT (hoy CISA) *Data Backup Options* la plantea así: tener 3 copias de los archivos importantes (la original más 2 respaldos), en 2 tipos de medios distintos para cubrir distintos riesgos, y 1 copia fuera del sitio<Cita f="cisa-backup" loc="introducción" />. Ese texto atribuye la regla a Peter Krogh, en su libro *The DAM Book* (2.ª ed., 2009), así que es una práctica difundida más que una norma formal<Cita f="cisa-backup" loc="nota 1" />.
+
+La regla no alcanza sola contra ransomware. La guía #StopRansomware de CISA recomienda mantener respaldos offline y cifrados, porque muchas variantes buscan los respaldos accesibles para borrarlos o cifrarlos, y verificar cada tanto que estén disponibles y íntegros<Cita f="cisa-ransomware" loc="Parte 1" />. La recuperación se hace desde esos respaldos offline, cuidando de no reinfectar sistemas limpios<Cita f="cisa-ransomware" loc="Parte 2" />.
+
+### Qué decir en la política de backup
+
+El NIST pide que la política fije la frecuencia mínima y el alcance de los respaldos (diario o semanal, completo o incremental), dónde se guardan, cómo se rota el medio y cómo se lleva afuera del sitio<Cita f="nist-800-34" loc="§3.4.2, p. 21" />. Guardar los datos fuera del sitio es una buena práctica; al elegir el lugar conviene considerar si un mismo desastre lo alcanzaría junto con el sitio principal<Cita f="nist-800-34" loc="§3.4.2, p. 21" />. Y los respaldos deben probarse con regularidad para asegurar que los datos se guardan bien y los archivos se pueden recuperar sin errores (la nota habla de cintas, pero el criterio vale para cualquier medio)<Cita f="nist-800-34" loc="nota 25, p. 21" />. Las pruebas del plan suelen centrarse justamente en la recuperación y los backups<Cita f="nist-800-34" loc="§3.5.1, p. 27" />.
+
+### Herramientas
+
+`rsync` copia solo lo que cambió. Con `-a` conserva permisos, fechas y enlaces; con `-n` hace un simulacro sin tocar nada; `--delete` borra en el destino lo que ya no está en el origen<Cita f="rsync-man" loc="-a, -n, --delete" />. Eso es un espejo, no un historial: si el origen se cifra, el espejo se cifra también la noche siguiente. Para conservar versiones, `--link-dest` enlaza (con enlaces duros) los archivos sin cambios del respaldo anterior y copia solo lo nuevo<Cita f="rsync-man" loc="--link-dest" />.
+
+```bash
+# Simulacro: qué copiaría, sin tocar nada
+rsync -an --delete /srv/datos/ /mnt/respaldo/espejo/
+
+# Una carpeta por día, reutilizando lo que no cambió
+rsync -a --link-dest=/mnt/respaldo/2026-11-10 /srv/datos/ /mnt/respaldo/2026-11-11/
+
+# Prueba de restauración: copiá a un lugar aparte y comparalo con checksums
+rsync -a /mnt/respaldo/2026-11-11/ /tmp/prueba-restore/
+rsync -anc -v /srv/datos/ /tmp/prueba-restore/    # lista lo que difiere
+```
+
+Con `-c`, rsync compara por checksum en vez de tamaño y fecha: es más lento porque ambos lados leen todo<Cita f="rsync-man" loc="-c" />. Para una base PostgreSQL, `pg_dump` saca una foto consistente sin bloquear lecturas ni escrituras, y el formato personalizado se restaura con `pg_restore`<Cita f="postgres-dump" loc="§25.1" />.
+
+```bash
+pg_dump -Fc basedatos > /mnt/respaldo/basedatos.dump
+pg_restore -d basedatos_prueba /mnt/respaldo/basedatos.dump   # en una base de prueba vacía
+```
+
+Para programar el respaldo, un timer de systemd con `OnCalendar=` define el horario, y `Persistent=true` recupera una ejecución perdida si el equipo estaba apagado a esa hora<Cita f="systemd-timer" loc="OnCalendar=, Persistent=" />.
+
+```ini
+# /etc/systemd/system/respaldo.timer
+[Timer]
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+<Profundizar titulo="Un respaldo con éxito no es un respaldo restaurado">
+
+Que `rsync` o `pg_dump` terminen sin error solo significa que la copia se escribió. Lo que querés saber es si en el peor día vas a poder restaurar y cuánto vas a tardar. Por eso la prueba tiene dos salidas: que los datos estén completos (comparación con el origen o una consulta de control) y cuánto tardó (tu RTO real). Anotá las dos.
+
+</Profundizar>
+
+</Formal>

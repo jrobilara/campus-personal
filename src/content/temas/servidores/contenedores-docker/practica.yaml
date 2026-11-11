@@ -1,0 +1,184 @@
+tarjetas:
+  - id: t-contenedor-definicion
+    frente: ¿Qué es un contenedor, en una frase?
+    dorso: Un proceso aislado que lleva consigo los archivos que necesita para correr.
+    fuente: docker-container
+  - id: t-imagen-inmutable
+    frente: Una vez construida una imagen de Docker, ¿se puede modificar?
+    dorso: No. Para cambiarla se crea otra imagen o se agregan cambios encima en una capa nueva.
+    fuente: docker-image
+  - id: t-expose-no-publica
+    frente: ¿Qué hace la instrucción `EXPOSE 8080` en un Dockerfile?
+    dorso: Solo documenta el puerto; no lo publica. Para abrirlo al host hay que usar `-p` al correr.
+    fuente: dockerfile-ref
+  - id: t-stop-senal
+    frente: ¿Qué hace `docker stop` por defecto y cuánto espera antes de forzar?
+    dorso: Manda SIGTERM al proceso principal y, pasados 10 segundos, SIGKILL.
+    fuente: docker-stop
+  - id: t-rm-restart
+    frente: ¿Se pueden combinar `--rm` y `--restart` en un mismo `docker run`?
+    dorso: No, da error.
+    fuente: docker-run
+  - id: t-volumen-sobrevive
+    frente: Borrás un contenedor con `docker rm`. ¿Qué pasa con los datos que escribió en su capa de escritura y con los de un volumen?
+    dorso: Los de la capa de escritura se pierden; los del volumen siguen ahí.
+    fuente: docker-volumes
+  - id: t-restart-default
+    frente: ¿Qué política de reinicio tiene un contenedor de Docker si no indicás `--restart`?
+    dorso: "`no`: nunca se reinicia automáticamente."
+    fuente: docker-restart
+  - id: t-always-vs-unless
+    frente: Detenés a mano un contenedor y se reinicia el daemon de Docker. ¿Qué diferencia hay entre `always` y `unless-stopped`?
+    dorso: Con `always` vuelve a arrancar; con `unless-stopped` sigue detenido.
+    fuente: docker-restart
+  - id: t-restart-diez-segundos
+    frente: ¿Cuándo empieza a regir una política de reinicio de Docker sobre un contenedor?
+    dorso: Cuando ya arrancó con éxito, es decir, cuando estuvo arriba al menos 10 segundos.
+    fuente: docker-restart
+  - id: t-pod-definicion
+    frente: ¿Qué es un Pod en Kubernetes?
+    dorso: La unidad más chica que se despliega, formada por uno o más contenedores que comparten almacenamiento y red.
+    fuente: k8s-pods
+  - id: t-readiness-que-hace
+    frente: Si falla el readiness probe de un contenedor, ¿qué hace Kubernetes?
+    dorso: Saca su IP de los Services que apuntan a él, para que no reciba tráfico; no lo reinicia.
+    fuente: k8s-probes
+  - id: t-crashloop
+    frente: ¿Qué indica el estado `CrashLoopBackOff` en un Pod?
+    dorso: Que el contenedor se cae y reinicia una y otra vez, y que la espera creciente entre intentos está activa.
+    fuente: k8s-lifecycle
+
+ejercicios:
+  - id: e-unless-stopped-reinicio-daemon
+    tipo: opcion-multiple
+    enunciado: Un contenedor se creó con `--restart unless-stopped`. Lo detenés con `docker stop` y después reiniciás el servidor, así que el daemon de Docker arranca de nuevo. ¿Qué pasa?
+    opciones:
+      - texto: El contenedor vuelve a arrancar, porque el daemon reinicia todos los contenedores.
+        explicacion: Eso es lo que hace `always`. Con `unless-stopped`, un contenedor detenido a mano sigue detenido.
+      - texto: El contenedor queda detenido.
+        correcta: true
+        explicacion: "`unless-stopped` se comporta como `always`, salvo que un contenedor detenido manualmente no vuelve ni con un reinicio del daemon."
+      - texto: El contenedor pasa a `removed` automáticamente.
+        explicacion: Ninguna política de reinicio borra el contenedor; solo `--rm` lo borra al terminar, y no combina con `--restart`.
+    fuente: docker-restart
+  - id: e-espera-total-backoff
+    tipo: numerico
+    enunciado: |
+      Un contenedor en un Pod se cae al arrancar una y otra vez. El kubelet espera 10 s, 20 s, 40 s, 80 s, 160 s y así, duplicando cada vez, con un tope de 300 s. ¿Cuántos segundos de espera acumulás entre los primeros 6 reinicios?
+    respuesta: 610
+    tolerancia:
+      absoluta: 0
+    unidad: s
+    explicacion: |
+      Las esperas son 10, 20, 40, 80, 160 y la sexta sería 320, pero el tope es 300. Suma: $10+20+40+80+160+300 = 610$ s, unos 10 minutos.
+    erroresComunes:
+      - valor: 630
+        explicacion: No aplicaste el tope de 300 s a la sexta espera (usaste 320).
+      - valor: 310
+        explicacion: Sumaste solo las primeras cinco esperas y te faltó la sexta.
+    fuente: k8s-lifecycle
+  - id: e-probe-dependencia-externa
+    tipo: opcion-multiple
+    enunciado: Tu API de turnos usa una base de datos externa. Cuando la base se cae, querés que los Pods dejen de recibir tráfico, pero que Kubernetes no los reinicie en cascada. ¿Qué configurás?
+    opciones:
+      - texto: Un liveness probe que chequee la conexión a la base.
+        explicacion: Si la base cae, todos los Pods fallan el liveness y se reinician a la vez, sin arreglar nada.
+      - texto: Un liveness probe que chequee solo la app, y un readiness probe que además chequee la base.
+        correcta: true
+        explicacion: El liveness dice si la app está sana; el readiness también verifica la dependencia, y al fallar saca al Pod del tráfico sin reiniciarlo.
+      - texto: Un startup probe que chequee la base.
+        explicacion: El startup probe solo protege el arranque lento y deja de usarse una vez que tiene éxito.
+    fuente: k8s-probes
+  - id: e-vf-expose-publica
+    tipo: verdadero-falso
+    enunciado: Si el Dockerfile tiene `EXPOSE 8080`, el puerto queda accesible desde el host sin hacer nada más.
+    respuesta: false
+    justificacion: "`EXPOSE` solo documenta el puerto que usa la aplicación. Para publicarlo hay que correr el contenedor con `-p`, por ejemplo `-p 8080:8080`."
+    fuente: dockerfile-ref
+  - id: e-datos-sobreviven
+    tipo: opcion-multiple
+    enunciado: Corrés una base de datos en un contenedor y los datos están en el volumen `datos`. Hacés `docker stop` y `docker rm` del contenedor. ¿Dónde están los datos?
+    opciones:
+      - texto: Se perdieron junto con el contenedor.
+        explicacion: Eso pasa con lo que escribió en la capa de escritura del contenedor, no con lo que está en un volumen.
+      - texto: Siguen en el volumen, en el host.
+        correcta: true
+        explicacion: Los volúmenes viven en el host y sobreviven a la eliminación del contenedor; hay que borrarlos aparte.
+      - texto: Están en la imagen, que ahora tiene una capa nueva.
+        explicacion: Las imágenes son inmutables; un contenedor en ejecución no cambia la imagen.
+    fuente: docker-volumes
+
+casos:
+  - id: c-contenedor-restarting-3am
+    titulo: Son las 3:05 y el contenedor de la API no deja de reiniciarse
+    rol: Sos el de guardia de la API de turnos, que corre en un contenedor Docker.
+    contexto: |
+      Son las 3:05. Salta la alerta de que la API no responde. Entrás por SSH y ves, con `docker ps -a`, que el contenedor `turnos` figura como `Restarting`. Se desplegó la versión 1.4 a las 23:00; la 1.3 anduvo bien durante semanas y su imagen sigue en el servidor.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: El contenedor se reinicia en loop. ¿Qué hacés primero?
+        opciones:
+          - texto: Miro el log con `docker logs --tail 50 turnos`.
+            va: ver-log
+            consecuencia: El log muestra la misma línea en cada intento, justo antes de que el proceso termine con error.
+          - texto: Lo borro con `docker rm -f turnos` y lo vuelvo a crear con el mismo comando.
+            va: ver-log
+            consecuencia: Vuelve a fallar igual y además perdiste el log del contenedor anterior. Ahora tenés que mirar el del nuevo.
+          - texto: Corro `docker system prune -a -f` para limpiar el servidor y empezar de cero.
+            va: final-prune
+            consecuencia: Borrás todas las imágenes sin usar, incluida la 1.3, que era tu salida segura.
+      - id: ver-log
+        tipo: decision
+        texto: El log dice que falta la variable de entorno `DATABASE_URL`, que la versión 1.4 empezó a exigir. ¿Cómo seguís?
+        opciones:
+          - texto: Vuelvo a levantar la versión 1.3 con el mismo comando y las mismas variables de antes.
+            va: despues-rollback
+            consecuencia: La API responde en menos de un minuto con la versión anterior.
+          - texto: Invento una cadena de conexión que parezca correcta y arranco la 1.4.
+            va: final-inventada
+            consecuencia: Arranca, pero apunta a una base equivocada.
+      - id: despues-rollback
+        tipo: decision
+        texto: La API anda con la 1.3. Son las 3:20. ¿Qué dejás hecho antes de volver a dormir?
+        opciones:
+          - texto: Anoto en un ticket la causa (variable nueva no documentada) y qué hay que cambiar en el despliegue de la 1.4.
+            va: final-bien
+            consecuencia: A la mañana, el equipo corrige el despliegue con la variable correcta y reintenta con calma.
+          - texto: Nada, ya anda.
+            va: final-regular
+            consecuencia: A la mañana nadie sabe por qué se hizo un rollback y la 1.4 se vuelve a desplegar con el mismo error.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: Recuperaste el servicio en unos minutos con una imagen conocida y dejaste la causa documentada. El siguiente despliegue incluye la variable y una verificación previa.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: El servicio anda esa noche, pero la causa quedó sin registrar y el problema vuelve en el próximo despliegue.
+      - id: final-inventada
+        tipo: desenlace
+        resultado: mal
+        texto: La API responde, pero escribe en una base que no es la de producción. Descubrís el error por la mañana, con datos de turnos mal guardados.
+      - id: final-prune
+        tipo: desenlace
+        resultado: mal
+        texto: Sin la imagen 1.3 no tenés a dónde volver. Pasás la madrugada reconstruyendo una imagen anterior desde cero.
+    leccion: |
+      Un contenedor que se reinicia en loop no se arregla reiniciándolo ni limpiando el servidor: el log dice por qué muere. Y conservá la imagen anterior, que es tu forma más rápida de volver atrás.
+    fuente: docker-restart
+
+problemas:
+  - id: p-politicas-reinicio-local
+    enunciado: En una máquina con Docker, creá cuatro contenedores con un comando que salga con error a los 15 segundos (por ejemplo `sh -c "sleep 15; exit 1"`), uno por cada política (`no`, `on-failure:3`, `always`, `unless-stopped`). Mirá con `docker ps -a` cuántas veces se reinicia cada uno, y repetí con un `docker stop` a mano. Anotá qué cambia al reiniciar el servicio de Docker y compará con la tabla de la documentación.
+    fuente: docker-restart
+    ubicacion: secciones Use a restart policy y Restart policy details
+    url: https://docs.docker.com/engine/containers/start-containers-automatically/
+    dificultad: intermedio
+  - id: p-dockerfile-propio
+    enunciado: Escribí un Dockerfile para una app tuya (aunque sea un script) con FROM, WORKDIR, COPY y CMD en forma de lista. Construí la imagen, correla con `-d -p` y un volumen, borrá el contenedor y corré otro con la misma imagen y el mismo volumen. Verificá que los datos del volumen siguen ahí y explicá en dos oraciones por qué.
+    fuente: dockerfile-ref
+    ubicacion: instrucciones FROM, WORKDIR, COPY, CMD y EXPOSE
+    url: https://docs.docker.com/reference/dockerfile/
+    dificultad: basico

@@ -1,0 +1,173 @@
+tarjetas:
+  - id: t-restart-valor-defecto
+    frente: Si no escribís `Restart=` en la unidad, ¿qué hace systemd cuando el proceso muere?
+    dorso: Nada. El valor por defecto es `no`, así que el servicio queda caído.
+    fuente: systemd-service
+  - id: t-restart-stop-manual
+    frente: Con `Restart=always`, ¿systemd vuelve a levantar el servicio después de un `systemctl stop`?
+    dorso: No. Si el proceso murió por una operación de systemd (stop o restart), no hay reinicio automático.
+    fuente: systemd-service
+  - id: t-restartsec-defecto
+    frente: ¿Cuánto espera systemd entre un intento de reinicio y el siguiente si no tocaste `RestartSec=`?
+    dorso: 100 milisegundos, tan poco que un proceso que muere al instante agota el límite en menos de un segundo.
+    fuente: systemd-service
+  - id: t-start-limit-defecto
+    frente: ¿Con cuántos arranques en cuánto tiempo suele rendirse systemd, con los valores por defecto del manager?
+    dorso: Con más de 5 arranques dentro de 10 segundos, salvo que tu distribución haya cambiado esos valores.
+    fuente: systemd-system-conf
+  - id: t-reset-failed
+    frente: Una unidad llegó al límite de arranques y no te deja iniciarla. ¿Qué comando limpia el contador?
+    dorso: "`systemctl reset-failed` sobre esa unidad."
+    fuente: systemctl-man
+  - id: t-estado-d
+    frente: ¿Qué letra muestra `ps` para un proceso que espera disco y no se puede interrumpir?
+    dorso: La `D`.
+    fuente: ps-man
+  - id: t-zombi-no-se-mata
+    frente: ¿Por qué un `kill -9` no elimina un proceso zombi?
+    dorso: Porque ya terminó. Solo queda su fila en la tabla hasta que el padre haga `wait()` o muera.
+    fuente: tlpi
+  - id: t-journal-por-unidad
+    frente: Querés ver solo el log de `facturacion.service` desde el último arranque del sistema. ¿Qué flags usás con journalctl?
+    dorso: "`journalctl -u facturacion.service -b`."
+    fuente: journalctl-man
+  - id: t-journal-memoria
+    frente: Con `Storage=auto`, ¿qué le pasa al log si el directorio `/var/log/journal` no existe?
+    dorso: Queda solo en memoria y se pierde al reiniciar el servidor.
+    fuente: journald-conf
+
+ejercicios:
+  - id: e-arranques-en-ventana
+    tipo: numerico
+    enunciado: |
+      Una unidad tiene `Restart=on-failure` y `RestartSec=4` (segundos). El proceso muere al instante cada vez que arranca, así que los arranques ocurren en t = 0, 4, 8, 12 s, y así. ¿Cuál es la **mayor** cantidad de arranques que caben en cualquier ventana de 10 segundos?
+    respuesta: 3
+    tolerancia:
+      absoluta: 0
+    unidad: arranques
+    explicacion: |
+      Los arranques están separados 4 s. En una ventana de 10 s caben a lo sumo $\lceil 10/4 \rceil = 3$ (por ejemplo los de 0, 4 y 8 s). Como 3 es menor que `StartLimitBurst=5`, la unidad nunca llega a `failed`: se reinicia en loop para siempre.
+    erroresComunes:
+      - valor: 2.5
+        explicacion: Dividiste 10 por 4 sin redondear. Los arranques son enteros y el primero (en t = 0) también cuenta.
+      - valor: 5
+        explicacion: Ese es el límite por defecto, no la cantidad que ocurre con esa espera.
+    fuente: systemd-unit
+  - id: e-stop-con-restart-always
+    tipo: opcion-multiple
+    enunciado: Una unidad tiene `Restart=always`. Hacés `sudo systemctl stop facturacion.service`. ¿Qué pasa?
+    opciones:
+      - texto: systemd la vuelve a levantar a los 100 ms, porque `always` reinicia en toda circunstancia.
+        explicacion: "`always` cubre salidas limpias, fallas y timeouts del proceso, pero no una detención pedida a systemd."
+      - texto: La unidad queda detenida y no se reinicia sola.
+        correcta: true
+        explicacion: Si la muerte es resultado de una operación de systemd, como un stop, no se aplica el reinicio automático.
+      - texto: La unidad pasa a `failed`, porque el proceso fue terminado por una señal.
+        explicacion: Una detención ordenada no es una falla; el estado queda `inactive`.
+    fuente: systemd-service
+  - id: e-vf-zombi-con-kill9
+    tipo: verdadero-falso
+    enunciado: Si ves un proceso zombi (`Z`) en la tabla, alcanza con mandarle `kill -9` para sacarlo.
+    respuesta: false
+    justificacion: El zombi ya terminó; solo conserva su fila para que el padre lea el código de salida. Se va cuando el padre hace `wait()` o cuando el padre muere y `init` lo adopta. Hay que mirar al padre.
+    fuente: tlpi
+  - id: e-comando-log-unidad
+    tipo: opcion-multiple
+    enunciado: Son las 3 de la mañana y querés ver los errores que registró `facturacion.service` desde las 02:30 de hoy. ¿Qué comando usás?
+    opciones:
+      - texto: "`journalctl -u facturacion.service --since 02:30 -p err`"
+        correcta: true
+        explicacion: "`-u` filtra la unidad, `--since` acepta una hora suelta y `-p err` deja solo errores o prioridades más graves."
+      - texto: "`systemctl status facturacion.service`"
+        explicacion: Muestra el estado y apenas las últimas líneas; no filtra por hora ni por prioridad.
+      - texto: "`journalctl -f`"
+        explicacion: Sigue el log en vivo de todo el sistema; no te muestra lo que ya pasó a las 02:30.
+    fuente: journalctl-man
+
+casos:
+  - id: c-facturacion-failed-viernes
+    titulo: La unidad de facturación quedó en failed
+    rol: Sos el de guardia de la sucursal un viernes a la noche.
+    contexto: |
+      Son las 19:40. Hace nueve minutos alguien editó `/etc/facturacion/app.conf`. Ahora nadie puede emitir facturas. `systemctl status facturacion` muestra la unidad en `failed` con resultado `start-limit-hit`. Nadie la detuvo a mano.
+    inicio: primer-vistazo
+    nodos:
+      - id: primer-vistazo
+        tipo: decision
+        texto: Estás frente a la terminal y la unidad está en failed. ¿Qué hacés primero?
+        opciones:
+          - texto: Leo el log de la unidad de este arranque con `journalctl -u facturacion -b -n 50`.
+            va: leer-log
+            consecuencia: Las últimas líneas dicen que el proceso salió con error por una coma de más en la línea 14 de app.conf, una y otra vez.
+          - texto: Hago `systemctl restart facturacion` a ver si se arregla solo.
+            va: restart-ciego
+            consecuencia: No arranca, o arranca y muere de inmediato. No cambiaste la causa, solo repetís el síntoma.
+          - texto: Reinicio todo el servidor, que con eso se acomoda.
+            va: final-reinicio
+            consecuencia: El servidor tarda cuatro minutos en volver, cortás las sesiones de los demás servicios y el servicio sigue en failed.
+      - id: restart-ciego
+        tipo: decision
+        texto: El restart no sirvió. Perdiste dos minutos y los reclamos suben. ¿Y ahora?
+        opciones:
+          - texto: Ahora sí miro el log de la unidad para ver por qué muere.
+            va: leer-log
+            consecuencia: Encontrás la misma línea de error en la configuración. Conviene haber empezado por acá.
+          - texto: Subo `StartLimitBurst` a 100 para que systemd no se rinda.
+            va: final-limite-alto
+            consecuencia: La unidad ya no queda en failed, pero ahora se reinicia en loop sin parar y llena el log.
+      - id: leer-log
+        tipo: decision
+        texto: Ya sabés que el problema es una coma de más en `app.conf`. ¿Cómo lo corregís?
+        opciones:
+          - texto: Comparo con la copia del archivo que está en el repositorio, corrijo la coma y guardo.
+            va: despues-de-corregir
+            consecuencia: El diff muestra una sola diferencia, la coma. Corregida, el archivo vuelve a ser válido.
+          - texto: Borro la línea 14 entera, sin mirar qué había.
+            va: final-linea-borrada
+            consecuencia: El servicio arranca, pero a los diez minutos falla la facturación electrónica porque faltaba un parámetro.
+      - id: despues-de-corregir
+        tipo: decision
+        texto: El archivo está bien, pero la unidad sigue en failed por haber pasado el límite de arranques. ¿Cómo la levantás?
+        opciones:
+          - texto: "`systemctl reset-failed facturacion`, después `systemctl start facturacion` y verifico con `status` y con el log."
+            va: final-bien
+            consecuencia: La unidad pasa a active y el log muestra el arranque limpio.
+          - texto: Dejo `Restart=no` para que no se vuelva a rendir y listo.
+            va: final-sin-restart
+            consecuencia: Arranca, pero ahora si el proceso se cae una noche nadie lo levanta.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: A las 19:52 se factura de nuevo. Dejás anotada la causa y pedís que los cambios de configuración se validen antes de reiniciar el servicio.
+      - id: final-limite-alto
+        tipo: desenlace
+        resultado: regular
+        texto: Taparon la señal en lugar de la causa. El servicio sigue sin andar y ahora además genera miles de líneas de log por minuto.
+      - id: final-sin-restart
+        tipo: desenlace
+        resultado: regular
+        texto: Se facturó el viernes, pero quitaste la red de seguridad. Lo vas a pagar la próxima vez que el proceso muera de madrugada.
+      - id: final-linea-borrada
+        tipo: desenlace
+        resultado: mal
+        texto: Arreglaste el síntoma sin entender la causa y rompiste otra cosa. Terminás la noche restaurando el archivo desde el repositorio.
+      - id: final-reinicio
+        tipo: desenlace
+        resultado: mal
+        texto: Reiniciaste todo sin leer el log. Perdiste evidencia en memoria, cortaste otros servicios y la causa sigue intacta.
+    leccion: |
+      Ante un servicio en failed, el log de la unidad dice el porqué y es lo primero que se lee. Reiniciar sin entender la causa solo repite el síntoma, y subir el límite de arranques tapa la alarma.
+    fuente: journalctl-man
+
+problemas:
+  - id: p-restart-en-vm
+    enunciado: En una VM o un contenedor de pruebas (nunca en producción), armá una unidad cuyo `ExecStart` sea un script que hace `exit 1` enseguida. Probá `Restart=no`, `Restart=on-failure` con `RestartSec` por defecto y con `RestartSec=4`. Anotá, con `journalctl -u`, cuántos arranques ves en 30 segundos y en cuál caso aparece `start-limit-hit`.
+    fuente: systemd-service
+    ubicacion: opciones Restart= y RestartSec=, y tabla de Result
+    url: https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+    dificultad: intermedio
+  - id: p-kerrisk-zombi
+    enunciado: Leé la sección sobre huérfanos y zombis, compilá el programa de ejemplo que crea un zombi y mirá su estado con `ps`. Después matá al proceso padre y comprobá qué pasa con el zombi. Escribí en dos oraciones por qué `SIGKILL` no lo elimina.
+    fuente: tlpi
+    ubicacion: cap. 26, §26.2 (Orphans and Zombies), ejemplo 26-4
+    dificultad: intermedio
