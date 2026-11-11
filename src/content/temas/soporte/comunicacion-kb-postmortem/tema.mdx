@@ -1,0 +1,209 @@
+---
+titulo: "Comunicación con el usuario, base de conocimiento y post-mortem sin culpables"
+area: soporte
+orden: 4
+resumen: Cómo hablarle a un usuario enojado durante una caída, cómo convertir cada ticket resuelto en conocimiento reutilizable y cómo escribir un post-mortem que enseñe sin buscar culpables.
+materias:
+  - carrera: ing-informatica
+    codigo: "3650"
+    nombre: Seguridad de la Información
+  - carrera: ing-informatica
+    codigo: "3667"
+    nombre: Gestión de la Calidad en Procesos de Sistemas
+  - carrera: lic-gestion-tecnologia
+    codigo: "1321"
+    nombre: Gestión del Conocimiento
+prerrequisitos:
+  - soporte/itil-incidente-problema-cambio
+  - soporte/prioridad-y-sla
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: google-sre-incidentes
+    tipo: libro
+    autor: Andrew Stribblehill (en Beyer et al., eds.)
+    titulo: Site Reliability Engineering. How Google Runs Production Systems
+    edicion: 1.ª ed., 2016
+    editorial: O'Reilly Media
+    ubicacion: cap. 14, "Managing Incidents"
+    url: https://sre.google/sre-book/managing-incidents/
+  - id: google-sre-postmortem
+    tipo: libro
+    autor: John Lunney y Sue Lueder (en Beyer et al., eds.)
+    titulo: Site Reliability Engineering. How Google Runs Production Systems
+    edicion: 1.ª ed., 2016
+    editorial: O'Reilly Media
+    ubicacion: "cap. 15, \"Postmortem Culture: Learning from Failure\""
+    url: https://sre.google/sre-book/postmortem-culture/
+  - id: google-sre-workbook-pm
+    tipo: libro
+    autor: Daniel Rogers, Murali Suriar, Sue Lueder, Pranjal Deo y Divya Sudhakar, con Gary O'Connor y Dave Rensin
+    titulo: The Site Reliability Workbook. Practical Ways to Implement SRE
+    edicion: 1.ª ed., 2018
+    editorial: O'Reilly Media
+    ubicacion: "cap. 10, \"Postmortem Culture: Learning from Failure\""
+    url: https://sre.google/workbook/postmortem-culture/
+  - id: pagerduty-postmortem
+    tipo: doc-oficial
+    autor: PagerDuty
+    titulo: Incident Response Guide, Postmortem Process
+    url: https://response.pagerduty.com/after/post_mortem_process/
+    ubicacion: secciones "Owner Responsibilities" y "Postmortem"
+  - id: pagerduty-durante
+    tipo: doc-oficial
+    autor: PagerDuty
+    titulo: Incident Response Guide, During an Incident
+    url: https://response.pagerduty.com/during/during_an_incident/
+    ubicacion: "Steps for Incident Commander"
+  - id: atlassian-comunicacion
+    tipo: doc-oficial
+    autor: Atlassian
+    titulo: Incident Communication Best Practices & Channels
+    url: https://www.atlassian.com/incident-management/incident-communication
+    ubicacion: secciones "Why incident communication matters" y "Prepping for incident communication"
+  - id: kcs-v6
+    tipo: doc-oficial
+    autor: Consortium for Service Innovation
+    titulo: KCS v6 Practices Guide, The Solve Loop
+    url: https://library.serviceinnovation.org/KCS/KCS_v6/KCS_v6_Practices_Guide/030/030
+    edicion: v6
+    ubicacion: "Prácticas 1 a 4 (Capture, Structure, Reuse, Improve)"
+  - id: atlassian-conocimiento
+    tipo: doc-oficial
+    autor: Atlassian
+    titulo: "Knowledge Management in ITSM: Process & Benefits"
+    url: https://www.atlassian.com/itsm/knowledge-management
+    ubicacion: secciones "Knowledge management in IT", "The knowledge management process in IT" y autoservicio
+  - id: peoplecert-glosario
+    tipo: doc-oficial
+    autor: PeopleCert
+    titulo: PeopleCert DevOps Fundamentals, Syllabus (glosario con definiciones tomadas de ITIL Foundation, ITIL 4 Edition, AXELOS/TSO 2019)
+    url: https://www.peoplecert.org/-/media/peoplecert/images/landing-pages/devops-launch-indian/peoplecert-devops-fundamentals.pdf
+    edicion: v01.0, septiembre 2019
+    ubicacion: "§8 Glossary, p. 15 (Knowledge Management)"
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="40 reseteos de clave por semana, una usuaria furiosa y una caída sin informe">
+
+Jueves, 11:30. En lo que va de la semana atendiste 40 tickets de "me olvidé la contraseña". Cada uno te lleva unos 6 minutos y a cada persona le explicás exactamente lo mismo (números ilustrativos). Son cuatro horas por semana de repetir una receta.
+
+Mientras tanto, la jefa de ventas lleva tres horas sin poder mandar adjuntos por mail. Ya escribió tres veces; el último mensaje dice "NADIE ME CONTESTA", así, en mayúsculas. Vos sabés que hay una degradación del servidor de correo y que infraestructura está trabajando, pero no sabés cuándo se arregla.
+
+Para peor, el martes se cayó el correo dos horas y tu jefe pidió un informe que diga "quién fue". Nadie quiere escribirlo.
+
+Son tres problemas distintos: cómo hablarle a quien espera, cómo no explicar lo mismo cuarenta veces y cómo aprender de una caída sin armar un tribunal.
+
+</CasoReal>
+
+<Intuicion>
+
+La idea en una oración: **lo que más enoja no es que algo se rompa, sino no saber qué pasa, y lo que más cansa es resolver otra vez lo que alguien ya resolvió**.
+
+<Analogia titulo="El vuelo demorado">
+
+En un aeropuerto, un vuelo demorado dos horas con un cartel que dice "próximo aviso a las 18:00" genera mucha menos bronca que una demora de una hora sin ninguna información. La gente tolera la espera; lo que no tolera es el silencio. Quien está en la sala quiere saber tres cosas: qué pasa, qué se está haciendo y cuándo va a tener noticias.
+
+Con un usuario enojado por una caída pasa igual: el enojo suele ser falta de información.
+
+</Analogia>
+
+<Analogia titulo="La investigación de un accidente aéreo">
+
+Cuando se cae un avión, la investigación no busca al piloto para castigarlo: lee la caja negra, reconstruye la cadena de decisiones y se pregunta qué en el sistema (la capacitación, los instrumentos, los procedimientos) permitió que una persona razonable llegara ahí. Después los cambios se aplican a todos los aviones. Si el piloto temiera un castigo, el siguiente ocultaría el error, y el sistema nunca aprendería.
+
+Un post-mortem sin culpables funciona igual con una caída del correo.
+
+</Analogia>
+
+Ahora probá cuánto te ahorra una base de conocimiento (*knowledge base*, KB):
+
+<SimFlujo
+  consigna="Activá la base de conocimiento y subí el '% resuelto con KB' hasta 40 %. Mirá cómo cambia la espera media con el mismo equipo. Después volvé a 0 % y subí la llegada de tickets: ¿qué pasa con 'en cola'?"
+  modo="cola"
+  etiquetas="tickets"
+  kb={true}
+/>
+
+Lo que tenés que notar: con el mismo equipo y los mismos tickets, cada ticket que se resuelve solo con un artículo deja de ocupar tiempo de un técnico, y la espera baja para todos, incluso para los casos difíciles.
+
+<Ojo>
+
+Una base de conocimiento vieja es peor que ninguna: sugiere soluciones que ya no funcionan. Por eso la práctica incluye revisar cada artículo cada vez que se usa.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Comunicar durante un incidente
+
+El libro de SRE de Google cuenta cómo un incidente se desarma cuando quien lo atiende está absorbido por lo técnico: nadie sabe qué hace cada uno y los directivos y usuarios quedan sin información<Cita f="google-sre-incidentes" loc="Anatomy of an Unmanaged Incident" />. Por eso separan roles: quien opera el sistema es el único que lo modifica, y otra persona se encarga de la comunicación, que incluye actualizaciones periódicas a los involucrados<Cita f="google-sre-incidentes" loc="Recursive Separation of Responsibilities" />. En un equipo chico, si no podés separar roles, al menos reservá un momento fijo para comunicar.
+
+Atlassian recomienda lo siguiente para los incidentes que siguen afectando a usuarios<Cita f="atlassian-comunicacion" loc="Tailor alerts and communications to the right audience" />:
+
+- Pensar en cinco públicos: el equipo que responde, el soporte de primera línea, los directivos, el resto de los empleados y los clientes externos.
+- No pasar más de una hora sin una actualización, y **decir siempre cuándo será la siguiente**.
+- Preparar plantillas de antemano, para no redactar bajo presión.
+
+Mantener informados a los usuarios reduce mucho la reacción negativa<Cita f="atlassian-comunicacion" loc="Why incident communication matters" />. Y en los mensajes externos, la guía de PagerDuty sugiere evitar la palabra "caída total" (*outage*) cuando no lo fue y hablar de incidente o degradación del servicio<Cita f="pagerduty-postmortem" loc="Postmortem" />. Ante la duda sobre avisar públicamente, la regla de esa misma guía es avisar<Cita f="pagerduty-durante" loc="Steps for Incident Commander" />. Son reglas de empresas concretas, no normas.
+
+Una plantilla ilustrativa, armada con esos elementos (qué pasa, qué se hace, cuándo hay novedades):
+
+```text
+Asunto: [Actualización 2] Correo lento para toda la oficina
+Estado: investigando
+Qué sabemos: desde las 9:40 el correo tarda en enviar y recibir. El resto de los sistemas anda.
+Qué estamos haciendo: infraestructura revisa el servidor de correo.
+Qué podés hacer mientras: para algo urgente, escribinos por chat o llamá al interno 120.
+Próxima actualización: 10:45, o antes si hay novedades.
+```
+
+### Base de conocimiento
+
+ITIL 4 incluye la práctica de gestión del conocimiento (*knowledge management*): mantener y mejorar el uso eficaz, eficiente y cómodo de la información y el conocimiento de la organización<Cita f="peoplecert-glosario" loc="§8, p. 15" />. En la mesa de ayuda, lo más valioso para documentar son los incidentes comunes que generan muchos tickets y los problemas recurrentes que siempre piden los mismos pasos<Cita f="atlassian-conocimiento" loc="The knowledge management process in IT" />.
+
+La metodología KCS (*Knowledge-Centered Service*) del Consortium for Service Innovation propone cuatro prácticas en el ciclo de resolución de cada pedido<Cita f="kcs-v6" loc="Practices 1 to 4" />:
+
+1. **Capturar** (*capture*) el conocimiento mientras resolvés, con las palabras que usó el usuario.
+2. **Estructurar** (*structure*) con una plantilla simple, para que el artículo se lea rápido.
+3. **Reutilizar** (*reuse*): buscar en la base al empezar y durante el ticket, así no resolvés dos veces lo mismo.
+4. **Mejorar** (*improve*): quien usa un artículo lo revisa. Si algo está mal, lo corrige (si tiene permiso) o lo marca para que alguien lo corrija.
+
+Un artículo mínimo para el caso del reseteo (los datos son ilustrativos):
+
+```markdown
+## No puedo ingresar: me dice "usuario o contraseña incorrectos"
+**Síntoma (con palabras del usuario):** "me sale usuario o clave incorrectos"
+**Entorno:** correo corporativo, desde la oficina o desde casa
+**Causa:** contraseña vencida (en este ejemplo, vence cada 90 días)
+**Solución:** entrar al portal de autoservicio, elegir "Olvidé mi contraseña" y seguir los pasos
+**Si no funciona:** abrir ticket indicando el usuario y el mensaje exacto
+**Última revisión:** 2026-11-11
+```
+
+Cuando los usuarios pueden resolver esto solos en un portal de autoservicio, los tickets se desvían antes de llegar a la cola<Cita f="atlassian-conocimiento" loc="Knowledge sharing and distribution" />.
+
+### Post-mortem sin culpables
+
+Un post-mortem (*postmortem*) es un registro escrito de un incidente: su impacto, lo que se hizo para mitigarlo o resolverlo, las causas raíz y las acciones para que no se repita<Cita f="google-sre-postmortem" loc="Introducción" />. Sus objetivos son documentar el incidente, entender todas las causas que contribuyeron y, sobre todo, dejar acciones preventivas efectivas<Cita f="google-sre-postmortem" loc="Google's Postmortem Philosophy" />. Conviene definir de antemano cuándo corresponde escribir uno (por ejemplo, ante una caída visible para los usuarios por encima de cierto umbral, pérdida de datos, o una intervención de emergencia de quien está de guardia)<Cita f="google-sre-postmortem" loc="Google's Postmortem Philosophy" />.
+
+**Sin culpables** (*blameless*) significa buscar las causas que contribuyeron sin acusar a nadie, asumiendo que todos tenían buenas intenciones y decidieron lo mejor con la información que tenían. La razón es práctica: no se puede "arreglar" a las personas, pero sí los sistemas y procesos que las ayudan a decidir bien<Cita f="google-sre-postmortem" loc="Google's Postmortem Philosophy" />. Esta cultura nació en la salud y la aviación, industrias donde un error puede ser fatal<Cita f="google-sre-postmortem" loc="Google's Postmortem Philosophy" />. En una cultura de castigo, la gente deja de avisar los problemas por miedo<Cita f="google-sre-postmortem" loc="Best Practice: Avoid Blame and Keep It Constructive" />.
+
+El *Workbook* de SRE agrega criterios para que el documento sirva<Cita f="google-sre-workbook-pm" loc="Bad Postmortem y Good Postmortem" />:
+
+- Se pregunta qué falló, no quién, y las acciones apuntan a mejorar el sistema, no a las personas.
+- Cada acción tiene un responsable, una prioridad y un estado final verificable. Frases como "mejorar" o "tener más cuidado" no sirven.
+- El texto evita el lenguaje cargado de emoción y se apoya en datos.
+- Se publica rápido, mientras los detalles están frescos, y se comparte con la mayor cantidad posible de gente.
+
+PagerDuty agrega un detalle de organización: un único responsable del post-mortem, con la línea de tiempo como primera tarea<Cita f="pagerduty-postmortem" loc="Owner Responsibilities" />. Blameless no quiere decir sin nombres de roles: se anotan quiénes respondieron y con qué función, pero sin juzgarlos.
+
+| Con culpable | Sin culpable |
+|---|---|
+| "Martín aplicó un cambio sin autorización." | "El cambio se aplicó fuera de ventana porque no había una revisión previa obligatoria para esa configuración." |
+| "Hay que capacitar mejor al equipo." | "Agregar un chequeo de pares antes de aplicar cambios en el antispam (responsable y fecha)." |
+| "La alerta tardó porque nadie miraba el panel." | "La alerta de falla de entrega saltaba recién a los 25 minutos; bajarla a 5." |
+
+</Formal>

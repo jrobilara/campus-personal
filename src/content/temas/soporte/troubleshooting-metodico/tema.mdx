@@ -1,0 +1,169 @@
+---
+titulo: "Troubleshooting metódico: capas OSI y dividir para encontrar"
+area: soporte
+orden: 2
+resumen: Un método para encontrar fallas sin probar cosas al azar, usando las capas de red para ordenar la búsqueda y la bisección para achicar el campo a la mitad en cada prueba.
+materias:
+  - carrera: ing-informatica
+    codigo: "3643"
+    nombre: Redes de Computadoras
+  - carrera: ing-informatica
+    codigo: "3649"
+    nombre: Sistemas Operativos
+prerrequisitos: []
+nivel: basico
+minutos: 10
+fuentes:
+  - id: google-sre-troubleshooting
+    tipo: libro
+    autor: Chris Jones (en Beyer, Jones, Petoff y Murphy, eds.)
+    titulo: Site Reliability Engineering. How Google Runs Production Systems
+    edicion: 1.ª ed., 2016
+    editorial: O'Reilly Media
+    ubicacion: cap. 12, "Effective Troubleshooting"
+    url: https://sre.google/sre-book/effective-troubleshooting/
+  - id: itu-x200
+    tipo: doc-oficial
+    autor: ITU-T / ISO-IEC
+    titulo: "Recomendación X.200, Modelo de referencia de interconexión de sistemas abiertos (texto idéntico a ISO/IEC 7498-1:1994)"
+    url: https://www.itu.int/rec/T-REC-X.200-199407-I/en
+    edicion: 07/1994
+    ubicacion: "§6.1.2 (las siete capas) y §7.4.2, §7.5.2, §7.6.2, §7.7.2 (propósito de cada capa inferior)"
+  - id: rfc1122
+    tipo: doc-oficial
+    autor: IETF (R. Braden, ed.)
+    titulo: "RFC 1122, Requirements for Internet Hosts. Communication Layers"
+    url: https://www.rfc-editor.org/rfc/rfc1122
+    edicion: octubre 1989
+    ubicacion: "§1.1.3, Internet Protocol Suite"
+  - id: ciscopress-tshoot
+    tipo: libro
+    autor: Amir Ranjbar
+    titulo: Troubleshooting and Maintaining Cisco IP Networks (TSHOOT) Foundation Learning Guide
+    edicion: Cisco Press, 2015
+    editorial: Cisco Press
+    ubicacion: "cap. 1, sección \"Structured Troubleshooting Approaches\" (capítulo de muestra gratuito)"
+    url: https://www.ciscopress.com/articles/article.asp?p=2273070&seqNum=2
+  - id: ping-man
+    tipo: doc-oficial
+    autor: Proyecto iputils
+    titulo: ping(8), página de manual
+    url: https://manpages.ubuntu.com/manpages/noble/man8/ping.8.html
+    edicion: iputils 20240117 (Ubuntu 24.04)
+    ubicacion: secciones DESCRIPTION y OPTIONS (-c, -W)
+  - id: dig-man
+    tipo: doc-oficial
+    autor: ISC (BIND 9)
+    titulo: dig(1), página de manual
+    url: https://manpages.ubuntu.com/manpages/noble/man1/dig.1.html
+    edicion: Ubuntu 24.04
+    ubicacion: secciones DESCRIPTION y +short
+  - id: iproute2-route
+    tipo: doc-oficial
+    autor: Linux man-pages project
+    titulo: ip-route(8) e ip-address(8), páginas de manual
+    url: https://man7.org/linux/man-pages/man8/ip-route.8.html
+    ubicacion: "ip route show; ip address show"
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="'No anda internet' en una oficina de 30 puestos, y todos te escriben a la vez">
+
+Lunes, 8:45. En cinco minutos entran once tickets con el mismo título: "no anda internet". La oficina tiene 30 puestos, un switch en el rack y un router que puso el proveedor. Sos el único técnico.
+
+El instinto es ir corriendo a reiniciar el router. A veces funciona, y justamente por eso es peligroso: si funciona, no sabés por qué, y si no funciona, ya perdiste diez minutos y lo que había en memoria.
+
+Además, "no anda internet" no dice mucho. Puede ser que no carguen las páginas pero el sistema interno ande, o que no haya red de ningún tipo, o que ande el correo y no el navegador. Un cable flojo, un switch colgado, el DNS o el proveedor producen el mismo reclamo y se arreglan de maneras distintas. ¿Por dónde empezás para no andar probando a ciegas?
+
+</CasoReal>
+
+<Intuicion>
+
+La idea en una oración: **cada prueba tiene que descartar un montón de causas a la vez**, y para eso hace falta un orden y un criterio de dónde cortar.
+
+<Analogia titulo="El mecánico y el auto que no arranca">
+
+Un buen mecánico no desarma el motor apenas llegás. Primero gira la llave y mira el tablero: ¿se prenden las luces? ¿hay nafta? ¿la batería da señal? Va de lo simple y probable a lo complejo, y cada respuesta le tacha media lista de sospechas. Si las luces están apagadas, ni se molesta en revisar el motor de arranque, porque ya sabe que el problema está antes.
+
+Las capas de red funcionan igual: si el cable no tiene enlace, es inútil revisar el DNS.
+
+</Analogia>
+
+<Analogia titulo="La tira de luces de Navidad">
+
+Una bombita quemada apaga toda la tira, porque están en serie. No probás una por una desde el enchufe: enchufás la mitad de la tira y mirás si prende. Si prende, la falla está en la otra mitad; si no, en esta. Repetís con la mitad que sospechás. Con 64 bombitas, en 6 pruebas la encontrás.
+
+</Analogia>
+
+Ahora hacelo vos sobre una red de oficina:
+
+<SimGrafo
+  consigna="Hay una falla escondida en algún tramo entre la PC y el servidor. Probá siempre en la mitad del tramo que te queda sospechoso y compará tus pruebas con el mínimo teórico. ¿Qué pasa si probás de a un tramo desde el principio?"
+  grafo="cadena-red"
+  modo="buscar-falla"
+/>
+
+Lo que tenés que notar: cuando probás en la mitad, la cantidad de tramos sospechosos se parte por dos en cada intento. Probar de un extremo al otro es más lento y el número de pruebas crece con la longitud de la cadena.
+
+<Ojo>
+
+La bisección supone una sola falla y una prueba que sea confiable ("¿llega la señal hasta acá?"). Con fallas intermitentes o dos fallas a la vez, la cuenta deja de valer: en el simulador la falla está siempre, y en la vida real a veces aparece y desaparece.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### El método
+
+El libro de SRE de Google plantea el diagnóstico como una aplicación del método hipotético-deductivo: con lo que observás del sistema y lo que sabés de cómo funciona, proponés causas posibles y las ponés a prueba, una y otra vez, hasta dar con la raíz<Cita f="google-sre-troubleshooting" loc="Theory" />. Los pasos prácticos son:
+
+1. **Reporte del problema.** Un buen reporte dice qué se esperaba, qué ocurrió y, si se puede, cómo reproducirlo. Conviene registrar todo en un ticket, incluso lo que llega por chat<Cita f="google-sre-troubleshooting" loc="Problem Report" />.
+2. **Triage.** Ajustá la respuesta al impacto, y en una caída grande lo primero es que el sistema funcione como pueda (detener la hemorragia), preservando evidencia como los logs para analizar después<Cita f="google-sre-troubleshooting" loc="Triage" />.
+3. **Examinar y diagnosticar.** Mirá métricas y logs, simplificá el problema y reducí el área sospechosa. Una pregunta muy productiva es qué se tocó por última vez: los sistemas estables suelen romperse por un cambio de configuración o de carga<Cita f="google-sre-troubleshooting" loc="Diagnose, What touched it last" />.
+4. **Probar y tratar.** Probá primero lo más probable y de menor riesgo, tené cuidado con factores que confunden el resultado y anotá qué ideas tuviste y qué resultó<Cita f="google-sre-troubleshooting" loc="Test and Treat" />.
+
+El libro también lista trampas: mirar síntomas irrelevantes, proponer teorías muy improbables y confundir correlación con causalidad. A los médicos les enseñan que, si oyen cascos, piensen en caballos antes que en cebras<Cita f="google-sre-troubleshooting" loc="Common Pitfalls" />. Un ejemplo de factor que confunde: si una regla de firewall solo deja pasar a ciertas IP, tu ping al servidor puede fallar aunque desde el servidor de aplicación funcione<Cita f="google-sre-troubleshooting" loc="Test and Treat" />.
+
+Para ubicar la zona del problema, el libro propone recorrer el sistema de un extremo al otro, o bien, en sistemas muy grandes, partirlo por la mitad y examinar las comunicaciones de un lado y del otro (bisección), repitiendo con la mitad sospechosa<Cita f="google-sre-troubleshooting" loc="Simplify and reduce" />. Con $n$ tramos y una sola falla, probando siempre en el medio alcanzan como máximo $\lceil \log_2 n \rceil$ pruebas. Con 8 tramos son 3 y con 50 tramos, 6.
+
+### El modelo de capas
+
+El modelo de referencia OSI (*Open Systems Interconnection*) divide la comunicación en siete capas, numeradas de 7 (aplicación) a 1 (física)<Cita f="itu-x200" loc="§6.1.2" />. La Recomendación X.200 de la UIT es el mismo texto que la norma ISO/IEC 7498-1. Para diagnosticar, interesan sobre todo las cuatro de abajo:
+
+| Capa | Qué hace, según X.200 | Qué mirás en la oficina |
+|---|---|---|
+| 1, física | Activa, mantiene y desactiva las conexiones físicas para transmitir bits<Cita f="itu-x200" loc="§7.7.2" /> | Cable, ficha, luz del puerto, placa de red |
+| 2, enlace de datos | Ofrece conexiones de enlace de datos y detecta (y puede corregir) los errores que ocurran en la capa física<Cita f="itu-x200" loc="§7.6.2" /> | Switch, dirección MAC |
+| 3, red | Aísla a las capas de arriba de los detalles de ruteo y relevo entre redes<Cita f="itu-x200" loc="§7.5.2" /> | Dirección IP, gateway, router |
+| 4, transporte | Da transferencia de datos transparente y confiable de punta a punta<Cita f="itu-x200" loc="§7.4.2" /> | TCP, UDP, puertos, firewall |
+| 5 a 7 | Sesión, presentación y aplicación | Navegador, correo, DNS |
+
+Internet funciona sobre TCP/IP, que tiene otra división: enlace, internet, transporte y aplicación. Su capa de aplicación junta lo que OSI separa en presentación y aplicación, y ahí viven protocolos como SMTP o DNS<Cita f="rfc1122" loc="§1.1.3" />. Por eso OSI sirve como mapa para ordenar la búsqueda, no como descripción exacta de cada protocolo.
+
+### Tres maneras de recorrer las capas
+
+Cada capa depende de las de abajo, así que si una capa funciona, se puede suponer que las inferiores también<Cita f="ciscopress-tshoot" loc="The Top-Down Troubleshooting Approach" />. De ahí salen tres estrategias<Cita f="ciscopress-tshoot" loc="Structured Troubleshooting Approaches" />:
+
+- **De arriba hacia abajo** (*top-down*): arrancás por la aplicación y buscás la capa más alta que todavía funciona. Es natural porque el usuario reporta síntomas de aplicación, pero necesitás acceso a su software.
+- **De abajo hacia arriba** (*bottom-up*): arrancás por el cable y subís. Rinde con hardware viejo, pero en redes grandes lleva mucho tiempo.
+- **Dividir y conquistar** (*divide and conquer*): arrancás en el medio, normalmente la capa de red, con `ping`. Si responde, las capas de abajo andan y subís; si no, bajás.
+
+El propio libro advierte que esas conclusiones son razonables pero no prueban todo: una conexión TCP que anda no garantiza, por ejemplo, que los paquetes fragmentados pasen<Cita f="ciscopress-tshoot" loc="The Top-Down Troubleshooting Approach" />.
+
+### Comandos para la oficina
+
+El manual de `ping` recomienda justamente usarlo para aislar fallas desde cerca hacia lejos: primero en la máquina local, para verificar que la interfaz de red esté activa, y después contra equipos y gateways cada vez más lejanos<Cita f="ping-man" loc="OPTIONS, -W" />. `ping` manda mensajes ICMP `ECHO_REQUEST` y espera un `ECHO_REPLY`<Cita f="ping-man" loc="DESCRIPTION" />.
+
+```bash
+ip address show             # ¿la interfaz tiene dirección IP?
+ip route show               # ¿hay una ruta por defecto (gateway)?
+ping -c 3 192.168.1.1       # ¿llego al gateway? (supongamos que ese es el de tu oficina)
+ping -c 3 1.1.1.1           # ¿llego a Internet por IP? Esto descarta al DNS
+dig +short ejemplo.com      # ¿se resuelven los nombres?
+```
+
+`ip route show` lista la tabla de rutas<Cita f="iproute2-route" loc="ip-route(8), ip route show" /> y `dig` consulta servidores DNS, empezando por los de `/etc/resolv.conf`<Cita f="dig-man" loc="DESCRIPTION" />. Si responde el ping a una IP pública pero falla el de un nombre, las capas bajas andan y la sospecha pasa a la resolución de nombres.
+
+</Formal>
