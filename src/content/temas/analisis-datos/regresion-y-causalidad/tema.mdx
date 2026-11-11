@@ -1,0 +1,138 @@
+---
+titulo: "Regresión lineal y correlación no es causalidad"
+area: analisis-datos
+orden: 4
+resumen: Cómo ajustar una recta a dos variables, qué dicen realmente la correlación y el R², y por qué dos cosas que suben juntas no prueban que una cause la otra.
+materias:
+  - carrera: ing-informatica
+    codigo: "3670"
+    nombre: Ciencia de Datos
+  - carrera: ing-informatica
+    codigo: "3651"
+    nombre: Probabilidad y Estadística
+  - carrera: ing-informatica
+    codigo: "3656"
+    nombre: Estadística Aplicada
+prerrequisitos:
+  - analisis-datos/limpieza-y-eda
+nivel: intermedio
+minutos: 25
+fuentes:
+  - id: openintro
+    tipo: libro
+    autor: David Diez, Christopher Barr y Mine Çetinkaya-Rundel
+    titulo: OpenIntro Statistics
+    edicion: 4.ª ed. (versión abierta en LibreTexts, CC BY-SA)
+    ubicacion: cap. 1, §1.3 y §1.4; cap. 8, §8.1 a §8.3
+    url: https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Introduction_to_Statistics_4e_(Diez_et_al.)/08%3A_Introduction_to_Linear_Regression
+  - id: emc-ds
+    tipo: libro
+    autor: EMC Education Services
+    titulo: "Data Science and Big Data Analytics: Discovering, Analyzing, Visualizing and Presenting Data"
+    edicion: Wiley, 2015
+    editorial: John Wiley & Sons
+    ubicacion: cap. 3, §3.2.1, pp. 82-84; cap. 6, §6.1 (pp. 163-165 y 173-175) y §6.4 (p. 188)
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="Cuando sube la VPN suben los incidentes: ¿la cortamos?">
+
+Martes, 10:15. Armaste un gráfico con noventa días de datos: en el eje horizontal, el máximo de sesiones simultáneas de la VPN de cada día; en el vertical, los incidentes abiertos ese día. Los puntos suben en diagonal y el coeficiente de correlación da cerca de 0,8.
+
+En la reunión de seguridad alguien mira el gráfico y dice lo obvio: "La VPN genera incidentes. Si la cortamos, bajan". Del otro lado, el jefe de infraestructura pregunta cuántas personas dejarían de trabajar.
+
+Tenés el número, tenés la recta y tenés un gráfico que parece contundente. ¿Alcanza con eso para decidir? ¿Y qué otra cosa podría estar subiendo, en esos mismos días, junto con las dos?
+
+</CasoReal>
+
+<Intuicion>
+
+Una recta de regresión (*regression line*) resume cómo cambia una variable cuando cambia otra. Sirve para describir y para predecir dentro de los datos que tenés. Lo que no hace es explicar por qué se mueven juntas<Cita f="openintro" loc="§1.3, §8.2" />.
+
+<Analogia titulo="Los bomberos y los incendios">
+
+Mirá estadísticas de incendios: cuantos más bomberos llegan, más daño hay. ¿Los bomberos causan el daño? No: el tamaño del incendio manda a más bomberos y, a la vez, produce más daño. El tamaño del incendio es la tercera variable que explica las otras dos. Con la VPN y los incidentes puede pasar lo mismo, con "cantidad de gente conectada" haciendo de incendio.
+
+</Analogia>
+
+Primero, para qué sirve mirar los datos antes de confiar en la recta.
+
+<SimDatos
+  consigna="Pasá por los cuatro conjuntos del cuarteto de Anscombe y mirá r y la recta de cada uno. ¿Qué tienen igual, y qué te muestra el gráfico que los números esconden?"
+  dataset="anscombe"
+  vistas={["dispersion"]}
+  regresion
+/>
+
+Los cuatro conjuntos dan casi la misma recta y el mismo coeficiente, pero las nubes de puntos no se parecen en nada: una es una curva, otra tiene un punto raro y en otra casi todos los puntos comparten el mismo valor en x.
+
+Ahora, la otra mitad del problema: dos cosas que suben juntas sin que una cause la otra.
+
+<SimDatos
+  consigna="Mirá la dispersión de ventas de helado contra golpes de calor y después activá 'colorear por temperatura'. ¿Qué pasa con la relación dentro de cada franja de color?"
+  dataset="confusora-temperatura"
+  vistas={["dispersion"]}
+  regresion
+/>
+
+Lo que tenés que notar: en el gráfico completo la correlación es alta, pero dentro de cada franja de temperatura casi desaparece. La temperatura mueve a las dos variables; el helado no causa los golpes de calor.
+
+<Ojo>
+
+Esto no significa que toda correlación sea falsa. Significa que una correlación sola no te dice la causa. Para decidir si hay causa hace falta un diseño que la ponga a prueba, no un coeficiente más alto.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### La recta de mínimos cuadrados
+
+El modelo más simple es $\hat{y} = b_0 + b_1 x$. Para cada dato, el residuo (*residual*) es la diferencia entre el valor observado y el que predice la recta: observado menos predicho<Cita f="openintro" loc="§8.1" />. El método de mínimos cuadrados (*least squares*) elige la recta que minimiza la suma de los cuadrados de esos residuos<Cita f="emc-ds" loc="§6.1.1, p. 164" />.
+
+<Formula nombre="Pendiente e intercepto de mínimos cuadrados" tex="b_1 = r \,\frac{s_y}{s_x}, \qquad b_0 = \bar{y} - b_1\,\bar{x}">
+
+donde $r$ es el coeficiente de correlación, $s_x$ y $s_y$ los desvíos estándar de $x$ y de $y$, y $\bar{x}$, $\bar{y}$ las medias. La recta siempre pasa por el punto $(\bar{x}, \bar{y})$<Cita f="openintro" loc="§8.2" />.
+
+</Formula>
+
+El coeficiente de correlación $r$ va de −1 a 1 y mide la fuerza de la relación **lineal**; con una relación fuerte pero curva puede dar un número engañoso<Cita f="openintro" loc="§8.1" />. El $R^2$ es la proporción de la variación de $y$ que explica la recta; con una sola variable explicativa es $r$ al cuadrado (con $r = -0{,}499$, $R^2 \approx 0{,}25$)<Cita f="openintro" loc="§8.2" />.
+
+La interpretación de la pendiente es "por cada unidad más de $x$, $y$ cambia $b_1$ en promedio". El intercepto solo significa algo si $x = 0$ tiene sentido en tus datos<Cita f="openintro" loc="§8.2" />.
+
+### Condiciones y diagnóstico
+
+La recta funciona bien si la tendencia es lineal, los residuos son aproximadamente normales, su dispersión es parecida a lo largo de la recta y las observaciones son independientes<Cita f="openintro" loc="§8.2" />. Con datos ordenados en el tiempo (como incidentes por día) la independencia pide cuidado. El diagnóstico clásico es graficar los residuos contra los valores ajustados: si ves curvas o una dispersión que crece, el modelo no está capturando algo<Cita f="emc-ds" loc="§6.1.3, pp. 173-175" />.
+
+### El cuarteto de Anscombe
+
+Francis Anscombe armó en 1973 cuatro conjuntos de datos para mostrar la importancia de graficar<Cita f="emc-ds" loc="§3.2.1, p. 82" />. Los cuatro tienen casi las mismas propiedades:
+
+| Propiedad | Valor (en los cuatro) |
+|---|---|
+| Media de $x$ | 9 |
+| Media de $y$ | 7,50 |
+| Varianza de $y$ | cerca de 4,12 |
+| Correlación entre $x$ e $y$ | 0,816 |
+| Recta ajustada | $y = 3{,}00 + 0{,}50\,x$ |
+
+El primero es una nube lineal razonable; el segundo es claramente curvo; el tercero es lineal salvo un punto atípico en $x = 13$; y en el cuarto casi todos los puntos tienen el mismo $x$, así que no se puede saber si la relación es lineal<Cita f="emc-ds" loc="§3.2.1, p. 83" />.
+
+Un punto muy alejado del resto en la dirección de $x$ tira con fuerza de la recta (tiene alto apalancamiento, *leverage*); si al sacarlo la recta cambia mucho, es un punto influyente<Cita f="openintro" loc="§8.3" />. En el tercer conjunto, sin el punto atípico la pendiente baja de 0,50 a 0,35 y la correlación se acerca a 1 (cálculo propio sobre los datos publicados).
+
+### De la correlación a la causa
+
+Un estudio observacional (sin tratamiento aplicado por quien investiga) sirve para ver asociaciones o armar hipótesis, no para afirmar causas<Cita f="openintro" loc="§1.3" />. La razón es la variable confusora (*confounding variable*): una variable relacionada tanto con la explicativa como con la respuesta<Cita f="openintro" loc="§1.3" />. En el ejemplo del libro, quien usa más protector solar tiene más cáncer de piel, pero la causa de ambas cosas es la exposición al sol.
+
+En cambio, un experimento con asignación al azar reparte las diferencias que no controlás entre los grupos, y por eso permite atribuir una diferencia sistemática al tratamiento<Cita f="openintro" loc="§1.4" />. Los autores de EMC dan la misma advertencia para modelos predictivos: que unas variables sirvan para predecir otra no demuestra que la causen<Cita f="emc-ds" loc="§6.4, p. 188" />.
+
+Dos precauciones más. No extrapoles: fuera del rango de los datos, la relación lineal puede dejar de valer<Cita f="openintro" loc="§8.2" />. Y no descartes puntos raros solo porque molestan: modelos que ignoran casos inusuales pero reales suelen rendir mal<Cita f="openintro" loc="§8.3" />.
+
+<Profundizar titulo="¿Qué haría yo con la VPN?">
+
+Primero buscaría qué otra variable se mueve con la VPN (cantidad de gente conectada, día de la semana, cierres de mes) y miraría si la relación sobrevive cuando comparo días parecidos. Si queda un efecto, lo siguiente es un experimento: cambiar la configuración para un grupo de usuarios elegidos al azar y comparar incidentes entre grupos. Cortar la VPN para todos sería el peor diseño: cambia todo a la vez y no deja grupo de comparación.
+
+</Profundizar>
+
+</Formal>

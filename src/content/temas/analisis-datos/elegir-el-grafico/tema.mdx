@@ -1,0 +1,132 @@
+---
+titulo: "Elegir el gráfico correcto"
+area: analisis-datos
+orden: 2
+resumen: Cómo elegir el tipo de gráfico según la pregunta que tenés que responder, y por qué una torta, una barra truncada o una dispersión sin orden pueden contar otra historia.
+materias:
+  - carrera: ing-informatica
+    codigo: "3670"
+    nombre: Ciencia de Datos
+  - carrera: lic-gestion-tecnologia
+    codigo: "1325"
+    nombre: Inteligencia de Negocios
+prerrequisitos:
+  - analisis-datos/limpieza-y-eda
+nivel: basico
+minutos: 15
+fuentes:
+  - id: wilke
+    tipo: libro
+    autor: Claus O. Wilke
+    titulo: Fundamentals of Data Visualization
+    edicion: 1.ª ed. (versión abierta online)
+    editorial: O'Reilly
+    ubicacion: cap. 5, 6, 10, 13 y 17
+    url: https://clauswilke.com/dataviz/
+  - id: emc-ds
+    tipo: libro
+    autor: EMC Education Services
+    titulo: "Data Science and Big Data Analytics: Discovering, Analyzing, Visualizing and Presenting Data"
+    edicion: Wiley, 2015
+    editorial: John Wiley & Sons
+    ubicacion: cap. 3, §3.2.3 y §3.2.5, pp. 88 y 99-100
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="El gerente quiere una torta para mostrar 24 meses de ventas">
+
+Jueves, 16:30. Mañana hay reunión de directorio y te piden "algo visual" con las ventas de los últimos 24 meses en tres regiones (Norte, Centro y Sur). El gerente comercial lo tiene claro: "Poneme una torta, que se ve más prolija".
+
+Lo que él quiere contar es que el Norte viene creciendo mes a mes y que el Centro sube y baja con la temporada. Eso es una historia sobre el tiempo. Una torta es una foto de cómo se reparte un total en un momento. Podrías armar veinticuatro tortas, una por mes, y pedirle al directorio que las compare con la vista.
+
+¿Cómo le decís que no sin que parezca un capricho tuyo? Y sobre todo: ¿cuál sí le mostrás?
+
+</CasoReal>
+
+<Intuicion>
+
+Un gráfico es una pregunta hecha al ojo. Antes de elegir el tipo, elegí la pregunta: ¿cuánto hay de cada cosa?, ¿cómo cambió en el tiempo?, ¿qué parte del total es cada una?, ¿se mueven juntas dos variables?, ¿cómo se reparten los valores? Cada pregunta tiene su gráfico natural<Cita f="wilke" loc="cap. 5" />.
+
+<Analogia titulo="El mapa de calles y el mapa del subte">
+
+La misma ciudad se dibuja de dos maneras. El mapa de calles sirve para llegar caminando a una dirección; el del subte, para saber dónde combinar. Ninguno es "más lindo": cada uno responde una pregunta distinta y estorba para la otra. Con los datos pasa igual: la misma tabla de ventas puede dibujarse como barras, líneas o torta, y cada versión responde otra pregunta.
+
+</Analogia>
+
+Probalo con las ventas de las tres regiones. Cambiá de vista y fijate qué pregunta se responde bien en cada una, y cuál queda tapada.
+
+<SimDatos
+  consigna="Pasá por las cuatro vistas y para cada una preguntate si responde 'cómo evolucionó cada región en 24 meses'. ¿Cuál lo muestra sin esfuerzo y cuál te obliga a adivinar?"
+  dataset="ventas-mensuales"
+  vistas={["barras", "lineas", "torta", "dispersion"]}
+  veredictos={{
+    barras: {
+      nota: "regular",
+      porque: "Las barras sirven para comparar cantidades entre categorías (Wilke, cap. 5, §5.1). Con 24 meses y 3 regiones son 72 barras y la tendencia se pierde entre tanta barra."
+    },
+    lineas: {
+      nota: "bien",
+      porque: "Cuando el eje horizontal es el tiempo, la línea que une los puntos muestra la evolución (Wilke, cap. 5, §5.4 y cap. 13, §13.1). Con tres series, etiquetar cada línea directamente evita la leyenda (Wilke, cap. 13, §13.2)."
+    },
+    torta: {
+      nota: "mal",
+      porque: "Una torta muestra cómo se reparte un total en un momento. No sirve para seguir cambios año tras año, y comparar rebanadas parecidas entre tortas distintas es difícil (Wilke, cap. 10, §10.2)."
+    },
+    dispersion: {
+      nota: "regular",
+      porque: "La dispersión es la herramienta para ver la relación entre dos variables numéricas (Wilke, cap. 5, §5.4). Con el mes en el eje x se parece a una línea sin conectar: pierde el orden que la línea sí muestra."
+    }
+  }}
+/>
+
+Lo que tenés que notar: con la línea, el crecimiento del Norte y el sube y baja del Centro se ven de un vistazo. Con la torta, en cambio, tendrías que recordar veinticuatro imágenes para comparar.
+
+<Ojo>
+
+Los veredictos del simulador son criterio de diseño con respaldo en los libros citados, no leyes. Hay casos donde una torta es una buena elección. Lo que no se negocia es empezar por la pregunta.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Un mapa de preguntas a gráficos
+
+| Pregunta | Gráfico habitual | Cuándo no |
+|---|---|---|
+| ¿Cuánto hay en cada categoría? | Barras (o puntos) | Barras con eje que no empieza en cero |
+| ¿Cómo cambia en el tiempo? | Líneas | Torta o barras apiladas con muchos períodos |
+| ¿Qué parte del total es cada una? | Torta si son pocas y simples; barras lado a lado si no | Torta con muchas rebanadas parecidas |
+| ¿Se relacionan dos variables? | Dispersión (*scatter plot*) | Cuando el eje x es el tiempo: usá líneas |
+| ¿Cómo se distribuyen los valores? | Histograma o caja (*box plot*) | Promedios sueltos, que esconden la forma |
+
+La tabla resume el catálogo del capítulo 5 de Wilke: barras para cantidades, histogramas y cajas para distribuciones, tortas o barras para proporciones, dispersión para relaciones entre dos variables numéricas y líneas cuando el eje x es el tiempo<Cita f="wilke" loc="cap. 5, §5.1-§5.4" />.
+
+### Barras: empiezan en cero
+
+El largo de una barra representa el valor. Por eso la barra tiene que arrancar en cero: si arranca en otro valor, el ojo compara alturas medidas desde un piso arbitrario y exagera las diferencias<Cita f="wilke" loc="cap. 17, §17.1" />. Dos barras de 100 y 110 dibujadas con el eje desde 90 muestran una barra el doble de larga que la otra, cuando la diferencia real es de 10 %.
+
+Otras dos reglas prácticas: si las categorías no tienen un orden natural, ordenalas por valor; y si las etiquetas son largas, usá barras horizontales<Cita f="wilke" loc="cap. 6, §6.1" />. Si necesitás un eje que no empiece en cero (por ejemplo, valores muy juntos), el gráfico de puntos (*dot plot*) lo tolera, porque ahí el valor se lee por posición y no por largo<Cita f="wilke" loc="cap. 6, §6.3" />.
+
+### Líneas: para el tiempo
+
+Un gráfico de líneas une puntos vecinos y por eso resalta el orden<Cita f="wilke" loc="cap. 13, §13.1" />. Con varias series, es mejor escribir el nombre al lado de cada línea que obligar a buscar en una leyenda<Cita f="wilke" loc="cap. 13, §13.2" />. Y si rellenás el área debajo de la línea, ahí sí el eje vertical debe empezar en cero<Cita f="wilke" loc="cap. 13, §13.1" />.
+
+### Tortas: sí, pero poco
+
+Una torta funciona con fracciones simples (mitad, tercio, cuarto) y pocas porciones<Cita f="wilke" loc="cap. 10, §10.1" />. Se vuelve mala cuando querés comparar rebanadas parecidas dentro de una torta, o la misma composición a lo largo de varios años: las barras lado a lado lo hacen mejor<Cita f="wilke" loc="cap. 10, §10.2" />. La razón es perceptiva: las personas juzgamos mejor distancias que áreas, y por eso las tortas hacen parecer más chicas las diferencias entre categorías que las barras con los mismos datos<Cita f="wilke" loc="cap. 17, §17.3" />.
+
+El ángulo de una rebanada es proporcional a su parte del total:
+
+$$
+\theta = 360^\circ \times p
+$$
+
+donde $p$ es la proporción de esa categoría. Si el Norte tiene 34,7 % de las ventas y el Sur 32 % (números de ejemplo), sus rebanadas miden unos 125° y 115°: una diferencia de 10° que casi no se ve.
+
+### Explorar no es presentar
+
+Los gráficos que usás para entender los datos (densidades, cajas, varios paneles) no son los que le mostrás a quien decide. El libro de EMC distingue los dos públicos: el analista tolera gráficos técnicos con mucha información; el público no técnico prefiere gráficos simples centrados en el mensaje<Cita f="emc-ds" loc="§3.2.5, pp. 99-100" />. Antes de mandar el gráfico, preguntate quién lo va a leer y qué tiene que entender en cinco segundos.
+
+</Formal>

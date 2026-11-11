@@ -1,0 +1,186 @@
+# Cálculos verificados con Python (stdlib):
+#   e-media-sin-cuelgue: sum([35,40,42,45,50,55,60,70,85]) / 9 = 53.5556 ; con el 2400: 288.2 ; mediana con 2400: 52.5
+#   e-media-con-horas: (40+55+3*60+70+2*60+50)/6 = 515/6 = 85.8333 ; sin corregir: 220/6 = 36.6667
+#   e-valla-superior: IQR = 130-40 = 90 ; 130 + 1.5*90 = 265 ; con 1 IQR: 220
+tarjetas:
+  - id: t-eda-objetivo
+    frente: ¿Para qué se hace un análisis exploratorio (EDA) antes de calcular las métricas importantes?
+    dorso: Para conocer cómo son los datos y detectar rarezas (valores extremos, supuestos que no se cumplen) antes de sacar conclusiones.
+    fuente: nist-eda
+  - id: t-drop-duplicates-primero
+    frente: En pandas, ¿qué fila conserva `drop_duplicates()` por defecto cuando hay filas repetidas?
+    dorso: La primera aparición de cada grupo de repetidas.
+    fuente: pandas-docs
+  - id: t-faltante-disfrazado
+    frente: El histograma de edades de tus clientes tiene un pico enorme en 0. ¿Qué hipótesis probás primero?
+    dorso: Que son faltantes que algún sistema guardó como 0, no clientes recién nacidos.
+    fuente: emc-ds
+  - id: t-r-mean-na
+    frente: En R, ¿qué devuelve `mean(x)` si `x` tiene un `NA` y no usás `na.rm=TRUE`?
+    dorso: Devuelve `NA`.
+    fuente: emc-ds
+  - id: t-pandas-skipna
+    frente: En pandas, ¿qué hace por defecto un estadístico descriptivo como `std()` con los valores faltantes?
+    dorso: Los ignora (el parámetro `skipna` vale `True` por defecto).
+    fuente: pandas-docs
+  - id: t-valla-superior
+    frente: ¿Cómo se calcula la valla superior del diagrama de caja que marca valores sospechosos?
+    dorso: $Q_3 + 1{,}5\,\text{IQR}$, es decir, el tercer cuartil más una vez y media el rango intercuartil.
+    fuente: nist-eda
+  - id: t-marcar-no-borrar
+    frente: Un valor cae fuera de las vallas. ¿Qué hacés antes de sacarlo del análisis?
+    dorso: Investigás por qué apareció, porque puede ser un error o justo lo más informativo del proceso.
+    fuente: nist-outliers
+  - id: t-reemplazar-por-na
+    frente: Si un valor es claramente inválido, ¿qué recomienda R4DS hacer en vez de borrar la fila completa?
+    dorso: Reemplazar solo ese valor por faltante (`NA`), porque el resto de la fila puede ser válido.
+    fuente: r4ds
+  - id: t-sensibilidad-extremos
+    frente: ¿Cómo comprobás si unos pocos valores extremos cambian tus conclusiones?
+    dorso: Repetís el análisis con y sin ellos y comparás los resultados.
+    fuente: r4ds
+  - id: t-unidades-antes-que-outliers
+    frente: ¿Por qué conviene corregir las unidades mezcladas antes de buscar valores extremos?
+    dorso: Porque un valor en la unidad equivocada puede parecer un extremo, o esconderse entre los normales, y lo diagnosticarías mal.
+
+ejercicios:
+  - id: e-media-sin-cuelgue
+    tipo: numerico
+    enunciado: |
+      Diez tickets de la mesa de ayuda tardaron (en minutos) 35, 40, 42, 45, 50, 55, 60, 70, 85 y 2400. Confirmaste con el equipo que el de 2400 fue un ticket que quedó abierto por error durante un fin de semana, así que lo excluís. ¿Cuál es la media de resolución de los otros nueve? Respondé con dos decimales.
+    respuesta: 53.56
+    tolerancia:
+      absoluta: 0.05
+    unidad: min
+    explicacion: |
+      Sumás los nueve valores: $35+40+42+45+50+55+60+70+85 = 482$. Dividís por 9: $482/9 \approx 53{,}56$ min. Con el ticket de 2400 la media daba 288,2 min, cinco veces más.
+    erroresComunes:
+      - valor: 288.2
+        explicacion: Esa es la media con el ticket de 2400 incluido (2882 dividido 10). Pedía excluirlo.
+      - valor: 52.5
+        explicacion: Eso es la mediana de los diez tickets, no la media de los nueve.
+    fuente: r4ds
+  - id: e-media-con-horas
+    tipo: numerico
+    enunciado: |
+      Seis tickets tienen estos valores en la columna de resolución, en minutos: 40, 55, 3, 70, 2 y 50. Confirmaste que el 3 y el 2 están cargados en horas. ¿Cuál es la media en minutos después de corregirlos? Redondeá a un decimal.
+    respuesta: 85.8
+    tolerancia:
+      absoluta: 0.1
+    unidad: min
+    explicacion: |
+      Pasás las horas a minutos: $3 \times 60 = 180$ y $2 \times 60 = 120$. Los datos quedan 40, 55, 180, 70, 120 y 50, que suman 515. Dividís por 6 y da $85{,}83$, o sea 85,8 min.
+    erroresComunes:
+      - valor: 36.7
+        explicacion: Esa es la media sin corregir las unidades (220 dividido 6). El 3 y el 2 contaban como minutos.
+  - id: e-valla-superior
+    tipo: numerico
+    enunciado: |
+      En una columna de tiempos de resolución, el primer cuartil es 40 min y el tercero es 130 min. Usando la regla de las vallas del diagrama de caja con 1,5 IQR, ¿cuál es el valor máximo que todavía no se marca como sospechoso?
+    respuesta: 265
+    tolerancia:
+      absoluta: 0.5
+    unidad: min
+    explicacion: |
+      El rango intercuartil es $130 - 40 = 90$. La valla superior es $Q_3 + 1{,}5 \times \text{IQR} = 130 + 135 = 265$ min. Cualquier ticket por encima de 265 queda marcado para revisar.
+    erroresComunes:
+      - valor: 220
+        explicacion: Sumaste una vez el IQR (130 + 90) en lugar de una vez y media.
+      - valor: 135
+        explicacion: Sumaste solo 1,5 IQR sin partir del tercer cuartil (1,5 por 90 es 135). La valla se mide desde Q3.
+    fuente: nist-eda
+  - id: e-que-hacer-con-ceros
+    tipo: opcion-multiple
+    enunciado: En el export de tickets, el 15 % de las filas tiene 0 en la columna de minutos de resolución. ¿Qué hacés primero?
+    opciones:
+      - texto: Borro todas las filas con 0 para que no arruinen el promedio.
+        explicacion: Perdés el 15 % de los datos sin saber qué significa ese 0, y quizás las otras columnas de esas filas eran válidas.
+      - texto: Reemplazo los 0 por la media de la columna.
+        explicacion: Inventás un dato sin saber si el 0 era un faltante, un ticket instantáneo real u otra cosa.
+      - texto: Averiguo qué significa 0 en el sistema de origen y, si es un faltante, lo marco como tal.
+        correcta: true
+        explicacion: Es lo que muestran el libro de EMC y R4DS, donde un 0 resultó ser un faltante mal codificado. Recién cuando sabés qué es podés decidir si lo descartás o lo tratás aparte.
+      - texto: Los dejo como están; son datos del sistema y por eso son válidos.
+        explicacion: Un dato del sistema también puede estar mal codificado, y un 15 % de ceros arrastra la media hacia abajo.
+    fuente: emc-ds
+  - id: e-vf-outlier-se-borra
+    tipo: verdadero-falso
+    enunciado: Si un dato cae fuera de las vallas de 1,5 IQR, corresponde eliminarlo del análisis.
+    respuesta: false
+    justificacion: La regla solo marca candidatos a revisar. El valor puede ser un error, pero también una observación real e informativa, y por eso se investiga antes de decidir.
+    fuente: nist-outliers
+
+casos:
+  - id: c-excel-listo-para-analizar
+    titulo: El Excel que llegó "listo para analizar"
+    rol: Sos analista en la mesa de ayuda y tenés que entregar el promedio de resolución antes de las 11.
+    contexto: |
+      Lunes 9:20. Te pasaron el export del mes con 200 tickets y la frase "está listo". Todavía no abriste el archivo. La reunión es a las 11.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: Abrís el archivo. ¿Cuál es tu primer movimiento?
+        opciones:
+          - texto: Calculo el promedio de la columna de minutos y se lo mando a mi jefa.
+            va: final-mal
+            consecuencia: El número sale altísimo, nadie lo cree, y en la reunión alguien pregunta de dónde salió.
+          - texto: Miro primero la forma del archivo, los vacíos por columna y el histograma de minutos.
+            va: ver-rarezas
+            consecuencia: En diez minutos ves repetidos, celdas vacías, un grupito de valores entre 1 y 5 y dos tickets de más de 2000 minutos.
+          - texto: Borro cualquier fila que tenga algo raro y calculo con lo que queda.
+            va: final-regular
+            consecuencia: Te quedan 181 de 200 tickets y un promedio prolijo, pero sin saber qué sacaste ni por qué.
+      - id: ver-rarezas
+        tipo: decision
+        texto: Ya detectaste 8 filas repetidas, 6 sin minutos, 3 con valores entre 1 y 5 y 2 tickets de más de 2000 minutos. ¿Cómo seguís?
+        opciones:
+          - texto: Pregunto a quien carga los datos qué significan los valores chicos y los de 2000 minutos antes de tocar nada.
+            va: confirmar-causas
+            consecuencia: Te confirman que los repetidos son doble carga, los 3 chicos están en horas y los dos de 2000 minutos son una caída real de un fin de semana.
+          - texto: Saco los 2 valores gigantes y reemplazo el resto por la media para que quede parejo.
+            va: final-mal
+            consecuencia: Perdés justo el incidente más importante del mes y mezclás datos inventados con datos reales.
+      - id: confirmar-causas
+        tipo: decision
+        texto: Ya sabés qué es cada rareza. Los dos tickets de la caída son reales pero arrastran la media. ¿Cómo lo informás?
+        opciones:
+          - texto: Presento media y mediana con y sin esos dos tickets, y explico la caída en una línea.
+            va: final-bien
+            consecuencia: Se ve que la mediana casi no cambia y la media sí, y la reunión discute la caída en lugar del promedio.
+          - texto: Los saco sin decir nada, así el promedio queda "normal".
+            va: final-regular
+            consecuencia: El número es razonable, pero la caída desaparece del reporte y alguien se entera por otro lado.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: Entregás un reporte con los pasos de limpieza escritos y las dos versiones del resultado. Tu jefa puede defenderlo ante cualquier pregunta.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: El reporte sale a tiempo y parece prolijo, pero dejaste afuera información real o no podés explicar qué borraste. Si alguien lo cuestiona, no tenés cómo defenderlo.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Entregás un número que no se sostiene, perdés credibilidad frente al equipo y hay que rehacer el análisis después de la reunión.
+    leccion: |
+      Antes de calcular, mirá los datos y entendé de dónde viene cada rareza. Marcar y averiguar es mejor que borrar, y lo que decidas tiene que quedar escrito y reproducible.
+
+problemas:
+  - id: p-limpieza-pandas
+    enunciado: Armá una planilla (o un CSV) de unos 50 tickets inventados con repetidos, vacíos, un par de valores en horas y dos extremos. Cargala con pandas, quitá los repetidos y los vacíos, calculá las vallas con 1,5 IQR y anotá cuánto cambian la media y la mediana en cada paso.
+    fuente: mckinney
+    ubicacion: cap. 7, §7.1 (Handling Missing Data) y §7.2 (Removing Duplicates, Detecting and Filtering Outliers)
+    url: https://wesmckinney.com/book/data-cleaning.html
+    dificultad: basico
+  - id: p-r4ds-preguntas
+    enunciado: Con cualquier tabla que uses en el laburo, anotá diez preguntas sobre variación (qué valores son comunes o raros) y covariación (qué variables se mueven juntas). Respondé tres con un gráfico y escribí qué dato inesperado encontraste.
+    fuente: r4ds
+    ubicacion: cap. 10, §10.3 (Variation) a §10.5 (Covariation)
+    url: https://r4ds.hadley.nz/EDA.html
+    dificultad: basico
+  - id: p-emc-dirty-data
+    enunciado: Dibujá el histograma de una columna numérica de alguna base que conozcas y buscá picos en 0, en valores negativos o en un tope redondo. Para cada pico, escribí dos hipótesis de cómo pudo llegar ese valor y qué pregunta le harías a quien carga los datos.
+    fuente: emc-ds
+    ubicacion: cap. 3, §3.2.2 (Dirty Data), pp. 85-87
+    dificultad: intermedio

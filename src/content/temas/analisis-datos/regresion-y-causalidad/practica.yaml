@@ -1,0 +1,221 @@
+# Cálculos (Python stdlib, statistics.linear_regression / correlation):
+#   Anscombe I (datos de EMC p. 84): r = 0.816 ; recta y = 3.0001 + 0.5001 x ; residuo en x=13 (y=7.58): 7.58 - (3 + 0.5*13) = -1.92
+#   Anscombe III sin el punto (13, 12.74): pendiente 0.3454 , intercepto 4.0056 , r = 0.99999
+#   VPN: b1 = r*sy/sx = 0.75*8/60 = 0.10 ; b0 = 20 - 0.10*300 = -10 ; a x=350: -10 + 0.10*350 = 25 ; sin intercepto: 0.10*350 = 35
+#   R2 = r^2 = (-0.6)^2 = 0.36
+tarjetas:
+  - id: t-residuo-definicion
+    frente: ¿Qué es el residuo de una observación en una regresión?
+    dorso: La diferencia entre el valor observado de y y el que predice la recta (observado menos predicho).
+    fuente: openintro
+  - id: t-minimos-cuadrados
+    frente: ¿Qué criterio usa la recta de mínimos cuadrados para elegirse?
+    dorso: Minimiza la suma de los cuadrados de los residuos.
+    fuente: emc-ds
+  - id: t-pendiente-desde-r
+    frente: ¿Cómo se obtiene la pendiente de la recta a partir de r y de los desvíos de x e y?
+    dorso: |
+      Con $b_1 = r \cdot s_y / s_x$.
+    fuente: openintro
+  - id: t-recta-pasa-por-medias
+    frente: ¿Por qué punto pasa siempre la recta de mínimos cuadrados?
+    dorso: |
+      Por el punto de las medias, $(\bar{x}, \bar{y})$.
+    fuente: openintro
+  - id: t-r-solo-lineal
+    frente: ¿Qué mide el coeficiente de correlación r y qué no capta bien?
+    dorso: Mide la fuerza de una relación lineal, de −1 a 1; no describe bien relaciones curvas.
+    fuente: openintro
+  - id: t-r-cuadrado-significado
+    frente: Una regresión simple da R² = 0,25. ¿Qué significa?
+    dorso: Que la recta explica el 25 % de la variación de y.
+    fuente: openintro
+  - id: t-anscombe-leccion
+    frente: ¿Qué enseña el cuarteto de Anscombe?
+    dorso: Que conjuntos con la misma recta y el mismo r pueden ser muy distintos, así que hay que graficar antes de confiar en los números.
+    fuente: emc-ds
+  - id: t-extrapolar-riesgo
+    frente: ¿Por qué es riesgoso predecir con la recta fuera del rango de los datos?
+    dorso: Porque la relación lineal puede no valer más allá de lo observado.
+    fuente: openintro
+  - id: t-confusora-definicion
+    frente: ¿Qué es una variable confusora?
+    dorso: Una variable relacionada a la vez con la variable explicativa y con la respuesta.
+    fuente: openintro
+  - id: t-observacional-limite
+    frente: ¿Qué podés concluir de un estudio observacional y qué no?
+    dorso: Podés ver asociaciones y armar hipótesis, pero no afirmar causas.
+    fuente: openintro
+  - id: t-azar-causalidad
+    frente: ¿Por qué un experimento con asignación al azar sí permite hablar de causa?
+    dorso: Porque el azar reparte entre los grupos las diferencias que no controlás, y una diferencia sistemática se atribuye al tratamiento.
+    fuente: openintro
+
+ejercicios:
+  - id: e-pendiente-vpn
+    tipo: numerico
+    enunciado: |
+      En 90 días, las sesiones simultáneas máximas de la VPN tuvieron media 300 y desvío 60, y los incidentes diarios tuvieron media 20 y desvío 8. La correlación entre ambas es 0,75. ¿Cuál es la pendiente de la recta de mínimos cuadrados que predice incidentes a partir de sesiones? Respondé en incidentes por sesión.
+    respuesta: 0.1
+    tolerancia:
+      absoluta: 0.005
+    unidad: inc/sesión
+    explicacion: |
+      La pendiente es $b_1 = r \cdot s_y / s_x = 0{,}75 \times 8 / 60 = 0{,}10$. Por cada sesión más, la recta predice 0,10 incidentes más por día, en promedio (o 1 incidente más cada 10 sesiones).
+    erroresComunes:
+      - valor: 5.625
+        explicacion: Invertiste el cociente (60/8). La pendiente es desvío de y sobre desvío de x, multiplicado por r.
+    fuente: openintro
+  - id: e-prediccion-vpn
+    tipo: numerico
+    enunciado: |
+      Con los datos del ejercicio anterior (pendiente 0,10), ¿cuántos incidentes diarios predice la recta para un día con 350 sesiones simultáneas? Recordá que la recta pasa por el punto de las medias.
+    respuesta: 25
+    tolerancia:
+      absoluta: 0.5
+    unidad: incidentes
+    explicacion: |
+      El intercepto es $b_0 = \bar{y} - b_1 \bar{x} = 20 - 0{,}10 \times 300 = -10$. La predicción es $-10 + 0{,}10 \times 350 = 25$ incidentes. Otra forma de verlo: 350 está 50 sesiones por encima de la media, que suman 5 incidentes sobre los 20 de la media.
+    erroresComunes:
+      - valor: 35
+        explicacion: Te olvidaste del intercepto (0,10 por 350). La recta no pasa por el origen sino por el punto de las medias.
+    fuente: openintro
+  - id: e-residuo-anscombe
+    tipo: numerico
+    enunciado: |
+      En el primer conjunto de Anscombe, la recta ajustada es $y = 3{,}00 + 0{,}50\,x$. El punto con $x = 13$ tiene $y = 7{,}58$. ¿Cuál es su residuo? Respondé con dos decimales y con signo.
+    respuesta: -1.92
+    tolerancia:
+      absoluta: 0.05
+    unidad: ""
+    explicacion: |
+      La recta predice $3 + 0{,}5 \times 13 = 9{,}5$. El residuo es observado menos predicho: $7{,}58 - 9{,}5 = -1{,}92$. Es negativo porque el punto queda por debajo de la recta.
+    erroresComunes:
+      - valor: 1.92
+        explicacion: El signo está al revés. El residuo es observado menos predicho, no al contrario.
+      - valor: 9.5
+        explicacion: Ese es el valor predicho por la recta, no el residuo.
+    fuente: emc-ds
+  - id: e-r-cuadrado
+    tipo: numerico
+    enunciado: |
+      Una regresión entre horas de capacitación y tickets resueltos por semana da una correlación de −0,6. ¿Qué porcentaje de la variación de los tickets explica la recta?
+    respuesta: 36
+    tolerancia:
+      absoluta: 0.5
+    unidad: "%"
+    explicacion: |
+      Con una sola variable explicativa, $R^2 = r^2 = (-0{,}6)^2 = 0{,}36$, o sea 36 %. El signo de $r$ desaparece al elevar al cuadrado.
+    erroresComunes:
+      - valor: 60
+        explicacion: Tomaste el valor absoluto de r. El R² se obtiene elevando r al cuadrado.
+    fuente: openintro
+  - id: e-causa-helado
+    tipo: opcion-multiple
+    enunciado: En un negocio de playa, los días con más ventas de helado tienen también más golpes de calor atendidos, con una correlación alta. ¿Cuál es la mejor lectura?
+    opciones:
+      - texto: El helado causa golpes de calor, así que conviene dejar de venderlo.
+        explicacion: Confunde correlación con causa. Si fuera así, tendría que seguir pasando entre días de igual temperatura.
+      - texto: Los golpes de calor hacen que la gente compre helado.
+        explicacion: Es una causa inversa posible en general, pero acá hay una explicación más simple que actúa sobre las dos.
+      - texto: La temperatura es una variable confusora que sube las dos cosas a la vez.
+        correcta: true
+        explicacion: Los días de calor se venden más helados y hay más golpes de calor. Al comparar días de temperatura parecida, la relación casi desaparece.
+      - texto: Es pura casualidad, porque una correlación alta nunca significa nada.
+        explicacion: La correlación existe y es real; lo que no está probado es la causa entre las dos variables.
+    fuente: openintro
+  - id: e-evidencia-causal
+    tipo: opcion-multiple
+    enunciado: Querés saber si activar una nueva configuración de la VPN reduce los incidentes. ¿Qué evidencia permite una conclusión causal más sólida?
+    opciones:
+      - texto: Una correlación de 0,9 entre sesiones de VPN e incidentes en los últimos 90 días.
+        explicacion: Con datos observacionales, una correlación alta no descarta una variable confusora.
+      - texto: Una regresión con R² alto que predice los incidentes a partir de varias variables.
+        explicacion: Que un modelo prediga bien no prueba que sus variables causen el resultado.
+      - texto: Un experimento donde la nueva configuración se asigna al azar a la mitad de los usuarios.
+        correcta: true
+        explicacion: El azar reparte entre los dos grupos las diferencias que no controlás, así que una diferencia sistemática de incidentes se atribuye a la configuración.
+      - texto: Comparar este mes con el mes pasado, antes del cambio.
+        explicacion: Entre un mes y otro cambian muchas cosas más (demanda, personal, fechas), y no hay forma de separarlas.
+    fuente: openintro
+  - id: e-vf-mismo-r-mismo-grafico
+    tipo: verdadero-falso
+    enunciado: Si dos conjuntos de datos tienen la misma media, la misma varianza, el mismo r y la misma recta de regresión, sus gráficos de dispersión tienen que ser parecidos.
+    respuesta: false
+    justificacion: Los cuatro conjuntos de Anscombe comparten esos números y sus gráficos son muy distintos (uno curvo, uno con un punto atípico, uno con casi todos los puntos en el mismo x).
+    fuente: emc-ds
+  - id: e-vf-r2-linealidad
+    tipo: verdadero-falso
+    enunciado: Un R² de 0,67 en una regresión simple prueba que la relación entre las variables es lineal.
+    respuesta: false
+    justificacion: En el cuarteto de Anscombe los cuatro conjuntos dan R² cercano a 0,67, y el segundo es claramente curvo. La linealidad se chequea mirando el gráfico y los residuos, no el R².
+    fuente: emc-ds
+
+casos:
+  - id: c-vpn-incidentes
+    titulo: La VPN y los incidentes
+    rol: Sos el analista de datos de infraestructura y tenés que recomendar qué hacer con la VPN.
+    contexto: |
+      Martes 10:15. En 90 días, los días con más sesiones de VPN tienen más incidentes (r cercano a 0,8). Seguridad propone cortar la VPN "para ver si bajan". Infraestructura se opone porque hay 400 personas que trabajan remoto.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: Te piden una recomendación para la reunión de las 11. ¿Qué hacés?
+        opciones:
+          - texto: Recomiendo cortar la VPN un día para confirmar, porque la correlación es alta.
+            va: final-mal
+            consecuencia: Cortás el acceso a 400 personas por un día y los incidentes de ese martes no se parecen a ningún otro martes.
+          - texto: Busco qué más cambia en los días de mucha VPN (cantidad de gente conectada, día de la semana, cierres) antes de recomendar nada.
+            va: buscar-confusora
+            consecuencia: Los días de más VPN son lunes y fin de mes, cuando hay más gente trabajando y más sistemas en uso.
+          - texto: Uso la recta para predecir cuántos incidentes habría con 1000 sesiones y lo presento como proyección.
+            va: final-regular
+            consecuencia: La VPN nunca superó las 450 sesiones simultáneas, así que nadie puede comprobar esa predicción.
+      - id: buscar-confusora
+        tipo: decision
+        texto: Al separar por tipo de día, dentro de cada tipo la relación entre VPN e incidentes se debilita mucho. ¿Cómo seguís?
+        opciones:
+          - texto: Propongo probar un cambio de configuración con la mitad de los usuarios elegidos al azar y comparar incidentes durante dos semanas.
+            va: final-bien
+            consecuencia: Seguridad acepta, porque el piloto es chico y reversible, y los dos grupos son comparables.
+          - texto: Concluyo que no hay ninguna relación y cierro el tema.
+            va: final-regular
+            consecuencia: Quedó sin estudiar si hay un efecto chico propio de la VPN, y el tema vuelve en el próximo incidente grande.
+          - texto: Agrego variables al modelo hasta que el R² suba y lo presento como la causa de los incidentes.
+            va: final-mal
+            consecuencia: El modelo predice mejor pero nadie sabe qué cambiar, y alguien toma la lista de variables como lista de culpables.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El piloto mide el efecto de la configuración con un grupo de comparación, y la decisión se toma con evidencia causal en lugar de una correlación.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Evitaste el error más grande, pero la decisión queda sin evidencia sólida y probablemente tengas que volver sobre el tema.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Se decide sobre una conclusión que los datos no sostienen, con costo real para el negocio y sin aprender nada de la causa.
+    leccion: |
+      Una correlación alta es un motivo para investigar, no una causa probada. Antes de actuar, buscá variables confusoras y, si hay que decidir, probá con un experimento chico y reversible.
+    fuente: openintro
+
+problemas:
+  - id: p-openintro-regresion
+    enunciado: Resolvé los ejercicios del capítulo 8 sobre residuos, correlación y R² de la versión abierta del libro. En cada uno, además del resultado, escribí si la recta sirve para predecir fuera del rango de los datos y por qué.
+    fuente: openintro
+    ubicacion: cap. 8, §8.1 y §8.2, y sus ejercicios (§8.5)
+    url: https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Introduction_to_Statistics_4e_(Diez_et_al.)/08%3A_Introduction_to_Linear_Regression
+    dificultad: basico
+  - id: p-anscombe-propio
+    enunciado: Tomá los once pares de cada uno de los cuatro conjuntos de la tabla del libro, calculá media, correlación y recta de cada uno en una planilla o en Python, y graficá los cuatro. Después sacá el punto atípico del tercero y anotá cómo cambian la pendiente y r.
+    fuente: emc-ds
+    ubicacion: cap. 3, §3.2.1 (Visualization Before Analysis), pp. 82-84
+    dificultad: intermedio
+  - id: p-confusora-propia
+    enunciado: Elegí dos series de tu laburo que suban juntas (por ejemplo, tickets por día y usuarios activos por día). Graficalas en dispersión, calculá r, y después separá los datos por una tercera variable (día de la semana o turno) y mirá si la relación sobrevive dentro de cada grupo.
+    fuente: openintro
+    ubicacion: cap. 1, §1.3 (subsección Observational studies)
+    url: https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Introduction_to_Statistics_4e_(Diez_et_al.)/01%3A_Introduction_to_Data/1.03%3A_Sampling_Principles_and_Strategies
+    dificultad: intermedio

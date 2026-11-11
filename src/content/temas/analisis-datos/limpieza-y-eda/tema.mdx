@@ -1,0 +1,152 @@
+---
+titulo: "Limpieza y exploración de datos (EDA)"
+area: analisis-datos
+orden: 1
+resumen: Cómo revisar un Excel "listo para analizar" antes de sacar conclusiones, y cómo tratar duplicados, vacíos, unidades mezcladas y valores extremos sin borrar a ciegas.
+materias:
+  - carrera: ing-informatica
+    codigo: "3670"
+    nombre: Ciencia de Datos
+  - carrera: ing-informatica
+    codigo: "3641"
+    nombre: Bases de Datos Aplicada
+  - carrera: lic-gestion-tecnologia
+    codigo: "1325"
+    nombre: Inteligencia de Negocios
+prerrequisitos: []
+nivel: basico
+minutos: 15
+fuentes:
+  - id: r4ds
+    tipo: libro
+    autor: Hadley Wickham, Mine Çetinkaya-Rundel y Garrett Grolemund
+    titulo: R for Data Science
+    edicion: 2.ª ed. (versión abierta online)
+    editorial: O'Reilly
+    ubicacion: cap. 10 (Exploratory data analysis), §10.4
+    url: https://r4ds.hadley.nz/EDA.html
+  - id: emc-ds
+    tipo: libro
+    autor: EMC Education Services
+    titulo: "Data Science and Big Data Analytics: Discovering, Analyzing, Visualizing and Presenting Data"
+    edicion: Wiley, 2015
+    editorial: John Wiley & Sons
+    ubicacion: cap. 3, §3.2.2 "Dirty Data", pp. 85-87
+  - id: nist-eda
+    tipo: doc-oficial
+    autor: NIST/SEMATECH
+    titulo: e-Handbook of Statistical Methods — What is EDA? y Box Plot
+    url: https://www.itl.nist.gov/div898/handbook/eda/section1/eda11.htm
+    ubicacion: §1.1.1 y §1.3.3.7
+  - id: nist-outliers
+    tipo: doc-oficial
+    autor: NIST/SEMATECH
+    titulo: e-Handbook of Statistical Methods — What are outliers in the data?
+    url: https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm
+    ubicacion: §7.1.6
+  - id: pandas-docs
+    tipo: doc-oficial
+    autor: pandas development team
+    titulo: pandas documentation — DataFrame.drop_duplicates, DataFrame.dropna y Working with missing data
+    url: https://pandas.pydata.org/docs/user_guide/missing_data.html
+    ubicacion: guía "Working with missing data" y referencia de la API
+    edicion: pandas 3.1.1
+  - id: mckinney
+    tipo: libro
+    autor: Wes McKinney
+    titulo: Python for Data Analysis
+    edicion: 3.ª ed. (versión abierta online)
+    editorial: O'Reilly
+    ubicacion: cap. 7, §7.1 y §7.2 (Data Cleaning and Preparation)
+    url: https://wesmckinney.com/book/data-cleaning.html
+    verMas: true
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="El Excel de tickets 'listo para analizar' y la media que no cierra">
+
+Lunes, 9:20. Tu jefa te pasa el export de la mesa de ayuda del mes: "está listo, solo armame el promedio de resolución para la reunión de las 11". Son 200 tickets, con la categoría, los minutos que tardó cada uno y la fecha.
+
+Sacás el promedio y da un número que no tiene sentido: la mesa de ayuda sale resolviendo en horas lo que todos saben que se resuelve en minutos. Revisás por arriba y encontrás cosas raras: tickets que aparecen dos veces, celdas de minutos vacías, tres tickets con un "2" y un "3" donde por el contexto deberían ser 120 y 180, y un par de valores de más de 2000 minutos.
+
+Nadie hizo nada mal a propósito. Así llegan los datos de verdad. La pregunta es qué hacés con cada rareza: ¿borrás todo lo que molesta y entregás un promedio lindo, o primero entendés qué pasó?
+
+</CasoReal>
+
+<Intuicion>
+
+Antes de analizar, hay que mirar. Esa es la idea del análisis exploratorio (*exploratory data analysis*, EDA): conocer los datos con gráficos y resúmenes simples antes de calcular nada importante, para descubrir qué tienen de raro<Cita f="nist-eda" loc="§1.1.1" />.
+
+<Analogia titulo="Recibir un camión de mercadería">
+
+Cuando llega un camión a un depósito, no empezás a armar pedidos: primero contás. ¿Hay cajas repetidas porque el remito se cargó dos veces? ¿Hay cajas vacías? ¿Una etiqueta dice "5" y es en kilos mientras las demás están en gramos? ¿Y esa caja de dos toneladas: es un error de tipeo o es el pedido más grande del año? Cada rareza tiene su tratamiento, y para elegirlo hay que saber de dónde salió. Con los datos pasa lo mismo.
+
+</Analogia>
+
+En el simulador tenés ese camión: 200 tickets con los cuatro problemas.
+
+<SimDatos
+  consigna="Activá de a un toggle de limpieza y mirá filas, media y mediana. ¿Cuál de los pasos mueve más la media y cuál casi no toca la mediana?"
+  dataset="tickets-sucios"
+  vistas={["tabla", "histograma", "caja"]}
+  limpieza
+/>
+
+Fijate en dos cosas. Quitar duplicados baja las filas de 200 a 192, y quitar los vacíos las deja en 186. Y comparando la media con la mediana: si están lejos una de la otra, hay valores extremos tirando de la media. En la vista de caja esos extremos aparecen marcados solos, sin que tengas que buscarlos.
+
+<Ojo>
+
+"Limpiar" no es "borrar lo que molesta". Un vacío puede ser información<Cita f="r4ds" loc="§10.4" /> (un ticket sin minutos quizás sigue abierto), y un valor enorme puede ser el incidente más importante del mes. Primero entendé de dónde viene; después decidí.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Cuatro problemas típicos y su tratamiento
+
+**1. Duplicados.** Son filas repetidas por una carga doble o una unión mal hecha. En pandas, `drop_duplicates` compara todas las columnas por defecto, o solo las del argumento `subset`, y conserva la primera aparición<Cita f="pandas-docs" loc="DataFrame.drop_duplicates" />. Ojo con el "duplicado" que en realidad es el mismo `id` con minutos distintos: ese no es un repetido, es un conflicto que hay que resolver con quien carga los datos.
+
+**2. Faltantes (*missing values*).** En pandas, `isna` marca los valores faltantes, y `dropna` descarta por defecto las filas que tengan alguno; con `subset` mirás solo las columnas que te importan<Cita f="pandas-docs" loc="DataFrame.dropna" />. Los estadísticos descriptivos de pandas ignoran los faltantes salvo que pidas lo contrario con `skipna=False`<Cita f="pandas-docs" loc="Calculations with NA" />. En R, en cambio, `mean` devuelve `NA` si hay algún faltante, y hay que pasarle `na.rm=TRUE`<Cita f="emc-ds" loc="§3.2.2, p. 86" />. Lo traicionero es el faltante disfrazado: un pico de clientes con edad cero o negativa suele ser un faltante que algún sistema guardó como 0 o −1<Cita f="emc-ds" loc="§3.2.2, pp. 85-86" />. Revisá siempre el histograma antes de confiar en un promedio.
+
+**3. Unidades mezcladas.** No hay función mágica: se detectan comparando con lo que el negocio sabe. Si la mediana ronda los 50 minutos y tres tickets dicen "2" o "3", lo razonable es sospechar que están en horas. Los autores del libro de EMC recomiendan contrastar los datos raros con el conocimiento del dominio antes de decidir si se eliminan<Cita f="emc-ds" loc="§3.2.2, p. 87" />. Corregí solo después de confirmarlo con quien cargó los datos.
+
+**4. Valores extremos (*outliers*).** Una regla muy usada sale del diagrama de caja con "vallas" (*fences*): se calcula el rango intercuartil (*interquartile range*, IQR) y se marca como sospechoso lo que cae fuera de 1,5 IQR de los cuartiles<Cita f="nist-eda" loc="§1.3.3.7" />.
+
+<Formula nombre="Vallas del diagrama de caja" tex="\text{IQR} = Q_3 - Q_1, \qquad V_{inf} = Q_1 - 1{,}5\,\text{IQR}, \qquad V_{sup} = Q_3 + 1{,}5\,\text{IQR}">
+
+donde $Q_1$ y $Q_3$ son el primer y el tercer cuartil (los valores que dejan por debajo el 25 % y el 75 % de los datos ordenados). Un dato fuera de $[V_{inf},\,V_{sup}]$ queda marcado, no condenado.
+
+</Formula>
+
+Marcado no es borrado. El *e-Handbook* del NIST pide investigar por qué apareció un valor atípico antes de sacarlo, porque a veces es justamente lo más informativo del proceso<Cita f="nist-outliers" loc="§7.1.6" />. Una práctica razonable es reemplazar el valor sospechoso por un faltante en lugar de descartar la fila entera, porque un valor malo no vuelve inválido al resto de la fila; y repetir el análisis con y sin los extremos para ver si las conclusiones cambian<Cita f="r4ds" loc="§10.4" />.
+
+### Un orden de trabajo posible
+
+```python
+import pandas as pd
+
+df = pd.read_excel("tickets.xlsx")
+print(df.shape)                       # cuántas filas y columnas llegaron
+print(df.isna().sum())                # faltantes por columna
+
+df = df.drop_duplicates()             # repetidos exactos, deja el primero
+df = df.dropna(subset=["minutos_resolucion"])  # solo si decidiste descartarlos
+
+q1, q3 = df["minutos_resolucion"].quantile([0.25, 0.75])
+iqr = q3 - q1
+fuera = df[(df["minutos_resolucion"] < q1 - 1.5 * iqr)
+           | (df["minutos_resolucion"] > q3 + 1.5 * iqr)]
+print(fuera)                          # a mirar de a uno, no a borrar
+```
+
+Corregir unidades va antes de buscar extremos: si no, un "3" que en realidad es 180 minutos cae bajo la valla inferior y lo tomás por un error cuando era una unidad mal puesta. Y cada paso conviene dejarlo escrito (en el script, no en el Excel a mano), así otra persona puede repetirlo y ver qué sacaste.
+
+<Profundizar titulo="¿Por qué los cuartiles pueden dar distinto según la herramienta?">
+
+Hay más de una forma de calcular un cuartil cuando la posición cae entre dos datos. Por defecto, `Series.quantile` de pandas interpola linealmente entre los dos valores vecinos<Cita f="pandas-docs" loc="Series.quantile" />. Otras herramientas usan otra convención, así que con pocos datos las vallas pueden diferir un poco. Con cientos de filas la diferencia es despreciable, pero conviene anotar con qué herramienta calculaste.
+
+</Profundizar>
+
+</Formal>
