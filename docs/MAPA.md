@@ -1,19 +1,16 @@
 # MAPA — campus-personal
 
-> Cómo se conecta, en una pantalla (tope 5.000 bytes). Opcional: si el proyecto no tiene módulos ni conexiones, borrá este archivo. La arquitectura a fondo va a `referencia/ARCHITECTURE.md`; acá se apunta.
+> Cómo se conecta, en una pantalla (tope 5.000 bytes). La arquitectura a fondo va a `referencia/ARCHITECTURE.md`; acá se apunta.
 
 ## Por dentro
-Módulos, base y servicios, a nivel módulos (no clases):
 
 ```mermaid
 flowchart LR
-  A[[completar: MODULO_A]] --> B[[completar: MODULO_B]]
-  B --> C[([completar: BASE_O_SERVICIO])]
+  C[(src/content: áreas y temas en MDX, validados con Zod)] --> B[Build de Astro + Pagefind]
+  B --> S[Sitio estático PWA en GitHub Pages]
+  S --> N[(Navegador: progreso FSRS en IndexedDB)]
+  N <--> J[Exportar/importar JSON]
 ```
 
 ## Con otras apps
-Los acuerdos vigentes, cortos: qué comparte, quién escribe qué. La historia de mensajes no va acá.
-
-| App | Qué comparte | Quién escribe |
-|---|---|---|
-| [completar: APP] | [completar: QUE_COMPARTE] | [completar: QUIEN_ESCRIBE] |
+Ninguna. No hay backend ni servicios externos; solo GitHub Pages sirve los archivos.

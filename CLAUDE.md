@@ -33,3 +33,15 @@ Todo en español, narración incluida. Decisiones: contexto, la RECOMENDADA prim
 ## Evidencia con datos reales
 
 Capturas, exports y volcados viven **fuera del repo, con registro** (ruta, tramo, quién la borra), y se borran al cerrar.
+
+## Este proyecto (stack, comandos y reglas)
+
+- Stack: Astro 7 + MDX + islas de React 19, KaTeX (unified), ts-fsrs 6, Mafs + Observable Plot, motion, Pagefind, @vite-pwa/astro 2.0.2, idb-keyval, Zod, Vitest + Playwright. Las versiones van **fijadas** (nunca `latest`) y se revisan con `npm ls`. Detalle y trampas: `docs/investigacion/stack-verificado.md`.
+- Node 24 (`.nvmrc`); esta PC trae Node 25, que Astro no soporta: `nvm use` antes de correr nada.
+- Comandos: `npm run dev` · chequeo base `npm run build` · chequeo completo `npx astro check && npm run build && npx vitest run && npx playwright test`.
+- Deploy: push a `main` → GitHub Actions → `https://jrobilara.github.io/campus-personal/` (`base: '/campus-personal'`; con `trailingSlash` el `BASE_URL` ya termina en `/`).
+- Áreas y temas salen de `src/content/` validados con esquema Zod: sumar un tema es sumar un archivo, nunca tocar pantallas. Un archivo mal formado rompe el build con el archivo y el campo.
+- Toda afirmación del contenido lleva cita (libro con capítulo, doc oficial o curso abierto con URL); videos y blogs solo como "para ver más". Nunca texto copiado de libros: paráfrasis propia.
+- Cada tema sigue el orden caso real → intuición (gráfico, animación o simulador) → formal → práctica → fuentes, en criollo rioplatense con el término técnico en inglés entre paréntesis.
+- Importar un JSON de progreso inválido avisa y no pisa el progreso actual; el JSON lleva `version`.
+- Solo español (i18n: NO) y sin login (multi-tenant: NO): decididos en el SPEC-0, no se reabren sin Arquitecto.

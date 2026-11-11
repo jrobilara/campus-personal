@@ -5,9 +5,13 @@
 ## 🔴 Crítico
 
 ## 🟠 Importante
+- [ ] Construir v1 según `docs/modulos/v1/SPEC.md` (READY); las fases F1-F7 están en la ficha `docs/modulos/v1/README.md`
 
 ## 🟡 Cuando se pueda
+- [ ] El dueño veta o ajusta la lista de temas de v1 (está en el SPEC-0, sección "Temas de v1")
 
 ## 🟢 Ideas / algún día
+- [ ] v2: mapa de conexiones entre temas (grafo)
+- [ ] v2: recordatorio diario de repaso (notificación)
 
 ## Reportado por el usuario

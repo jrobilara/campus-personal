@@ -1,7 +1,8 @@
 # SPEC-0: campus-personal
 Sistema personal de apuntes y repaso interactivo (gráficos, animaciones, explicaciones en criollo) por área y contenido, para mantenerse afilado en Ing. en Informática y Lic. en Gestión de Tecnología (UNLaM).
-- Estado: BORRADOR
+- Estado: READY
 - Fecha: 2026-11-11
+- Sello del Arquitecto: `arquitecto: 2026-11-11 · kit 3.0.0-rc.6 · chequeos: tamaño ✅ · entorno ✅ · tope ✅ · hash c49d1648b95d`
 
 ## Por qué (el dolor)
 Lo cursado se olvida a los meses, los apuntes están desparramados, la teoría llega demasiado estructurada y sin aplicación visible, y falta el salto de la facultad al laburo. Con el sistema funcionando: un solo lugar por área y tema, repaso espaciado que trae cada concepto antes de olvidarlo, y explicaciones en criollo con gráficos, animaciones y analogías con casos reales del trabajo.
