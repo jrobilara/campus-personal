@@ -1,0 +1,141 @@
+tarjetas:
+  - id: t-grafo-que-es
+    frente: ¿De qué está hecho un grafo?
+    dorso: De nodos (vértices) y de aristas que los unen, opcionalmente con peso y con dirección.
+    fuente: mcs
+  - id: t-distancia-definicion
+    frente: En un grafo, ¿qué es la distancia entre dos vértices?
+    dorso: El largo del camino más corto que va de uno al otro.
+    fuente: mcs
+  - id: t-bfs-sin-pesos
+    frente: ¿Qué recorrido sirve para hallar caminos mínimos cuando todas las aristas valen lo mismo?
+    dorso: La búsqueda en anchura (BFS), que recorre el grafo por capas con una cola.
+    fuente: ocw-6006
+  - id: t-dijkstra-que-saca
+    frente: En cada paso, ¿qué nodo saca Dijkstra para procesar?
+    dorso: El que tiene la menor distancia estimada desde el origen entre los que todavía no procesó.
+    fuente: ocw-6006
+  - id: t-relajar-arista
+    frente: ¿Qué significa "relajar" la arista $(u, v)$ en Dijkstra?
+    dorso: Ver si pasar por $u$ da una distancia más corta a $v$ y, si es así, actualizar la estimación de $v$.
+    fuente: ocw-6006
+  - id: t-dijkstra-negativos
+    frente: ¿Por qué Dijkstra necesita que ninguna arista tenga peso negativo?
+    dorso: Porque sin eso, un nodo más lejano podría abaratar un camino ya fijado y la distancia ya cerrada dejaría de ser correcta.
+    fuente: ocw-6006
+  - id: t-menos-aristas-no-es-barato
+    frente: ¿El camino con menos aristas es siempre el más barato?
+    dorso: No, una sola arista muy cara puede costar más que varias baratas.
+    fuente: ocw-6006
+  - id: t-dijkstra-heap
+    frente: ¿Qué estructura conviene usar en Dijkstra para un grafo con pocas aristas?
+    dorso: Un montículo binario (binary heap), que da del orden de $|E|\log|V|$.
+    fuente: ocw-6006
+  - id: t-dag-definicion
+    frente: ¿Qué es un DAG?
+    dorso: Un grafo dirigido sin ciclos.
+    fuente: mcs
+  - id: t-orden-topologico-definicion
+    frente: ¿Qué cumple un orden topológico respecto de cada flecha $u \to v$?
+    dorso: Que $u$ aparece antes que $v$ en la lista.
+    fuente: mcs
+  - id: t-orden-topologico-unico
+    frente: ¿Un DAG tiene un único orden topológico?
+    dorso: No, casi siempre tiene varios y cualquiera de ellos sirve.
+    fuente: mcs
+  - id: t-ciclo-sin-orden
+    frente: ¿Qué le pasa al armado del orden topológico si el grafo tiene un ciclo?
+    dorso: Se frena con vértices sin ubicar, porque los del ciclo siempre tienen una flecha entrante pendiente.
+    fuente: mcs
+
+ejercicios:
+  - id: e-camino-minimo-costo
+    tipo: numerico
+    enunciado: |
+      Un mapa de cinco puntos tiene estos tramos en minutos, en los dos sentidos: S–A 4, S–B 1, B–A 2, A–C 5, B–C 8, C–T 3 y A–T 11. ¿Cuál es el tiempo mínimo para ir de S a T?
+    respuesta: 11
+    tolerancia:
+      absoluta: 0.01
+    unidad: min
+    explicacion: |
+      Dijkstra desde S: B = 1, A = 3 (pasando por B), C = 8 (A + 5) y T = 11 (C + 3). Las otras opciones son peores: S–B–C–T = 12 y S–A–T = 15. El camino es S, B, A, C, T.
+    erroresComunes:
+      - valor: 15
+        explicacion: Elegiste S–A–T, que es el de menos tramos (2) pero no el más barato. Contar tramos no es lo mismo que sumar minutos.
+      - valor: 12
+        explicacion: Ese es S–B–C–T, que se pasa por la calle B–C de 8 minutos cuando pasando por A se llega a C en 8 y no en 9.
+    fuente: ocw-6006
+  - id: e-atasco-en-la-avenida
+    tipo: numerico
+    enunciado: |
+      Con el mismo mapa, un atasco hace que el tramo A–C pase de 5 a 15 minutos. ¿Cuál es ahora el tiempo mínimo de S a T?
+    respuesta: 12
+    tolerancia:
+      absoluta: 0.01
+    unidad: min
+    explicacion: |
+      El camino S, B, A, C, T ahora cuesta $1 + 2 + 15 + 3 = 21$. Pero S, B, C, T cuesta $1 + 8 + 3 = 12$, y S, B, A, T cuesta $1 + 2 + 11 = 14$. El mínimo es 12 y el camino cambió.
+    erroresComunes:
+      - valor: 21
+        explicacion: Mantuviste el mismo recorrido de antes y le sumaste el atasco. Cuando cambia un costo, hay que volver a buscar el mínimo porque otro camino puede ganar.
+      - valor: 11
+        explicacion: Ese es el valor original, sin atasco.
+    fuente: ocw-6006
+  - id: e-cantidad-de-ordenes
+    tipo: numerico
+    enunciado: |
+      Cinco paquetes de un monorepo tienen estas reglas: `core` va antes que `ui`, que `db` y que `api`; `db` va antes que `api`; `ui` y `api` van antes que `app`. ¿Cuántos órdenes de construcción distintos respetan todas las reglas?
+    respuesta: 3
+    tolerancia:
+      absoluta: 0.01
+    unidad: órdenes
+    explicacion: |
+      `core` va primero y `app` último. En el medio hay que ubicar `ui`, `db` y `api` con la única restricción de que `db` esté antes que `api`. Los órdenes son: core, ui, db, api, app; core, db, ui, api, app; y core, db, api, ui, app. Son 3.
+    erroresComunes:
+      - valor: 6
+        explicacion: Contaste todas las formas de ordenar `ui`, `db` y `api`, 3! = 6, sin descartar las que ponen `api` antes que `db`.
+      - valor: 1
+        explicacion: Es cierto que hay un orden que siempre sirve, pero hay más de uno válido.
+    fuente: mcs
+  - id: e-vf-dijkstra-pesos-negativos
+    tipo: verdadero-falso
+    enunciado: Dijkstra encuentra bien los caminos mínimos en un grafo aunque algunas aristas tengan pesos negativos.
+    respuesta: false
+    justificacion: La demostración de que las distancias que cierra son correctas usa que los pesos no son negativos. Con pesos negativos hace falta otro algoritmo, como Bellman-Ford, que es más lento.
+    fuente: ocw-6006
+  - id: e-om-ciclo-de-dependencias
+    tipo: opcion-multiple
+    enunciado: Tu herramienta intenta ordenar los paquetes de un monorepo y se queda sin poder ubicar tres de ellos. ¿Qué es lo más probable?
+    opciones:
+      - texto: Esos tres paquetes forman un ciclo de dependencias, o dependen de uno.
+        correcta: true
+        explicacion: Un vértice dentro de un ciclo (o que depende de uno) siempre tiene una dependencia pendiente, así que nunca llega a ser elegible.
+      - texto: Hay demasiados paquetes y el algoritmo no alcanza a procesarlos.
+        explicacion: La cantidad no impide ordenar, porque cualquier DAG finito tiene un orden topológico.
+      - texto: Hay paquetes sin ninguna dependencia.
+        explicacion: Eso es lo contrario, son justo los primeros que se pueden ubicar.
+      - texto: El grafo no es conexo.
+        explicacion: Un grafo no conexo se puede ordenar sin problema. Lo que lo impide es el ciclo.
+    fuente: mcs
+
+casos: []
+
+problemas:
+  - id: p-mcs-prerrequisitos
+    enunciado: |
+      El problema 10.21 del libro trae una tabla de prerrequisitos entre materias del MIT. Con ella armá el grafo dirigido y escribí un orden topológico. Después averiguá cuántos cuatrimestres hacen falta si podés cursar todas las materias disponibles en cada uno. El problema afirma que son exactamente seis: explicá por qué. Para repetir el ejercicio con algo cercano, hacelo con las correlatividades de tu propia carrera.
+    fuente: mcs
+    ubicacion: cap. 10, problema 10.21 (pp. 459-460)
+    dificultad: intermedio
+  - id: p-dijkstra-a-mano-y-codigo
+    enunciado: |
+      Inventá un grafo de 7 nodos con pesos (por ejemplo, tiempos entre seis lugares de tu ciudad y tu casa). Calculá a mano las distancias desde tu casa con una tabla como la del ejemplo de la clase, y después programá Dijkstra con `heapq` en Python y compará. Cambiá el peso de una arista a un valor alto y verificá que el camino cambia.
+    fuente: ocw-6006
+    ubicacion: Lecture 13, p. 2 (algoritmo) y p. 3 (tabla de ejemplo)
+    dificultad: intermedio
+  - id: p-detectar-ciclos
+    enunciado: |
+      Programá en Python la construcción del orden topológico que describe el texto (sacar un vértice sin flechas entrantes pendientes y repetir). Probala con el DAG del ejercicio de los cinco paquetes y con una variante donde `core` dependa de `app`. Mostrá qué vértices quedan sin ubicar en el segundo caso.
+    fuente: mcs
+    ubicacion: cap. 10, §10.5.1 (p. 434)
+    dificultad: basico

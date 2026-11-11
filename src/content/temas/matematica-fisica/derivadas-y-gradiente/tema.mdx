@@ -1,0 +1,203 @@
+---
+titulo: "Derivadas y descenso por gradiente"
+area: matematica-fisica
+orden: 1
+resumen: Cómo la pendiente de una función te dice para dónde bajar, y cómo repetir ese paso una y otra vez es lo que hace que un modelo "aprenda" sus parámetros.
+materias:
+  - carrera: ing-informatica
+    codigo: "3622"
+    nombre: Análisis Matemático I
+  - carrera: ing-informatica
+    codigo: "3639"
+    nombre: Análisis Matemático III
+  - carrera: ing-informatica
+    codigo: "3664"
+    nombre: Inteligencia Artificial
+prerrequisitos: []
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: openstax-calc1
+    tipo: libro
+    autor: Gilbert Strang y Edwin Herman
+    titulo: Calculus Volume 1
+    edicion: OpenStax, 2016 (versión libre)
+    editorial: OpenStax
+    ubicacion: cap. 3, §3.1 "Defining the Derivative"
+    url: https://openstax.org/books/calculus-volume-1/pages/3-1-defining-the-derivative
+  - id: openstax-calc3
+    tipo: libro
+    autor: Gilbert Strang y Edwin Herman
+    titulo: Calculus Volume 3
+    edicion: OpenStax, 2016 (versión libre)
+    editorial: OpenStax
+    ubicacion: cap. 4, §4.6 "Directional Derivatives and the Gradient"
+    url: https://openstax.org/books/calculus-volume-3/pages/4-6-directional-derivatives-and-the-gradient
+  - id: stewart-multi
+    tipo: libro
+    autor: James Stewart
+    titulo: Cálculo de varias variables. Trascendentes tempranas
+    edicion: 7.ª ed., 2012
+    editorial: Cengage Learning
+    ubicacion: cap. 14, §14.6, pp. 936 y 939
+  - id: mml
+    tipo: libro
+    autor: Marc P. Deisenroth, A. Aldo Faisal y Cheng Soon Ong
+    titulo: Mathematics for Machine Learning
+    edicion: Cambridge University Press, 2020 (PDF libre, borrador del 15/01/2024)
+    editorial: Cambridge University Press
+    ubicacion: §5.1, §5.2 y §7.1 (pp. 141, 146, 227-230)
+    url: https://mml-book.github.io/
+  - id: khan-derivadas
+    tipo: curso-abierto
+    autor: Khan Academy
+    titulo: "Differentiation: definition and basic derivative rules"
+    url: https://www.khanacademy.org/math/ap-calculus-ab/ab-differentiation-1-new
+    verMas: true
+  - id: 3b1b-descenso
+    tipo: video
+    autor: 3Blue1Brown
+    titulo: Gradient descent, how neural networks learn (Deep Learning, capítulo 2)
+    url: https://www.youtube.com/watch?v=IHZwWFHWa-w
+    verMas: true
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="Un parámetro, cien valores posibles y un modelo con cincuenta millones">
+
+Medís ocho reportes de tu sistema y anotás cuántas filas procesa cada uno y cuántos segundos tarda. Los números son ilustrativos, pero la forma es la de siempre: más o menos 2 segundos por cada mil filas. Querés una recta que prediga el tiempo, $t = w \cdot n$, y todo lo que te falta es el valor de $w$.
+
+Para un solo parámetro la cosa es mansa: probás $w = 0{,}5$, $w = 1$, $w = 1{,}5$, medís el error de cada uno y te quedás con el menor. Con diez parámetros ya no te alcanza el día. Con los cincuenta millones de un modelo grande, ni las computadoras del mundo juntas.
+
+Y sin embargo esos modelos "aprenden". Nadie los prueba de a uno: en cada paso miran para qué lado baja el error y dan un pasito en esa dirección. ¿De dónde sacan el "para qué lado"?
+
+</CasoReal>
+
+<Intuicion>
+
+La **derivada** (*derivative*) responde una sola pregunta: si muevo un poquito la entrada, ¿para qué lado y cuánto se mueve la salida? Dicho en dibujo, es la pendiente de la curva en ese punto.
+
+<Analogia titulo="El velocímetro">
+
+La posición de un auto cambia con el tiempo. La velocidad que marca el velocímetro es cuánto cambia esa posición en ese instante, no el promedio del viaje. La derivada de la posición es la velocidad instantánea. Para medirla "a mano" mirás cuánto avanzó el auto en un intervalo cada vez más corto: la velocidad media de ese intervalo se acerca a la del velocímetro.
+
+</Analogia>
+
+En el simulador, esa velocidad media de un intervalo es la pendiente de la **secante** (la recta que une dos puntos de la curva). Cuando el intervalo $h$ se achica, la secante se pega a la **tangente**, y la pendiente de la tangente es la derivada.
+
+<SimFuncion
+  consigna="Con la función cuadrática y x0 en 1, llevá h hacia 0,01 y mirá cómo la pendiente de la secante se pega a la derivada. Después poné x0 en 0: ¿cuánto vale la derivada ahí y cómo se ve la tangente?"
+  titulo="De la secante a la tangente"
+  modo="tangente"
+  funcion="cuadratica"
+  x0={1}
+/>
+
+Ahora la segunda mitad de la idea. Si estás parado en una loma con los ojos cerrados, no sabés dónde está el valle, pero con el pie sentís para qué lado se inclina el suelo.
+
+<Analogia titulo="Bajar la loma con los ojos cerrados">
+
+Tanteás la inclinación donde estás parado y das un paso hacia abajo. El paso es más largo si la cuesta es empinada y más corto si es suave. Después volvés a tantear y repetís. No necesitás el mapa entero: alcanza con la pendiente de acá. Ese es el **descenso por gradiente** (*gradient descent*). El tamaño del paso lo regulás vos con la **tasa de aprendizaje** (*learning rate*).
+
+</Analogia>
+
+<SimFuncion
+  consigna="Con tasa 0,1 apretá '10 pasos' y mirá cómo el punto se acerca a 0. Reiniciá y subí la tasa a 0,6, después a 1 y después a 1,1: ¿qué hace el punto y qué dice la lectura 'estado'?"
+  titulo="La tasa de aprendizaje manda"
+  modo="descenso"
+  funcion="cuadratica"
+  x0={3}
+  tasa={0.1}
+/>
+
+<Ojo>
+
+La tasa de aprendizaje no es "más grande, más rápido". Si te pasás, el punto salta de un lado al otro de la curva y puede alejarse cada vez más. Si te quedás corto, llegás, pero tardás una eternidad.
+
+</Ojo>
+
+Hay una trampa más. Hasta acá la loma tenía un solo valle. Probá con una que tiene dos.
+
+<SimFuncion
+  consigna="Arrancá en x0 = 2 con tasa 0,01 y apretá varias veces '10 pasos': ¿en qué valle termina? Reiniciá con x0 = -2: ¿termina en el mismo?"
+  titulo="Dos valles, un solo paso a la vez"
+  modo="descenso"
+  funcion="doble-pozo"
+  x0={2}
+  tasa={0.01}
+/>
+
+El descenso solo sabe de la pendiente de donde está parado. Si abajo de sus pies hay un valle, baja ahí, aunque haya otro más profundo a la vuelta.
+
+</Intuicion>
+
+<Formal>
+
+### La derivada
+
+La derivada de $f$ en $a$ es el límite del cociente incremental, siempre que ese límite exista<Cita f="openstax-calc1" loc="§3.1" />. Es a la vez la pendiente de la recta tangente en $(a, f(a))$ y la razón de cambio instantánea de $f$ en $a$<Cita f="openstax-calc1" loc="§3.1" />.
+
+<Formula nombre="Derivada en un punto" tex="f'(a) = \lim_{h \to 0} \frac{f(a+h) - f(a)}{h}">
+
+donde $h$ es el tamaño del intervalo (cuanto más chico, más se parece la secante a la tangente) y $f(a+h) - f(a)$ es cuánto cambió la salida en ese intervalo.
+
+</Formula>
+
+Con esta definición se obtiene, por ejemplo, que la derivada de $x^n$ es $n x^{n-1}$<Cita f="mml" loc="§5.1, Ejemplo 5.2, p. 142" />. En particular, $\frac{d}{dx}x^2 = 2x$: vale 0 en $x=0$ (el fondo de la parábola) y es positiva a la derecha, negativa a la izquierda.
+
+### Varias variables: el gradiente
+
+Si la función depende de varias variables, se deriva respecto de cada una dejando fijas las demás. Juntar todas esas derivadas parciales en un vector da el **gradiente** (*gradient*)<Cita f="stewart-multi" loc="§14.6, definición 8, p. 936" />.
+
+<Formula nombre="Gradiente" tex="\nabla f(x_1,\dots,x_n) = \left( \frac{\partial f}{\partial x_1}, \dots, \frac{\partial f}{\partial x_n} \right)">
+
+donde $\frac{\partial f}{\partial x_i}$ es la derivada de $f$ respecto de $x_i$ con las otras variables quietas. Algunos libros lo escriben como fila y otros como columna; es una convención<Cita f="mml" loc="§5.2, pp. 146-147" />.
+
+</Formula>
+
+El gradiente tiene una propiedad que lo hace útil para optimizar: en cada punto señala la dirección en la que la función crece más rápido, y esa máxima rapidez es justamente su longitud $\lVert \nabla f \rVert$<Cita f="stewart-multi" loc="teorema 15, p. 939" />. En la dirección contraria es donde más rápido decrece<Cita f="openstax-calc3" loc="§4.6, teorema 4.13" />. Además, es perpendicular a las curvas de nivel de la función<Cita f="openstax-calc3" loc="§4.6, teorema 4.14" />.
+
+### El algoritmo
+
+Para minimizar una función diferenciable $f$ se parte de una estimación inicial y se repite un paso: restar el gradiente multiplicado por un número chico y positivo<Cita f="mml" loc="§7.1, ec. 7.6, p. 228" />.
+
+<Formula nombre="Paso del descenso por gradiente" tex="x_{k+1} = x_k - \gamma \, \nabla f(x_k)">
+
+donde $x_k$ es el punto actual, $\nabla f(x_k)$ el gradiente ahí y $\gamma > 0$ la tasa de aprendizaje (el libro la llama *step-size*).
+
+</Formula>
+
+Con una tasa adecuada, los valores de $f$ van bajando y la secuencia converge a un **mínimo local** (*local minimum*), no necesariamente al global<Cita f="mml" loc="§7.1, p. 228" />. Una tasa muy chica vuelve el proceso lento; una muy grande hace que se pase de largo, no converja o hasta diverja<Cita f="mml" loc="§7.1.1, p. 229" />.
+
+### Un caso concreto: el error cuadrático medio
+
+En el caso de la recta $t = w \cdot n$, el error de un valor de $w$ sobre $m$ mediciones $(n_i, t_i)$ se resume con el error cuadrático medio:
+
+$$
+E(w) = \frac{1}{m}\sum_{i=1}^{m} \left(t_i - w\,n_i\right)^2
+\qquad
+E'(w) = -\frac{2}{m}\sum_{i=1}^{m} n_i \left(t_i - w\,n_i\right)
+$$
+
+La derivada sale de la regla de la cadena: la derivada de $(\cdot)^2$ es $2(\cdot)$ y la derivada interna respecto de $w$ es $-n_i$<Cita f="mml" loc="§5.2, ejemplo 5.6, pp. 146-147" />. Es el caso de una dimensión del problema de mínimos cuadrados con gradiente $2(Ax-b)^\top A$ que trata el libro<Cita f="mml" loc="§7.1, ejemplo 7.2, p. 230" />. Con eso, cada paso es $w \leftarrow w - \gamma E'(w)$.
+
+### Cuándo anda: tasa y forma de la función
+
+Para $f(x)=x^2$ el gradiente es $2x$ y el paso queda $x_{k+1} = (1-2\gamma)\,x_k$. Es una cuenta propia que se verifica a mano. De ahí sale todo:
+
+| Tasa $\gamma$ | Factor $1-2\gamma$ | Qué pasa |
+|---|---|---|
+| entre 0 y 0,5 | entre 0 y 1 | baja del mismo lado, cada vez más cerca de 0 |
+| entre 0,5 y 1 | entre -1 y 0 | cruza de lado en cada paso, pero se achica |
+| 1 | -1 | rebota entre $x_0$ y $-x_0$ para siempre |
+| mayor que 1 | menor que -1 | cada salto es más grande que el anterior: diverge |
+
+<Profundizar titulo="¿Y para otras funciones, hay un límite parecido?">
+
+Para una parábola $f(x) = \tfrac{a}{2}x^2$ con $a>0$ el paso es $x_{k+1} = (1 - \gamma a)\,x_k$, así que converge si $0 < \gamma < 2/a$. Cuanto más curvo es el valle (mayor $a$), más chica tiene que ser la tasa. Para funciones generales, cerca de un mínimo la función se parece a una parábola, y por eso la regla práctica es la misma: la curvatura marca la tasa máxima razonable. El libro advierte además que en valles largos y angostos el descenso hace zigzag y avanza despacio<Cita f="mml" loc="§7.1, p. 229" />.
+
+</Profundizar>
+
+Y una última advertencia: que el gradiente sea cero solo dice que estás en un punto estacionario. Puede ser un mínimo, un máximo o un punto silla (*saddle point*)<Cita f="mml" loc="ejercicio 7.1, p. 247" />.
+
+</Formal>
