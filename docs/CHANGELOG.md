@@ -8,5 +8,5 @@ kit 3.0.0-rc.6: adopción — piezas settings, hook-arranque, hook-escritura, ho
 
 ### Added
 - SPEC-0 (`docs/modulos/v1/SPEC.md`) sellado y READY: PWA estática en GitHub Pages, 6 áreas, repaso espaciado FSRS, simuladores, ejercicios, casos de guardia y fuentes verificadas.
-- Investigaciones: `docs/investigacion/unlam-planes.md` (planes UNLaM) y `docs/investigacion/stack-verificado.md` (stack verificado hoy).
+- Investigaciones: `docs/modulos/v1/investigacion/unlam-planes.md` (planes UNLaM) y `docs/modulos/v1/investigacion/stack-verificado.md` (stack verificado hoy).
 - Scaffolding Astro 7 (template minimal) y kit 3.0.0-rc.6 adoptado.

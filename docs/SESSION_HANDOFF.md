@@ -22,4 +22,4 @@
 ## Contexto
 - La sesión del Arquitecto pasa a director por pedido del dueño: lanza subagentes (Opus medio planifica, Sonnet alto ejecuta) y no escribe código ni contenido.
 - Repo público `jrobilara/campus-personal` autorizado; `gh` ya autenticado con `repo` y `workflow`.
-- Trampas del stack (Astro 7 sin remark por defecto, ts-fsrs 6 con API nueva, @vite-pwa/astro con export nombrado, TS ^6, katex 0.16.47): `docs/investigacion/stack-verificado.md`.
+- Trampas del stack (Astro 7 sin remark por defecto, ts-fsrs 6 con API nueva, @vite-pwa/astro con export nombrado, TS ^6, katex 0.16.47): `docs/modulos/v1/investigacion/stack-verificado.md`.

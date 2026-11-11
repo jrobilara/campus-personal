@@ -2,7 +2,7 @@
 Sistema personal de apuntes y repaso interactivo (gráficos, animaciones, explicaciones en criollo) por área y contenido, para mantenerse afilado en Ing. en Informática y Lic. en Gestión de Tecnología (UNLaM).
 - Estado: READY
 - Fecha: 2026-11-11
-- Sello del Arquitecto: `arquitecto: 2026-11-11 · kit 3.0.0-rc.6 · chequeos: tamaño ✅ · entorno ✅ · tope ✅ · hash c49d1648b95d`
+- Sello del Arquitecto: `arquitecto: 2026-11-11 · kit 3.0.0-rc.6 · chequeos: tamaño ✅ · entorno ✅ · tope ✅ · hash 3e797a169430`
 
 ## Por qué (el dolor)
 Lo cursado se olvida a los meses, los apuntes están desparramados, la teoría llega demasiado estructurada y sin aplicación visible, y falta el salto de la facultad al laburo. Con el sistema funcionando: un solo lugar por área y tema, repaso espaciado que trae cada concepto antes de olvidarlo, y explicaciones en criollo con gráficos, animaciones y analogías con casos reales del trabajo.
@@ -20,7 +20,7 @@ Lo cursado se olvida a los meses, los apuntes están desparramados, la teoría l
 
 ## Nivel y stack, y por qué
 Nivel: `estandar` (con código).
-Tipo: web instalable (PWA) que anda sin internet, en PC y celular. Sin servidor ni login: el progreso vive en cada dispositivo y se pasa con exportar/importar. (Decidido en la entrevista.) Contenido: lo arman agentes con fuentes citadas y verificadas; el dueño suma o corrige apuntes en archivos Markdown dentro del repo, que la app levanta sola (sin editor dentro de la app). Stack (verificado 2026-11-11, detalle en `docs/investigacion/stack-verificado.md`): Astro 7.4 + MDX + islas de React 19; KaTeX 0.16.47 con remark-math/rehype-katex vía `markdown.processor: unified(...)`; ts-fsrs 6 (API nueva `DefaultScheduler`/`review`); Mafs + Observable Plot para gráficos y simuladores; `motion` para animaciones; Pagefind para el buscador; @vite-pwa/astro 2.0.2 (export nombrado) para offline; idb-keyval para el progreso; Zod (content collections) para validar el contenido; Vitest + Playwright; deploy con withastro/action en Node 24. Versiones exactas fijadas, nunca `latest`.
+Tipo: web instalable (PWA) que anda sin internet, en PC y celular. Sin servidor ni login: el progreso vive en cada dispositivo y se pasa con exportar/importar. (Decidido en la entrevista.) Contenido: lo arman agentes con fuentes citadas y verificadas; el dueño suma o corrige apuntes en archivos Markdown dentro del repo, que la app levanta sola (sin editor dentro de la app). Stack (verificado 2026-11-11, detalle en `docs/modulos/v1/investigacion/stack-verificado.md`): Astro 7.4 + MDX + islas de React 19; KaTeX 0.16.47 con remark-math/rehype-katex vía `markdown.processor: unified(...)`; ts-fsrs 6 (API nueva `DefaultScheduler`/`review`); Mafs + Observable Plot para gráficos y simuladores; `motion` para animaciones; Pagefind para el buscador; @vite-pwa/astro 2.0.2 (export nombrado) para offline; idb-keyval para el progreso; Zod (content collections) para validar el contenido; Vitest + Playwright; deploy con withastro/action en Node 24. Versiones exactas fijadas, nunca `latest`.
 Por qué: el sitio estático sale gratis y anda offline; Astro arma una página por tema y valida el contenido; la interactividad solo carga donde hace falta. Sin Python ni backend porque no hay cálculo pesado del lado del servidor.
 
 ## Concerns activados
@@ -80,13 +80,13 @@ Mínimo 3 por área, el 4.º si pasa la verificación. Entre paréntesis, la mat
 Tamaño: módulo solo
 - Sesiones: una, esta misma. Por pedido explícito del dueño, la sesión del Arquitecto pasa a director después del sello: no escribe código ni contenido, lanza subagentes y verifica.
 - Modelo: subagentes que planifican (esquema de contenido, plantilla de tema, guía de estilo, plan de simuladores) con Opus en esfuerzo medio; los que ejecutan (construir la app, investigar y escribir contenido por área, verificar fuentes, tests, deploy) con Sonnet en esfuerzo alto. Opus para ejecutar solo con motivo avisado al dueño.
-- Fases: F1 plan (esquema Zod, plantilla de tema, guía de estilo en criollo, plan de simuladores) → F2 app (un constructor) en paralelo con F3 contenido (un escritor por área, cada uno en su carpeta `src/content/<area>/`) → F4 verificación (un verificador por área, distinto del autor) → F5 correcciones → F6 tests, deploy y prueba en el sitio vivo → F7 revisión de código y de UI.
+- Fases: F1 plan (esquema Zod, plantilla de tema, guía de estilo en criollo, plan de simuladores) → F2 app (un constructor) en paralelo con F3 contenido (un escritor por área, cada uno en su carpeta de área dentro de las content collections) → F4 verificación (un verificador por área, distinto del autor) → F5 correcciones → F6 tests, deploy y prueba en el sitio vivo → F7 revisión de código y de UI.
 - Para abrir: `inicio — ejecutá docs/modulos/v1/SPEC.md (está READY)` (solo si esta sesión se corta: la sesión nueva retoma como director desde la ficha).
 - Cómo se prueba: ver "Entorno de prueba".
 
 ## Entorno de prueba
 - Cómo se levanta: `npm run dev` (local) o `npm run build && npx astro preview --port 4321 --ignore-lock`.
-- Datos semilla: el propio contenido en `src/content/`. El progreso vive en el navegador; en los tests, Playwright arranca con perfil limpio. Cómo se resetea: borrar los datos del sitio en el navegador o usar el botón "reiniciar progreso".
+- Datos semilla: el propio contenido de las content collections. El progreso vive en el navegador; en los tests, Playwright arranca con perfil limpio. Cómo se resetea: borrar los datos del sitio en el navegador o usar el botón "reiniciar progreso".
 - Chequeo base (verde antes de tocar código): `npm run build`. Cuando estén instalados, el chequeo completo es `npx astro check && npm run build && npx vitest run && npx playwright test`.
 - Compartido entre carriles: un solo repo. Cada escritor de contenido toca solo su carpeta de área; el código de la app lo toca solo el constructor.
 - Herramientas: Node 24 LTS (`node -v` → v24.x; local con nvm y `.nvmrc`), npm (`npm -v`), Chromium de Playwright (`npx playwright --version`), gh autenticado (`gh auth status`). No hay entornos reales ni datos de terceros.
@@ -102,7 +102,7 @@ Tamaño: módulo solo
 ## Riesgos y decisiones ⚠️
 - ⚠️ i18n: NO, solo español rioplatense; los términos técnicos llevan su nombre en inglés entre paréntesis y las fuentes pueden estar en inglés. Consecuencia: traducir después obliga a reescribir cada texto de la app y del contenido.
 - ⚠️ Multi-tenant / cuentas: NO. Es de uso personal, pero se puede pasar el link: como el progreso vive en cada navegador, cada persona tiene el suyo sin login ni base. Consecuencia: si algún día se quieren grupos con cuentas, progreso en la nube o ranking, hay que sumar login y base (otro módulo, con migración del progreso exportado).
-- Contexto curricular: ver `docs/investigacion/unlam-planes.md`. Ing. en Informática (plan 2023-2) cubre las 6 áreas con contenidos mínimos verificados. La Lic. en Gestión de Tecnología (ciclo de complementación, EFC, plan 2011-1) no publica programas, así que su mapeo es solo por nombre de materia (NO VERIFICADO). Las áreas 3 (servidores) y 6 (soporte) tienen poca cobertura en la facultad, así que su contenido se apoya en documentación oficial (Linux, Docker, Kubernetes, ITIL 4, etc.).
+- Contexto curricular: ver `docs/modulos/v1/investigacion/unlam-planes.md`. Ing. en Informática (plan 2023-2) cubre las 6 áreas con contenidos mínimos verificados. La Lic. en Gestión de Tecnología (ciclo de complementación, EFC, plan 2011-1) no publica programas, así que su mapeo es solo por nombre de materia (NO VERIFICADO). Las áreas 3 (servidores) y 6 (soporte) tienen poca cobertura en la facultad, así que su contenido se apoya en documentación oficial (Linux, Docker, Kubernetes, ITIL 4, etc.).
 
 ### Alternativas evaluadas y descartadas
 - PC y celular sincronizados (login + base en la nube): descartado porque suma mantenimiento y costo para un uso de una sola persona.
