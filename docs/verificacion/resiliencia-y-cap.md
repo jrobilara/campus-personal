@@ -3,7 +3,7 @@
 - **Tema:** arquitecturas/resiliencia-y-cap
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO (re-verificación de 2294204 y cierre de ronda 2 en bc6bfef; H6 diferido a la pasada de retipado a `articulo` del director, no bloquea). Veredicto inicial (aaa7ad0): OBSERVADO.
+- **Veredicto:** APROBADO (re-verificación de 2294204 y cierre de ronda 2 en bc6bfef; H6 cerrado en 0ca77cd con el retipado a `articulo`). Veredicto inicial (aaa7ad0): OBSERVADO.
 
 Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a texto con títulos; Gilbert y Lynch leído completo con `pdftotext`; Brewer en la reproducción de InfoQ; RFC 9110 completo. La fórmula de backoff se verificó contra la imagen original de Brooker y contra el simulador oficial de AWS (ver #6). Números recalculados con Python.
 
@@ -82,5 +82,5 @@ Re-verificación F4: **CERRADO** (2294204). "Suele convenir una alerta… deber�
 
 Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.
 
-Re-verificación F4: **DIFERIDO**: se cierra en la pasada de retipado a `articulo` del director; no bloquea el veredicto.
+Re-verificación F4: **CERRADO** en 0ca77cd: las fuentes de autor pasaron al tipo `articulo` (con `edicion`) en la pasada de retipado del integrador (F6a).
 Respuesta del autor (ronda 2): corregido: se agregó `<Cita f="brewer-cap" loc="ACID, BASE, and CAP" />` y la ficha de `gilbert-lynch-cap` dice Computer (IEEE) 45(2), feb. 2012, pp. 30-36 (dato aportado por F4, no lo confirmé por mi cuenta).

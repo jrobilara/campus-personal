@@ -3,7 +3,7 @@
 - **Tema:** arquitecturas/sincrono-vs-asincrono
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO (re-verificación de 2294204 y cierre de ronda 2 en bc6bfef; H8 diferido a la pasada de retipado a `articulo` del director, no bloquea). Veredicto inicial (aaa7ad0): OBSERVADO.
+- **Veredicto:** APROBADO (re-verificación de 2294204 y cierre de ronda 2 en bc6bfef; H8 cerrado en 0ca77cd con el retipado a `articulo`). Veredicto inicial (aaa7ad0): OBSERVADO.
 
 Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a texto con títulos (no resúmenes). Kafka 4.4: intro, Design y Quickstart leídos completos. Números recalculados con Python. Los simuladores no existen aún: se contrastó con `SIMULADORES.md` §2.8.
 
@@ -89,7 +89,7 @@ Re-verificación F4: **CERRADO** (2294204). El enunciado pide la distribución d
 
 Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.
 
-Re-verificación F4: **DIFERIDO**: se cierra en la pasada de retipado a `articulo` del director; no bloquea el veredicto.
+Re-verificación F4: **CERRADO** en 0ca77cd: las fuentes de autor pasaron al tipo `articulo` (con `edicion`) en la pasada de retipado del integrador (F6a).
 
 **H9** (nuevo en la re-verificación, menor) — `src/content/temas/arquitecturas/sincrono-vs-asincrono/practica.yaml`, caso `c-cola-mails-crece`, nodo `escalar-a-ciegas`, texto: "Con 20 consumidores configurados la cola casi no baja y la mitad está reiniciando". Qué está mal: ahora que el contexto fija 4 mensajes por segundo por consumidor, 10 consumidores sanos sacan 40/s contra 30/s que entran: la cola baja unos 10/s (18.000 / 10 = 1.800 s, 30 minutos), o sea baja; "casi no baja" contradice la cuenta que el propio caso hace en el camino bueno (12 sanos, 18/s). Corrección: decir "la cola baja muy despacio" (o "apenas se mueve porque cada reinicio pierde trabajo") y, si se quiere conservar el efecto del mensaje venenoso, aclarar que cada consumidor sano se cae y reinicia al recibirlo. Estado: **CERRADO** (bc6bfef). El nodo ahora dice "la cola baja despacio (unos 10 mensajes por segundo, o sea unos 30 minutos para 18.000) porque la mitad está reiniciando" y la consecuencia de seguir escalando "la mejora es mínima". Recalculado con Python: 10 sanos × 4 = 40/s; 40 − 30 = 10/s; 18.000 / 10 = 1.800 s = 30 min. Coherente con el camino bueno (12 sanos, 18/s, ≈ 17 min).
 

@@ -3,7 +3,7 @@
 - **Tema:** arquitecturas/monolito-y-microservicios
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO (re-verificación de 2294204 y cierre de ronda 2 en bc6bfef; H6 diferido a la pasada de retipado a `articulo` del director, no bloquea). Veredicto inicial (aaa7ad0): OBSERVADO.
+- **Veredicto:** APROBADO (re-verificación de 2294204 y cierre de ronda 2 en bc6bfef; H6 cerrado en 0ca77cd con el retipado a `articulo`). Veredicto inicial (aaa7ad0): OBSERVADO.
 
 Método: las fuentes se abrieron con `curl` sobre el HTML original y se convirtieron a texto con los títulos de sección (no resúmenes de WebFetch); así se confirmó cada título citado. Los números se recalcularon con Python sin mirar la cuenta del autor. Los simuladores aún no existen: sus lecturas se contrastaron con `SIMULADORES.md` §2.8 y §2.11, no con el componente real.
 
@@ -76,7 +76,7 @@ Re-verificación F4: **CERRADO** (2294204). "puede ser síntoma" en el texto y e
 
 Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.
 
-Re-verificación F4: **DIFERIDO**: se cierra en la pasada de retipado a `articulo` del director; no bloquea el veredicto.
+Re-verificación F4: **CERRADO** en 0ca77cd: las fuentes de autor pasaron al tipo `articulo` (con `edicion`) en la pasada de retipado del integrador (F6a).
 
 H7 — menor, `practica.yaml`, tarjeta `t-disponibilidad-independencia`: el dorso lleva dos ideas (independencia y dependencia dura). Corrección: dividir en dos tarjetas o preguntar solo por la independencia.
 
