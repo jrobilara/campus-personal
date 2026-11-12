@@ -28,12 +28,17 @@ export default defineConfig({
         display: 'standalone',
         background_color: '#ffffff',
         theme_color: '#2563eb',
-        icons: [{ src: 'icono.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
+        icons: [
+          { src: 'icono-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icono-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icono-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'icono.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+        ],
       },
-      includeManifestIcons: false, // icono.svg ya entra por globPatterns: evita la entrada duplicada del precache
+      includeManifestIcons: false, // los íconos ya entran por globPatterns (svg y png): evita la entrada duplicada del precache
       maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       generateSW: {
-        globPatterns: ['**/*.{html,js,css,svg,woff,woff2,json,wasm,pf_meta,pf_index,pf_fragment}'],
+        globPatterns: ['**/*.{html,js,css,svg,png,woff,woff2,json,wasm,pf_meta,pf_index,pf_fragment}'],
         navigateFallback: null,
       },
     }),

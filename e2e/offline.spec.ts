@@ -30,4 +30,10 @@ test('el manifest declara el subpath y el sitio se puede instalar', async ({ pag
   expect(href).toBe('/campus-personal/manifest.webmanifest');
   const m = await (await page.request.get(href!)).json();
   expect(m).toMatchObject({ name: 'Campus personal', lang: 'es', display: 'standalone', scope: '/campus-personal/', start_url: '/campus-personal/' });
+  // íconos instalables: PNG de 192 y 512, uno maskable, y que existan en el sitio
+  const iconos = m.icons as { src: string; sizes: string; purpose?: string }[];
+  expect(iconos.some((i) => i.sizes === '192x192' && i.purpose === 'any')).toBe(true);
+  expect(iconos.some((i) => i.sizes === '512x512' && i.purpose === 'any')).toBe(true);
+  expect(iconos.some((i) => i.sizes === '512x512' && i.purpose === 'maskable')).toBe(true);
+  for (const i of iconos) expect((await page.request.get(new URL(i.src, new URL(href!, page.url()).href).href)).ok(), i.src).toBe(true);
 });
