@@ -1,8 +1,8 @@
 tarjetas:
   - id: t-incidente-definicion
     frente: En ITIL 4, ¿qué es un incidente (*incident*)?
-    dorso: Una interrupción no planificada de un servicio, o la falla de un componente que todavía no afectó al servicio.
-    fuente: peoplecert-glosario
+    dorso: Una interrupción no planificada de un servicio o una reducción de su calidad.
+    fuente: axelos-glosario
   - id: t-incidente-objetivo
     frente: ¿Qué busca la gestión de incidentes, restaurar el servicio o encontrar la causa raíz?
     dorso: Restaurar el servicio normal lo antes posible; la causa raíz es trabajo de la gestión de problemas.
@@ -16,28 +16,28 @@ tarjetas:
     dorso: El problema, porque el rollback restauró el servicio pero no eliminó la causa.
     fuente: atlassian-problemas
   - id: t-error-conocido
-    frente: ¿Qué es un error conocido (*known error*)?
-    dorso: Un problema con causa raíz documentada y una solución temporal (*workaround*) registrada.
-    fuente: atlassian-problemas
+    frente: En ITIL 4, ¿qué es un error conocido (*known error*)?
+    dorso: Un problema que ya fue analizado pero todavía no se resolvió.
+    fuente: axelos-glosario
   - id: t-cambio-definicion
-    frente: ¿Qué cuenta como un cambio (*change*) en ITIL?
+    frente: ¿Qué cuenta como un cambio (*change*) en ITIL 4?
     dorso: Agregar, modificar o quitar cualquier cosa que pueda afectar a un servicio, directa o indirectamente.
-    fuente: atlassian-cambios
+    fuente: axelos-glosario
   - id: t-cambio-estandar
     frente: ¿Qué hace que un cambio sea estándar (*standard change*)?
-    dorso: Que es de bajo riesgo, se repite seguido y tiene un procedimiento documentado ya preaprobado.
-    fuente: atlassian-cambios
+    dorso: Que es de bajo riesgo, está preautorizado, se entiende bien y está totalmente documentado.
+    fuente: axelos-glosario
   - id: t-cambio-emergencia
     frente: Sale un parche de seguridad que no puede esperar. ¿Qué tipo de cambio es y qué lo distingue?
-    dorso: De emergencia; se revisa con un trámite más corto porque esperar es más riesgoso que cambiar rápido.
-    fuente: atlassian-cambios
+    dorso: De emergencia, que el glosario de ITIL 4 define como un cambio que hay que introducir lo antes posible.
+    fuente: axelos-glosario
   - id: t-solicitud-vs-incidente
     frente: Un usuario pide el alta de una cuenta de correo nueva. ¿Es un incidente?
-    dorso: No, es una solicitud de servicio (*service request*), un pedido formal de algo y no una falla.
-    fuente: atlassian-solicitudes
+    dorso: No, es una solicitud de servicio (*service request*), un pedido que inicia una acción acordada como parte normal del servicio.
+    fuente: axelos-glosario
   - id: t-change-enablement
     frente: ¿Cómo se llama en ITIL 4 la práctica que antes se llamó control de cambios (*change control*)?
-    dorso: Habilitación del cambio (*change enablement*); se renombró porque "control" sonaba a frenar a los equipos.
+    dorso: Habilitación del cambio (*change enablement*); según Atlassian, el nombre cambió porque "control" se interpretaba como controlar a los equipos.
     fuente: atlassian-cambios
 
 ejercicios:
@@ -81,16 +81,16 @@ ejercicios:
   - id: e-tipo-de-cambio
     tipo: opcion-multiple
     enunciado: |
-      Tu equipo agrega 100 GB de disco a una máquina virtual unas dos veces por mes, siempre con el mismo procedimiento ya aprobado y sin impacto en el servicio. ¿Qué tipo de cambio es?
+      Tu equipo agrega 100 GB de disco a una máquina virtual unas dos veces por mes, siempre con el mismo procedimiento ya aprobado y documentado, y sin impacto en el servicio. ¿Qué tipo de cambio es?
     opciones:
       - texto: Cambio estándar (*standard change*).
         correcta: true
-        explicacion: Es de bajo riesgo, repetido y con procedimiento documentado y preaprobado, que es justo la definición de estándar. No hace falta pasarlo por aprobación cada vez.
+        explicacion: Es de bajo riesgo, está preautorizado y totalmente documentado, que es justo la definición de estándar en el glosario de ITIL 4. No hace falta pasarlo por aprobación cada vez.
       - texto: Cambio normal que siempre requiere reunión del CAB.
-        explicacion: Los cambios normales no tienen procedimiento preaprobado. Y aun entre los normales, el CAB suele reservarse para los de alto riesgo.
+        explicacion: Según Atlassian, los cambios normales no tienen procedimiento preaprobado, y aun entre los normales el CAB suele reservarse para los de alto riesgo.
       - texto: Cambio de emergencia.
-        explicacion: Una emergencia surge de una falla o amenaza que no puede esperar. Acá es una tarea planificada y rutinaria.
-    fuente: atlassian-cambios
+        explicacion: Una emergencia es un cambio que hay que introducir lo antes posible por una falla o amenaza. Acá es una tarea planificada y rutinaria.
+    fuente: axelos-glosario
 
 casos:
   - id: c-impresora-fiscal-tercera-vez
@@ -197,15 +197,14 @@ casos:
         resultado: mal
         texto: Un cambio de emergencia existe justamente para casos así, con un trámite corto. Esperar al comité costó un fin de semana de ventas.
     leccion: |
-      Si algo falla justo después de un cambio, lo primero es revertirlo, con registro y avisando. Y todo cambio, también el urgente, deja rastro.
-    fuente: atlassian-cambios
+      Si algo falla justo después de un cambio, empezá por ahí: revertirlo, con registro y avisando, suele ser la mitigación más rápida. Y todo cambio, también el urgente, deja rastro.
+    fuente: pagerduty-durante
 
 problemas:
   - id: p-tabla-itil-propia
-    enunciado: Armá una tabla con cuatro filas (incidente, problema, cambio, solicitud de servicio) y, para cada una, escribí con tus palabras una definición de una oración y un ejemplo real de tu trabajo. Después compará tus definiciones con el glosario de PeopleCert y marcá cuáles estaban flojas.
-    fuente: peoplecert-glosario
-    ubicacion: "§8 Glossary, pp. 14-16 (incidente, problema, gestión de incidentes y de problemas, control de cambios)"
-    url: https://www.peoplecert.org/-/media/peoplecert/images/landing-pages/devops-launch-indian/peoplecert-devops-fundamentals.pdf
+    enunciado: Armá una tabla con cuatro filas (incidente, problema, cambio, solicitud de servicio) y, para cada una, escribí con tus palabras una definición de una oración y un ejemplo real de tu trabajo. Después compará tus definiciones con el glosario de ITIL 4 Foundation y marcá cuáles estaban flojas.
+    fuente: axelos-glosario
+    ubicacion: glosario, entradas incident, problem, change y service request
     dificultad: basico
   - id: p-buscar-repetidos
     enunciado: Tomá los tickets del último trimestre de tu mesa de ayuda (o inventá 30 con títulos parecidos). Agrupalos por título o categoría, elegí los grupos de tres o más y, para cada uno, decí si abrirías un problema, qué solución temporal documentarías y si la solución definitiva sería un cambio estándar, normal o de emergencia.

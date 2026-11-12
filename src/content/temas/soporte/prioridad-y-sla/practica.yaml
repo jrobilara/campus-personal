@@ -1,42 +1,42 @@
 tarjetas:
   - id: t-prioridad-dos-factores
-    frente: ¿De qué dos factores sale la prioridad de un incidente en una matriz ITIL?
-    dorso: Del impacto y de la urgencia, que pesan igual en la cuenta.
-    fuente: pagerduty-matriz
+    frente: ¿De qué dos factores sale la prioridad de un incidente en una matriz de impacto y urgencia?
+    dorso: Del impacto y de la urgencia.
+    fuente: atlassian-impacto-urgencia
   - id: t-impacto-que-mide
     frente: ¿Qué mide el impacto de un incidente?
-    dorso: Cuánto daño hace y a cuánta gente, mirando también SLA aplicables y consecuencias financieras, de seguridad o de cumplimiento.
+    dorso: El efecto sobre los procesos del negocio, que se mide con la gente afectada, los SLA aplicables y las consecuencias financieras, de seguridad o de cumplimiento.
     fuente: atlassian-incidentes
   - id: t-urgencia-que-mide
     frente: ¿Qué mide la urgencia de un incidente?
-    dorso: Qué tan rápido hay que actuar, según la criticidad del servicio, la sensibilidad al tiempo, si se está extendiendo y la visibilidad.
-    fuente: pagerduty-matriz
+    dorso: Cuánto falta para que el incidente afecte de verdad al negocio; un impacto alto puede tener urgencia baja.
+    fuente: atlassian-impacto-urgencia
   - id: t-matriz-no-universal
     frente: ¿Hay una matriz de prioridad oficial que toda organización tenga que usar?
-    dorso: No, son recomendaciones de alto nivel que cada organización adapta a sus propios SLA.
-    fuente: pagerduty-matriz
+    dorso: No, son ejemplos; cada equipo define sus niveles de impacto, de urgencia y sus prioridades.
+    fuente: atlassian-impacto-urgencia
   - id: t-p1-matriz-ejemplo
     frente: En la matriz de ejemplo de 3 por 3, ¿qué prioridad tiene un incidente con impacto alto y urgencia alta?
     dorso: P1, la más alta de las cinco.
   - id: t-orden-de-llegada
     frente: ¿Por qué atender los tickets por orden de llegada es mala idea?
-    dorso: Porque la gestión de incidentes se enfoca en el impacto, no en el orden en que llegan los problemas.
-    fuente: pagerduty-matriz
+    dorso: Porque la prioridad, calculada con impacto y urgencia, es lo que define qué se resuelve primero, y no la hora de llegada.
+    fuente: atlassian-impacto-urgencia
   - id: t-sev-duda
     frente: Dudás entre SEV-1 y SEV-2 en pleno incidente. ¿Qué recomienda la guía de PagerDuty?
     dorso: Tratarlo como el nivel más alto y discutir la severidad después, en la revisión.
     fuente: pagerduty-severidad
   - id: t-sla-itil
     frente: ¿Qué es un SLA según el glosario de ITIL 4?
-    dorso: Un acuerdo escrito entre el proveedor de TI y el negocio que fija objetivos y responsabilidades clave del servicio.
-    fuente: peoplecert-glosario
+    dorso: Un acuerdo documentado entre un proveedor de servicio y un cliente que identifica los servicios requeridos y el nivel de servicio esperado.
+    fuente: axelos-glosario
   - id: t-sli-definicion
     frente: ¿Qué es un SLI en el libro de SRE de Google?
     dorso: Una medida cuantitativa de algún aspecto del servicio, como la latencia, la tasa de error o la disponibilidad.
     fuente: google-sre-slo
   - id: t-slo-vs-sla
     frente: ¿Qué pregunta te sirve para distinguir un SLO de un SLA?
-    dorso: Preguntar qué pasa si no se cumple; si no hay consecuencia explícita, es un SLO.
+    dorso: Preguntar qué pasa si no se cumple; si no hay consecuencia explícita, casi seguro es un SLO.
     fuente: google-sre-slo
   - id: t-downtime-99-9
     frente: Un SLA mensual de 99,9 %, ¿cuántos minutos de caída tolera en un mes de 30 días?
@@ -65,7 +65,6 @@ ejercicios:
         explicacion: Sumaste también los 45 minutos de la propia atención de facturación. La pregunta es hasta que arranca.
       - valor: 20
         explicacion: Tomaste solo la espera detrás de la impresora y olvidaste los 30 minutos del alta.
-    fuente: pagerduty-matriz
   - id: e-disponibilidad-del-mes
     tipo: numerico
     enunciado: |
@@ -107,12 +106,12 @@ ejercicios:
         correcta: true
         explicacion: El impacto de facturación es mucho mayor (muchas personas y ventas frenadas) y su urgencia es alta. El gerente afectado tiene alternativas, y comunicarle la espera baja el enojo sin cambiar el orden.
       - texto: El gerente primero, porque es el que más insiste.
-        explicacion: La insistencia no es un criterio de impacto ni de urgencia. La gestión se enfoca en el impacto, no en quién reclama más fuerte.
+        explicacion: La insistencia no es un criterio de impacto ni de urgencia, y la prioridad se calcula solo con esos dos factores.
       - texto: Por orden de llegada, que es lo más justo.
         explicacion: Lo justo es lo que daña menos al negocio. Atender por llegada puede dejar parada una sucursal entera detrás de tickets que pueden esperar.
       - texto: Ninguno, hasta que el gerente y la sucursal se pongan de acuerdo.
         explicacion: Priorizar es tu trabajo. Esperar un acuerdo entre usuarios solo agrega demora.
-    fuente: pagerduty-matriz
+    fuente: atlassian-impacto-urgencia
   - id: e-vf-sla-cumplido-satisfecho
     tipo: verdadero-falso
     enunciado: Si cerraste todos los tickets dentro del SLA, el servicio al usuario fue bueno.
@@ -133,7 +132,7 @@ casos:
         tipo: decision
         texto: ¿Cómo empezás?
         opciones:
-          - texto: Atiendo por orden de llegada; el gerente, que llamó dos veces, va primero.
+          - texto: Atiendo por orden de llegada, sin priorizar.
             va: final-orden-llegada
             consecuencia: Arrancás por la impresora y seguís con el alta. Facturación espera casi una hora.
           - texto: Dedico dos minutos a clasificar cada ticket por impacto y urgencia y arranco por facturación.
@@ -162,7 +161,7 @@ casos:
       - id: final-orden-llegada
         tipo: desenlace
         resultado: regular
-        texto: El gerente queda contento, pero el ticket P1 incumple su plazo de respuesta y la sucursal sur perdió casi una hora de ventas.
+        texto: El ticket P1 incumple su plazo de respuesta, la sucursal sur pierde casi una hora de ventas y el gerente, que también esperó su turno, llama una tercera vez.
       - id: final-jerarquia
         tipo: desenlace
         resultado: regular
@@ -177,7 +176,7 @@ casos:
         texto: Priorizaste bien pero no comunicaste. Para el gerente, no priorizar y no contestar son lo mismo, y ahora además tenés a tu jefa en el medio.
     leccion: |
       Priorizar es comparar impacto y urgencia, no obedecer a quien más insiste. Y al que queda esperando le debés una fecha estimada y una alternativa.
-    fuente: pagerduty-matriz
+    fuente: atlassian-impacto-urgencia
 
 problemas:
   - id: p-tabla-downtime-propio
@@ -188,7 +187,7 @@ problemas:
     dificultad: basico
   - id: p-armar-matriz
     enunciado: Definí para tu organización (o una ficticia de 200 empleados) tres o cuatro criterios concretos de impacto y de urgencia (alto, medio y bajo), armá una matriz con sus prioridades y proponé un plazo de respuesta y de resolución para cada una. Probala con diez tickets reales o inventados y anotá en cuáles te costó decidir.
-    fuente: pagerduty-matriz
-    ubicacion: secciones "Incident urgency and impact" y "Assigning incident impact"
-    url: https://www.pagerduty.com/resources/learn/incident-priority-matrix/
+    fuente: atlassian-impacto-urgencia
+    ubicacion: páginas "How should my team define impact and urgency of requests?" y "Create an impact urgency priority matrix"
+    url: https://support.atlassian.com/jira-service-management-cloud/docs/how-impact-and-urgency-are-used-to-calculate-priority/
     dificultad: intermedio

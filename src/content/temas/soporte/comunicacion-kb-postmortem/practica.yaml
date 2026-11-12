@@ -28,7 +28,7 @@ tarjetas:
     dorso: Para los usuarios es indistinguible de no haber escrito nada, porque nada cambia.
     fuente: google-sre-workbook-pm
   - id: t-actualizacion-cada-hora
-    frente: En un incidente que sigue afectando a usuarios, ¿cada cuánto como máximo recomienda Atlassian actualizar?
+    frente: Con clientes externos que siguen afectados por un incidente, ¿cada cuánto como máximo recomienda Atlassian actualizar?
     dorso: Nunca más de una hora sin novedades, indicando siempre cuándo será la próxima.
     fuente: atlassian-comunicacion
   - id: t-palabra-outage
@@ -74,7 +74,7 @@ ejercicios:
     opciones:
       - texto: Qué sabés (el correo está lento, el resto anda), qué hace el equipo, qué puede hacer mientras y a qué hora le volvés a escribir.
         correcta: true
-        explicacion: Le da lo que sabe, lo que se está haciendo y una próxima fecha de contacto. Aunque no haya solución, mantener informado reduce la reacción negativa.
+        explicacion: Le da lo que sabe, lo que se está haciendo y una próxima fecha de contacto. Según Atlassian, mantener informados a los usuarios reduce mucho la reacción negativa, aunque todavía no haya solución.
       - texto: "Estamos al tanto del tema y trabajando en ello. Gracias por su paciencia."
         explicacion: No dice qué pasa ni cuándo volverás a escribir. Para quien espera, equivale al silencio.
       - texto: No le contestás hasta tener la solución para no darle falsas esperanzas.
@@ -158,7 +158,7 @@ casos:
         resultado: mal
         texto: Le pediste repetir un reclamo que ya estaba hecho. Escala el reclamo con tu gerente por mala atención.
     leccion: |
-      A quien está enojado casi siempre le falta información más que paciencia. Decí qué sabés, qué no sabés, qué estás haciendo y cuándo vas a volver a escribir, y cumplí esa hora aunque no haya novedades.
+      Según Atlassian, mantener informados a los usuarios baja mucho la reacción negativa. Decí qué sabés, qué no sabés, qué estás haciendo y cuándo vas a volver a escribir, y cumplí esa hora aunque no haya novedades.
     fuente: atlassian-comunicacion
   - id: c-postmortem-quien-fue
     titulo: El gerente quiere saber quién fue
@@ -219,10 +219,10 @@ casos:
 
 problemas:
   - id: p-articulo-kb-reseteo
-    enunciado: Elegí el ticket que más se repite en tu mesa de ayuda (o el reseteo de contraseña) y escribí el artículo de base de conocimiento con la estructura de KCS, que consiste en síntoma con palabras del usuario, entorno, causa y solución. Pedile a alguien que no sea técnico que lo siga sin ayuda y corregilo según lo que no entendió.
+    enunciado: Elegí el ticket que más se repite en tu mesa de ayuda (o el reseteo de contraseña) y escribí el artículo de base de conocimiento con los campos de KCS, que son asunto (*issue*) con las palabras del usuario, entorno (*environment*), resolución (*resolution*) y causa (*cause*) si se conoce. Pedile a alguien que no sea técnico que lo siga sin ayuda y corregilo según lo que no entendió.
     fuente: kcs-v6
-    ubicacion: Prácticas 1 (Capture) y 2 (Structure)
-    url: https://library.serviceinnovation.org/KCS/KCS_v6/KCS_v6_Practices_Guide/030/030
+    ubicacion: Technique 2.1, Use A Simple Template
+    url: https://library.serviceinnovation.org/KCS/KCS_v6/KCS_v6_Practices_Guide/030/030/020/010
     dificultad: basico
   - id: p-postmortem-propio
     enunciado: Tomá el último incidente de tu trabajo o de un proyecto propio y escribí un post-mortem sin culpables con resumen, impacto, línea de tiempo, causas contribuyentes y tres acciones, cada una con responsable, prioridad y un estado final verificable. Releé el texto y marcá cualquier frase que juzgue a una persona.

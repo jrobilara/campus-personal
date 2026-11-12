@@ -18,12 +18,19 @@ prerrequisitos:
 nivel: intermedio
 minutos: 15
 fuentes:
-  - id: pagerduty-matriz
+  - id: atlassian-impacto-urgencia
     tipo: doc-oficial
-    autor: PagerDuty
-    titulo: Using the Incident Priority Matrix
-    url: https://www.pagerduty.com/resources/learn/incident-priority-matrix/
-    ubicacion: secciones "What is the incident priority matrix?", "Incident urgency and impact" y "Assigning incident impact"
+    autor: Atlassian
+    titulo: Jira Service Management Cloud, documentación de soporte (impacto, urgencia y prioridad)
+    url: https://support.atlassian.com/jira-service-management-cloud/docs/how-impact-and-urgency-are-used-to-calculate-priority/
+    ubicacion: páginas "How impact and urgency are used to calculate priority" y "Create an impact urgency priority matrix"
+  - id: axelos-glosario
+    tipo: libro
+    autor: AXELOS
+    titulo: "ITIL Foundation: ITIL 4 Edition — Glossary"
+    edicion: AXELOS / TSO, 2019
+    editorial: TSO (The Stationery Office)
+    ubicacion: "glosario, entrada service level agreement"
   - id: pagerduty-severidad
     tipo: doc-oficial
     autor: PagerDuty
@@ -42,7 +49,7 @@ fuentes:
     titulo: PeopleCert DevOps Fundamentals, Syllabus (glosario con definiciones tomadas de ITIL Foundation, ITIL 4 Edition, AXELOS/TSO 2019)
     url: https://www.peoplecert.org/-/media/peoplecert/images/landing-pages/devops-launch-indian/peoplecert-devops-fundamentals.pdf
     edicion: v01.0, septiembre 2019
-    ubicacion: "§8 Glossary, p. 16 (Service Level Agreement, Service Level Management)"
+    ubicacion: "§8 Glossary, p. 16 (Service Level Management)"
   - id: peoplecert-practicas-2023
     tipo: doc-oficial
     autor: Adam Griffith (ITIL Architect, PeopleCert)
@@ -72,6 +79,12 @@ fuentes:
     titulo: "What is a service-level objective (SLO)? SLO vs. SLA vs. SLI"
     url: https://www.atlassian.com/incident-management/kpis/sla-vs-slo-vs-sli
     ubicacion: secciones "SLO vs. SLA vs. SLI" y "Service level agreement (SLA)"
+  - id: pagerduty-matriz
+    tipo: blog
+    autor: PagerDuty
+    titulo: Using the Incident Priority Matrix
+    url: https://www.pagerduty.com/resources/learn/incident-priority-matrix/
+    verMas: true
   - id: itprocessmaps-prioridad
     tipo: blog
     autor: Stefan Kempter y Andrea Kempter (IT Process Maps)
@@ -134,12 +147,12 @@ Priorizar no resuelve la falta de gente. Si llegan más tickets de los que el eq
 
 ### Prioridad = impacto y urgencia
 
-Una matriz de prioridad de incidentes (*incident priority matrix*) rankea los incidentes por dos factores, su impacto en el negocio y su urgencia, y la combinación indica cuáles atender primero<Cita f="pagerduty-matriz" loc="What is the incident priority matrix?" />. Impacto y urgencia pesan igual en esa cuenta<Cita f="pagerduty-matriz" loc="Assigning incident impact" />, y la gestión se enfoca en el impacto, no en el orden en que llegan los problemas<Cita f="pagerduty-matriz" loc="Incident urgency and impact" />.
+La prioridad (*priority*) de un incidente se calcula a partir de su impacto y su urgencia, y sirve para que se resuelvan primero los de mayor prioridad<Cita f="atlassian-impacto-urgencia" loc="How impact and urgency are used to calculate priority" />. Una matriz de impacto y urgencia (*impact urgency priority matrix*) es la tabla que traduce cada combinación en una prioridad.
 
-- **Impacto**: se evalúa mirando el efecto sobre el negocio, la cantidad de personas afectadas, los SLA aplicables y las implicaciones financieras, de seguridad y de cumplimiento normativo<Cita f="atlassian-incidentes" loc="Prioritize" />.
-- **Urgencia**: se suele evaluar con criterios como la criticidad del servicio, la sensibilidad al tiempo, si el problema se está extendiendo y la visibilidad ante la dirección<Cita f="pagerduty-matriz" loc="Incident urgency and impact" />.
+- **Impacto**: el efecto del incidente sobre los procesos del negocio, que depende de cuánto se ve afectada la calidad del servicio<Cita f="atlassian-impacto-urgencia" loc="How impact and urgency are used to calculate priority" />. Para medirlo se mira cuánta gente afecta, qué SLA aplican y qué implicaciones financieras, de seguridad y de cumplimiento tiene<Cita f="atlassian-incidentes" loc="Prioritize" />.
+- **Urgencia**: cuánto falta para que el incidente afecte de verdad al negocio. Un incidente de impacto alto puede tener urgencia baja si el daño recién llega a fin de año<Cita f="atlassian-impacto-urgencia" loc="How impact and urgency are used to calculate priority" />.
 
-Una matriz de 3 × 3 de ejemplo, que es la que usa el simulador:
+Una matriz de 3 × 3 de ejemplo:
 
 | Impacto \ Urgencia | Alta | Media | Baja |
 |---|---|---|---|
@@ -149,7 +162,7 @@ Una matriz de 3 × 3 de ejemplo, que es la que usa el simulador:
 
 <Ojo>
 
-Esta matriz es **de ejemplo**: los propios materiales que la presentan son recomendaciones de alto nivel que cada organización adapta a sus SLA<Cita f="pagerduty-matriz" loc="Introducción" />. Tu empresa puede tener cuatro niveles, otros nombres o criterios de urgencia propios (por ejemplo, tratar distinto a un usuario clave).
+Esta tabla, los niveles P1 a P5 y los plazos del simulador son un ejemplo armado para este tema: no son norma de ITIL ni de PagerDuty. Cada organización define la suya. La propia documentación de Atlassian muestra otra matriz (impacto en cuatro niveles contra urgencia en cinco) y aclara que sus valores son solo ejemplos<Cita f="atlassian-impacto-urgencia" loc="Create an impact urgency priority matrix" />. Tu empresa puede tener otros niveles, otros nombres o criterios propios (por ejemplo, tratar distinto a un usuario clave).
 
 </Ojo>
 
@@ -157,11 +170,11 @@ Algunos equipos usan niveles de **severidad** (SEV), donde un número menor es m
 
 ### SLA, SLO y SLI
 
-Para ITIL, un **acuerdo de nivel de servicio** (*service level agreement*, SLA) es un acuerdo escrito entre el proveedor de TI y el negocio que fija objetivos y responsabilidades clave del servicio<Cita f="peoplecert-glosario" loc="§8, p. 16" />. El libro de SRE de Google separa tres conceptos que se mezclan seguido<Cita f="google-sre-slo" loc="Indicators, Objectives, Agreements" />:
+Para ITIL 4, un **acuerdo de nivel de servicio** (*service level agreement*, SLA) es un acuerdo documentado entre un proveedor de servicio y un cliente que identifica los servicios requeridos y el nivel de servicio esperado<Cita f="axelos-glosario" loc="glosario, entrada service level agreement" />. La práctica asociada, la gestión de niveles de servicio (*service level management*), fija objetivos de servicio basados en el negocio para poder evaluar y monitorear el servicio contra ellos<Cita f="peoplecert-glosario" loc="§8, p. 16" />. El libro de SRE de Google separa tres conceptos que se mezclan seguido<Cita f="google-sre-slo" loc="Indicators, Objectives, Agreements" />:
 
 - **SLI** (*service level indicator*): una medida cuantitativa de algún aspecto del servicio, como la latencia, la tasa de error o la disponibilidad.
 - **SLO** (*service level objective*): el valor objetivo para ese SLI.
-- **SLA**: un contrato con los usuarios que incluye consecuencias por cumplir o no los SLO. La prueba rápida es preguntar qué pasa si no se cumple: sin consecuencia explícita, es un SLO.
+- **SLA**: un contrato con los usuarios que incluye consecuencias por cumplir o no los SLO. La prueba rápida es preguntar qué pasa si no se cumple: si no hay consecuencia explícita, casi seguro es un SLO.
 
 Un SLA no habla solo de disponibilidad: también puede fijar tiempos de respuesta al usuario<Cita f="atlassian-slo" loc="Service level agreement (SLA)" />. El simulador usa dos relojes por prioridad, la primera respuesta y la resolución (P1 con 15 y 240 minutos), y esos valores son ilustrativos. Y cumplir el SLA no alcanza si el usuario sigue sin poder trabajar: ITIL 4 recomienda mirar el incidente desde quien usa el servicio y no esconderse detrás del plazo<Cita f="peoplecert-practicas-2023" loc="Chapter 8" />.
 

@@ -67,7 +67,7 @@ fuentes:
     titulo: KCS v6 Practices Guide, The Solve Loop
     url: https://library.serviceinnovation.org/KCS/KCS_v6/KCS_v6_Practices_Guide/030/030
     edicion: v6
-    ubicacion: "Prácticas 1 a 4 (Capture, Structure, Reuse, Improve)"
+    ubicacion: "Prácticas 1 a 4 (Capture, Structure, Reuse, Improve); Technique 2.1 (plantilla simple)"
   - id: atlassian-conocimiento
     tipo: doc-oficial
     autor: Atlassian
@@ -98,13 +98,13 @@ Son tres problemas distintos: cómo hablarle a quien espera, cómo no explicar l
 
 <Intuicion>
 
-La idea en una oración: **lo que más enoja no es que algo se rompa, sino no saber qué pasa, y lo que más cansa es resolver otra vez lo que alguien ya resolvió**.
+La idea en una oración: **mantener informados a los usuarios baja mucho su reacción negativa ante una caída**<Cita f="atlassian-comunicacion" loc="Why incident communication matters" />, y una base de conocimiento sirve para no resolver dos veces lo que ya se resolvió<Cita f="kcs-v6" loc="The Solve Loop" />.
 
 <Analogia titulo="El vuelo demorado">
 
 En un aeropuerto, un vuelo demorado dos horas con un cartel que dice "próximo aviso a las 18:00" genera mucha menos bronca que una demora de una hora sin ninguna información. La gente tolera la espera; lo que no tolera es el silencio. Quien está en la sala quiere saber tres cosas: qué pasa, qué se está haciendo y cuándo va a tener noticias.
 
-Con un usuario enojado por una caída pasa igual: el enojo suele ser falta de información.
+Con un usuario enojado por una caída pasa algo parecido: muchas veces el enojo viene de la falta de información.
 
 </Analogia>
 
@@ -141,11 +141,13 @@ Una base de conocimiento vieja es peor que ninguna: sugiere soluciones que ya no
 
 El libro de SRE de Google cuenta cómo un incidente se desarma cuando quien lo atiende está absorbido por lo técnico: nadie sabe qué hace cada uno y los directivos y usuarios quedan sin información<Cita f="google-sre-incidentes" loc="Anatomy of an Unmanaged Incident" />. Por eso separan roles: quien opera el sistema es el único que lo modifica, y otra persona se encarga de la comunicación, que incluye actualizaciones periódicas a los involucrados<Cita f="google-sre-incidentes" loc="Recursive Separation of Responsibilities" />. En un equipo chico, si no podés separar roles, al menos reservá un momento fijo para comunicar.
 
-Atlassian recomienda lo siguiente para los incidentes que siguen afectando a usuarios<Cita f="atlassian-comunicacion" loc="Tailor alerts and communications to the right audience" />:
+Atlassian recomienda lo siguiente para la comunicación de incidentes<Cita f="atlassian-comunicacion" loc="Tailor alerts and communications to the right audience" />:
 
 - Pensar en cinco públicos: el equipo que responde, el soporte de primera línea, los directivos, el resto de los empleados y los clientes externos.
-- No pasar más de una hora sin una actualización, y **decir siempre cuándo será la siguiente**.
+- Con clientes externos cuyo uso del producto sigue afectado, Atlassian recomienda no pasar más de una hora sin una actualización, y **decir siempre cuándo será la siguiente**.
 - Preparar plantillas de antemano, para no redactar bajo presión.
+
+La regla de la hora es de Atlassian y está pensada para clientes externos. Para usuarios internos conviene aplicar la misma lógica (una cadencia fija y anunciada), pero eso es criterio de este tema, no de Atlassian.
 
 Mantener informados a los usuarios reduce mucho la reacción negativa<Cita f="atlassian-comunicacion" loc="Why incident communication matters" />. Y en los mensajes externos, la guía de PagerDuty sugiere evitar la palabra "caída total" (*outage*) cuando no lo fue y hablar de incidente o degradación del servicio<Cita f="pagerduty-postmortem" loc="Postmortem" />. Ante la duda sobre avisar públicamente, la regla de esa misma guía es avisar<Cita f="pagerduty-durante" loc="Steps for Incident Commander" />. Son reglas de empresas concretas, no normas.
 
@@ -171,16 +173,14 @@ La metodología KCS (*Knowledge-Centered Service*) del Consortium for Service In
 3. **Reutilizar** (*reuse*): buscar en la base al empezar y durante el ticket, así no resolvés dos veces lo mismo.
 4. **Mejorar** (*improve*): quien usa un artículo lo revisa. Si algo está mal, lo corrige (si tiene permiso) o lo marca para que alguien lo corrija.
 
-Un artículo mínimo para el caso del reseteo (los datos son ilustrativos):
+KCS sugiere una plantilla simple con estos campos: el asunto o síntoma (*issue*) con las palabras del usuario, el entorno (*environment*), la resolución (*resolution*) y, si se conoce, la causa (*cause*), más metadatos<Cita f="kcs-v6" loc="Technique 2.1, Use A Simple Template" />. Un artículo mínimo para el caso del reseteo (los datos son ilustrativos):
 
 ```markdown
-## No puedo ingresar: me dice "usuario o contraseña incorrectos"
-**Síntoma (con palabras del usuario):** "me sale usuario o clave incorrectos"
-**Entorno:** correo corporativo, desde la oficina o desde casa
-**Causa:** contraseña vencida (en este ejemplo, vence cada 90 días)
-**Solución:** entrar al portal de autoservicio, elegir "Olvidé mi contraseña" y seguir los pasos
-**Si no funciona:** abrir ticket indicando el usuario y el mensaje exacto
-**Última revisión:** 2026-11-11
+## Asunto (issue): me sale "usuario o contraseña incorrectos"
+**Entorno (environment):** correo corporativo, desde la oficina o desde casa
+**Resolución (resolution):** entrar al portal de autoservicio, elegir "Olvidé mi contraseña" y seguir los pasos
+**Causa (cause, opcional):** contraseña vencida (en este ejemplo, vence cada 90 días)
+**Metadatos:** última revisión 2026-11-11
 ```
 
 Cuando los usuarios pueden resolver esto solos en un portal de autoservicio, los tickets se desvían antes de llegar a la cola<Cita f="atlassian-conocimiento" loc="Knowledge sharing and distribution" />.

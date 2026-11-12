@@ -24,6 +24,27 @@ fuentes:
     url: https://www.peoplecert.org/-/media/peoplecert/images/landing-pages/devops-launch-indian/peoplecert-devops-fundamentals.pdf
     edicion: v01.0, septiembre 2019
     ubicacion: "§8 Glossary, pp. 14-16"
+  - id: axelos-glosario
+    tipo: libro
+    autor: AXELOS
+    titulo: "ITIL Foundation: ITIL 4 Edition — Glossary"
+    edicion: AXELOS / TSO, 2019
+    editorial: TSO (The Stationery Office)
+    ubicacion: "glosario, entradas incident, known error, change, standard change, emergency change, service request y change enablement"
+  - id: google-sre-troubleshooting
+    tipo: libro
+    autor: Chris Jones (en Beyer, Jones, Petoff y Murphy, eds.)
+    titulo: Site Reliability Engineering. How Google Runs Production Systems
+    edicion: 1.ª ed., 2016
+    editorial: O'Reilly Media
+    ubicacion: "cap. 12, \"Effective Troubleshooting\""
+    url: https://sre.google/sre-book/effective-troubleshooting/
+  - id: pagerduty-durante
+    tipo: doc-oficial
+    autor: PagerDuty
+    titulo: Incident Response Guide, During an Incident
+    url: https://response.pagerduty.com/during/during_an_incident/
+    ubicacion: "Steps for Incident Commander (acciones de reparación típicas, entre ellas el rollback de un deploy defectuoso)"
   - id: peoplecert-practicas-2023
     tipo: doc-oficial
     autor: Adam Griffith (ITIL Architect, PeopleCert)
@@ -106,7 +127,7 @@ Los estados del simulador (registrado, clasificado, en curso, en espera del usua
 
 ### Las definiciones
 
-Un **incidente** (*incident*) es, para ITIL 4, una interrupción no planificada de un servicio, o la falla de un componente del servicio que todavía no llegó a afectarlo<Cita f="peoplecert-glosario" loc="§8, p. 15" />. La gestión de incidentes (*incident management*) es la práctica de minimizar el impacto negativo de los incidentes devolviendo el servicio a su operación normal lo antes posible<Cita f="peoplecert-glosario" loc="§8, p. 15" />. Fijate que el objetivo es **restaurar**, no encontrar la causa raíz.
+Un **incidente** (*incident*) es, para ITIL 4, una interrupción no planificada de un servicio o una reducción de su calidad<Cita f="axelos-glosario" loc="glosario, entrada incident" />. La gestión de incidentes (*incident management*) es la práctica de minimizar el impacto negativo de los incidentes devolviendo el servicio a su operación normal lo antes posible<Cita f="peoplecert-glosario" loc="§8, p. 15" />. Fijate que el objetivo es **restaurar**, no encontrar la causa raíz.
 
 <Nota>
 
@@ -114,31 +135,31 @@ Atlassian usa una definición más angosta: para su equipo un incidente es lo qu
 
 </Nota>
 
-Un **problema** (*problem*) es la causa, o la causa potencial, de uno o más incidentes. La gestión de problemas (*problem management*) busca reducir la probabilidad y el impacto de los incidentes identificando causas reales y potenciales, y manejando soluciones temporales y errores conocidos<Cita f="peoplecert-glosario" loc="§8, p. 16" />. Una solución temporal (*workaround*) baja el impacto sin eliminar la causa. Un **error conocido** (*known error*) es un problema con causa raíz documentada y una solución temporal, que se guarda en una base de errores conocidos<Cita f="atlassian-problemas" loc="The problem management process" />. Hacer rollback de un deploy puede terminar el incidente, pero el problema sigue ahí<Cita f="atlassian-problemas" loc="Problem management vs. incident management" />.
+Un **problema** (*problem*) es la causa, o la causa potencial, de uno o más incidentes. La gestión de problemas (*problem management*) busca reducir la probabilidad y el impacto de los incidentes identificando causas reales y potenciales, y manejando soluciones temporales y errores conocidos<Cita f="peoplecert-glosario" loc="§8, p. 16" />. Una solución temporal (*workaround*) baja el impacto sin eliminar la causa<Cita f="atlassian-problemas" loc="The problem management process" />. Un **error conocido** (*known error*) es, en ITIL 4, un problema que ya fue analizado pero todavía no se resolvió<Cita f="axelos-glosario" loc="glosario, entrada known error" />. La definición clásica de ITIL v3, que Atlassian sigue usando, agrega que tiene causa raíz documentada y una solución temporal, y que se guarda en una base de errores conocidos<Cita f="atlassian-problemas" loc="The problem management process" />. Hacer rollback de un deploy puede terminar el incidente, pero el problema sigue ahí<Cita f="atlassian-problemas" loc="Problem management vs. incident management" />.
 
-Un **cambio** (*change*) es agregar, modificar o quitar cualquier cosa que pueda afectar a un servicio, directa o indirectamente<Cita f="atlassian-cambios" loc="What is IT change management" />. ITIL distingue tres tipos<Cita f="atlassian-cambios" loc="Types of changes" />:
+Un **cambio** (*change*) es agregar, modificar o quitar cualquier cosa que pueda afectar a un servicio, directa o indirectamente<Cita f="axelos-glosario" loc="glosario, entrada change" />. Se suelen distinguir tres tipos:
 
-- **Estándar** (*standard*): bajo riesgo, se repite seguido y está preaprobado con un procedimiento documentado (agregar memoria a un servidor).
-- **Normal**: no es una emergencia pero no tiene procedimiento preaprobado; pasa por evaluación de riesgo y aprobación, a veces de un comité asesor de cambios (*change advisory board*, CAB).
-- **De emergencia** (*emergency*): surge de una falla o amenaza que no puede esperar, como un parche de seguridad; se revisa con un trámite mucho más corto.
+- **Estándar** (*standard*): de bajo riesgo, preautorizado, bien entendido y totalmente documentado<Cita f="axelos-glosario" loc="glosario, entrada standard change" />. Según Atlassian, además se repite seguido (agregar memoria a un servidor)<Cita f="atlassian-cambios" loc="Types of changes" />.
+- **Normal**: según Atlassian, no es una emergencia pero tampoco tiene procedimiento preaprobado; pasa por evaluación de riesgo y aprobación, a veces de un comité asesor de cambios (*change advisory board*, CAB)<Cita f="atlassian-cambios" loc="Types of changes" />.
+- **De emergencia** (*emergency*): un cambio que hay que introducir lo antes posible<Cita f="axelos-glosario" loc="glosario, entrada emergency change" />, por ejemplo un parche de seguridad. Según Atlassian, se revisa con un trámite mucho más corto, porque esperar es más riesgoso que cambiar rápido<Cita f="atlassian-cambios" loc="Types of changes" />.
 
-La práctica que los administra hoy se llama **habilitación del cambio** (*change enablement*). ITIL 4 Foundation, de 2019, la había llamado *change control*: asegurar que los riesgos se evalúen, autorizar los cambios y manejar un calendario para maximizar los que salen bien<Cita f="peoplecert-glosario" loc="§8, p. 14" />. Según Atlassian, AXELOS cambió el nombre porque "control" se leía como frenar a los equipos<Cita f="atlassian-cambios" loc="Defining change management" />.
+La práctica que administra los cambios se llama **habilitación del cambio** (*change enablement*) en el glosario de ITIL 4<Cita f="axelos-glosario" loc="glosario, entrada change enablement" />. En el temario de PeopleCert de 2019 aparece con la etiqueta *change control*: asegurar que los riesgos se evalúen, autorizar los cambios y manejar un calendario para maximizar los que salen bien<Cita f="peoplecert-glosario" loc="§8, p. 14" />. Según Atlassian, que cita a AXELOS, el nombre cambió porque "control" se interpretaba como controlar los cambios o a los equipos<Cita f="atlassian-cambios" loc="Defining change management" />.
 
-Una **solicitud de servicio** (*service request*) es un pedido formal de un usuario para que le provean algo (acceso a una aplicación, un reseteo de contraseña, información), y no es una falla. Conviene manejarla como un flujo aparte, porque suele ser de bajo riesgo y automatizable<Cita f="atlassian-solicitudes" loc="Service request management vs incident management" />.
+Una **solicitud de servicio** (*service request*) es un pedido de un usuario (o de su representante autorizado) que inicia una acción de servicio acordada como parte normal de la entrega del servicio<Cita f="axelos-glosario" loc="glosario, entrada service request" />: un acceso, un reseteo de contraseña, información. No es una falla. Según Atlassian, conviene manejarla como un flujo aparte, porque suele ser de bajo riesgo y automatizable<Cita f="atlassian-solicitudes" loc="Service request management vs incident management" />.
 
 ### Prácticas, no procesos
 
-ITIL 4 organiza su guía en 34 **prácticas**, que reemplazan lo que versiones anteriores llamaban procesos: describen objetivos y consideraciones en vez de pasos fijos<Cita f="atlassian-itil4" loc="ITIL 4 practices" />. En 2023 PeopleCert actualizó las primeras cinco (incidentes, problemas, solicitudes de servicio, monitoreo y eventos, y *service desk*), y para incidentes recomienda mirar desde la perspectiva de quien usa el servicio, sin esconderse detrás del SLA<Cita f="peoplecert-practicas-2023" />. Si leés material que habla de "proceso de gestión de incidentes", puede venir de ITIL v3 o de la redacción de un proveedor.
+ITIL 4 describe 34 **prácticas** de gestión<Cita f="peoplecert-practicas-2023" />. Según PeopleCert, van más allá de la idea de proceso, porque además definen los interesados, las responsabilidades, la tecnología y el conocimiento necesarios<Cita f="peoplecert-practicas-2023" />. Atlassian lo resume diciendo que reemplazan lo que versiones anteriores llamaban procesos<Cita f="atlassian-itil4" loc="ITIL 4 practices" />. En 2023 PeopleCert actualizó las primeras cinco (incidentes, problemas, solicitudes de servicio, monitoreo y eventos, y *service desk*), y para incidentes recomienda mirar desde la perspectiva de quien usa el servicio, sin esconderse detrás del SLA<Cita f="peoplecert-practicas-2023" />. Si leés material que habla de "proceso de gestión de incidentes", puede venir de ITIL v3 o de la redacción de un proveedor.
 
 ### Cómo se conectan
 
 | | Incidente | Problema | Cambio | Solicitud |
 |---|---|---|---|---|
 | Pregunta que responde | ¿Cómo vuelvo a tener servicio ya? | ¿Por qué pasó y cómo evito que vuelva? | ¿Cómo toco algo sin romper nada? | ¿Cómo entrego lo que me pidieron? |
-| Se da por terminado cuando | El servicio se restauró | La causa se eliminó, o queda como error conocido con solución temporal | Se implementó y se revisó el resultado | Se entregó lo pedido |
+| Se da por terminado cuando | El servicio se restauró | La causa se eliminó (si no se puede, el problema sigue abierto como error conocido, con su solución temporal) | Se implementó y se revisó el resultado | Se entregó lo pedido |
 | Ejemplo | La caja 3 no emite facturas | Tres caídas en el mes por la misma impresora | Actualizar el firmware de la impresora | Alta de un usuario nuevo en el sistema de ventas |
 
-Un cambio mal hecho puede ser el origen de un incidente: cuando un cambio provoca una interrupción, se analiza con las prácticas de incidentes y de problemas<Cita f="atlassian-problemas" loc="Problem management and change management" />. Para poder abrir un problema hace falta evidencia: Atlassian recomienda categorizar cada incidente justamente para detectar tendencias y patrones, que alimentan la gestión de problemas<Cita f="atlassian-incidentes" loc="Steps in the IT incident management process, Categorize" />. Un registro mínimo (los datos son inventados, la forma es ilustrativa):
+Un cambio mal hecho puede ser el origen de un incidente: cuando un cambio provoca una interrupción, se analiza con las prácticas de incidentes y de problemas<Cita f="atlassian-problemas" loc="Problem management and change management" />. Por eso, ante una falla, una pregunta útil es qué se tocó por última vez: los sistemas estables suelen romperse por un cambio de configuración o de carga<Cita f="google-sre-troubleshooting" loc="Diagnose, What touched it last" />, y la guía de PagerDuty lista el rollback como respuesta típica a un deploy defectuoso<Cita f="pagerduty-durante" loc="Steps for Incident Commander" />. Para poder abrir un problema hace falta evidencia: Atlassian recomienda categorizar cada incidente justamente para detectar tendencias y patrones, que alimentan la gestión de problemas<Cita f="atlassian-incidentes" loc="Steps in the IT incident management process, Categorize" />. Un registro mínimo (los datos son inventados, la forma es ilustrativa):
 
 ```yaml
 incidente:
