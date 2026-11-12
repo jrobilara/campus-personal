@@ -36,7 +36,7 @@ tarjetas:
     dorso: No, es una solicitud de servicio (*service request*), un pedido que inicia una acción acordada como parte normal del servicio.
     fuente: axelos-glosario
   - id: t-change-enablement
-    frente: ¿Cómo se llama en ITIL 4 la práctica que antes se llamó control de cambios (*change control*)?
+    frente: La práctica que el glosario de 2019 llamaba *change control*, ¿cómo se llama en el material de ITIL 4 de 2021?
     dorso: Habilitación del cambio (*change enablement*); según Atlassian, el nombre cambió porque "control" se interpretaba como controlar a los equipos.
     fuente: atlassian-cambios
 

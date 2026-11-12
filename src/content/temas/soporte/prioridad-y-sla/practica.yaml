@@ -14,7 +14,7 @@ tarjetas:
   - id: t-matriz-no-universal
     frente: ¿Hay una matriz de prioridad oficial que toda organización tenga que usar?
     dorso: No, son ejemplos; cada equipo define sus niveles de impacto, de urgencia y sus prioridades.
-    fuente: atlassian-impacto-urgencia
+    fuente: atlassian-matriz
   - id: t-p1-matriz-ejemplo
     frente: En la matriz de ejemplo de 3 por 3, ¿qué prioridad tiene un incidente con impacto alto y urgencia alta?
     dorso: P1, la más alta de las cinco.
@@ -106,7 +106,7 @@ ejercicios:
         correcta: true
         explicacion: El impacto de facturación es mucho mayor (muchas personas y ventas frenadas) y su urgencia es alta. El gerente afectado tiene alternativas, y comunicarle la espera baja el enojo sin cambiar el orden.
       - texto: El gerente primero, porque es el que más insiste.
-        explicacion: La insistencia no es un criterio de impacto ni de urgencia, y la prioridad se calcula solo con esos dos factores.
+        explicacion: La insistencia no es un criterio de impacto ni de urgencia, y según Atlassian la prioridad se calcula en base a impacto y urgencia (aunque también se puede ajustar a mano), no en base a quién reclama más fuerte.
       - texto: Por orden de llegada, que es lo más justo.
         explicacion: Lo justo es lo que daña menos al negocio. Atender por llegada puede dejar parada una sucursal entera detrás de tickets que pueden esperar.
       - texto: Ninguno, hasta que el gerente y la sucursal se pongan de acuerdo.
@@ -187,7 +187,7 @@ problemas:
     dificultad: basico
   - id: p-armar-matriz
     enunciado: Definí para tu organización (o una ficticia de 200 empleados) tres o cuatro criterios concretos de impacto y de urgencia (alto, medio y bajo), armá una matriz con sus prioridades y proponé un plazo de respuesta y de resolución para cada una. Probala con diez tickets reales o inventados y anotá en cuáles te costó decidir.
-    fuente: atlassian-impacto-urgencia
-    ubicacion: páginas "How should my team define impact and urgency of requests?" y "Create an impact urgency priority matrix"
-    url: https://support.atlassian.com/jira-service-management-cloud/docs/how-impact-and-urgency-are-used-to-calculate-priority/
+    fuente: atlassian-matriz
+    ubicacion: página "Create an impact urgency priority matrix" (matriz de ejemplo con 4 niveles de impacto y 5 de urgencia)
+    url: https://support.atlassian.com/jira-service-management-cloud/docs/how-do-i-create-a-matrix-using-impact-and-urgency-values/
     dificultad: intermedio
