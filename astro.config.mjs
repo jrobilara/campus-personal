@@ -8,6 +8,7 @@ import { unified } from '@astrojs/markdown-remark'; // Astro 7 no trae remark po
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeSinKatexError from './src/lib/rehype-sin-katex-error.mjs';
+import rehypeKatexSinIndice from './src/lib/rehype-katex-sin-indice.mjs';
 
 export default defineConfig({
   site: 'https://jrobilara.github.io',
@@ -47,6 +48,6 @@ export default defineConfig({
   vite: { cacheDir: process.env.CAMPUS_VITE_CACHE || undefined },
   // Un LaTeX inválido rompe el build: rehype-katex solo deja un <span class="katex-error"> (ver rehype-sin-katex-error.mjs).
   markdown: {
-    processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex, rehypeSinKatexError] }),
+    processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex, rehypeSinKatexError, rehypeKatexSinIndice] }),
   },
 });

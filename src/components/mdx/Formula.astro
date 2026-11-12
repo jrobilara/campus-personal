@@ -1,5 +1,5 @@
 ---
-import katex from 'katex';
+import { renderKatex } from '../../lib/katex-render';
 import { errorDeComponente } from '../../lib/errores';
 const { tex, nombre } = Astro.props;
 if (typeof tex !== 'string' || tex.trim() === '') {
@@ -7,7 +7,7 @@ if (typeof tex !== 'string' || tex.trim() === '') {
 }
 let html: string;
 try {
-  html = katex.renderToString(tex, { displayMode: true, throwOnError: true });
+  html = renderKatex(tex, { displayMode: true });
 } catch (e) {
   throw errorDeComponente(Astro.url.pathname, 'Formula', 'tex', `LaTeX inválido: ${(e as Error).message}`);
 }

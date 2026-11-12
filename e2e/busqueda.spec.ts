@@ -15,7 +15,7 @@ test('el buscador encuentra páginas del sitio construido y los resultados respe
 
 test('sin coincidencias, el buscador lo dice y sugiere qué probar', async ({ page }) => {
   await page.goto('buscar/');
-  await page.getByRole('searchbox').fill('qwxjkvbnm');
+  await page.getByRole('searchbox').fill('kwxjkvbnm');
   await expect(page.getByRole('heading', { name: /No encontré nada/ })).toBeVisible();
 });
 
@@ -35,5 +35,23 @@ test('buscar "varianza" devuelve el tema que la trata (y "varianzas" también)',
   await page.getByRole('searchbox').fill('varianza');
   await expect(page.locator('[data-testid=resultados] a[href$="probabilidad-estadistica/variables-y-distribuciones/"]')).toBeVisible();
   await page.getByRole('searchbox').fill('varianzas');
+  await expect(page.locator('[data-testid=resultados] a[href$="probabilidad-estadistica/variables-y-distribuciones/"]')).toBeVisible();
+});
+
+// El texto duplicado de KaTeX (MathML oculto + anotación con el LaTeX fuente) no entra al índice. Pagefind también encuentra por prefijo
+// ("zzz" cae en palabras que empiezan con "z"), así que no alcanza con mirar si hay resultados: se mira que ningún extracto traiga
+// el LaTeX fuente ni la "zzz" que salía de pegar el z de la fórmula con su copia MathML y su anotación.
+test('las fórmulas no ensucian el índice: ningún resultado trae LaTeX fuente ni la fórmula triplicada', async ({ page }) => {
+  await page.goto('buscar/');
+  for (const q of ['zzz', 'frac', 'operatorname', 'mid', 'binom']) {
+    await page.getByRole('searchbox').fill(q);
+    await expect(page.getByTestId('resultados').or(page.getByRole('heading', { name: /No encontré nada/ }))).toBeVisible();
+    await page.waitForTimeout(700); // el buscador espera 150 ms y después consulta el índice: evita leer los resultados de la consulta anterior
+    const texto = (await page.locator('[data-testid=resultados]').allInnerTexts()).join('\n');
+    expect(texto, `"${q}" devolvió LaTeX fuente`).not.toMatch(/\\(frac|operatorname|mid|sum|sqrt|binom|left|right|cdot)\b/);
+    expect(texto, `"${q}" devolvió una fórmula triplicada`).not.toMatch(/zzz/i);
+  }
+  // y el buscador sigue funcionando con texto normal
+  await page.getByRole('searchbox').fill('varianza');
   await expect(page.locator('[data-testid=resultados] a[href$="probabilidad-estadistica/variables-y-distribuciones/"]')).toBeVisible();
 });
