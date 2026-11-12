@@ -16,8 +16,8 @@ tarjetas:
     dorso: Una.
     fuente: cisa-backup
   - id: t-321-falta-uno
-    frente: Tenés el original en el servidor y dos copias en discos de la misma sala. ¿Qué número de la regla 3-2-1 te falta cumplir?
-    dorso: El 1, una copia fuera del sitio; los discos tampoco son dos tipos de medios distintos.
+    frente: Tenés el original en el disco del servidor, una copia en cintas en la misma sala y otra en el NAS de esa sala. ¿Qué número de la regla 3-2-1 te falta?
+    dorso: El 1, una copia fuera del sitio; ya tenés tres copias y dos tipos de medios.
     fuente: cisa-backup
   - id: t-nas-conectado
     frente: Tu NAS de backup está siempre montado en el servidor. ¿Qué riesgo corre ante un ransomware?
@@ -141,21 +141,31 @@ casos:
         texto: El cifrado empezó antes de la copia de las 2:00. ¿Qué hacés primero?
         opciones:
           - texto: Desconecto de la red el servidor y el NAS, sin apagarlos y sin restaurar nada todavía.
-            va: tomar-evidencia
+            va: reportar
             consecuencia: El cifrado deja de propagarse a otros equipos y los rastros de la infección quedan en memoria y en disco.
           - texto: Restauro ya mismo desde el NAS encima de las carpetas del servidor.
             va: final-restore-cifrado
             consecuencia: El NAS espejó los archivos ya cifrados en la corrida de las 2:00. Restaurás los mismos archivos cifrados.
           - texto: Busco cómo pagar el rescate, a ver si arreglo esto rápido.
             va: final-pagar
-            consecuencia: Pagás sin haber mirado qué copias tenías ni haber consultado a nadie; la guía de CISA recomienda consultar antes a las fuerzas de seguridad por posibles descifradores.
+            consecuencia: Pagás sin haber mirado qué copias tenías ni haber avisado a nadie, y sin ninguna garantía de recuperar los archivos.
+      - id: reportar
+        tipo: decision
+        texto: El servidor y el NAS están aislados. Antes de tocar nada más, ¿qué hacés?
+        opciones:
+          - texto: Aviso a gerencia y al responsable de seguridad, y reporto el incidente al CERT.ar.
+            va: tomar-evidencia
+            consecuencia: Quienes tienen que decidir saben qué pasó y el incidente queda reportado mientras todavía hay rastros.
+          - texto: Me pongo directo a reconstruir y aviso cuando termine.
+            va: final-sin-reporte
+            consecuencia: Reconstruís sin que nadie con responsabilidad lo sepa y sin pedir ayuda externa.
       - id: tomar-evidencia
         tipo: decision
-        texto: El servidor y el NAS están aislados. Antes de reconstruir nada, ¿qué hacés?
+        texto: Se va a investigar cómo entraron los atacantes. Antes de reconstruir, ¿qué hacés?
         opciones:
-          - texto: Tomo una imagen del disco y una captura de memoria del servidor, aviso al responsable de seguridad y a gerencia, y recién después sigo.
+          - texto: Tomo una imagen del disco y una captura de memoria de una muestra de equipos afectados.
             va: mirar-copias
-            consecuencia: Conservás evidencia para entender cómo entró el ataque y dejás avisada a la gente que tiene que decidir.
+            consecuencia: Conservás evidencia para entender cómo entró el ataque.
           - texto: Formateo el servidor enseguida para ganar tiempo.
             va: final-sin-evidencia
             consecuencia: El servidor queda limpio, pero perdiste todo rastro de cómo entraron.
@@ -173,20 +183,24 @@ casos:
         tipo: decision
         texto: El servidor está reconstruido y la copia del USB se abre bien. Perdés 22 días de datos. ¿Qué hacés ahora?
         opciones:
-          - texto: Informo el RPO real (22 días) a gerencia, reporto el incidente al CERT.ar y pido archivos recientes a cada área para revisarlos antes de copiarlos.
+          - texto: Informo el RPO real (22 días) a gerencia y pido archivos recientes a cada área para revisarlos antes de copiarlos.
             va: final-bien
-            consecuencia: La dirección entiende por qué hay que cambiar la política de backup, el incidente queda reportado y recuperás trabajo reciente sin reinfectar.
+            consecuencia: La dirección entiende por qué hay que cambiar la política de backup y recuperás trabajo reciente sin reinfectar.
           - texto: Copio la carpeta del NAS encima, por si hay algo más nuevo.
             va: final-mezcla
             consecuencia: Mezclás archivos cifrados con archivos sanos y es imposible separarlos después.
       - id: final-bien
         tipo: desenlace
         resultado: bien
-        texto: El servidor vuelve con 22 días de atraso, pero reconstruido, con datos verificados, evidencia guardada e incidente reportado. Proponés una copia offline cada semana y una restauración de prueba por trimestre.
+        texto: El servidor vuelve con 22 días de atraso, pero reconstruido, con datos verificados, evidencia guardada e incidente reportado desde el principio. Proponés una copia offline cada semana y una restauración de prueba por trimestre.
       - id: final-sin-validar
         tipo: desenlace
         resultado: mal
         texto: Los datos vuelven sobre un servidor que nadie limpió. A la semana vuelve a cifrarse y el trabajo de restauración se pierde.
+      - id: final-sin-reporte
+        tipo: desenlace
+        resultado: regular
+        texto: El servicio vuelve, pero el incidente no se reportó a tiempo y nadie con responsabilidad pudo decidir qué más hacer.
       - id: final-sin-evidencia
         tipo: desenlace
         resultado: regular
@@ -204,7 +218,7 @@ casos:
         resultado: mal
         texto: Copiaste archivos cifrados sobre los sanos. Terminás restaurando de nuevo desde cero el domingo a la noche.
     leccion: |
-      Una copia que siempre está conectada también se cifra. Necesitás al menos una copia que el atacante no alcance (offline o fuera del sitio), una restauración probada y un orden de respuesta: aislar, guardar evidencia, reconstruir limpio, restaurar y reportar.
+      Una copia que siempre está conectada también se cifra. Necesitás al menos una copia que el atacante no alcance (offline o fuera del sitio), una restauración probada y un orden de respuesta: aislar, reportar, guardar evidencia, reconstruir limpio y restaurar.
     fuente: cisa-ransomware
 
 problemas:
