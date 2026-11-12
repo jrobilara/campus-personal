@@ -8,13 +8,9 @@ tarjetas:
     dorso: La probabilidad, suponiendo cierta la hipótesis nula, de ver datos al menos tan extremos como los observados.
     fuente: mit1805
   - id: t-pvalor-no-es
-    frente: Un test da p = 0,03. ¿Es correcto decir que hay 3 % de probabilidad de que la hipótesis nula sea cierta?
-    dorso: No; el p-valor es una probabilidad de los datos dada la nula, no una probabilidad de la hipótesis.
-    fuente: mit1805
-  - id: t-pvalor-no-es-prob-nula
-    frente: ¿Qué NO es el p-valor?
+    frente: ¿El p-valor es la probabilidad de que la hipótesis nula sea cierta?
     dorso: |
-      No es la probabilidad de que la hipótesis nula sea cierta, $P(H_0 \mid \text{datos})$; es una probabilidad de los datos suponiendo la nula.
+      No; es la probabilidad de ver datos al menos así de extremos suponiendo la nula, $P(\text{datos} \mid H_0)$, no $P(H_0 \mid \text{datos})$.
     fuente: mit1805
   - id: t-nivel-significancia
     frente: |

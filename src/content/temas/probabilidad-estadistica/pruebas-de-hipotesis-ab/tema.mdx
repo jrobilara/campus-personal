@@ -112,7 +112,7 @@ El p-valor es una probabilidad de datos dada la hipótesis, no una probabilidad 
 
 El error tipo I es rechazar $H_0$ siendo cierta, y su probabilidad es $\alpha$. El error tipo II es no rechazarla siendo falsa, con probabilidad $\beta$. La potencia (*power*) es $1-\beta$, la probabilidad de detectar un efecto que existe<Cita f="mit1805" loc="Reading 17b, §4.2-4.3" />. La potencia sube con más datos y con efectos más grandes, y por eso el tamaño de muestra se calcula antes del experimento<Cita f="mit1805" loc="Reading 17b, §4.3 y §4.4.2" />.
 
-Con 8 % contra 11 % y 300 visitas por grupo, la potencia es de unos 24 % (cálculo propio con la aproximación normal): tres de cada cuatro veces el test no detectaría una mejora real de ese tamaño. Para llegar a 80 % hacen falta unas 1500 visitas por grupo<Cita f="nist-handbook" loc="§7.2.4.2" />.
+Con 8 % contra 11 % y 300 visitas por grupo, la potencia es de unos 24 % (cálculo propio con la aproximación normal): tres de cada cuatro veces el test no detectaría una mejora real de ese tamaño. Para llegar a 80 % hacen falta unas 1500 visitas por grupo (cuenta mía con la fórmula de NIST, en el desplegable de abajo).
 
 <Profundizar titulo="¿De dónde salen esas 1500 visitas?">
 
@@ -122,7 +122,7 @@ $$
 n \approx \frac{\left(z_{\alpha/2}\sqrt{2\bar{p}(1-\bar{p})} + z_{\beta}\sqrt{p_A(1-p_A)+p_B(1-p_B)}\right)^2}{(p_B-p_A)^2}
 $$
 
-Con $p_A = 0{,}08$, $p_B = 0{,}11$, $\bar{p} = 0{,}095$, $z_{\alpha/2} = 1{,}96$ y $z_\beta = 0{,}84$ da $n \approx 1498$ (cuenta mía con esa fórmula). La verifiqué con una simulación de Monte Carlo: con 300 por grupo rechaza $H_0$ en 23 % de los experimentos, parecido al 24 % teórico.
+Con $p_A = 0{,}08$, $p_B = 0{,}11$, $\bar{p} = 0{,}095$, $z_{\alpha/2} = 1{,}96$ y $z_\beta = 0{,}8416$ (el valor para 80 % de potencia), la cuenta da $n \approx 1498$. El número es mío; NIST respalda la fórmula, no esta cifra. La verifiqué con una simulación de Monte Carlo: con 300 por grupo rechaza $H_0$ en 23 % de los experimentos, parecido al 24 % teórico.
 
 </Profundizar>
 
