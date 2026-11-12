@@ -3,7 +3,8 @@
 - **Tema:** `probabilidad-estadistica/pruebas-de-hipotesis-ab` (Pruebas de hipótesis y A/B testing)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto (re-verificación sobre ee0ff26):** OBSERVADO (H1, H3, H4 y H5 cerrados; H2 reabierto y dos hallazgos nuevos, H6 y H7)
+- **Veredicto (cierre ronda 2, sobre c9409d7):** APROBADO (todos los hallazgos cerrados)
+- **Veredicto de la re-verificación (ee0ff26):** OBSERVADO (H1, H3, H4 y H5 cerrados; H2 reabierto y dos hallazgos nuevos, H6 y H7)
 - **Veredicto de la primera pasada (9eb3c4b):** OBSERVADO (dos hallazgos de severidad media que conviene corregir antes de publicar; el resto es menor)
 - **Commit revisado:** 9eb3c4b
 - **Afirmaciones revisadas:** 43 (19 del cuerpo, 13 tarjetas, 7 ejercicios, 1 caso, 3 problemas)
@@ -140,3 +141,16 @@ Método. Mendenhall (página impresa = PDF − 24) y MIT 18.05 Readings 17b, 20,
 ## Hallazgos abiertos (estado final)
 
 H2 (reabierto, depende de H7), H6, H7.
+
+## Cierre ronda 2 (diff 406d542..c9409d7, fecha 2026-11-11)
+
+| Hallazgo | Estado | Comprobación |
+|---|---|---|
+| H2 / H7 | **CERRADO (c9409d7)** | El Profundizar ahora usa $z_\beta = 0{,}8416$ ("el valor para 80 % de potencia"). Recalculé con z=1,96 y 0,8416: n = 1498,41, es decir 1498. Dice "el número es mío; NIST respalda la fórmula, no esta cifra", y el párrafo previo reemplazó la cita por "cuenta mía con la fórmula de NIST, en el desplegable de abajo". Presentación honesta. |
+| H6 | **CERRADO (c9409d7)** | Las dos tarjetas quedaron fusionadas en `t-pvalor-no-es`; no queda ninguna referencia a `t-pvalor-no-es-prob-nula`. Frente "¿El p-valor es la probabilidad de que la hipótesis nula sea cierta?"; dorso "No; es la probabilidad de ver datos al menos así de extremos suponiendo la nula, P(datos \| H₀), no P(H₀ \| datos)". Respuesta única y correcta según MIT 17b §7 y 20 §5. Observación de estilo, no bloqueante: el frente es una pregunta de sí/no, parecida a la forma original que ya estaba aprobada. |
+
+Hallazgos nuevos: ninguno. `npm run build` en verde sobre c9409d7.
+
+## Hallazgos abiertos (estado final)
+
+Ninguno.

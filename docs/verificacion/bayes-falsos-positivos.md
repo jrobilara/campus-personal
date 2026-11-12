@@ -3,7 +3,8 @@
 - **Tema:** `probabilidad-estadistica/bayes-falsos-positivos` (Bayes y los falsos positivos)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto (re-verificación sobre ee0ff26):** OBSERVADO (H1 cerrado; H2 reabierto)
+- **Veredicto (cierre ronda 2, sobre c9409d7):** APROBADO (todos los hallazgos cerrados)
+- **Veredicto de la re-verificación (ee0ff26):** OBSERVADO (H1 cerrado; H2 reabierto)
 - **Veredicto de la primera pasada (9eb3c4b):** OBSERVADO (un hallazgo de severidad media sobre la independencia condicional; el resto es menor)
 - **Commit revisado:** 9eb3c4b
 - **Afirmaciones revisadas:** 39 (16 del cuerpo, 12 tarjetas, 7 ejercicios, 1 caso, 3 problemas)
@@ -96,3 +97,15 @@ Método. MIT 18.05 Readings 3 y 12b, y los psets de las clases 11 y 5, descargad
 ## Hallazgos abiertos (estado final)
 
 H2 (reabierto; se cierra con H3).
+
+## Cierre ronda 2 (diff 406d542..c9409d7, fecha 2026-11-11)
+
+| Hallazgo | Estado | Comprobación |
+|---|---|---|
+| H2 / H3 | **CERRADO (c9409d7)** | El texto ahora dice "prevalencia 0,5 %", "cambiando una cosa por vez con todo lo demás fijo" y rotula "(cuenta propia)". Recalculé con Python: base 19,76 %; sensibilidad 98→99,9 % da 20,06 % (≈20 %); falsas alarmas 2→0,1 % da 83,12 % (≈83 %). Con 1 % de prevalencia y 98 % de base en sensibilidad y especificidad: 33,11 % de base, 33,53 % (≈33,5 %) subiendo la sensibilidad y 90,82 % (≈90,8 %) bajando las falsas alarmas. Coincide con lo impreso. Cada porcentaje queda identificable (sensibilidad, falsas alarmas, VPP). |
+
+Hallazgos nuevos: ninguno. `npm run build` en verde sobre c9409d7.
+
+## Hallazgos abiertos (estado final)
+
+Ninguno.
