@@ -113,10 +113,12 @@ test.describe('a 390 px', () => {
   test('la etiqueta "24:00" del eje no queda cortada', async ({ page }) => {
     await abrir(page);
     const fig = await figura(page, 'Carga');
-    const svg = fig.locator('[data-testid="grafico-alertas"] svg').first();
-    await expect(svg).toBeVisible();
-    const marco = (await svg.boundingBox())!;
-    const etiqueta = (await svg.getByText('24:00').first().boundingBox())!;
-    expect(etiqueta.x + etiqueta.width, 'la etiqueta se sale del SVG por la derecha').toBeLessThanOrEqual(marco.x + marco.width);
+    // el gráfico se redibuja al medir el ancho (reemplaza el <svg>): se mide dentro de la página y se reintenta hasta que se estabiliza
+    await expect.poll(async () => fig.locator('[data-testid="grafico-alertas"]').evaluate((cont) => {
+      const svg = cont.querySelector('svg');
+      const t = [...(svg?.querySelectorAll('text') ?? [])].find((x) => x.textContent?.trim() === '24:00');
+      if (!svg || !t) return null;
+      return Math.round((svg.getBoundingClientRect().right - t.getBoundingClientRect().right) * 10) / 10; // px que sobran a la derecha
+    }), { message: 'la etiqueta 24:00 se sale del SVG por la derecha' }).toBeGreaterThanOrEqual(0);
   });
 });
