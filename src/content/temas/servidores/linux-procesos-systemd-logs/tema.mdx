@@ -104,7 +104,7 @@ Pensá en un local con un encargado y varios empleados. Si un empleado se desmay
 Probalo en el primer simulador. Fijate que el estado `failed` no sale por morir una vez, sino por morir demasiadas veces en poco tiempo.
 
 <SimMaquinaEstados
-  consigna="Prendé Restart=on-failure y apretá 'el proceso muere (exit 1)' cinco veces seguidas, rápido. Mirá el estado y el log. Después reiniciá la unidad, apagá Restart y repetí con una sola muerte."
+  consigna="Con 'Restart=on-failure' prendido, apretá 'el proceso muere (exit 1)' cinco veces seguidas, rápido. Mirá el estado y el log. Después apretá 'Empezar de nuevo', apagá 'Restart=on-failure' y repetí con una sola muerte."
   preset="unidad-systemd"
   titulo="Ciclo de vida de una unidad systemd"
 />

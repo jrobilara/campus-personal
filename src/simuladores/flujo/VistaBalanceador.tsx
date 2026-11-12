@@ -46,7 +46,9 @@ export default function VistaBalanceador(props: Props) {
   const l: LayoutBalanceador = layoutBalanceador(motor.servidores.length);
   const puntos = puntosBalanceador(motor.recientes, motor.t, l, cache);
   const capTotal = (servidores - motor.caidos) * capacidad;
-  const saturado = tasa > capTotal;
+  // con caché, a los servidores solo llegan los pedidos que la caché no resuelve
+  const tasaAServidores = cache ? tasa * (1 - acierto) : tasa;
+  const saturado = tasaAServidores > capTotal;
 
   const items: ItemLectura[] = [
     { clave: 'utilizacion', etiqueta: 'Utilización', valor: num(lect.utilizacion * 100, 0), unidad: '%', tono: lect.utilizacion >= 0.9 ? 'alerta' : undefined },
@@ -126,7 +128,7 @@ export default function VistaBalanceador(props: Props) {
       </div>
 
       <p className={`sim-nota sfl-capacidad${saturado ? ' alerta' : ''}`}>
-        Llegan {num(tasa, 0)} pedidos/s y los {servidores - motor.caidos} servidores en pie atienden {num(capTotal, 0)} en total ({num(capacidad, 0)} cada uno).
+        Llegan {num(tasa, 0)} pedidos/s{cache ? ` (a los servidores pasan ${num(tasaAServidores, 0)} después de la caché)` : ''} y los {servidores - motor.caidos} servidores en pie atienden {num(capTotal, 0)} en total ({num(capacidad, 0)} cada uno).
         {saturado ? ' Entra más de lo que sale: las colas van a crecer.' : ''}
       </p>
 

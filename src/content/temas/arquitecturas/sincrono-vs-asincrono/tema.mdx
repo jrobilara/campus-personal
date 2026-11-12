@@ -99,7 +99,7 @@ Primero, quién espera a quién cuando el servicio B se pone lento o se cae.
 <SimFlujo
   modo="sincrono-vs-asincrono"
   titulo="El carril síncrono contra el asíncrono"
-  consigna="Subí la latencia del servicio B hasta 3000 ms y mirá cuánto espera el cliente en cada carril. Después activá 'B caído' y compará los errores del carril síncrono con los pendientes del asíncrono."
+  consigna="Subí la latencia del servicio B hasta 3000 ms y mirá cuánto espera el cliente en cada carril. Después activá 'Servicio B caído' y compará los errores del carril síncrono con los pendientes del asíncrono."
   latenciaServicioB={200}
 />
 
@@ -111,7 +111,7 @@ Ahora el límite de la cola: no hace magia, solo reparte el tiempo.
   modo="cola"
   etiquetas="mensajes"
   titulo="Una cola entre el productor y los consumidores"
-  consigna="Con 5 mensajes/s y 2 consumidores de 0,5 s, mirá crecer la cola. Sumá un consumidor y fijate si se vacía. Después activá 'consumidor caído' y mirá cuánto tarda la cola en llegar al tope y mostrar mensajes perdidos."
+  consigna="Con 5 mensajes/s y 2 consumidores de 0,5 s, mirá crecer la cola. Sumá un consumidor y fijate si se vacía. Después volvé a 2, activá 'Un consumidor caído' y mirá cuánto tarda la cola en llegar al tope y mostrar mensajes perdidos."
   tasaLlegada={5}
   consumidores={2}
   tiempoProceso={0.5}
