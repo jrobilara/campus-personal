@@ -40,6 +40,8 @@ export default defineConfig({
       maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       generateSW: {
         globPatterns: ['**/*.{html,js,css,svg,png,woff,woff2,json,wasm,pf_meta,pf_index,pf_fragment}'],
+        // 404.html se precachearía como `404/`, una URL que en GitHub Pages responde 404: el precache falla y el service worker nunca se instala.
+        globIgnores: ['404.html'],
         navigateFallback: null,
       },
     }),

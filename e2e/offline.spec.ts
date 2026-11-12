@@ -1,5 +1,7 @@
 // Criterio 6: sin red, después de una primera visita, abren la portada y un tema ya visitado.
 import { expect, test } from '@playwright/test';
+import { existsSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 test('offline: la portada y un tema visitado cargan sin red', async ({ page, context }) => {
   await page.goto('');
@@ -36,4 +38,21 @@ test('el manifest declara el subpath y el sitio se puede instalar', async ({ pag
   expect(iconos.some((i) => i.sizes === '512x512' && i.purpose === 'any')).toBe(true);
   expect(iconos.some((i) => i.sizes === '512x512' && i.purpose === 'maskable')).toBe(true);
   for (const i of iconos) expect((await page.request.get(new URL(i.src, new URL(href!, page.url()).href).href)).ok(), i.src).toBe(true);
+});
+
+// Si una sola URL del precache no responde 200, Workbox aborta la instalación y el service worker nunca se activa (pasó en GitHub Pages
+// con 404.html, que se precacheaba como `404/`). `astro preview` es más permisivo que GitHub Pages, así que se comprueba contra los archivos:
+// cada URL del precache tiene que ser un archivo de dist/ o la carpeta con su index.html (lo que sirve Pages).
+test('todas las URLs del precache existen como archivo en el sitio publicado', async ({ page }) => {
+  await page.goto('');
+  const sw = await (await page.request.get('sw.js')).text();
+  const urls = [...sw.matchAll(/url:[`"]([^`"]+)[`"]/g)].map((m) => m[1]!);
+  expect(urls.length).toBeGreaterThan(50);
+  const dist = resolve(import.meta.dirname, '../dist');
+  const malas = urls.filter((u) => {
+    const ruta = u.replace(/^\/campus-personal\//, '').replace(/^\//, '');
+    const archivo = ruta === '' || ruta.endsWith('/') ? join(dist, ruta, 'index.html') : join(dist, ruta);
+    return !existsSync(archivo);
+  });
+  expect(malas, 'URLs del precache sin archivo (GitHub Pages responde 404 y el service worker no se instala)').toEqual([]);
 });
