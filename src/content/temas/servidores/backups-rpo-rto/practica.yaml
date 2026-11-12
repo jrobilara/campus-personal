@@ -153,7 +153,7 @@ casos:
         tipo: decision
         texto: El servidor y el NAS están aislados. Antes de tocar nada más, ¿qué hacés?
         opciones:
-          - texto: Aviso a gerencia y al responsable de seguridad, y reporto el incidente al CERT.ar.
+          - texto: Aviso a gerencia y al responsable de seguridad, y reporto el incidente a la autoridad o CSIRT que corresponda a mi organización.
             va: tomar-evidencia
             consecuencia: Quienes tienen que decidir saben qué pasó y el incidente queda reportado mientras todavía hay rastros.
           - texto: Me pongo directo a reconstruir y aviso cuando termine.
