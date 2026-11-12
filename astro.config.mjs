@@ -36,6 +36,8 @@ export default defineConfig({
       },
     }),
   ],
+  // CAMPUS_VITE_CACHE: permite correr varios `astro dev` a la vez sin pisarse el caché de Vite (solo desarrollo).
+  vite: { cacheDir: process.env.CAMPUS_VITE_CACHE || undefined },
   markdown: {
     processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex] }),
   },

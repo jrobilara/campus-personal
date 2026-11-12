@@ -1,0 +1,60 @@
+---
+// Página de pruebas de los 12 simuladores: solo existe en `npm run dev` o con CAMPUS_INCLUIR_EJEMPLO=1 (e2e).
+// noindex, sin enlaces desde ningún lado y fuera del buscador.
+import Base from '../../layouts/Base.astro';
+import { componentesMdx as C } from '../../components/mdx';
+
+export function getStaticPaths() {
+  const permitido = import.meta.env.DEV || process.env.CAMPUS_INCLUIR_EJEMPLO === '1';
+  return permitido ? [{ params: { pagina: 'simuladores' } }] : [];
+}
+const consigna = 'Mové un control y mirá qué cambia.';
+---
+<Base titulo="Simuladores de prueba · Campus personal" noindex>
+  <main id="contenido" class="angosto" data-pagefind-ignore>
+    <h1>Simuladores de prueba</h1>
+    <C.SimFuncion consigna={consigna} titulo="Tangente" modo="tangente" funcion="cuadratica" />
+    <C.SimFuncion consigna={consigna} titulo="Descenso" modo="descenso" funcion="doble-pozo" />
+    <C.SimFuncion consigna={consigna} titulo="Señal" modo="senal" componentes={[{ frecuencia: 3, amplitud: 1 }, { frecuencia: 10, amplitud: 0.5 }]} muestreo filtro />
+    <C.SimFuncion consigna={consigna} titulo="Tasa en la parábola" modo="descenso" funcion="cuadratica" />
+    <C.SimTransformacion2D consigna={consigna} titulo="Transformación" editable mostrarAutovectores />
+    <C.SimTransformacion2D consigna={consigna} titulo="Autovectores sobre el eje" preset="escala" mostrarAutovectores vector={[1, 0]} />
+    <C.SimDistribucion consigna={consigna} titulo="Distribución" distribucion="binomial" aproximacionNormal permitirCambiarDistribucion mostrarIntervalo />
+    <C.SimInferencia consigna={consigna} titulo="TCL" modo="tcl" poblacion="exponencial" />
+    <C.SimInferencia consigna={consigna} titulo="Intervalos" modo="intervalos" poblacion="dado" />
+    <C.SimInferencia consigna={consigna} titulo="A/B" modo="ab" />
+    <C.SimBayes consigna={consigna} titulo="Bayes" contexto="medico" />
+    <C.SimBayes consigna={consigna} titulo="Spam" contexto="spam" poblacion={10000} prevalencia={0.3} />
+    <C.SimDatos consigna={consigna} titulo="Tickets" dataset="tickets-sucios" vistas={['tabla', 'histograma', 'caja']} limpieza />
+    <C.SimDatos consigna={consigna} titulo="Latencias" dataset="latencias" vistas={['histograma', 'caja']} />
+    <C.SimDatos consigna={consigna} titulo="Anscombe" dataset="anscombe" vistas={['dispersion']} regresion />
+    <C.SimDatos consigna={consigna} titulo="Confusora" dataset="confusora-temperatura" vistas={['dispersion']} regresion />
+    <C.SimDatos consigna={consigna} titulo="Ventas" dataset="ventas-mensuales" vistas={['barras', 'lineas', 'torta', 'dispersion']} />
+    <C.SimDatos consigna={consigna} titulo="Horas y notas" dataset="horas-y-notas" vistas={['dispersion', 'histograma']} regresion />
+    <C.SimDatos consigna={consigna} titulo="Elegir el gráfico" dataset="ventas-mensuales" vistas={['torta', 'lineas']} veredictos={{ torta: { nota: 'mal', porque: 'Una torta no muestra cómo cambian las ventas mes a mes.' }, lineas: { nota: 'bien', porque: 'La línea deja ver la tendencia y la estacionalidad de cada región.' } }} />
+    <C.SimTablaSQL consigna={consigna} titulo="GROUP BY" tabla="ventas" operacion="group-by" editable />
+    <C.SimTablaSQL consigna={consigna} titulo="Ventana" tabla="ventas" operacion="ventana" funcion="suma-acumulada" editable />
+    <C.SimFlujo consigna={consigna} titulo="Balanceador" modo="balanceador" cache />
+    <C.SimFlujo consigna={consigna} titulo="Cola" modo="cola" />
+    <C.SimFlujo consigna={consigna} titulo="Cola de tickets" modo="cola" etiquetas="tickets" slaMinutos={240} kb />
+    <C.SimFlujo consigna={consigna} titulo="Síncrono vs asíncrono" modo="sincrono-vs-asincrono" />
+    <C.SimFlujo consigna={consigna} titulo="Cadena" modo="cadena" />
+    <C.SimMaquinaEstados consigna={consigna} titulo="Circuit breaker" preset="circuit-breaker" />
+    <C.SimMaquinaEstados consigna={consigna} titulo="systemd" preset="unidad-systemd" />
+    <C.SimMaquinaEstados consigna={consigna} titulo="Proceso Linux" preset="proceso-linux" />
+    <C.SimMaquinaEstados consigna={consigna} titulo="Contenedor" preset="contenedor-docker" />
+    <C.SimMaquinaEstados consigna={consigna} titulo="Incidente" preset="incidente-itil" />
+    <C.SimSerieTemporal consigna={consigna} titulo="Pico breve" modo="alertas" escenario="pico-breve" />
+    <C.SimSerieTemporal consigna={consigna} titulo="Disco" modo="alertas" escenario="disco-llenandose" />
+    <C.SimSerieTemporal consigna={consigna} titulo="Carga" modo="alertas" escenario="carga-sostenida" />
+    <C.SimSerieTemporal consigna={consigna} titulo="Memoria" modo="alertas" escenario="fuga-memoria" />
+    <C.SimSerieTemporal consigna={consigna} titulo="Respaldo" modo="respaldo" />
+    <C.SimGrafo consigna={consigna} titulo="Recorrido" grafo="red-ciudad" modo="recorrido" />
+    <C.SimGrafo consigna={consigna} titulo="Camino mínimo" grafo="red-ciudad" modo="camino-minimo" />
+    <C.SimGrafo consigna={consigna} titulo="Orden topológico" grafo="dependencias-paquetes" modo="orden-topologico" />
+    <C.SimGrafo consigna={consigna} titulo="Propagar falla" grafo="microservicios-tienda" modo="propagar-falla" />
+    <C.SimGrafo consigna={consigna} titulo="Buscar falla" grafo="cadena-red" modo="buscar-falla" />
+    <C.SimMatrizPrioridad consigna={consigna} titulo="Mesa del lunes" />
+    <C.SimMatrizPrioridad consigna={consigna} titulo="Caída parcial" tickets="caida-parcial" />
+  </main>
+</Base>

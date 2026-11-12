@@ -228,3 +228,17 @@ export function validarPropsSimulador(nombre: NombreSimulador, props: unknown, a
   });
   throw new Error(lineas.join('\n'));
 }
+
+// Tipos de props de cada isla (las islas importan estos, no cambian el contrato).
+export type PropsSimFuncion = z.infer<typeof propsSimFuncion>;
+export type PropsSimTransformacion2D = z.infer<typeof propsSimTransformacion2D>;
+export type PropsSimDistribucion = z.infer<typeof propsSimDistribucion>;
+export type PropsSimInferencia = z.infer<typeof propsSimInferencia>;
+export type PropsSimBayes = z.infer<typeof propsSimBayes>;
+export type PropsSimDatos = z.infer<typeof propsSimDatos>;
+export type PropsSimTablaSQL = z.infer<typeof propsSimTablaSQL>;
+export type PropsSimFlujo = z.infer<typeof propsSimFlujo>;
+export type PropsSimMaquinaEstados = z.infer<typeof propsSimMaquinaEstados>;
+export type PropsSimSerieTemporal = z.infer<typeof propsSimSerieTemporal>;
+export type PropsSimGrafo = z.infer<typeof propsSimGrafo>;
+export type PropsSimMatrizPrioridad = z.infer<typeof propsSimMatrizPrioridad>;

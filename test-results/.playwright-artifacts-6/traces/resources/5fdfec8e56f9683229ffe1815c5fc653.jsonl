@@ -1,0 +1,12 @@
+{"type":"receive","time":1794448150597.701,"opcode":1,"data":"{\"type\":\"connected\"}"}
+{"type":"receive","time":1794448152670.983,"opcode":1,"data":"{\"type\":\"full-reload\"}"}
+{"type":"send","time":1794448153099.492,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:home:toggled\",\"data\":{\"state\":false}}"}
+{"type":"send","time":1794448153099.756,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:xray:toggled\",\"data\":{\"state\":false}}"}
+{"type":"send","time":1794448153099.836,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:audit:toggled\",\"data\":{\"state\":false}}"}
+{"type":"send","time":1794448153099.906,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:settings:toggled\",\"data\":{\"state\":false}}"}
+{"type":"send","time":1794448153100.006,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:more:toggled\",\"data\":{\"state\":false}}"}
+{"type":"send","time":1794448154047.206,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:home:initialized\"}"}
+{"type":"send","time":1794448154047.308,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:xray:initialized\"}"}
+{"type":"send","time":1794448154047.37,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:settings:initialized\"}"}
+{"type":"send","time":1794448154050.578,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:more:initialized\"}"}
+{"type":"send","time":1794448155055.375,"opcode":1,"data":"{\"type\":\"custom\",\"event\":\"astro-dev-toolbar:astro:audit:initialized\"}"}

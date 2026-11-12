@@ -1,0 +1,4194 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: sim-datos.spec.ts >> horas-y-notas: agregar un outlier suma un alumno y baja la pendiente
+- Location: e2e/sim-datos.spec.ts:110:1
+
+# Error details
+
+```
+Test timeout of 45000ms exceeded.
+```
+
+```
+Error: locator.scrollIntoViewIfNeeded: Test timeout of 45000ms exceeded.
+Call log:
+  - waiting for locator('figure.sim').filter({ hasText: /^\s*Horas y notas\s*Probá/ })
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Saltar al contenido" [ref=e2] [cursor=pointer]:
+    - /url: "#contenido"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "Campus personal, ir al inicio" [ref=e5] [cursor=pointer]:
+        - /url: /campus-personal/
+        - text: Campus
+      - navigation "Principal" [ref=e10]:
+        - link "Inicio" [ref=e11] [cursor=pointer]:
+          - /url: /campus-personal/
+        - link "Repaso" [ref=e13] [cursor=pointer]:
+          - /url: /campus-personal/repaso/
+        - link "Progreso" [ref=e15] [cursor=pointer]:
+          - /url: /campus-personal/progreso/
+        - link "Buscar" [ref=e17] [cursor=pointer]:
+          - /url: /campus-personal/buscar/
+        - link "Ajustes" [ref=e19] [cursor=pointer]:
+          - /url: /campus-personal/ajustes/
+  - main [ref=e21]:
+    - heading "Simuladores de prueba" [level=1] [ref=e22]
+    - 'figure "Tangente Probá: Mové un control y mirá qué cambia." [ref=e23]':
+      - generic [ref=e24]:
+        - paragraph [ref=e25]: Tangente
+        - paragraph [ref=e26]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e28]:
+        - img "Gráfico de parábola x al cuadrado, con la recta tangente en x = 1,00 y la secante hasta x + h" [ref=e29]:
+          - img [ref=e31]:
+            - generic [ref=e35]:
+              - generic [ref=e36]:
+                - generic [ref=e37]:
+                  - generic [ref=e38]: −8
+                  - generic [ref=e39]: −7
+                  - generic [ref=e40]: −6
+                  - generic [ref=e41]: −5
+                - generic [ref=e42]:
+                  - generic [ref=e43]: −4
+                  - generic [ref=e44]: −3
+                  - generic [ref=e45]: −2
+                  - generic [ref=e46]: −1
+                - generic [ref=e47]:
+                  - generic [ref=e48]: "1"
+                  - generic [ref=e49]: "2"
+                  - generic [ref=e50]: "3"
+                - generic [ref=e51]:
+                  - generic [ref=e52]: "4"
+                  - generic [ref=e53]: "5"
+                  - generic [ref=e54]: "6"
+                  - generic [ref=e55]: "7"
+              - generic [ref=e56]:
+                - generic [ref=e57]:
+                  - generic [ref=e58]: −8
+                  - generic [ref=e59]: −6
+                  - generic [ref=e60]: −4
+                  - generic [ref=e61]: −2
+                - generic [ref=e62]:
+                  - generic [ref=e63]: "2"
+                  - generic [ref=e64]: "4"
+                  - generic [ref=e65]: "6"
+                - generic [ref=e66]:
+                  - generic [ref=e67]: "8"
+                  - generic [ref=e68]: "10"
+                  - generic [ref=e69]: "12"
+                  - generic [ref=e70]: "14"
+                - generic [ref=e71]:
+                  - generic [ref=e72]: "16"
+                  - generic [ref=e73]: "18"
+                  - generic [ref=e74]: "20"
+                  - generic [ref=e75]: "22"
+            - generic [ref=e78]: h
+        - generic [ref=e86]:
+          - generic [ref=e87]: f(x) = x²
+          - generic [ref=e89]: recta tangente
+          - generic [ref=e91]: secante entre x y x + h
+        - generic [ref=e93]:
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - generic [ref=e96]: Punto x
+              - status [ref=e97]: 1,00
+            - slider "Punto x" [ref=e98] [cursor=pointer]: "1"
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - generic [ref=e101]: Separación h
+              - status [ref=e102]: 1,00
+            - slider "Separación h" [ref=e103] [cursor=pointer]: "1"
+        - generic [ref=e104]:
+          - generic [ref=e105]:
+            - term [ref=e106]: f(x)
+            - definition [ref=e107]: 1,00
+          - generic [ref=e108]:
+            - term [ref=e109]: Derivada f′(x)
+            - definition [ref=e110]: 2,00
+          - generic [ref=e111]:
+            - term [ref=e112]: Pendiente de la secante
+            - definition [ref=e113]: 3,00
+        - paragraph [ref=e114]: "Arrastrá el punto sobre la curva o usá los sliders. Achicá h: la secante se va pegando a la tangente."
+    - 'figure "Descenso Probá: Mové un control y mirá qué cambia." [ref=e115]':
+      - generic [ref=e116]:
+        - paragraph [ref=e117]: Descenso
+        - paragraph [ref=e118]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e120]:
+        - generic [ref=e123]: Divergiendo · los pasos se agrandan y el punto se aleja del mínimo.
+        - generic [ref=e124]:
+          - paragraph [ref=e125]: "f(x): la altura que queremos achicar"
+          - 'img "Gráfico de curva con dos pozos: un mínimo local y uno global con los pasos del descenso por gradiente: va por el paso 0, en x = 3,000" [ref=e126]'
+          - paragraph [ref=e128]: "x: la posición del punto"
+        - generic [ref=e129]:
+          - generic [ref=e130]: f(x) = x⁴ − 3x² + x
+          - generic [ref=e132]: pasos xₖ₊₁ = xₖ − tasa·f′(xₖ)
+        - generic [ref=e134]:
+          - generic [ref=e135]:
+            - generic [ref=e136]:
+              - generic [ref=e137]: Tasa de aprendizaje
+              - status [ref=e138]: 0,10
+            - slider "Tasa de aprendizaje" [ref=e139] [cursor=pointer]: "630"
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - generic [ref=e142]: Punto de partida (x₀)
+              - status [ref=e143]: 3,00
+            - slider "Punto de partida (x₀)" [ref=e144] [cursor=pointer]: "3"
+        - generic [ref=e145]:
+          - button "1 paso" [ref=e146] [cursor=pointer]
+          - button "10 pasos" [ref=e147] [cursor=pointer]
+          - button "Reiniciar" [ref=e148] [cursor=pointer]
+        - generic [ref=e149]:
+          - generic [ref=e150]:
+            - term [ref=e151]: Paso
+            - definition [ref=e152]: "0"
+          - generic [ref=e153]:
+            - term [ref=e154]: x
+            - definition [ref=e155]: 3,000
+          - generic [ref=e156]:
+            - term [ref=e157]: f(x)
+            - definition [ref=e158]: 57,000
+          - generic [ref=e159]:
+            - term [ref=e160]: Estado
+            - definition [ref=e161]: divergiendo
+          - generic [ref=e162]:
+            - term [ref=e163]: Factor |1 − tasa·f″|
+            - definition [ref=e164]: 9,20
+        - paragraph [ref=e165]: Si el factor es menor que 1 cada paso achica la distancia al mínimo; si es mayor que 1 la agranda y el descenso se dispara.
+    - 'figure "Señal Probá: Mové un control y mirá qué cambia." [ref=e166]':
+      - generic [ref=e167]:
+        - paragraph [ref=e168]: Señal
+        - paragraph [ref=e169]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e171]:
+        - generic [ref=e172]:
+          - paragraph [ref=e173]: Señal en el tiempo (1 segundo)
+          - img "Señal en el tiempo, suma de 2 senoidales, con sus muestras y la curva reconstruida" [ref=e174]
+          - paragraph [ref=e176]: tiempo (s)
+          - paragraph [ref=e177]: "Espectro: cuánta amplitud hay en cada frecuencia"
+          - 'img "Espectro de barras: 3 hercios con amplitud 1,00, 10 hercios con amplitud 0,50" [ref=e178]'
+          - paragraph [ref=e180]: frecuencia (Hz)
+        - generic [ref=e181]:
+          - generic [ref=e182]: señal
+          - generic [ref=e184]: muestras
+          - generic [ref=e186]: reconstruida desde las muestras (alias)
+        - generic [ref=e188]:
+          - generic [ref=e189]:
+            - generic [ref=e190]:
+              - generic [ref=e191]:
+                - generic [ref=e192]: Frecuencia 1
+                - status [ref=e193]: 3 Hz
+              - slider "Frecuencia 1" [ref=e194] [cursor=pointer]: "3"
+            - generic [ref=e195]:
+              - generic [ref=e196]:
+                - generic [ref=e197]: Amplitud 1
+                - status [ref=e198]: 1,00
+              - slider "Amplitud 1" [ref=e199] [cursor=pointer]: "1"
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - generic [ref=e202]:
+                - generic [ref=e203]: Frecuencia 2
+                - status [ref=e204]: 10 Hz
+              - slider "Frecuencia 2" [ref=e205] [cursor=pointer]: "10"
+            - generic [ref=e206]:
+              - generic [ref=e207]:
+                - generic [ref=e208]: Amplitud 2
+                - status [ref=e209]: 0,50
+              - slider "Amplitud 2" [ref=e210] [cursor=pointer]: "0.5"
+          - generic [ref=e211]:
+            - generic [ref=e212]:
+              - generic [ref=e213]: Ruido
+              - status [ref=e214]: 0,00
+            - slider "Ruido" [ref=e215] [cursor=pointer]: "0"
+          - generic [ref=e216]:
+            - generic [ref=e217] [cursor=pointer]:
+              - checkbox "Muestrear la señal" [checked] [ref=e218]
+              - generic [ref=e219]: Muestrear la señal
+            - generic [ref=e220]:
+              - generic [ref=e221]:
+                - generic [ref=e222]: Frecuencia de muestreo
+                - status [ref=e223]: 40 Hz
+              - slider "Frecuencia de muestreo" [ref=e224] [cursor=pointer]: "40"
+          - generic [ref=e225]:
+            - generic [ref=e226] [cursor=pointer]:
+              - checkbox "Filtro pasa-bajos" [ref=e227]
+              - generic [ref=e228]: Filtro pasa-bajos
+            - generic [ref=e229]:
+              - generic [ref=e230]:
+                - generic [ref=e231]: Corte del filtro
+                - status [ref=e232]: 7 Hz
+              - slider "Corte del filtro" [disabled] [ref=e233] [cursor=pointer]: "7"
+        - generic [ref=e234]:
+          - generic [ref=e235]:
+            - term [ref=e236]: Frecuencia máxima
+            - definition [ref=e237]: 10Hz
+          - generic [ref=e238]:
+            - term [ref=e239]: Nyquist (fs/2)
+            - definition [ref=e240]: 20Hz
+          - generic [ref=e241]:
+            - term [ref=e242]: Alias
+            - definition [ref=e243]: —
+          - generic [ref=e244]:
+            - term [ref=e245]: Componentes filtradas
+            - definition [ref=e246]: "0"
+        - paragraph [ref=e247]: "Para no perder información hay que muestrear a más del doble de la frecuencia más alta. Si no, aparece un alias: una frecuencia falsa más grave."
+    - 'figure "Tasa en la parábola Probá: Mové un control y mirá qué cambia." [ref=e248]':
+      - generic [ref=e249]:
+        - paragraph [ref=e250]: Tasa en la parábola
+        - paragraph [ref=e251]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e253]:
+        - generic [ref=e256]: Convergiendo · cada paso te deja más cerca del mínimo.
+        - generic [ref=e257]:
+          - paragraph [ref=e258]: "f(x): la altura que queremos achicar"
+          - 'img "Gráfico de parábola x al cuadrado con los pasos del descenso por gradiente: va por el paso 0, en x = 3,000" [ref=e259]'
+          - paragraph [ref=e261]: "x: la posición del punto"
+        - generic [ref=e262]:
+          - generic [ref=e263]: f(x) = x²
+          - generic [ref=e265]: pasos xₖ₊₁ = xₖ − tasa·f′(xₖ)
+        - generic [ref=e267]:
+          - generic [ref=e268]:
+            - generic [ref=e269]:
+              - generic [ref=e270]: Tasa de aprendizaje
+              - status [ref=e271]: 0,10
+            - slider "Tasa de aprendizaje" [ref=e272] [cursor=pointer]: "630"
+          - generic [ref=e273]:
+            - generic [ref=e274]:
+              - generic [ref=e275]: Punto de partida (x₀)
+              - status [ref=e276]: 3,00
+            - slider "Punto de partida (x₀)" [ref=e277] [cursor=pointer]: "3"
+        - generic [ref=e278]:
+          - button "1 paso" [ref=e279] [cursor=pointer]
+          - button "10 pasos" [ref=e280] [cursor=pointer]
+          - button "Reiniciar" [ref=e281] [cursor=pointer]
+        - generic [ref=e282]:
+          - generic [ref=e283]:
+            - term [ref=e284]: Paso
+            - definition [ref=e285]: "0"
+          - generic [ref=e286]:
+            - term [ref=e287]: x
+            - definition [ref=e288]: 3,000
+          - generic [ref=e289]:
+            - term [ref=e290]: f(x)
+            - definition [ref=e291]: 9,000
+          - generic [ref=e292]:
+            - term [ref=e293]: Estado
+            - definition [ref=e294]: convergiendo
+          - generic [ref=e295]:
+            - term [ref=e296]: Factor |1 − tasa·f″|
+            - definition [ref=e297]: 0,80
+        - paragraph [ref=e298]: Si el factor es menor que 1 cada paso achica la distancia al mínimo; si es mayor que 1 la agranda y el descenso se dispara.
+    - 'figure "Transformación Probá: Mové un control y mirá qué cambia." [ref=e299]':
+      - generic [ref=e300]:
+        - paragraph [ref=e301]: Transformación
+        - paragraph [ref=e302]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e304]:
+        - 'img "Plano 2D con la grilla transformada por la matriz de filas (1,00; 0,00) y (0,00; 1,00). El vector v pasa a Av = (1,00; 1,00). Determinante 1,00: se mantiene." [ref=e305]'
+        - generic [ref=e307]:
+          - generic [ref=e308]: "î′: adónde va (1; 0)"
+          - generic [ref=e310]: "ĵ′: adónde va (0; 1)"
+          - generic [ref=e312]: v (arrastralo)
+          - generic [ref=e314]: Av
+          - generic [ref=e316]: rectas de autovectores
+        - generic [ref=e318]:
+          - group "Matriz A" [ref=e319]:
+            - generic [ref=e320]:
+              - generic [ref=e321]:
+                - generic [ref=e322]: a
+                - status [ref=e323]: 1,0
+              - slider "a" [ref=e324] [cursor=pointer]: "1"
+            - generic [ref=e325]:
+              - generic [ref=e326]:
+                - generic [ref=e327]: b
+                - status [ref=e328]: 0,0
+              - slider "b" [ref=e329] [cursor=pointer]: "0"
+            - generic [ref=e330]:
+              - generic [ref=e331]:
+                - generic [ref=e332]: c
+                - status [ref=e333]: 0,0
+              - slider "c" [ref=e334] [cursor=pointer]: "0"
+            - generic [ref=e335]:
+              - generic [ref=e336]:
+                - generic [ref=e337]: d
+                - status [ref=e338]: 1,0
+              - slider "d" [ref=e339] [cursor=pointer]: "1"
+          - generic [ref=e340]:
+            - generic [ref=e341]: Probá una transformación
+            - group "Probá una transformación" [ref=e342]:
+              - generic [ref=e343]:
+                - button "Identidad" [pressed] [ref=e344] [cursor=pointer]
+                - button "Rotación 90°" [ref=e345] [cursor=pointer]
+                - button "Escala" [ref=e346] [cursor=pointer]
+                - button "Cizalla" [ref=e347] [cursor=pointer]
+                - button "Reflexión" [ref=e348] [cursor=pointer]
+                - button "Proyección" [ref=e349] [cursor=pointer]
+        - generic [ref=e350]:
+          - generic [ref=e351]:
+            - term [ref=e352]: Determinante
+            - definition [ref=e353]: 1,00
+          - generic [ref=e354]:
+            - term [ref=e355]: Área del cuadrado
+            - definition [ref=e356]: 1,00
+          - generic [ref=e357]:
+            - term [ref=e358]: Orientación
+            - definition [ref=e359]: se mantiene
+          - generic [ref=e360]:
+            - term [ref=e361]: Av
+            - definition [ref=e362]: (1,00; 1,00)
+          - generic [ref=e363]:
+            - term [ref=e364]: Autovalores λ₁; λ₂
+            - definition [ref=e365]: 1,00; 1,00
+        - paragraph [ref=e366]: "Esta matriz solo estira o encoge parejo: cualquier recta por el origen queda en su lugar."
+    - 'figure "Autovectores sobre el eje Probá: Mové un control y mirá qué cambia." [ref=e367]':
+      - generic [ref=e368]:
+        - paragraph [ref=e369]: Autovectores sobre el eje
+        - paragraph [ref=e370]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e372]:
+        - 'img "Plano 2D con la grilla transformada por la matriz de filas (2,00; 0,00) y (0,00; 0,50). El vector v pasa a Av = (2,00; 0,00). Determinante 1,00: se mantiene." [ref=e373]'
+        - generic [ref=e375]:
+          - generic [ref=e376]: "î′: adónde va (1; 0)"
+          - generic [ref=e378]: "ĵ′: adónde va (0; 1)"
+          - generic [ref=e380]: v (arrastralo)
+          - generic [ref=e382]: Av
+          - generic [ref=e384]: rectas de autovectores
+        - group "Matriz A" [ref=e387]:
+          - generic [ref=e388]: 2,0
+          - generic [ref=e389]: 0,0
+          - generic [ref=e390]: 0,0
+          - generic [ref=e391]: 0,5
+        - generic [ref=e392]:
+          - generic [ref=e393]:
+            - term [ref=e394]: Determinante
+            - definition [ref=e395]: 1,00
+          - generic [ref=e396]:
+            - term [ref=e397]: Área del cuadrado
+            - definition [ref=e398]: 1,00
+          - generic [ref=e399]:
+            - term [ref=e400]: Orientación
+            - definition [ref=e401]: se mantiene
+          - generic [ref=e402]:
+            - term [ref=e403]: Av
+            - definition [ref=e404]: (2,00; 0,00)
+          - generic [ref=e405]:
+            - term [ref=e406]: Autovalores λ₁; λ₂
+            - definition [ref=e407]: 2,00; 0,50
+        - paragraph [ref=e408]: "Un vector sobre una de las rectas punteadas sigue sobre ella después de aplicar A: solo se estira por su autovalor."
+    - 'figure "Distribución Probá: Mové un control y mirá qué cambia." [ref=e409]':
+      - generic [ref=e410]:
+        - paragraph [ref=e411]: Distribución
+        - paragraph [ref=e412]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e414]:
+        - generic [ref=e415]:
+          - generic [ref=e416]: X ~ Binomial(n = 10, p = 0,50)
+          - generic [ref=e417]: P(3 ≤ X ≤ 7) = 0,8906
+        - generic [ref=e418]:
+          - generic [ref=e419]: Probabilidad de cada valor
+          - generic [ref=e421]: Media ± 1 desvío
+          - generic [ref=e423]: Normal con la misma media y varianza
+        - generic [ref=e425]:
+          - generic [ref=e426]:
+            - generic [ref=e427]: Distribución
+            - combobox "Distribución" [ref=e429]:
+              - option "Binomial" [selected]
+              - option "Poisson"
+              - option "Normal"
+              - option "Exponencial"
+              - option "Uniforme"
+          - generic [ref=e430]:
+            - generic [ref=e431]:
+              - generic [ref=e432]: n (intentos)
+              - status [ref=e433]: "10"
+            - slider "n (intentos)" [ref=e434] [cursor=pointer]: "10"
+          - generic [ref=e435]:
+            - generic [ref=e436]:
+              - generic [ref=e437]: p (probabilidad de éxito)
+              - status [ref=e438]: 0,50
+            - slider "p (probabilidad de éxito)" [ref=e439] [cursor=pointer]: "0.5"
+          - generic [ref=e440]:
+            - generic [ref=e441]:
+              - generic [ref=e442]: desde
+              - status [ref=e443]: "3"
+            - slider "desde" [ref=e444] [cursor=pointer]: "3"
+          - generic [ref=e445]:
+            - generic [ref=e446]:
+              - generic [ref=e447]: hasta
+              - status [ref=e448]: "7"
+            - slider "hasta" [ref=e449] [cursor=pointer]: "7"
+        - generic [ref=e450]:
+          - generic [ref=e451]:
+            - term [ref=e452]: Media
+            - definition [ref=e453]: 5,00
+          - generic [ref=e454]:
+            - term [ref=e455]: Varianza
+            - definition [ref=e456]: 2,50
+          - generic [ref=e457]:
+            - term [ref=e458]: Desvío
+            - definition [ref=e459]: 1,58
+          - generic [ref=e460]:
+            - term [ref=e461]: P(desde ≤ X ≤ hasta)
+            - definition [ref=e462]: 0,8906
+          - generic [ref=e463]:
+            - term [ref=e464]: Con la normal (corregida)
+            - definition [ref=e465]: 0,8862
+    - 'figure "TCL Probá: Mové un control y mirá qué cambia." [ref=e466]':
+      - generic [ref=e467]:
+        - paragraph [ref=e468]: TCL
+        - paragraph [ref=e469]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e471]:
+        - paragraph [ref=e473]: "Población: Exponencial (λ = 1) · μ = 1,00, σ = 1,00"
+        - paragraph [ref=e475]:
+          - generic [ref=e476]: Medias de 0 muestras
+          - text: "de tamaño n = 5 · curva: Normal(μ, σ/√n)"
+        - generic [ref=e477]:
+          - generic [ref=e478]: Medias muestrales acumuladas
+          - generic [ref=e480]: Normal teórica N(μ, σ/√n)
+          - generic [ref=e482]: Última muestra / su media
+        - generic [ref=e484]:
+          - generic [ref=e485]:
+            - generic [ref=e486]:
+              - generic [ref=e487]: n (tamaño de cada muestra)
+              - status [ref=e488]: "5"
+            - slider "n (tamaño de cada muestra)" [ref=e489] [cursor=pointer]: "5"
+          - generic [ref=e490]:
+            - button "1 muestra" [ref=e491] [cursor=pointer]
+            - button "100 muestras" [ref=e492] [cursor=pointer]
+            - button "Reiniciar" [ref=e493] [cursor=pointer]
+        - generic [ref=e494]:
+          - generic [ref=e495]:
+            - term [ref=e496]: Muestras
+            - definition [ref=e497]: "0"
+          - generic [ref=e498]:
+            - term [ref=e499]: Media de las medias
+            - definition [ref=e500]: —
+          - generic [ref=e501]:
+            - term [ref=e502]: Desvío de las medias
+            - definition [ref=e503]: —
+          - generic [ref=e504]:
+            - term [ref=e505]: σ/√n teórico
+            - definition [ref=e506]: 0,447
+        - paragraph [ref=e507]: "Todavía no hay muestras: apretá “1 muestra” o “100 muestras”."
+    - 'figure "Intervalos Probá: Mové un control y mirá qué cambia." [ref=e508]':
+      - generic [ref=e509]:
+        - paragraph [ref=e510]: Intervalos
+        - paragraph [ref=e511]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e513]:
+        - paragraph [ref=e515]: "Población: Dado equilibrado · μ real = 3,50 · cada rayita es el IC de una muestra de n = 30"
+        - generic [ref=e516]:
+          - generic [ref=e517]: Cubre la media real
+          - generic [ref=e519]: No la cubre
+          - generic [ref=e521]: Media real μ
+        - generic [ref=e523]:
+          - generic [ref=e524]:
+            - generic [ref=e525]:
+              - generic [ref=e526]: n (tamaño de cada muestra)
+              - status [ref=e527]: "30"
+            - slider "n (tamaño de cada muestra)" [ref=e528] [cursor=pointer]: "30"
+          - generic [ref=e529]:
+            - generic [ref=e530]: Confianza
+            - combobox "Confianza" [ref=e532]:
+              - option "90 %"
+              - option "95 %" [selected]
+              - option "99 %"
+          - generic [ref=e533]:
+            - button "Sacar 20 intervalos" [ref=e534] [cursor=pointer]
+            - button "Reiniciar" [ref=e535] [cursor=pointer]
+        - generic [ref=e536]:
+          - generic [ref=e537]:
+            - term [ref=e538]: Intervalos
+            - definition [ref=e539]: "0"
+          - generic [ref=e540]:
+            - term [ref=e541]: Cubren la media
+            - definition [ref=e542]: "0"
+          - generic [ref=e543]:
+            - term [ref=e544]: Cobertura
+            - definition [ref=e545]: —
+        - paragraph [ref=e546]: Apretá “Sacar 20 intervalos” y fijate cuántos atrapan a la media real.
+    - 'figure "A/B Probá: Mové un control y mirá qué cambia." [ref=e547]':
+      - generic [ref=e548]:
+        - paragraph [ref=e549]: A/B
+        - paragraph [ref=e550]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e552]:
+        - paragraph [ref=e554]:
+          - generic [ref=e555]: A convierte 10,0 %
+          - text: ·
+          - generic [ref=e556]: B convierte 12,0 %
+          - text: · 1.000 usuarios por grupo
+        - generic [ref=e557]:
+          - generic [ref=e558]: "H0: no hay diferencia"
+          - generic [ref=e560]: "H1: la diferencia real"
+          - generic [ref=e562]: Región de rechazo (α)
+          - generic [ref=e564]: Último experimento
+        - generic [ref=e566]:
+          - generic [ref=e567]:
+            - generic [ref=e568]:
+              - generic [ref=e569]: Tasa real de B
+              - status [ref=e570]: 12,0 %
+            - slider "Tasa real de B" [ref=e571] [cursor=pointer]: "0.12"
+          - generic [ref=e572]:
+            - generic [ref=e573]:
+              - generic [ref=e574]: Usuarios por grupo
+              - status [ref=e575]: "1.000"
+            - slider "Usuarios por grupo" [ref=e576] [cursor=pointer]: "435"
+          - generic [ref=e577]:
+            - generic [ref=e578]: Nivel de significación α
+            - combobox "Nivel de significación α" [ref=e580]:
+              - option "1 %"
+              - option "5 %" [selected]
+              - option "10 %"
+          - generic [ref=e581]:
+            - button "Correr 1 experimento" [ref=e582] [cursor=pointer]
+            - button "Correr 200" [ref=e583] [cursor=pointer]
+            - button "Reiniciar" [ref=e584] [cursor=pointer]
+        - generic [ref=e585]:
+          - generic [ref=e586]:
+            - term [ref=e587]: Diferencia observada
+            - definition [ref=e588]: —
+          - generic [ref=e589]:
+            - term [ref=e590]: z
+            - definition [ref=e591]: —
+          - generic [ref=e592]:
+            - term [ref=e593]: p-valor
+            - definition [ref=e594]: —
+          - generic [ref=e595]:
+            - term [ref=e596]: Decisión
+            - definition [ref=e597]: —
+          - generic [ref=e598]:
+            - term [ref=e599]: Potencia teórica
+            - definition [ref=e600]: 29,8%
+          - generic [ref=e601]:
+            - term [ref=e602]: Rechazos en 0 exp.
+            - definition [ref=e603]: —
+        - paragraph [ref=e604]: Si la diferencia real es de 2,0 puntos, un experimento de este tamaño la detecta el 29,8 % de las veces.
+    - 'figure "Bayes Probá: Mové un control y mirá qué cambia." [ref=e605]':
+      - generic [ref=e606]:
+        - paragraph [ref=e607]: Bayes
+        - paragraph [ref=e608]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e610]:
+        - generic [ref=e611]:
+          - generic [ref=e612]:
+            - generic [ref=e613]: Agrupar los puntos por
+            - group "Agrupar los puntos por" [ref=e614]:
+              - button "Realidad" [pressed] [ref=e615] [cursor=pointer]
+              - button "Resultado del test" [ref=e616] [cursor=pointer]
+          - 'img "Grilla de 1000 puntos: 10 verdaderos positivos, 49 falsos positivos, 0 falsos negativos y 941 verdaderos negativos." [ref=e617]'
+          - paragraph [ref=e1618]: Cada punto representa 1 de las 1.000 personas (1.000 en total).
+          - list [ref=e1619]:
+            - listitem [ref=e1620]:
+              - generic [ref=e1623]: Enfermedad y positivo
+              - strong [ref=e1624]: "10"
+            - listitem [ref=e1625]:
+              - generic [ref=e1628]: Sin enfermedad y positivo
+              - strong [ref=e1629]: "49"
+            - listitem [ref=e1630]:
+              - generic [ref=e1633]: Enfermedad y negativo
+              - strong [ref=e1634]: "0"
+            - listitem [ref=e1635]:
+              - generic [ref=e1638]: Sin enfermedad y negativo
+              - strong [ref=e1639]: "941"
+        - 'img "Árbol: de 1.000 personas, 10 con la enfermedad (10 positivos y 0 negativos) y 990 sin la enfermedad (49 positivos y 941 negativos)." [ref=e1640]':
+          - generic [ref=e1645]:
+            - generic [ref=e1647]: "1.000"
+            - generic [ref=e1648]: personas
+          - generic [ref=e1649]:
+            - generic [ref=e1651]: "10"
+            - generic [ref=e1652]: con la enfermedad
+          - generic [ref=e1653]:
+            - generic [ref=e1655]: "990"
+            - generic [ref=e1656]: sin la enfermedad
+          - generic [ref=e1657]:
+            - generic [ref=e1659]: "10"
+            - generic [ref=e1660]: VP · positivo
+          - generic [ref=e1661]:
+            - generic [ref=e1663]: "0"
+            - generic [ref=e1664]: FN · negativo
+          - generic [ref=e1665]:
+            - generic [ref=e1667]: "49"
+            - generic [ref=e1668]: FP · positivo
+          - generic [ref=e1669]:
+            - generic [ref=e1671]: "941"
+            - generic [ref=e1672]: VN · negativo
+        - generic [ref=e1673]:
+          - paragraph [ref=e1674]:
+            - text: De unas
+            - strong [ref=e1675]: "59"
+            - text: personas que dan positivo, unas
+            - strong [ref=e1676]: "10"
+            - text: son positivos verdaderos (16,7 %).
+          - img "16,7 % de los positivos son verdaderos" [ref=e1677]
+          - generic [ref=e1680]:
+            - generic [ref=e1681]: Positivos verdaderos
+            - generic [ref=e1683]: Falsos positivos
+        - generic [ref=e1685]:
+          - generic [ref=e1686]:
+            - generic [ref=e1687]:
+              - generic [ref=e1688]: Prevalencia (cuántas tienen la enfermedad)
+              - status [ref=e1689]: 1,0 %
+            - slider "Prevalencia (cuántas tienen la enfermedad)" [ref=e1690] [cursor=pointer]: "371"
+          - generic [ref=e1691]:
+            - generic [ref=e1692]:
+              - generic [ref=e1693]: Sensibilidad (detecta a las enfermas)
+              - status [ref=e1694]: 99,0 %
+            - slider "Sensibilidad (detecta a las enfermas)" [ref=e1695] [cursor=pointer]: "99"
+          - generic [ref=e1696]:
+            - generic [ref=e1697]:
+              - generic [ref=e1698]: Especificidad (descarta a las sanas)
+              - status [ref=e1699]: 95,0 %
+            - slider "Especificidad (descarta a las sanas)" [ref=e1700] [cursor=pointer]: "95"
+        - generic [ref=e1701]:
+          - generic [ref=e1702]:
+            - term [ref=e1703]: Verdaderos positivos
+            - definition [ref=e1704]: "10"
+          - generic [ref=e1705]:
+            - term [ref=e1706]: Falsos positivos
+            - definition [ref=e1707]: "49"
+          - generic [ref=e1708]:
+            - term [ref=e1709]: Falsos negativos
+            - definition [ref=e1710]: "0"
+          - generic [ref=e1711]:
+            - term [ref=e1712]: Verdaderos negativos
+            - definition [ref=e1713]: "941"
+          - generic [ref=e1714]:
+            - term [ref=e1715]: Valor predictivo positivo
+            - definition [ref=e1716]: 16,7%
+          - generic [ref=e1717]:
+            - term [ref=e1718]: Valor predictivo negativo
+            - definition [ref=e1719]: 100,0%
+    - 'figure "Spam Probá: Mové un control y mirá qué cambia." [ref=e1720]':
+      - generic [ref=e1721]:
+        - paragraph [ref=e1722]: Spam
+        - paragraph [ref=e1723]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e1725]:
+        - generic [ref=e1726]:
+          - generic [ref=e1727]:
+            - generic [ref=e1728]: Agrupar los puntos por
+            - group "Agrupar los puntos por" [ref=e1729]:
+              - button "Realidad" [pressed] [ref=e1730] [cursor=pointer]
+              - button "Resultado del test" [ref=e1731] [cursor=pointer]
+          - 'img "Grilla de 1000 puntos: 2970 verdaderos positivos, 350 falsos positivos, 30 falsos negativos y 6650 verdaderos negativos." [ref=e1732]'
+          - paragraph [ref=e2733]: Cada punto representa 10 correos (10.000 en total).
+          - list [ref=e2734]:
+            - listitem [ref=e2735]:
+              - generic [ref=e2738]: Spam atrapado
+              - strong [ref=e2739]: "2.970"
+            - listitem [ref=e2740]:
+              - generic [ref=e2743]: Legítimo a spam
+              - strong [ref=e2744]: "350"
+            - listitem [ref=e2745]:
+              - generic [ref=e2748]: Spam que se cuela
+              - strong [ref=e2749]: "30"
+            - listitem [ref=e2750]:
+              - generic [ref=e2753]: Legítimo en la bandeja
+              - strong [ref=e2754]: "6.650"
+        - 'img "Árbol: de 10.000 correos, 3.000 spam (2.970 positivos y 30 negativos) y 7.000 legítimos (350 positivos y 6.650 negativos)." [ref=e2755]':
+          - generic [ref=e2760]:
+            - generic [ref=e2762]: "10.000"
+            - generic [ref=e2763]: correos
+          - generic [ref=e2764]:
+            - generic [ref=e2766]: "3.000"
+            - generic [ref=e2767]: spam
+          - generic [ref=e2768]:
+            - generic [ref=e2770]: "7.000"
+            - generic [ref=e2771]: legítimos
+          - generic [ref=e2772]:
+            - generic [ref=e2774]: "2.970"
+            - generic [ref=e2775]: VP · positivo
+          - generic [ref=e2776]:
+            - generic [ref=e2778]: "30"
+            - generic [ref=e2779]: FN · negativo
+          - generic [ref=e2780]:
+            - generic [ref=e2782]: "350"
+            - generic [ref=e2783]: FP · positivo
+          - generic [ref=e2784]:
+            - generic [ref=e2786]: "6.650"
+            - generic [ref=e2787]: VN · negativo
+        - generic [ref=e2788]:
+          - paragraph [ref=e2789]:
+            - text: De unas
+            - strong [ref=e2790]: "3.320"
+            - text: correos que van a spam, unas
+            - strong [ref=e2791]: "2.970"
+            - text: son positivos verdaderos (89,5 %).
+          - img "89,5 % de los positivos son verdaderos" [ref=e2792]
+          - generic [ref=e2795]:
+            - generic [ref=e2796]: Positivos verdaderos
+            - generic [ref=e2798]: Falsos positivos
+        - generic [ref=e2800]:
+          - generic [ref=e2801]:
+            - generic [ref=e2802]:
+              - generic [ref=e2803]: Prevalencia (cuántos son spam)
+              - status [ref=e2804]: 30 %
+            - slider "Prevalencia (cuántos son spam)" [ref=e2805] [cursor=pointer]: "918"
+          - generic [ref=e2806]:
+            - generic [ref=e2807]:
+              - generic [ref=e2808]: Sensibilidad (atrapa el spam)
+              - status [ref=e2809]: 99,0 %
+            - slider "Sensibilidad (atrapa el spam)" [ref=e2810] [cursor=pointer]: "99"
+          - generic [ref=e2811]:
+            - generic [ref=e2812]:
+              - generic [ref=e2813]: Especificidad (deja pasar lo legítimo)
+              - status [ref=e2814]: 95,0 %
+            - slider "Especificidad (deja pasar lo legítimo)" [ref=e2815] [cursor=pointer]: "95"
+        - generic [ref=e2816]:
+          - generic [ref=e2817]:
+            - term [ref=e2818]: Verdaderos positivos
+            - definition [ref=e2819]: "2970"
+          - generic [ref=e2820]:
+            - term [ref=e2821]: Falsos positivos
+            - definition [ref=e2822]: "350"
+          - generic [ref=e2823]:
+            - term [ref=e2824]: Falsos negativos
+            - definition [ref=e2825]: "30"
+          - generic [ref=e2826]:
+            - term [ref=e2827]: Verdaderos negativos
+            - definition [ref=e2828]: "6650"
+          - generic [ref=e2829]:
+            - term [ref=e2830]: Valor predictivo positivo
+            - definition [ref=e2831]: 89,5%
+          - generic [ref=e2832]:
+            - term [ref=e2833]: Valor predictivo negativo
+            - definition [ref=e2834]: 99,6%
+    - 'figure "Tickets Probá: Mové un control y mirá qué cambia." [ref=e2835]':
+      - generic [ref=e2836]:
+        - paragraph [ref=e2837]: Tickets
+        - paragraph [ref=e2838]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e2840]:
+        - group "Vista del dataset" [ref=e2841]:
+          - generic [ref=e2842]:
+            - button "Tabla" [pressed] [ref=e2843] [cursor=pointer]
+            - button "Histograma" [ref=e2844] [cursor=pointer]
+            - button "Caja" [ref=e2845] [cursor=pointer]
+        - generic [ref=e2847]:
+          - region "Filas del dataset" [ref=e2848]:
+            - table "Filas del dataset" [ref=e2849]:
+              - caption [ref=e2850]: Filas del dataset
+              - rowgroup [ref=e2851]:
+                - row [ref=e2852]:
+                  - columnheader "#" [ref=e2853]
+                  - columnheader "id" [ref=e2854]
+                  - columnheader "categoría" [ref=e2855]
+                  - columnheader "minutos de resolución (min)" [ref=e2856]
+                  - columnheader "fecha" [ref=e2857]
+                  - columnheader "aviso" [ref=e2858]
+              - rowgroup [ref=e2859]:
+                - row [ref=e2860]:
+                  - cell "1" [ref=e2861]
+                  - cell "T-0001" [ref=e2862]
+                  - cell "Hardware" [ref=e2863]
+                  - cell "111" [ref=e2864]
+                  - cell "2025-03-03" [ref=e2865]
+                  - cell [ref=e2866]
+                - row [ref=e2867]:
+                  - cell "2" [ref=e2868]
+                  - cell "T-0002" [ref=e2869]
+                  - cell "Software" [ref=e2870]
+                  - cell "73" [ref=e2871]
+                  - cell "2025-03-03" [ref=e2872]
+                  - cell [ref=e2873]
+                - row [ref=e2874]:
+                  - cell "3" [ref=e2875]
+                  - cell "T-0003" [ref=e2876]
+                  - cell "Correo" [ref=e2877]
+                  - cell "66" [ref=e2878]
+                  - cell "2025-03-04" [ref=e2879]
+                  - cell [ref=e2880]
+                - row [ref=e2881]:
+                  - cell "4" [ref=e2882]
+                  - cell "T-0004" [ref=e2883]
+                  - cell "Correo" [ref=e2884]
+                  - cell "70" [ref=e2885]
+                  - cell "2025-03-04" [ref=e2886]
+                  - cell [ref=e2887]
+                - row [ref=e2888]:
+                  - cell "5" [ref=e2889]
+                  - cell "T-0005" [ref=e2890]
+                  - cell "Software" [ref=e2891]
+                  - cell "96" [ref=e2892]
+                  - cell "2025-03-05" [ref=e2893]
+                  - cell [ref=e2894]
+                - row [ref=e2895]:
+                  - cell "6" [ref=e2896]
+                  - cell "T-0006" [ref=e2897]
+                  - cell "Hardware" [ref=e2898]
+                  - cell "96" [ref=e2899]
+                  - cell "2025-03-06" [ref=e2900]
+                  - cell [ref=e2901]
+                - row [ref=e2902]:
+                  - cell "7" [ref=e2903]
+                  - cell "T-0007" [ref=e2904]
+                  - cell "Hardware" [ref=e2905]
+                  - cell "147" [ref=e2906]
+                  - cell "2025-03-06" [ref=e2907]
+                  - cell [ref=e2908]
+                - row [ref=e2909]:
+                  - cell "8" [ref=e2910]
+                  - cell "T-0008" [ref=e2911]
+                  - cell "Red" [ref=e2912]
+                  - cell "85" [ref=e2913]
+                  - cell "2025-03-07" [ref=e2914]
+                  - cell [ref=e2915]
+                - row [ref=e2916]:
+                  - cell "9" [ref=e2917]
+                  - cell "T-0009" [ref=e2918]
+                  - cell "Software" [ref=e2919]
+                  - cell "130" [ref=e2920]
+                  - cell "2025-03-07" [ref=e2921]
+                  - cell [ref=e2922]
+                - row [ref=e2923]:
+                  - cell "10" [ref=e2924]
+                  - cell "T-0010" [ref=e2925]
+                  - cell "Red" [ref=e2926]
+                  - cell "137" [ref=e2927]
+                  - cell "2025-03-08" [ref=e2928]
+                  - cell [ref=e2929]
+                - row [ref=e2930]:
+                  - cell "11" [ref=e2931]
+                  - cell "T-0011" [ref=e2932]
+                  - cell "Accesos" [ref=e2933]
+                  - cell "58" [ref=e2934]
+                  - cell "2025-03-09" [ref=e2935]
+                  - cell [ref=e2936]
+                - row [ref=e2937]:
+                  - cell "12" [ref=e2938]
+                  - cell "T-0012" [ref=e2939]
+                  - cell "Accesos" [ref=e2940]
+                  - cell [ref=e2941]:
+                    - emphasis [ref=e2942]: vacío
+                  - cell "2025-03-09" [ref=e2943]
+                  - cell "vacío" [ref=e2944]
+                - row [ref=e2945]:
+                  - cell "13" [ref=e2946]
+                  - cell "T-0013" [ref=e2947]
+                  - cell "Correo" [ref=e2948]
+                  - cell "72" [ref=e2949]
+                  - cell "2025-03-10" [ref=e2950]
+                  - cell [ref=e2951]
+                - row [ref=e2952]:
+                  - cell "14" [ref=e2953]
+                  - cell "T-0014" [ref=e2954]
+                  - cell "Hardware" [ref=e2955]
+                  - cell "146" [ref=e2956]
+                  - cell "2025-03-10" [ref=e2957]
+                  - cell [ref=e2958]
+                - row [ref=e2959]:
+                  - cell "15" [ref=e2960]
+                  - cell "T-0015" [ref=e2961]
+                  - cell "Software" [ref=e2962]
+                  - cell "106" [ref=e2963]
+                  - cell "2025-03-11" [ref=e2964]
+                  - cell [ref=e2965]
+                - row [ref=e2966]:
+                  - cell "16" [ref=e2967]
+                  - cell "T-0016" [ref=e2968]
+                  - cell "Correo" [ref=e2969]
+                  - cell "61" [ref=e2970]
+                  - cell "2025-03-12" [ref=e2971]
+                  - cell [ref=e2972]
+                - row [ref=e2973]:
+                  - cell "17" [ref=e2974]
+                  - cell "T-0017" [ref=e2975]
+                  - cell "Accesos" [ref=e2976]
+                  - cell "71" [ref=e2977]
+                  - cell "2025-03-12" [ref=e2978]
+                  - cell [ref=e2979]
+                - row [ref=e2980]:
+                  - cell "18" [ref=e2981]
+                  - cell "T-0018" [ref=e2982]
+                  - cell "Software" [ref=e2983]
+                  - cell "64" [ref=e2984]
+                  - cell "2025-03-13" [ref=e2985]
+                  - cell [ref=e2986]
+                - row [ref=e2987]:
+                  - cell "19" [ref=e2988]
+                  - cell "T-0019" [ref=e2989]
+                  - cell "Correo" [ref=e2990]
+                  - cell "75" [ref=e2991]
+                  - cell "2025-03-14" [ref=e2992]
+                  - cell [ref=e2993]
+                - row [ref=e2994]:
+                  - cell "20" [ref=e2995]
+                  - cell "T-0020" [ref=e2996]
+                  - cell "Red" [ref=e2997]
+                  - cell "87" [ref=e2998]
+                  - cell "2025-03-14" [ref=e2999]
+                  - cell [ref=e3000]
+                - row [ref=e3001]:
+                  - cell "21" [ref=e3002]
+                  - cell "T-0021" [ref=e3003]
+                  - cell "Hardware" [ref=e3004]
+                  - cell "130" [ref=e3005]
+                  - cell "2025-03-15" [ref=e3006]
+                  - cell [ref=e3007]
+                - row [ref=e3008]:
+                  - cell "22" [ref=e3009]
+                  - cell "T-0022" [ref=e3010]
+                  - cell "Hardware" [ref=e3011]
+                  - cell "164" [ref=e3012]
+                  - cell "2025-03-15" [ref=e3013]
+                  - cell [ref=e3014]
+                - row [ref=e3015]:
+                  - cell "23" [ref=e3016]
+                  - cell "T-0023" [ref=e3017]
+                  - cell "Correo" [ref=e3018]
+                  - cell "98" [ref=e3019]
+                  - cell "2025-03-16" [ref=e3020]
+                  - cell [ref=e3021]
+                - row [ref=e3022]:
+                  - cell "24" [ref=e3023]
+                  - cell "T-0024" [ref=e3024]
+                  - cell "Accesos" [ref=e3025]
+                  - cell "1,50" [ref=e3026]
+                  - cell "2025-03-17" [ref=e3027]
+                  - cell "¿horas?" [ref=e3028]
+                - row [ref=e3029]:
+                  - cell "25" [ref=e3030]
+                  - cell "T-0025" [ref=e3031]
+                  - cell "Red" [ref=e3032]
+                  - cell "128" [ref=e3033]
+                  - cell "2025-03-17" [ref=e3034]
+                  - cell [ref=e3035]
+                - row [ref=e3036]:
+                  - cell "26" [ref=e3037]
+                  - cell "T-0026" [ref=e3038]
+                  - cell "Accesos" [ref=e3039]
+                  - cell "42" [ref=e3040]
+                  - cell "2025-03-18" [ref=e3041]
+                  - cell [ref=e3042]
+                - row [ref=e3043]:
+                  - cell "27" [ref=e3044]
+                  - cell "T-0027" [ref=e3045]
+                  - cell "Software" [ref=e3046]
+                  - cell "73" [ref=e3047]
+                  - cell "2025-03-18" [ref=e3048]
+                  - cell [ref=e3049]
+                - row [ref=e3050]:
+                  - cell "28" [ref=e3051]
+                  - cell "T-0028" [ref=e3052]
+                  - cell "Correo" [ref=e3053]
+                  - cell "65" [ref=e3054]
+                  - cell "2025-03-19" [ref=e3055]
+                  - cell [ref=e3056]
+                - row [ref=e3057]:
+                  - cell "29" [ref=e3058]
+                  - cell "T-0029" [ref=e3059]
+                  - cell "Correo" [ref=e3060]
+                  - cell "53" [ref=e3061]
+                  - cell "2025-03-20" [ref=e3062]
+                  - cell [ref=e3063]
+                - row [ref=e3064]:
+                  - cell "30" [ref=e3065]
+                  - cell "T-0030" [ref=e3066]
+                  - cell "Software" [ref=e3067]
+                  - cell "87" [ref=e3068]
+                  - cell "2025-03-20" [ref=e3069]
+                  - cell [ref=e3070]
+                - row [ref=e3071]:
+                  - cell "31" [ref=e3072]
+                  - cell "T-0031" [ref=e3073]
+                  - cell "Correo" [ref=e3074]
+                  - cell "37" [ref=e3075]
+                  - cell "2025-03-21" [ref=e3076]
+                  - cell [ref=e3077]
+                - row [ref=e3078]:
+                  - cell "32" [ref=e3079]
+                  - cell "T-0032" [ref=e3080]
+                  - cell "Correo" [ref=e3081]
+                  - cell "83" [ref=e3082]
+                  - cell "2025-03-22" [ref=e3083]
+                  - cell [ref=e3084]
+                - row [ref=e3085]:
+                  - cell "33" [ref=e3086]
+                  - cell "T-0033" [ref=e3087]
+                  - cell "Correo" [ref=e3088]
+                  - cell "64" [ref=e3089]
+                  - cell "2025-03-22" [ref=e3090]
+                  - cell [ref=e3091]
+                - row [ref=e3092]:
+                  - cell "34" [ref=e3093]
+                  - cell "T-0034" [ref=e3094]
+                  - cell "Hardware" [ref=e3095]
+                  - cell [ref=e3096]:
+                    - emphasis [ref=e3097]: vacío
+                  - cell "2025-03-23" [ref=e3098]
+                  - cell "vacío" [ref=e3099]
+                - row [ref=e3100]:
+                  - cell "35" [ref=e3101]
+                  - cell "T-0035" [ref=e3102]
+                  - cell "Red" [ref=e3103]
+                  - cell "160" [ref=e3104]
+                  - cell "2025-03-23" [ref=e3105]
+                  - cell [ref=e3106]
+                - row [ref=e3107]:
+                  - cell "36" [ref=e3108]
+                  - cell "T-0036" [ref=e3109]
+                  - cell "Software" [ref=e3110]
+                  - cell "84" [ref=e3111]
+                  - cell "2025-03-24" [ref=e3112]
+                  - cell [ref=e3113]
+                - row [ref=e3114]:
+                  - cell "37" [ref=e3115]
+                  - cell "T-0037" [ref=e3116]
+                  - cell "Hardware" [ref=e3117]
+                  - cell "109" [ref=e3118]
+                  - cell "2025-03-25" [ref=e3119]
+                  - cell [ref=e3120]
+                - row [ref=e3121]:
+                  - cell "38" [ref=e3122]
+                  - cell "T-0038" [ref=e3123]
+                  - cell "Red" [ref=e3124]
+                  - cell "103" [ref=e3125]
+                  - cell "2025-03-25" [ref=e3126]
+                  - cell [ref=e3127]
+                - row [ref=e3128]:
+                  - cell "39" [ref=e3129]
+                  - cell "T-0039" [ref=e3130]
+                  - cell "Red" [ref=e3131]
+                  - cell "121" [ref=e3132]
+                  - cell "2025-03-26" [ref=e3133]
+                  - cell [ref=e3134]
+                - row [ref=e3135]:
+                  - cell "40" [ref=e3136]
+                  - cell "T-0040" [ref=e3137]
+                  - cell "Software" [ref=e3138]
+                  - cell "64" [ref=e3139]
+                  - cell "2025-03-26" [ref=e3140]
+                  - cell [ref=e3141]
+                - row [ref=e3142]:
+                  - cell "41" [ref=e3143]
+                  - cell "T-0041" [ref=e3144]
+                  - cell "Accesos" [ref=e3145]
+                  - cell "68" [ref=e3146]
+                  - cell "2025-03-27" [ref=e3147]
+                  - cell [ref=e3148]
+                - row [ref=e3149]:
+                  - cell "42" [ref=e3150]
+                  - cell "T-0038" [ref=e3151]
+                  - cell "Red" [ref=e3152]
+                  - cell "103" [ref=e3153]
+                  - cell "2025-03-25" [ref=e3154]
+                  - cell "duplicada" [ref=e3155]
+                - row [ref=e3156]:
+                  - cell "43" [ref=e3157]
+                  - cell "T-0042" [ref=e3158]
+                  - cell "Accesos" [ref=e3159]
+                  - cell "54" [ref=e3160]
+                  - cell "2025-03-28" [ref=e3161]
+                  - cell [ref=e3162]
+                - row [ref=e3163]:
+                  - cell "44" [ref=e3164]
+                  - cell "T-0043" [ref=e3165]
+                  - cell "Hardware" [ref=e3166]
+                  - cell "116" [ref=e3167]
+                  - cell "2025-03-28" [ref=e3168]
+                  - cell [ref=e3169]
+                - row [ref=e3170]:
+                  - cell "45" [ref=e3171]
+                  - cell "T-0044" [ref=e3172]
+                  - cell "Red" [ref=e3173]
+                  - cell "108" [ref=e3174]
+                  - cell "2025-03-29" [ref=e3175]
+                  - cell [ref=e3176]
+                - row [ref=e3177]:
+                  - cell "46" [ref=e3178]
+                  - cell "T-0045" [ref=e3179]
+                  - cell "Software" [ref=e3180]
+                  - cell "111" [ref=e3181]
+                  - cell "2025-03-30" [ref=e3182]
+                  - cell [ref=e3183]
+                - row [ref=e3184]:
+                  - cell "47" [ref=e3185]
+                  - cell "T-0046" [ref=e3186]
+                  - cell "Accesos" [ref=e3187]
+                  - cell "67" [ref=e3188]
+                  - cell "2025-03-30" [ref=e3189]
+                  - cell [ref=e3190]
+                - row [ref=e3191]:
+                  - cell "48" [ref=e3192]
+                  - cell "T-0047" [ref=e3193]
+                  - cell "Red" [ref=e3194]
+                  - cell "111" [ref=e3195]
+                  - cell "2025-03-31" [ref=e3196]
+                  - cell [ref=e3197]
+                - row [ref=e3198]:
+                  - cell "49" [ref=e3199]
+                  - cell "T-0048" [ref=e3200]
+                  - cell "Hardware" [ref=e3201]
+                  - cell "124" [ref=e3202]
+                  - cell "2025-03-31" [ref=e3203]
+                  - cell [ref=e3204]
+                - row [ref=e3205]:
+                  - cell "50" [ref=e3206]
+                  - cell "T-0049" [ref=e3207]
+                  - cell "Correo" [ref=e3208]
+                  - cell "60" [ref=e3209]
+                  - cell "2025-04-01" [ref=e3210]
+                  - cell [ref=e3211]
+                - row [ref=e3212]:
+                  - cell "51" [ref=e3213]
+                  - cell "T-0050" [ref=e3214]
+                  - cell "Red" [ref=e3215]
+                  - cell "80" [ref=e3216]
+                  - cell "2025-04-02" [ref=e3217]
+                  - cell [ref=e3218]
+                - row [ref=e3219]:
+                  - cell "52" [ref=e3220]
+                  - cell "T-0051" [ref=e3221]
+                  - cell "Software" [ref=e3222]
+                  - cell "105" [ref=e3223]
+                  - cell "2025-04-02" [ref=e3224]
+                  - cell [ref=e3225]
+                - row [ref=e3226]:
+                  - cell "53" [ref=e3227]
+                  - cell "T-0052" [ref=e3228]
+                  - cell "Red" [ref=e3229]
+                  - cell "113" [ref=e3230]
+                  - cell "2025-04-03" [ref=e3231]
+                  - cell [ref=e3232]
+                - row [ref=e3233]:
+                  - cell "54" [ref=e3234]
+                  - cell "T-0053" [ref=e3235]
+                  - cell "Red" [ref=e3236]
+                  - cell "114" [ref=e3237]
+                  - cell "2025-04-03" [ref=e3238]
+                  - cell [ref=e3239]
+                - row [ref=e3240]:
+                  - cell "55" [ref=e3241]
+                  - cell "T-0054" [ref=e3242]
+                  - cell "Correo" [ref=e3243]
+                  - cell "62" [ref=e3244]
+                  - cell "2025-04-04" [ref=e3245]
+                  - cell [ref=e3246]
+                - row [ref=e3247]:
+                  - cell "56" [ref=e3248]
+                  - cell "T-0055" [ref=e3249]
+                  - cell "Hardware" [ref=e3250]
+                  - cell "116" [ref=e3251]
+                  - cell "2025-04-05" [ref=e3252]
+                  - cell [ref=e3253]
+                - row [ref=e3254]:
+                  - cell "57" [ref=e3255]
+                  - cell "T-0056" [ref=e3256]
+                  - cell "Red" [ref=e3257]
+                  - cell "133" [ref=e3258]
+                  - cell "2025-04-05" [ref=e3259]
+                  - cell [ref=e3260]
+                - row [ref=e3261]:
+                  - cell "58" [ref=e3262]
+                  - cell "T-0057" [ref=e3263]
+                  - cell "Red" [ref=e3264]
+                  - cell "102" [ref=e3265]
+                  - cell "2025-04-06" [ref=e3266]
+                  - cell [ref=e3267]
+                - row [ref=e3268]:
+                  - cell "59" [ref=e3269]
+                  - cell "T-0058" [ref=e3270]
+                  - cell "Hardware" [ref=e3271]
+                  - cell "127" [ref=e3272]
+                  - cell "2025-04-07" [ref=e3273]
+                  - cell [ref=e3274]
+                - row [ref=e3275]:
+                  - cell "60" [ref=e3276]
+                  - cell "T-0059" [ref=e3277]
+                  - cell "Accesos" [ref=e3278]
+                  - cell "71" [ref=e3279]
+                  - cell "2025-04-07" [ref=e3280]
+                  - cell [ref=e3281]
+                - row [ref=e3282]:
+                  - cell "61" [ref=e3283]
+                  - cell "T-0060" [ref=e3284]
+                  - cell "Red" [ref=e3285]
+                  - cell "116" [ref=e3286]
+                  - cell "2025-04-08" [ref=e3287]
+                  - cell [ref=e3288]
+                - row [ref=e3289]:
+                  - cell "62" [ref=e3290]
+                  - cell "T-0061" [ref=e3291]
+                  - cell "Correo" [ref=e3292]
+                  - cell "81" [ref=e3293]
+                  - cell "2025-04-08" [ref=e3294]
+                  - cell [ref=e3295]
+                - row [ref=e3296]:
+                  - cell "63" [ref=e3297]
+                  - cell "T-0062" [ref=e3298]
+                  - cell "Accesos" [ref=e3299]
+                  - cell "41" [ref=e3300]
+                  - cell "2025-04-09" [ref=e3301]
+                  - cell [ref=e3302]
+                - row [ref=e3303]:
+                  - cell "64" [ref=e3304]
+                  - cell "T-0063" [ref=e3305]
+                  - cell "Red" [ref=e3306]
+                  - cell "140" [ref=e3307]
+                  - cell "2025-04-10" [ref=e3308]
+                  - cell [ref=e3309]
+                - row [ref=e3310]:
+                  - cell "65" [ref=e3311]
+                  - cell "T-0064" [ref=e3312]
+                  - cell "Software" [ref=e3313]
+                  - cell "97" [ref=e3314]
+                  - cell "2025-04-10" [ref=e3315]
+                  - cell [ref=e3316]
+                - row [ref=e3317]:
+                  - cell "66" [ref=e3318]
+                  - cell "T-0059" [ref=e3319]
+                  - cell "Accesos" [ref=e3320]
+                  - cell "71" [ref=e3321]
+                  - cell "2025-04-07" [ref=e3322]
+                  - cell "duplicada" [ref=e3323]
+                - row [ref=e3324]:
+                  - cell "67" [ref=e3325]
+                  - cell "T-0065" [ref=e3326]
+                  - cell "Red" [ref=e3327]
+                  - cell "114" [ref=e3328]
+                  - cell "2025-04-11" [ref=e3329]
+                  - cell [ref=e3330]
+                - row [ref=e3331]:
+                  - cell "68" [ref=e3332]
+                  - cell "T-0066" [ref=e3333]
+                  - cell "Correo" [ref=e3334]
+                  - cell "62" [ref=e3335]
+                  - cell "2025-04-11" [ref=e3336]
+                  - cell [ref=e3337]
+                - row [ref=e3338]:
+                  - cell "69" [ref=e3339]
+                  - cell "T-0067" [ref=e3340]
+                  - cell "Accesos" [ref=e3341]
+                  - cell "72" [ref=e3342]
+                  - cell "2025-04-12" [ref=e3343]
+                  - cell [ref=e3344]
+                - row [ref=e3345]:
+                  - cell "70" [ref=e3346]
+                  - cell "T-0068" [ref=e3347]
+                  - cell "Software" [ref=e3348]
+                  - cell "70" [ref=e3349]
+                  - cell "2025-04-13" [ref=e3350]
+                  - cell [ref=e3351]
+                - row [ref=e3352]:
+                  - cell "71" [ref=e3353]
+                  - cell "T-0069" [ref=e3354]
+                  - cell "Hardware" [ref=e3355]
+                  - cell "142" [ref=e3356]
+                  - cell "2025-04-13" [ref=e3357]
+                  - cell [ref=e3358]
+                - row [ref=e3359]:
+                  - cell "72" [ref=e3360]
+                  - cell "T-0070" [ref=e3361]
+                  - cell "Hardware" [ref=e3362]
+                  - cell "144" [ref=e3363]
+                  - cell "2025-04-14" [ref=e3364]
+                  - cell [ref=e3365]
+                - row [ref=e3366]:
+                  - cell "73" [ref=e3367]
+                  - cell "T-0041" [ref=e3368]
+                  - cell "Accesos" [ref=e3369]
+                  - cell "68" [ref=e3370]
+                  - cell "2025-03-27" [ref=e3371]
+                  - cell "duplicada" [ref=e3372]
+                - row [ref=e3373]:
+                  - cell "74" [ref=e3374]
+                  - cell "T-0071" [ref=e3375]
+                  - cell "Correo" [ref=e3376]
+                  - cell "68" [ref=e3377]
+                  - cell "2025-04-15" [ref=e3378]
+                  - cell [ref=e3379]
+                - row [ref=e3380]:
+                  - cell "75" [ref=e3381]
+                  - cell "T-0072" [ref=e3382]
+                  - cell "Red" [ref=e3383]
+                  - cell "85" [ref=e3384]
+                  - cell "2025-04-15" [ref=e3385]
+                  - cell [ref=e3386]
+                - row [ref=e3387]:
+                  - cell "76" [ref=e3388]
+                  - cell "T-0073" [ref=e3389]
+                  - cell "Hardware" [ref=e3390]
+                  - cell "151" [ref=e3391]
+                  - cell "2025-04-16" [ref=e3392]
+                  - cell [ref=e3393]
+                - row [ref=e3394]:
+                  - cell "77" [ref=e3395]
+                  - cell "T-0074" [ref=e3396]
+                  - cell "Correo" [ref=e3397]
+                  - cell "38" [ref=e3398]
+                  - cell "2025-04-16" [ref=e3399]
+                  - cell [ref=e3400]
+                - row [ref=e3401]:
+                  - cell "78" [ref=e3402]
+                  - cell "T-0075" [ref=e3403]
+                  - cell "Software" [ref=e3404]
+                  - cell "75" [ref=e3405]
+                  - cell "2025-04-17" [ref=e3406]
+                  - cell [ref=e3407]
+                - row [ref=e3408]:
+                  - cell "79" [ref=e3409]
+                  - cell "T-0076" [ref=e3410]
+                  - cell "Red" [ref=e3411]
+                  - cell "88" [ref=e3412]
+                  - cell "2025-04-18" [ref=e3413]
+                  - cell [ref=e3414]
+                - row [ref=e3415]:
+                  - cell "80" [ref=e3416]
+                  - cell "T-0077" [ref=e3417]
+                  - cell "Accesos" [ref=e3418]
+                  - cell "38" [ref=e3419]
+                  - cell "2025-04-18" [ref=e3420]
+                  - cell [ref=e3421]
+                - row [ref=e3422]:
+                  - cell "81" [ref=e3423]
+                  - cell "T-0078" [ref=e3424]
+                  - cell "Software" [ref=e3425]
+                  - cell "86" [ref=e3426]
+                  - cell "2025-04-19" [ref=e3427]
+                  - cell [ref=e3428]
+                - row [ref=e3429]:
+                  - cell "82" [ref=e3430]
+                  - cell "T-0079" [ref=e3431]
+                  - cell "Red" [ref=e3432]
+                  - cell "103" [ref=e3433]
+                  - cell "2025-04-19" [ref=e3434]
+                  - cell [ref=e3435]
+                - row [ref=e3436]:
+                  - cell "83" [ref=e3437]
+                  - cell "T-0080" [ref=e3438]
+                  - cell "Correo" [ref=e3439]
+                  - cell "2480" [ref=e3440]
+                  - cell "2025-04-20" [ref=e3441]
+                  - cell [ref=e3442]
+                - row [ref=e3443]:
+                  - cell "84" [ref=e3444]
+                  - cell "T-0081" [ref=e3445]
+                  - cell "Software" [ref=e3446]
+                  - cell "96" [ref=e3447]
+                  - cell "2025-04-21" [ref=e3448]
+                  - cell [ref=e3449]
+                - row [ref=e3450]:
+                  - cell "85" [ref=e3451]
+                  - cell "T-0082" [ref=e3452]
+                  - cell "Correo" [ref=e3453]
+                  - cell "95" [ref=e3454]
+                  - cell "2025-04-21" [ref=e3455]
+                  - cell [ref=e3456]
+                - row [ref=e3457]:
+                  - cell "86" [ref=e3458]
+                  - cell "T-0083" [ref=e3459]
+                  - cell "Red" [ref=e3460]
+                  - cell "135" [ref=e3461]
+                  - cell "2025-04-22" [ref=e3462]
+                  - cell [ref=e3463]
+                - row [ref=e3464]:
+                  - cell "87" [ref=e3465]
+                  - cell "T-0084" [ref=e3466]
+                  - cell "Software" [ref=e3467]
+                  - cell "85" [ref=e3468]
+                  - cell "2025-04-23" [ref=e3469]
+                  - cell [ref=e3470]
+                - row [ref=e3471]:
+                  - cell "88" [ref=e3472]
+                  - cell "T-0085" [ref=e3473]
+                  - cell "Accesos" [ref=e3474]
+                  - cell "83" [ref=e3475]
+                  - cell "2025-04-23" [ref=e3476]
+                  - cell [ref=e3477]
+                - row [ref=e3478]:
+                  - cell "89" [ref=e3479]
+                  - cell "T-0086" [ref=e3480]
+                  - cell "Correo" [ref=e3481]
+                  - cell "69" [ref=e3482]
+                  - cell "2025-04-24" [ref=e3483]
+                  - cell [ref=e3484]
+                - row [ref=e3485]:
+                  - cell "90" [ref=e3486]
+                  - cell "T-0087" [ref=e3487]
+                  - cell "Hardware" [ref=e3488]
+                  - cell "116" [ref=e3489]
+                  - cell "2025-04-24" [ref=e3490]
+                  - cell [ref=e3491]
+                - row [ref=e3492]:
+                  - cell "91" [ref=e3493]
+                  - cell "T-0088" [ref=e3494]
+                  - cell "Red" [ref=e3495]
+                  - cell "53" [ref=e3496]
+                  - cell "2025-04-25" [ref=e3497]
+                  - cell [ref=e3498]
+                - row [ref=e3499]:
+                  - cell "92" [ref=e3500]
+                  - cell "T-0089" [ref=e3501]
+                  - cell "Accesos" [ref=e3502]
+                  - cell "73" [ref=e3503]
+                  - cell "2025-04-26" [ref=e3504]
+                  - cell [ref=e3505]
+                - row [ref=e3506]:
+                  - cell "93" [ref=e3507]
+                  - cell "T-0090" [ref=e3508]
+                  - cell "Correo" [ref=e3509]
+                  - cell "32" [ref=e3510]
+                  - cell "2025-04-26" [ref=e3511]
+                  - cell [ref=e3512]
+                - row [ref=e3513]:
+                  - cell "94" [ref=e3514]
+                  - cell "T-0091" [ref=e3515]
+                  - cell "Red" [ref=e3516]
+                  - cell "118" [ref=e3517]
+                  - cell "2025-04-27" [ref=e3518]
+                  - cell [ref=e3519]
+                - row [ref=e3520]:
+                  - cell "95" [ref=e3521]
+                  - cell "T-0092" [ref=e3522]
+                  - cell "Hardware" [ref=e3523]
+                  - cell "151" [ref=e3524]
+                  - cell "2025-04-27" [ref=e3525]
+                  - cell [ref=e3526]
+                - row [ref=e3527]:
+                  - cell "96" [ref=e3528]
+                  - cell "T-0093" [ref=e3529]
+                  - cell "Red" [ref=e3530]
+                  - cell "88" [ref=e3531]
+                  - cell "2025-04-28" [ref=e3532]
+                  - cell [ref=e3533]
+                - row [ref=e3534]:
+                  - cell "97" [ref=e3535]
+                  - cell "T-0094" [ref=e3536]
+                  - cell "Hardware" [ref=e3537]
+                  - cell "155" [ref=e3538]
+                  - cell "2025-04-29" [ref=e3539]
+                  - cell [ref=e3540]
+                - row [ref=e3541]:
+                  - cell "98" [ref=e3542]
+                  - cell "T-0095" [ref=e3543]
+                  - cell "Software" [ref=e3544]
+                  - cell "111" [ref=e3545]
+                  - cell "2025-04-29" [ref=e3546]
+                  - cell [ref=e3547]
+                - row [ref=e3548]:
+                  - cell "99" [ref=e3549]
+                  - cell "T-0096" [ref=e3550]
+                  - cell "Correo" [ref=e3551]
+                  - cell "33" [ref=e3552]
+                  - cell "2025-04-30" [ref=e3553]
+                  - cell [ref=e3554]
+                - row [ref=e3555]:
+                  - cell "100" [ref=e3556]
+                  - cell "T-0097" [ref=e3557]
+                  - cell "Software" [ref=e3558]
+                  - cell "111" [ref=e3559]
+                  - cell "2025-05-01" [ref=e3560]
+                  - cell [ref=e3561]
+                - row [ref=e3562]:
+                  - cell "101" [ref=e3563]
+                  - cell "T-0098" [ref=e3564]
+                  - cell "Red" [ref=e3565]
+                  - cell "103" [ref=e3566]
+                  - cell "2025-05-01" [ref=e3567]
+                  - cell [ref=e3568]
+                - row [ref=e3569]:
+                  - cell "102" [ref=e3570]
+                  - cell "T-0099" [ref=e3571]
+                  - cell "Accesos" [ref=e3572]
+                  - cell "73" [ref=e3573]
+                  - cell "2025-05-02" [ref=e3574]
+                  - cell [ref=e3575]
+                - row [ref=e3576]:
+                  - cell "103" [ref=e3577]
+                  - cell "T-0100" [ref=e3578]
+                  - cell "Software" [ref=e3579]
+                  - cell "81" [ref=e3580]
+                  - cell "2025-05-02" [ref=e3581]
+                  - cell [ref=e3582]
+                - row [ref=e3583]:
+                  - cell "104" [ref=e3584]
+                  - cell "T-0101" [ref=e3585]
+                  - cell "Hardware" [ref=e3586]
+                  - cell "127" [ref=e3587]
+                  - cell "2025-05-03" [ref=e3588]
+                  - cell [ref=e3589]
+                - row [ref=e3590]:
+                  - cell "105" [ref=e3591]
+                  - cell "T-0102" [ref=e3592]
+                  - cell "Red" [ref=e3593]
+                  - cell "156" [ref=e3594]
+                  - cell "2025-05-04" [ref=e3595]
+                  - cell [ref=e3596]
+                - row [ref=e3597]:
+                  - cell "106" [ref=e3598]
+                  - cell "T-0103" [ref=e3599]
+                  - cell "Correo" [ref=e3600]
+                  - cell "61" [ref=e3601]
+                  - cell "2025-05-04" [ref=e3602]
+                  - cell [ref=e3603]
+                - row [ref=e3604]:
+                  - cell "107" [ref=e3605]
+                  - cell "T-0104" [ref=e3606]
+                  - cell "Hardware" [ref=e3607]
+                  - cell "121" [ref=e3608]
+                  - cell "2025-05-05" [ref=e3609]
+                  - cell [ref=e3610]
+                - row [ref=e3611]:
+                  - cell "108" [ref=e3612]
+                  - cell "T-0105" [ref=e3613]
+                  - cell "Hardware" [ref=e3614]
+                  - cell "106" [ref=e3615]
+                  - cell "2025-05-05" [ref=e3616]
+                  - cell [ref=e3617]
+                - row [ref=e3618]:
+                  - cell "109" [ref=e3619]
+                  - cell "T-0106" [ref=e3620]
+                  - cell "Software" [ref=e3621]
+                  - cell "60" [ref=e3622]
+                  - cell "2025-05-06" [ref=e3623]
+                  - cell [ref=e3624]
+                - row [ref=e3625]:
+                  - cell "110" [ref=e3626]
+                  - cell "T-0107" [ref=e3627]
+                  - cell "Software" [ref=e3628]
+                  - cell "107" [ref=e3629]
+                  - cell "2025-05-07" [ref=e3630]
+                  - cell [ref=e3631]
+                - row [ref=e3632]:
+                  - cell "111" [ref=e3633]
+                  - cell "T-0108" [ref=e3634]
+                  - cell "Software" [ref=e3635]
+                  - cell "73" [ref=e3636]
+                  - cell "2025-05-07" [ref=e3637]
+                  - cell [ref=e3638]
+                - row [ref=e3639]:
+                  - cell "112" [ref=e3640]
+                  - cell "T-0109" [ref=e3641]
+                  - cell "Red" [ref=e3642]
+                  - cell "92" [ref=e3643]
+                  - cell "2025-05-08" [ref=e3644]
+                  - cell [ref=e3645]
+                - row [ref=e3646]:
+                  - cell "113" [ref=e3647]
+                  - cell "T-0110" [ref=e3648]
+                  - cell "Correo" [ref=e3649]
+                  - cell "52" [ref=e3650]
+                  - cell "2025-05-08" [ref=e3651]
+                  - cell [ref=e3652]
+                - row [ref=e3653]:
+                  - cell "114" [ref=e3654]
+                  - cell "T-0111" [ref=e3655]
+                  - cell "Red" [ref=e3656]
+                  - cell "89" [ref=e3657]
+                  - cell "2025-05-09" [ref=e3658]
+                  - cell [ref=e3659]
+                - row [ref=e3660]:
+                  - cell "115" [ref=e3661]
+                  - cell "T-0112" [ref=e3662]
+                  - cell "Correo" [ref=e3663]
+                  - cell "58" [ref=e3664]
+                  - cell "2025-05-10" [ref=e3665]
+                  - cell [ref=e3666]
+                - row [ref=e3667]:
+                  - cell "116" [ref=e3668]
+                  - cell "T-0113" [ref=e3669]
+                  - cell "Software" [ref=e3670]
+                  - cell "83" [ref=e3671]
+                  - cell "2025-05-10" [ref=e3672]
+                  - cell [ref=e3673]
+                - row [ref=e3674]:
+                  - cell "117" [ref=e3675]
+                  - cell "T-0114" [ref=e3676]
+                  - cell "Red" [ref=e3677]
+                  - cell [ref=e3678]:
+                    - emphasis [ref=e3679]: vacío
+                  - cell "2025-05-11" [ref=e3680]
+                  - cell "vacío" [ref=e3681]
+                - row [ref=e3682]:
+                  - cell "118" [ref=e3683]
+                  - cell "T-0115" [ref=e3684]
+                  - cell "Software" [ref=e3685]
+                  - cell "98" [ref=e3686]
+                  - cell "2025-05-12" [ref=e3687]
+                  - cell [ref=e3688]
+                - row [ref=e3689]:
+                  - cell "119" [ref=e3690]
+                  - cell "T-0116" [ref=e3691]
+                  - cell "Correo" [ref=e3692]
+                  - cell "77" [ref=e3693]
+                  - cell "2025-05-12" [ref=e3694]
+                  - cell [ref=e3695]
+                - row [ref=e3696]:
+                  - cell "120" [ref=e3697]
+                  - cell "T-0107" [ref=e3698]
+                  - cell "Software" [ref=e3699]
+                  - cell "107" [ref=e3700]
+                  - cell "2025-05-07" [ref=e3701]
+                  - cell "duplicada" [ref=e3702]
+                - row [ref=e3703]:
+                  - cell "121" [ref=e3704]
+                  - cell "T-0117" [ref=e3705]
+                  - cell "Hardware" [ref=e3706]
+                  - cell "150" [ref=e3707]
+                  - cell "2025-05-13" [ref=e3708]
+                  - cell [ref=e3709]
+                - row [ref=e3710]:
+                  - cell "122" [ref=e3711]
+                  - cell "T-0118" [ref=e3712]
+                  - cell "Software" [ref=e3713]
+                  - cell "104" [ref=e3714]
+                  - cell "2025-05-13" [ref=e3715]
+                  - cell [ref=e3716]
+                - row [ref=e3717]:
+                  - cell "123" [ref=e3718]
+                  - cell "T-0119" [ref=e3719]
+                  - cell "Hardware" [ref=e3720]
+                  - cell "147" [ref=e3721]
+                  - cell "2025-05-14" [ref=e3722]
+                  - cell [ref=e3723]
+                - row [ref=e3724]:
+                  - cell "124" [ref=e3725]
+                  - cell "T-0120" [ref=e3726]
+                  - cell "Red" [ref=e3727]
+                  - cell [ref=e3728]:
+                    - emphasis [ref=e3729]: vacío
+                  - cell "2025-05-15" [ref=e3730]
+                  - cell "vacío" [ref=e3731]
+                - row [ref=e3732]:
+                  - cell "125" [ref=e3733]
+                  - cell "T-0121" [ref=e3734]
+                  - cell "Correo" [ref=e3735]
+                  - cell "66" [ref=e3736]
+                  - cell "2025-05-15" [ref=e3737]
+                  - cell [ref=e3738]
+                - row [ref=e3739]:
+                  - cell "126" [ref=e3740]
+                  - cell "T-0122" [ref=e3741]
+                  - cell "Accesos" [ref=e3742]
+                  - cell "37" [ref=e3743]
+                  - cell "2025-05-16" [ref=e3744]
+                  - cell [ref=e3745]
+                - row [ref=e3746]:
+                  - cell "127" [ref=e3747]
+                  - cell "T-0123" [ref=e3748]
+                  - cell "Software" [ref=e3749]
+                  - cell "123" [ref=e3750]
+                  - cell "2025-05-16" [ref=e3751]
+                  - cell [ref=e3752]
+                - row [ref=e3753]:
+                  - cell "128" [ref=e3754]
+                  - cell "T-0124" [ref=e3755]
+                  - cell "Correo" [ref=e3756]
+                  - cell "103" [ref=e3757]
+                  - cell "2025-05-17" [ref=e3758]
+                  - cell [ref=e3759]
+                - row [ref=e3760]:
+                  - cell "129" [ref=e3761]
+                  - cell "T-0125" [ref=e3762]
+                  - cell "Red" [ref=e3763]
+                  - cell "1" [ref=e3764]
+                  - cell "2025-05-18" [ref=e3765]
+                  - cell "¿horas?" [ref=e3766]
+                - row [ref=e3767]:
+                  - cell "130" [ref=e3768]
+                  - cell "T-0126" [ref=e3769]
+                  - cell "Accesos" [ref=e3770]
+                  - cell "70" [ref=e3771]
+                  - cell "2025-05-18" [ref=e3772]
+                  - cell [ref=e3773]
+                - row [ref=e3774]:
+                  - cell "131" [ref=e3775]
+                  - cell "T-0127" [ref=e3776]
+                  - cell "Software" [ref=e3777]
+                  - cell "101" [ref=e3778]
+                  - cell "2025-05-19" [ref=e3779]
+                  - cell [ref=e3780]
+                - row [ref=e3781]:
+                  - cell "132" [ref=e3782]
+                  - cell "T-0128" [ref=e3783]
+                  - cell "Software" [ref=e3784]
+                  - cell [ref=e3785]:
+                    - emphasis [ref=e3786]: vacío
+                  - cell "2025-05-20" [ref=e3787]
+                  - cell "vacío" [ref=e3788]
+                - row [ref=e3789]:
+                  - cell "133" [ref=e3790]
+                  - cell "T-0129" [ref=e3791]
+                  - cell "Accesos" [ref=e3792]
+                  - cell "61" [ref=e3793]
+                  - cell "2025-05-20" [ref=e3794]
+                  - cell [ref=e3795]
+                - row [ref=e3796]:
+                  - cell "134" [ref=e3797]
+                  - cell "T-0130" [ref=e3798]
+                  - cell "Red" [ref=e3799]
+                  - cell "92" [ref=e3800]
+                  - cell "2025-05-21" [ref=e3801]
+                  - cell [ref=e3802]
+                - row [ref=e3803]:
+                  - cell "135" [ref=e3804]
+                  - cell "T-0131" [ref=e3805]
+                  - cell "Red" [ref=e3806]
+                  - cell "84" [ref=e3807]
+                  - cell "2025-05-21" [ref=e3808]
+                  - cell [ref=e3809]
+                - row [ref=e3810]:
+                  - cell "136" [ref=e3811]
+                  - cell "T-0132" [ref=e3812]
+                  - cell "Hardware" [ref=e3813]
+                  - cell "162" [ref=e3814]
+                  - cell "2025-05-22" [ref=e3815]
+                  - cell [ref=e3816]
+                - row [ref=e3817]:
+                  - cell "137" [ref=e3818]
+                  - cell "T-0133" [ref=e3819]
+                  - cell "Red" [ref=e3820]
+                  - cell "3150" [ref=e3821]
+                  - cell "2025-05-23" [ref=e3822]
+                  - cell [ref=e3823]
+                - row [ref=e3824]:
+                  - cell "138" [ref=e3825]
+                  - cell "T-0134" [ref=e3826]
+                  - cell "Correo" [ref=e3827]
+                  - cell "38" [ref=e3828]
+                  - cell "2025-05-23" [ref=e3829]
+                  - cell [ref=e3830]
+                - row [ref=e3831]:
+                  - cell "139" [ref=e3832]
+                  - cell "T-0135" [ref=e3833]
+                  - cell "Correo" [ref=e3834]
+                  - cell "50" [ref=e3835]
+                  - cell "2025-05-24" [ref=e3836]
+                  - cell [ref=e3837]
+                - row [ref=e3838]:
+                  - cell "140" [ref=e3839]
+                  - cell "T-0136" [ref=e3840]
+                  - cell "Red" [ref=e3841]
+                  - cell "86" [ref=e3842]
+                  - cell "2025-05-24" [ref=e3843]
+                  - cell [ref=e3844]
+                - row [ref=e3845]:
+                  - cell "141" [ref=e3846]
+                  - cell "T-0137" [ref=e3847]
+                  - cell "Red" [ref=e3848]
+                  - cell "106" [ref=e3849]
+                  - cell "2025-05-25" [ref=e3850]
+                  - cell [ref=e3851]
+                - row [ref=e3852]:
+                  - cell "142" [ref=e3853]
+                  - cell "T-0138" [ref=e3854]
+                  - cell "Hardware" [ref=e3855]
+                  - cell "118" [ref=e3856]
+                  - cell "2025-05-26" [ref=e3857]
+                  - cell [ref=e3858]
+                - row [ref=e3859]:
+                  - cell "143" [ref=e3860]
+                  - cell "T-0139" [ref=e3861]
+                  - cell "Hardware" [ref=e3862]
+                  - cell "103" [ref=e3863]
+                  - cell "2025-05-26" [ref=e3864]
+                  - cell [ref=e3865]
+                - row [ref=e3866]:
+                  - cell "144" [ref=e3867]
+                  - cell "T-0140" [ref=e3868]
+                  - cell "Software" [ref=e3869]
+                  - cell "110" [ref=e3870]
+                  - cell "2025-05-27" [ref=e3871]
+                  - cell [ref=e3872]
+                - row [ref=e3873]:
+                  - cell "145" [ref=e3874]
+                  - cell "T-0141" [ref=e3875]
+                  - cell "Correo" [ref=e3876]
+                  - cell "75" [ref=e3877]
+                  - cell "2025-05-28" [ref=e3878]
+                  - cell [ref=e3879]
+                - row [ref=e3880]:
+                  - cell "146" [ref=e3881]
+                  - cell "T-0142" [ref=e3882]
+                  - cell "Red" [ref=e3883]
+                  - cell "84" [ref=e3884]
+                  - cell "2025-05-28" [ref=e3885]
+                  - cell [ref=e3886]
+                - row [ref=e3887]:
+                  - cell "147" [ref=e3888]
+                  - cell "T-0143" [ref=e3889]
+                  - cell "Software" [ref=e3890]
+                  - cell "85" [ref=e3891]
+                  - cell "2025-05-29" [ref=e3892]
+                  - cell [ref=e3893]
+                - row [ref=e3894]:
+                  - cell "148" [ref=e3895]
+                  - cell "T-0144" [ref=e3896]
+                  - cell "Hardware" [ref=e3897]
+                  - cell "130" [ref=e3898]
+                  - cell "2025-05-29" [ref=e3899]
+                  - cell [ref=e3900]
+                - row [ref=e3901]:
+                  - cell "149" [ref=e3902]
+                  - cell "T-0145" [ref=e3903]
+                  - cell "Accesos" [ref=e3904]
+                  - cell "81" [ref=e3905]
+                  - cell "2025-05-30" [ref=e3906]
+                  - cell [ref=e3907]
+                - row [ref=e3908]:
+                  - cell "150" [ref=e3909]
+                  - cell "T-0146" [ref=e3910]
+                  - cell "Hardware" [ref=e3911]
+                  - cell "119" [ref=e3912]
+                  - cell "2025-05-31" [ref=e3913]
+                  - cell [ref=e3914]
+                - row [ref=e3915]:
+                  - cell "151" [ref=e3916]
+                  - cell "T-0147" [ref=e3917]
+                  - cell "Correo" [ref=e3918]
+                  - cell "64" [ref=e3919]
+                  - cell "2025-05-31" [ref=e3920]
+                  - cell [ref=e3921]
+                - row [ref=e3922]:
+                  - cell "152" [ref=e3923]
+                  - cell "T-0148" [ref=e3924]
+                  - cell "Hardware" [ref=e3925]
+                  - cell "140" [ref=e3926]
+                  - cell "2025-06-01" [ref=e3927]
+                  - cell [ref=e3928]
+                - row [ref=e3929]:
+                  - cell "153" [ref=e3930]
+                  - cell "T-0149" [ref=e3931]
+                  - cell "Software" [ref=e3932]
+                  - cell "119" [ref=e3933]
+                  - cell "2025-06-01" [ref=e3934]
+                  - cell [ref=e3935]
+                - row [ref=e3936]:
+                  - cell "154" [ref=e3937]
+                  - cell "T-0150" [ref=e3938]
+                  - cell "Accesos" [ref=e3939]
+                  - cell "45" [ref=e3940]
+                  - cell "2025-06-02" [ref=e3941]
+                  - cell [ref=e3942]
+                - row [ref=e3943]:
+                  - cell "155" [ref=e3944]
+                  - cell "T-0151" [ref=e3945]
+                  - cell "Accesos" [ref=e3946]
+                  - cell "51" [ref=e3947]
+                  - cell "2025-06-03" [ref=e3948]
+                  - cell [ref=e3949]
+                - row [ref=e3950]:
+                  - cell "156" [ref=e3951]
+                  - cell "T-0152" [ref=e3952]
+                  - cell "Hardware" [ref=e3953]
+                  - cell "100" [ref=e3954]
+                  - cell "2025-06-03" [ref=e3955]
+                  - cell [ref=e3956]
+                - row [ref=e3957]:
+                  - cell "157" [ref=e3958]
+                  - cell "T-0153" [ref=e3959]
+                  - cell "Accesos" [ref=e3960]
+                  - cell "63" [ref=e3961]
+                  - cell "2025-06-04" [ref=e3962]
+                  - cell [ref=e3963]
+                - row [ref=e3964]:
+                  - cell "158" [ref=e3965]
+                  - cell "T-0154" [ref=e3966]
+                  - cell "Red" [ref=e3967]
+                  - cell "80" [ref=e3968]
+                  - cell "2025-06-05" [ref=e3969]
+                  - cell [ref=e3970]
+                - row [ref=e3971]:
+                  - cell "159" [ref=e3972]
+                  - cell "T-0155" [ref=e3973]
+                  - cell "Software" [ref=e3974]
+                  - cell "158" [ref=e3975]
+                  - cell "2025-06-05" [ref=e3976]
+                  - cell [ref=e3977]
+                - row [ref=e3978]:
+                  - cell "160" [ref=e3979]
+                  - cell "T-0105" [ref=e3980]
+                  - cell "Hardware" [ref=e3981]
+                  - cell "106" [ref=e3982]
+                  - cell "2025-05-05" [ref=e3983]
+                  - cell "duplicada" [ref=e3984]
+                - row [ref=e3985]:
+                  - cell "161" [ref=e3986]
+                  - cell "T-0156" [ref=e3987]
+                  - cell "Correo" [ref=e3988]
+                  - cell "57" [ref=e3989]
+                  - cell "2025-06-06" [ref=e3990]
+                  - cell [ref=e3991]
+                - row [ref=e3992]:
+                  - cell "162" [ref=e3993]
+                  - cell "T-0157" [ref=e3994]
+                  - cell "Hardware" [ref=e3995]
+                  - cell "2" [ref=e3996]
+                  - cell "2025-06-06" [ref=e3997]
+                  - cell "¿horas?" [ref=e3998]
+                - row [ref=e3999]:
+                  - cell "163" [ref=e4000]
+                  - cell "T-0158" [ref=e4001]
+                  - cell "Software" [ref=e4002]
+                  - cell "109" [ref=e4003]
+                  - cell "2025-06-07" [ref=e4004]
+                  - cell [ref=e4005]
+                - row [ref=e4006]:
+                  - cell "164" [ref=e4007]
+                  - cell "T-0159" [ref=e4008]
+                  - cell "Correo" [ref=e4009]
+                  - cell "73" [ref=e4010]
+                  - cell "2025-06-08" [ref=e4011]
+                  - cell [ref=e4012]
+                - row [ref=e4013]:
+                  - cell "165" [ref=e4014]
+                  - cell "T-0160" [ref=e4015]
+                  - cell "Software" [ref=e4016]
+                  - cell "70" [ref=e4017]
+                  - cell "2025-06-08" [ref=e4018]
+                  - cell [ref=e4019]
+                - row [ref=e4020]:
+                  - cell "166" [ref=e4021]
+                  - cell "T-0161" [ref=e4022]
+                  - cell "Correo" [ref=e4023]
+                  - cell "91" [ref=e4024]
+                  - cell "2025-06-09" [ref=e4025]
+                  - cell [ref=e4026]
+                - row [ref=e4027]:
+                  - cell "167" [ref=e4028]
+                  - cell "T-0162" [ref=e4029]
+                  - cell "Correo" [ref=e4030]
+                  - cell "66" [ref=e4031]
+                  - cell "2025-06-09" [ref=e4032]
+                  - cell [ref=e4033]
+                - row [ref=e4034]:
+                  - cell "168" [ref=e4035]
+                  - cell "T-0163" [ref=e4036]
+                  - cell "Red" [ref=e4037]
+                  - cell "127" [ref=e4038]
+                  - cell "2025-06-10" [ref=e4039]
+                  - cell [ref=e4040]
+                - row [ref=e4041]:
+                  - cell "169" [ref=e4042]
+                  - cell "T-0164" [ref=e4043]
+                  - cell "Accesos" [ref=e4044]
+                  - cell "51" [ref=e4045]
+                  - cell "2025-06-11" [ref=e4046]
+                  - cell [ref=e4047]
+                - row [ref=e4048]:
+                  - cell "170" [ref=e4049]
+                  - cell "T-0165" [ref=e4050]
+                  - cell "Correo" [ref=e4051]
+                  - cell "77" [ref=e4052]
+                  - cell "2025-06-11" [ref=e4053]
+                  - cell [ref=e4054]
+                - row [ref=e4055]:
+                  - cell "171" [ref=e4056]
+                  - cell "T-0166" [ref=e4057]
+                  - cell "Red" [ref=e4058]
+                  - cell "127" [ref=e4059]
+                  - cell "2025-06-12" [ref=e4060]
+                  - cell [ref=e4061]
+                - row [ref=e4062]:
+                  - cell "172" [ref=e4063]
+                  - cell "T-0167" [ref=e4064]
+                  - cell "Hardware" [ref=e4065]
+                  - cell "147" [ref=e4066]
+                  - cell "2025-06-13" [ref=e4067]
+                  - cell [ref=e4068]
+                - row [ref=e4069]:
+                  - cell "173" [ref=e4070]
+                  - cell "T-0139" [ref=e4071]
+                  - cell "Hardware" [ref=e4072]
+                  - cell "103" [ref=e4073]
+                  - cell "2025-05-26" [ref=e4074]
+                  - cell "duplicada" [ref=e4075]
+                - row [ref=e4076]:
+                  - cell "174" [ref=e4077]
+                  - cell "T-0168" [ref=e4078]
+                  - cell "Accesos" [ref=e4079]
+                  - cell "80" [ref=e4080]
+                  - cell "2025-06-13" [ref=e4081]
+                  - cell [ref=e4082]
+                - row [ref=e4083]:
+                  - cell "175" [ref=e4084]
+                  - cell "T-0169" [ref=e4085]
+                  - cell "Accesos" [ref=e4086]
+                  - cell "55" [ref=e4087]
+                  - cell "2025-06-14" [ref=e4088]
+                  - cell [ref=e4089]
+                - row [ref=e4090]:
+                  - cell "176" [ref=e4091]
+                  - cell "T-0170" [ref=e4092]
+                  - cell "Correo" [ref=e4093]
+                  - cell "62" [ref=e4094]
+                  - cell "2025-06-14" [ref=e4095]
+                  - cell [ref=e4096]
+                - row [ref=e4097]:
+                  - cell "177" [ref=e4098]
+                  - cell "T-0171" [ref=e4099]
+                  - cell "Accesos" [ref=e4100]
+                  - cell "65" [ref=e4101]
+                  - cell "2025-06-15" [ref=e4102]
+                  - cell [ref=e4103]
+                - row [ref=e4104]:
+                  - cell "178" [ref=e4105]
+                  - cell "T-0172" [ref=e4106]
+                  - cell "Correo" [ref=e4107]
+                  - cell "81" [ref=e4108]
+                  - cell "2025-06-16" [ref=e4109]
+                  - cell [ref=e4110]
+                - row [ref=e4111]:
+                  - cell "179" [ref=e4112]
+                  - cell "T-0173" [ref=e4113]
+                  - cell "Correo" [ref=e4114]
+                  - cell "63" [ref=e4115]
+                  - cell "2025-06-16" [ref=e4116]
+                  - cell [ref=e4117]
+                - row [ref=e4118]:
+                  - cell "180" [ref=e4119]
+                  - cell "T-0174" [ref=e4120]
+                  - cell "Software" [ref=e4121]
+                  - cell "120" [ref=e4122]
+                  - cell "2025-06-17" [ref=e4123]
+                  - cell [ref=e4124]
+                - row [ref=e4125]:
+                  - cell "181" [ref=e4126]
+                  - cell "T-0175" [ref=e4127]
+                  - cell "Software" [ref=e4128]
+                  - cell [ref=e4129]:
+                    - emphasis [ref=e4130]: vacío
+                  - cell "2025-06-17" [ref=e4131]
+                  - cell "vacío" [ref=e4132]
+                - row [ref=e4133]:
+                  - cell "182" [ref=e4134]
+                  - cell "T-0176" [ref=e4135]
+                  - cell "Red" [ref=e4136]
+                  - cell "102" [ref=e4137]
+                  - cell "2025-06-18" [ref=e4138]
+                  - cell [ref=e4139]
+                - row [ref=e4140]:
+                  - cell "183" [ref=e4141]
+                  - cell "T-0177" [ref=e4142]
+                  - cell "Hardware" [ref=e4143]
+                  - cell "123" [ref=e4144]
+                  - cell "2025-06-19" [ref=e4145]
+                  - cell [ref=e4146]
+                - row [ref=e4147]:
+                  - cell "184" [ref=e4148]
+                  - cell "T-0178" [ref=e4149]
+                  - cell "Correo" [ref=e4150]
+                  - cell "54" [ref=e4151]
+                  - cell "2025-06-19" [ref=e4152]
+                  - cell [ref=e4153]
+                - row [ref=e4154]:
+                  - cell "185" [ref=e4155]
+                  - cell "T-0179" [ref=e4156]
+                  - cell "Correo" [ref=e4157]
+                  - cell "96" [ref=e4158]
+                  - cell "2025-06-20" [ref=e4159]
+                  - cell [ref=e4160]
+                - row [ref=e4161]:
+                  - cell "186" [ref=e4162]
+                  - cell "T-0180" [ref=e4163]
+                  - cell "Correo" [ref=e4164]
+                  - cell "69" [ref=e4165]
+                  - cell "2025-06-21" [ref=e4166]
+                  - cell [ref=e4167]
+                - row [ref=e4168]:
+                  - cell "187" [ref=e4169]
+                  - cell "T-0181" [ref=e4170]
+                  - cell "Hardware" [ref=e4171]
+                  - cell "133" [ref=e4172]
+                  - cell "2025-06-21" [ref=e4173]
+                  - cell [ref=e4174]
+                - row [ref=e4175]:
+                  - cell "188" [ref=e4176]
+                  - cell "T-0182" [ref=e4177]
+                  - cell "Red" [ref=e4178]
+                  - cell "127" [ref=e4179]
+                  - cell "2025-06-22" [ref=e4180]
+                  - cell [ref=e4181]
+                - row [ref=e4182]:
+                  - cell "189" [ref=e4183]
+                  - cell "T-0176" [ref=e4184]
+                  - cell "Red" [ref=e4185]
+                  - cell "102" [ref=e4186]
+                  - cell "2025-06-18" [ref=e4187]
+                  - cell "duplicada" [ref=e4188]
+                - row [ref=e4189]:
+                  - cell "190" [ref=e4190]
+                  - cell "T-0183" [ref=e4191]
+                  - cell "Red" [ref=e4192]
+                  - cell "119" [ref=e4193]
+                  - cell "2025-06-22" [ref=e4194]
+                  - cell [ref=e4195]
+                - row [ref=e4196]:
+                  - cell "191" [ref=e4197]
+                  - cell "T-0184" [ref=e4198]
+                  - cell "Correo" [ref=e4199]
+                  - cell "85" [ref=e4200]
+                  - cell "2025-06-23" [ref=e4201]
+                  - cell [ref=e4202]
+                - row [ref=e4203]:
+                  - cell "192" [ref=e4204]
+                  - cell "T-0185" [ref=e4205]
+                  - cell "Correo" [ref=e4206]
+                  - cell "61" [ref=e4207]
+                  - cell "2025-06-24" [ref=e4208]
+                  - cell [ref=e4209]
+                - row [ref=e4210]:
+                  - cell "193" [ref=e4211]
+                  - cell "T-0186" [ref=e4212]
+                  - cell "Accesos" [ref=e4213]
+                  - cell "74" [ref=e4214]
+                  - cell "2025-06-24" [ref=e4215]
+                  - cell [ref=e4216]
+                - row [ref=e4217]:
+                  - cell "194" [ref=e4218]
+                  - cell "T-0187" [ref=e4219]
+                  - cell "Red" [ref=e4220]
+                  - cell "114" [ref=e4221]
+                  - cell "2025-06-25" [ref=e4222]
+                  - cell [ref=e4223]
+                - row [ref=e4224]:
+                  - cell "195" [ref=e4225]
+                  - cell "T-0188" [ref=e4226]
+                  - cell "Hardware" [ref=e4227]
+                  - cell "101" [ref=e4228]
+                  - cell "2025-06-25" [ref=e4229]
+                  - cell [ref=e4230]
+                - row [ref=e4231]:
+                  - cell "196" [ref=e4232]
+                  - cell "T-0189" [ref=e4233]
+                  - cell "Hardware" [ref=e4234]
+                  - cell "149" [ref=e4235]
+                  - cell "2025-06-26" [ref=e4236]
+                  - cell [ref=e4237]
+                - row [ref=e4238]:
+                  - cell "197" [ref=e4239]
+                  - cell "T-0190" [ref=e4240]
+                  - cell "Accesos" [ref=e4241]
+                  - cell "39" [ref=e4242]
+                  - cell "2025-06-27" [ref=e4243]
+                  - cell [ref=e4244]
+                - row [ref=e4245]:
+                  - cell "198" [ref=e4246]
+                  - cell "T-0191" [ref=e4247]
+                  - cell "Correo" [ref=e4248]
+                  - cell "58" [ref=e4249]
+                  - cell "2025-06-27" [ref=e4250]
+                  - cell [ref=e4251]
+                - row [ref=e4252]:
+                  - cell "199" [ref=e4253]
+                  - cell "T-0192" [ref=e4254]
+                  - cell "Accesos" [ref=e4255]
+                  - cell "91" [ref=e4256]
+                  - cell "2025-06-28" [ref=e4257]
+                  - cell [ref=e4258]
+                - row [ref=e4259]:
+                  - cell "200" [ref=e4260]
+                  - cell "T-0167" [ref=e4261]
+                  - cell "Hardware" [ref=e4262]
+                  - cell "147" [ref=e4263]
+                  - cell "2025-06-13" [ref=e4264]
+                  - cell "duplicada" [ref=e4265]
+          - paragraph [ref=e4266]:
+            - generic [ref=e4267]: fila repetida
+            - generic [ref=e4269]: dato faltante
+            - generic [ref=e4271]: ¿cargada en horas?
+        - generic [ref=e4273]:
+          - generic [ref=e4274]:
+            - term [ref=e4275]: Filas
+            - definition [ref=e4276]: "200"
+          - generic [ref=e4277]:
+            - term [ref=e4278]: Media
+            - definition [ref=e4279]: 119,34min
+          - generic [ref=e4280]:
+            - term [ref=e4281]: Mediana
+            - definition [ref=e4282]: 88,00min
+          - generic [ref=e4283]:
+            - term [ref=e4284]: Desvío
+            - definition [ref=e4285]: 279,88min
+          - generic [ref=e4286]:
+            - term [ref=e4287]: Faltantes
+            - definition [ref=e4288]: "6"
+        - group "Limpieza de minutos de resolución" [ref=e4290]:
+          - generic [ref=e4292] [cursor=pointer]:
+            - checkbox "Quitar duplicados" [ref=e4293]
+            - generic [ref=e4294]: Quitar duplicados
+          - generic [ref=e4295] [cursor=pointer]:
+            - checkbox "Quitar faltantes" [ref=e4296]
+            - generic [ref=e4297]: Quitar faltantes
+          - generic [ref=e4298] [cursor=pointer]:
+            - checkbox "Corregir unidades (horas ×60)" [ref=e4299]
+            - generic [ref=e4300]: Corregir unidades (horas ×60)
+          - generic [ref=e4301] [cursor=pointer]:
+            - checkbox "Marcar outliers (1,5·IQR)" [ref=e4302]
+            - generic [ref=e4303]: Marcar outliers (1,5·IQR)
+    - 'figure "Latencias Probá: Mové un control y mirá qué cambia." [ref=e4304]':
+      - generic [ref=e4305]:
+        - paragraph [ref=e4306]: Latencias
+        - paragraph [ref=e4307]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4309]:
+        - group "Vista del dataset" [ref=e4310]:
+          - generic [ref=e4311]:
+            - button "Histograma" [pressed] [ref=e4312] [cursor=pointer]
+            - button "Caja" [ref=e4313] [cursor=pointer]
+        - generic [ref=e4316]:
+          - generic [ref=e4317]: Media (sensible a los extremos)
+          - generic [ref=e4319]: Mediana (el valor del medio)
+        - generic [ref=e4321]:
+          - generic [ref=e4322]:
+            - term [ref=e4323]: Filas
+            - definition [ref=e4324]: "500"
+          - generic [ref=e4325]:
+            - term [ref=e4326]: Media
+            - definition [ref=e4327]: 133,89ms
+          - generic [ref=e4328]:
+            - term [ref=e4329]: Mediana
+            - definition [ref=e4330]: 116,30ms
+          - generic [ref=e4331]:
+            - term [ref=e4332]: Desvío
+            - definition [ref=e4333]: 71,74ms
+          - generic [ref=e4334]:
+            - term [ref=e4335]: Faltantes
+            - definition [ref=e4336]: "0"
+        - generic [ref=e4337]:
+          - generic [ref=e4338]:
+            - generic [ref=e4339]:
+              - generic [ref=e4340]: Cantidad de barras (bins)
+              - status [ref=e4341]: "20"
+            - slider "Cantidad de barras (bins)" [ref=e4342] [cursor=pointer]: "20"
+          - generic [ref=e4343] [cursor=pointer]:
+            - checkbox "Agregar valores extremos (5 de 30 000 ms)" [ref=e4344]
+            - generic [ref=e4345]: Agregar valores extremos (5 de 30 000 ms)
+    - 'figure "Anscombe Probá: Mové un control y mirá qué cambia." [ref=e4346]':
+      - generic [ref=e4347]:
+        - paragraph [ref=e4348]: Anscombe
+        - paragraph [ref=e4349]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4351]:
+        - generic [ref=e4352]: Recta de mínimos cuadrados
+        - generic [ref=e4357]:
+          - generic [ref=e4358]:
+            - term [ref=e4359]: Filas
+            - definition [ref=e4360]: "11"
+          - generic [ref=e4361]:
+            - term [ref=e4362]: Media
+            - definition [ref=e4363]: 7,50
+          - generic [ref=e4364]:
+            - term [ref=e4365]: Mediana
+            - definition [ref=e4366]: 7,58
+          - generic [ref=e4367]:
+            - term [ref=e4368]: Desvío
+            - definition [ref=e4369]: 2,03
+          - generic [ref=e4370]:
+            - term [ref=e4371]: Faltantes
+            - definition [ref=e4372]: "0"
+          - generic [ref=e4373]:
+            - term [ref=e4374]: Correlación r
+            - definition [ref=e4375]: 0,82
+          - generic [ref=e4376]:
+            - term [ref=e4377]: R²
+            - definition [ref=e4378]: 0,67
+          - generic [ref=e4379]:
+            - term [ref=e4380]: Pendiente
+            - definition [ref=e4381]: 0,50
+        - generic [ref=e4382]:
+          - generic [ref=e4383]:
+            - generic [ref=e4384]: Cuarteto
+            - combobox "Cuarteto" [ref=e4386]:
+              - option "Cuarteto I" [selected]
+              - option "Cuarteto II"
+              - option "Cuarteto III"
+              - option "Cuarteto IV"
+          - generic [ref=e4387] [cursor=pointer]:
+            - checkbox "Ver los cuatro juntos" [ref=e4388]
+            - generic [ref=e4389]: Ver los cuatro juntos
+    - 'figure "Confusora Probá: Mové un control y mirá qué cambia." [ref=e4390]':
+      - generic [ref=e4391]:
+        - paragraph [ref=e4392]: Confusora
+        - paragraph [ref=e4393]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4395]:
+        - generic [ref=e4396]: Recta de mínimos cuadrados
+        - generic [ref=e4401]:
+          - generic [ref=e4402]:
+            - term [ref=e4403]: Filas
+            - definition [ref=e4404]: "120"
+          - generic [ref=e4405]:
+            - term [ref=e4406]: Media
+            - definition [ref=e4407]: 251,82unidades
+          - generic [ref=e4408]:
+            - term [ref=e4409]: Mediana
+            - definition [ref=e4410]: 247,50unidades
+          - generic [ref=e4411]:
+            - term [ref=e4412]: Desvío
+            - definition [ref=e4413]: 115,88unidades
+          - generic [ref=e4414]:
+            - term [ref=e4415]: Faltantes
+            - definition [ref=e4416]: "0"
+          - generic [ref=e4417]:
+            - term [ref=e4418]: Correlación r
+            - definition [ref=e4419]: 0,87
+          - generic [ref=e4420]:
+            - term [ref=e4421]: R²
+            - definition [ref=e4422]: 0,75
+          - generic [ref=e4423]:
+            - term [ref=e4424]: Pendiente
+            - definition [ref=e4425]: 0,03
+        - generic [ref=e4427] [cursor=pointer]:
+          - checkbox "Colorear por temperatura (3 franjas)" [ref=e4428]
+          - generic [ref=e4429]: Colorear por temperatura (3 franjas)
+    - 'figure "Ventas Probá: Mové un control y mirá qué cambia." [ref=e4430]':
+      - generic [ref=e4431]:
+        - paragraph [ref=e4432]: Ventas
+        - paragraph [ref=e4433]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4435]:
+        - group "Vista del dataset" [ref=e4436]:
+          - generic [ref=e4437]:
+            - button "Barras" [pressed] [ref=e4438] [cursor=pointer]
+            - button "Líneas" [ref=e4439] [cursor=pointer]
+            - button "Torta" [ref=e4440] [cursor=pointer]
+            - button "Dispersión" [ref=e4441] [cursor=pointer]
+        - generic [ref=e4443]:
+          - paragraph [ref=e4444]: Ventas totales por región
+          - paragraph [ref=e4445]: "Total: 10.089 miles de $"
+        - generic [ref=e4446]:
+          - generic [ref=e4447]:
+            - term [ref=e4448]: Filas
+            - definition [ref=e4449]: "72"
+          - generic [ref=e4450]:
+            - term [ref=e4451]: Media
+            - definition [ref=e4452]: 140,13miles de $
+          - generic [ref=e4453]:
+            - term [ref=e4454]: Mediana
+            - definition [ref=e4455]: 127,50miles de $
+          - generic [ref=e4456]:
+            - term [ref=e4457]: Desvío
+            - definition [ref=e4458]: 30,00miles de $
+          - generic [ref=e4459]:
+            - term [ref=e4460]: Faltantes
+            - definition [ref=e4461]: "0"
+    - 'figure "Horas y notas Probá: Mové un control y mirá qué cambia." [ref=e4462]':
+      - generic [ref=e4463]:
+        - paragraph [ref=e4464]: Horas y notas
+        - paragraph [ref=e4465]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4467]:
+        - group "Vista del dataset" [ref=e4468]:
+          - generic [ref=e4469]:
+            - button "Dispersión" [pressed] [ref=e4470] [cursor=pointer]
+            - button "Histograma" [ref=e4471] [cursor=pointer]
+        - generic [ref=e4472]: Recta de mínimos cuadrados
+        - generic [ref=e4477]:
+          - generic [ref=e4478]:
+            - term [ref=e4479]: Filas
+            - definition [ref=e4480]: "60"
+          - generic [ref=e4481]:
+            - term [ref=e4482]: Media
+            - definition [ref=e4483]: 5,31
+          - generic [ref=e4484]:
+            - term [ref=e4485]: Mediana
+            - definition [ref=e4486]: 5,25
+          - generic [ref=e4487]:
+            - term [ref=e4488]: Desvío
+            - definition [ref=e4489]: 1,96
+          - generic [ref=e4490]:
+            - term [ref=e4491]: Faltantes
+            - definition [ref=e4492]: "0"
+          - generic [ref=e4493]:
+            - term [ref=e4494]: Correlación r
+            - definition [ref=e4495]: 0,92
+          - generic [ref=e4496]:
+            - term [ref=e4497]: R²
+            - definition [ref=e4498]: 0,84
+          - generic [ref=e4499]:
+            - term [ref=e4500]: Pendiente
+            - definition [ref=e4501]: 0,77
+        - generic [ref=e4503] [cursor=pointer]:
+          - checkbox "Agregar un outlier" [ref=e4504]
+          - generic [ref=e4505]: Agregar un outlier
+    - 'figure "Elegir el gráfico Probá: Mové un control y mirá qué cambia." [ref=e4506]':
+      - generic [ref=e4507]:
+        - paragraph [ref=e4508]: Elegir el gráfico
+        - paragraph [ref=e4509]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4511]:
+        - group "Vista del dataset" [ref=e4512]:
+          - generic [ref=e4513]:
+            - button "Torta" [pressed] [ref=e4514] [cursor=pointer]
+            - button "Líneas" [ref=e4515] [cursor=pointer]
+        - generic [ref=e4517]:
+          - paragraph [ref=e4518]: Ventas totales por región
+          - generic [ref=e4519]:
+            - 'img "Gráfico de torta: Ventas totales por región. Norte 36,2 %, Centro 35,5 %, Sur 28,3 %." [ref=e4520]'
+            - list [ref=e4525]:
+              - listitem [ref=e4526]:
+                - generic [ref=e4528]: Norte
+                - strong [ref=e4529]: 36,2 %
+                - generic [ref=e4530]: 3.651 miles de $
+              - listitem [ref=e4531]:
+                - generic [ref=e4533]: Centro
+                - strong [ref=e4534]: 35,5 %
+                - generic [ref=e4535]: 3.584 miles de $
+              - listitem [ref=e4536]:
+                - generic [ref=e4538]: Sur
+                - strong [ref=e4539]: 28,3 %
+                - generic [ref=e4540]: 2.854 miles de $
+        - note [ref=e4541]:
+          - strong [ref=e4542]: "Esta vista: mal"
+          - generic [aria-hidden] [ref=e4543]: Mal
+          - paragraph [ref=e4544]: Una torta no muestra cómo cambian las ventas mes a mes.
+        - generic [ref=e4545]:
+          - generic [ref=e4546]:
+            - term [ref=e4547]: Filas
+            - definition [ref=e4548]: "72"
+          - generic [ref=e4549]:
+            - term [ref=e4550]: Media
+            - definition [ref=e4551]: 140,13miles de $
+          - generic [ref=e4552]:
+            - term [ref=e4553]: Mediana
+            - definition [ref=e4554]: 127,50miles de $
+          - generic [ref=e4555]:
+            - term [ref=e4556]: Desvío
+            - definition [ref=e4557]: 30,00miles de $
+          - generic [ref=e4558]:
+            - term [ref=e4559]: Faltantes
+            - definition [ref=e4560]: "0"
+    - 'figure "GROUP BY Probá: Mové un control y mirá qué cambia." [ref=e4561]':
+      - generic [ref=e4562]:
+        - paragraph [ref=e4563]: GROUP BY
+        - paragraph [ref=e4564]: "Probá: Mové un control y mirá qué cambia."
+      - status [ref=e4566]: Simulador en construcción (SimTablaSQL)
+    - 'figure "Ventana Probá: Mové un control y mirá qué cambia." [ref=e4567]':
+      - generic [ref=e4568]:
+        - paragraph [ref=e4569]: Ventana
+        - paragraph [ref=e4570]: "Probá: Mové un control y mirá qué cambia."
+      - status [ref=e4572]: Simulador en construcción (SimTablaSQL)
+    - 'figure "Balanceador Probá: Mové un control y mirá qué cambia." [ref=e4573]':
+      - generic [ref=e4574]:
+        - paragraph [ref=e4575]: Balanceador
+        - paragraph [ref=e4576]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4578]:
+        - 'img "Diagrama animado: los clientes mandan pedidos al balanceador, que los reparte entre 3 servidores pasando antes por una caché." [ref=e4580]':
+          - generic [ref=e4587]: Clientes
+          - generic [ref=e4589]: LB
+          - generic [ref=e4590]: Balanceador
+          - generic [ref=e4591]:
+            - generic [ref=e4593]: Caché
+            - generic [ref=e4594]: 50 %
+          - generic [ref=e4595]:
+            - generic [ref=e4597]: Servidor 1
+            - generic [ref=e4598]: libre
+            - generic [ref=e4599]: cola 0
+          - generic [ref=e4601]:
+            - generic [ref=e4603]: Servidor 2
+            - generic [ref=e4604]: libre
+            - generic [ref=e4605]: cola 0
+          - generic [ref=e4607]:
+            - generic [ref=e4609]: Servidor 3
+            - generic [ref=e4610]: libre
+            - generic [ref=e4611]: cola 0
+        - paragraph [ref=e4613]: Llegan 20 pedidos/s y los 3 servidores en pie atienden 30 en total (10 cada uno).
+        - generic [ref=e4614]:
+          - generic [ref=e4615]: Pedido en camino
+          - generic [ref=e4617]: Acierto de caché
+          - generic [ref=e4619]: Rechazado
+        - generic [ref=e4621]:
+          - generic [ref=e4622]:
+            - term [ref=e4623]: Utilización
+            - definition [ref=e4624]: 0%
+          - generic [ref=e4625]:
+            - term [ref=e4626]: Latencia p50
+            - definition [ref=e4627]: —ms
+          - generic [ref=e4628]:
+            - term [ref=e4629]: Latencia p95
+            - definition [ref=e4630]: —ms
+          - generic [ref=e4631]:
+            - term [ref=e4632]: Rechazados
+            - definition [ref=e4633]: "0"
+          - generic [ref=e4634]:
+            - term [ref=e4635]: Aciertos de caché
+            - definition [ref=e4636]: —%
+          - generic [ref=e4637]:
+            - term [ref=e4638]: En cola (todos)
+            - definition [ref=e4639]: "0"
+        - generic [ref=e4640]:
+          - generic [ref=e4641]:
+            - generic [ref=e4642]:
+              - generic [ref=e4643]: Pedidos que llegan
+              - status [ref=e4644]: 20 /s
+            - slider "Pedidos que llegan" [ref=e4645] [cursor=pointer]: "20"
+          - generic [ref=e4646]:
+            - generic [ref=e4647]:
+              - generic [ref=e4648]: Servidores
+              - status [ref=e4649]: "3"
+            - slider "Servidores" [ref=e4650] [cursor=pointer]: "3"
+          - generic [ref=e4651]:
+            - generic [ref=e4652]: Algoritmo de reparto
+            - combobox "Algoritmo de reparto" [ref=e4654]:
+              - option "Round robin (por turnos)" [selected]
+              - option "Menos conexiones"
+              - option "Aleatorio"
+          - generic [ref=e4655]:
+            - generic [ref=e4656]:
+              - generic [ref=e4657]: Aciertos de la caché
+              - status [ref=e4658]: 50 %
+            - slider "Aciertos de la caché" [ref=e4659] [cursor=pointer]: "0.5"
+          - generic [ref=e4660] [cursor=pointer]:
+            - checkbox "Un servidor lento (mitad de velocidad)" [ref=e4661]
+            - generic [ref=e4662]: Un servidor lento (mitad de velocidad)
+          - generic [ref=e4663] [cursor=pointer]:
+            - checkbox "Poner una caché delante" [checked] [ref=e4664]
+            - generic [ref=e4665]: Poner una caché delante
+        - generic [ref=e4666]:
+          - button "Pausar" [ref=e4667] [cursor=pointer]
+          - button "Adelantar 10 s" [ref=e4671] [cursor=pointer]
+          - button "Reiniciar" [ref=e4672] [cursor=pointer]
+          - button "Tirar un servidor" [ref=e4673] [cursor=pointer]
+          - button "Levantar los caídos" [disabled] [ref=e4674]
+    - 'figure "Cola Probá: Mové un control y mirá qué cambia." [ref=e4675]':
+      - generic [ref=e4676]:
+        - paragraph [ref=e4677]: Cola
+        - paragraph [ref=e4678]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4680]:
+        - 'img "Diagrama animado: un productor manda mensajes a una cola que atienden 2 consumidores." [ref=e4682]':
+          - generic [ref=e4684]: Envía
+          - generic [ref=e4685]: Productor
+          - generic [ref=e4737]: Cola (capacidad 50)
+          - generic [ref=e4738]:
+            - generic [ref=e4741]: Consumidor 1
+            - generic [ref=e4742]: libre
+          - generic [ref=e4743]:
+            - generic [ref=e4746]: Consumidor 2
+            - generic [ref=e4747]: libre
+        - paragraph [ref=e4748]: "Llegan 5 mensajes/s; el equipo, con consumidores en pie, resuelve 4,0 mensajes/s. Entra más de lo que sale: la cola va a crecer."
+        - generic [ref=e4749]:
+          - generic [ref=e4750]: Mensaje esperando
+          - generic [ref=e4752]: Perdido (cola llena)
+        - generic [ref=e4754]:
+          - generic [ref=e4755]:
+            - term [ref=e4756]: Mensajes en cola
+            - definition [ref=e4757]: "0"
+          - generic [ref=e4758]:
+            - term [ref=e4759]: Espera media
+            - definition [ref=e4760]: —s
+          - generic [ref=e4761]:
+            - term [ref=e4762]: Mensajes perdidos
+            - definition [ref=e4763]: "0"
+        - generic [ref=e4764]:
+          - generic [ref=e4765]:
+            - generic [ref=e4766]:
+              - generic [ref=e4767]: Mensajes que llegan
+              - status [ref=e4768]: 5 /s
+            - slider "Mensajes que llegan" [ref=e4769] [cursor=pointer]: "5"
+          - generic [ref=e4770]:
+            - generic [ref=e4771]:
+              - generic [ref=e4772]: Consumidores
+              - status [ref=e4773]: "2"
+            - slider "Consumidores" [ref=e4774] [cursor=pointer]: "2"
+          - generic [ref=e4775]:
+            - generic [ref=e4776]:
+              - generic [ref=e4777]: Tiempo de proceso
+              - status [ref=e4778]: 0,50 s
+            - slider "Tiempo de proceso" [ref=e4779] [cursor=pointer]: "0.5"
+          - generic [ref=e4780] [cursor=pointer]:
+            - checkbox "Un consumidor caído" [ref=e4781]
+            - generic [ref=e4782]: Un consumidor caído
+        - generic [ref=e4783]:
+          - button "Pausar" [ref=e4784] [cursor=pointer]
+          - button "Adelantar 10 s" [ref=e4788] [cursor=pointer]
+          - button "Reiniciar" [ref=e4789] [cursor=pointer]
+    - 'figure "Cola de tickets Probá: Mové un control y mirá qué cambia." [ref=e4790]':
+      - generic [ref=e4791]:
+        - paragraph [ref=e4792]: Cola de tickets
+        - paragraph [ref=e4793]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4795]:
+        - 'img "Diagrama animado: un canal de usuarios manda tickets a una cola que atienden 2 técnicos." [ref=e4797]':
+          - generic [ref=e4799]: Pedidos
+          - generic [ref=e4800]: Usuarios
+          - generic [ref=e4852]: Cola (capacidad 50)
+          - generic [ref=e4853]:
+            - generic [ref=e4856]: Técnico 1
+            - generic [ref=e4857]: libre
+          - generic [ref=e4858]:
+            - generic [ref=e4861]: Técnico 2
+            - generic [ref=e4862]: libre
+        - paragraph [ref=e4863]: Llegan 5 tickets/h; el equipo, con técnicos en pie, resuelve 6,0 tickets/h.
+        - generic [ref=e4864]:
+          - generic [ref=e4865]: Ticket esperando
+          - generic [ref=e4867]: Fuera de SLA
+        - generic [ref=e4869]:
+          - generic [ref=e4870]:
+            - term [ref=e4871]: Tickets en cola
+            - definition [ref=e4872]: "0"
+          - generic [ref=e4873]:
+            - term [ref=e4874]: Espera media
+            - definition [ref=e4875]: —min
+          - generic [ref=e4876]:
+            - term [ref=e4877]: Tickets perdidos
+            - definition [ref=e4878]: "0"
+          - generic [ref=e4879]:
+            - term [ref=e4880]: Fuera de SLA
+            - definition [ref=e4881]: "0"
+        - generic [ref=e4882]:
+          - generic [ref=e4883]:
+            - generic [ref=e4884]:
+              - generic [ref=e4885]: Tickets que llegan
+              - status [ref=e4886]: 5 /h
+            - slider "Tickets que llegan" [ref=e4887] [cursor=pointer]: "5"
+          - generic [ref=e4888]:
+            - generic [ref=e4889]:
+              - generic [ref=e4890]: Técnicos
+              - status [ref=e4891]: "2"
+            - slider "Técnicos" [ref=e4892] [cursor=pointer]: "2"
+          - generic [ref=e4893]:
+            - generic [ref=e4894]:
+              - generic [ref=e4895]: Tiempo por ticket
+              - status [ref=e4896]: 20 min
+            - slider "Tiempo por ticket" [ref=e4897] [cursor=pointer]: "20"
+          - generic [ref=e4898]:
+            - generic [ref=e4899]:
+              - generic [ref=e4900]: "% resuelto con la base de conocimiento"
+              - status [ref=e4901]: 0 %
+            - slider "% resuelto con la base de conocimiento" [ref=e4902] [cursor=pointer]: "0"
+          - generic [ref=e4903] [cursor=pointer]:
+            - checkbox "Un técnico caído" [ref=e4904]
+            - generic [ref=e4905]: Un técnico caído
+        - generic [ref=e4906]:
+          - button "Pausar" [ref=e4907] [cursor=pointer]
+          - button "Adelantar 2,5 h" [ref=e4911] [cursor=pointer]
+          - button "Reiniciar" [ref=e4912] [cursor=pointer]
+        - paragraph [ref=e4913]: "El reloj corre rápido: cada segundo en pantalla son 15 minutos de la mesa de ayuda."
+    - 'figure "Síncrono vs asíncrono Probá: Mové un control y mirá qué cambia." [ref=e4914]':
+      - generic [ref=e4915]:
+        - paragraph [ref=e4916]: Síncrono vs asíncrono
+        - paragraph [ref=e4917]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4919]:
+        - 'img "Diagrama animado con dos carriles: arriba el cliente espera a que A llame a B; abajo A deja el mensaje en una cola y le contesta al cliente enseguida." [ref=e4921]':
+          - generic [ref=e4924]: "Síncrono: A espera la respuesta de B"
+          - generic [ref=e4925]: "Asíncrono: A deja el mensaje en una cola"
+          - generic [ref=e4926]:
+            - generic [ref=e4928]: Cliente
+            - generic [ref=e4929]: libre
+          - generic [ref=e4930]: A
+          - generic [ref=e4933]: B
+          - generic [ref=e4936]:
+            - generic [ref=e4938]: Cliente
+            - generic [ref=e4939]: libre
+          - generic [ref=e4940]: A
+          - generic [ref=e4949]: "cola: 0"
+          - generic [ref=e4950]: B
+        - generic [ref=e4953]:
+          - generic [ref=e4954]: Pedido
+          - generic [ref=e4956]: Esperando a B
+          - generic [ref=e4958]: Respuesta o confirmación
+          - generic [ref=e4960]: Error
+        - generic [ref=e4962]:
+          - generic [ref=e4963]:
+            - term [ref=e4964]: Espera del cliente (síncrono)
+            - definition [ref=e4965]: 0ms
+          - generic [ref=e4966]:
+            - term [ref=e4967]: Espera del cliente (asíncrono)
+            - definition [ref=e4968]: 0ms
+          - generic [ref=e4969]:
+            - term [ref=e4970]: Errores (síncrono)
+            - definition [ref=e4971]: "0"
+          - generic [ref=e4972]:
+            - term [ref=e4973]: Pendientes en la cola (asíncrono)
+            - definition [ref=e4974]: "0"
+        - generic [ref=e4975]:
+          - generic [ref=e4976]:
+            - generic [ref=e4977]:
+              - generic [ref=e4978]: Latencia del servicio B
+              - status [ref=e4979]: 200 ms
+            - slider "Latencia del servicio B" [ref=e4980] [cursor=pointer]: "339"
+          - generic [ref=e4981] [cursor=pointer]:
+            - checkbox "Servicio B caído" [ref=e4982]
+            - generic [ref=e4983]: Servicio B caído
+        - generic [ref=e4984]:
+          - button "Pausar" [ref=e4985] [cursor=pointer]
+          - button "Adelantar 10 s" [ref=e4989] [cursor=pointer]
+          - button "Reiniciar" [ref=e4990] [cursor=pointer]
+        - paragraph [ref=e4991]: Cámara lenta (la mitad de la velocidad real) para que se vean los saltos. Llega un pedido cada medio segundo.
+    - 'figure "Cadena Probá: Mové un control y mirá qué cambia." [ref=e4992]':
+      - generic [ref=e4993]:
+        - paragraph [ref=e4994]: Cadena
+        - paragraph [ref=e4995]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e4997]:
+        - img "Una llamada atraviesa 4 servicios y vuelve. Latencia total 80 milisegundos, disponibilidad compuesta 99,60 por ciento." [ref=e4999]:
+          - generic [ref=e5001]: Vos
+          - generic [ref=e5002]:
+            - generic [ref=e5004]: S1
+            - generic [ref=e5005]: 20 ms
+            - generic [ref=e5006]: 99,9%
+          - generic [ref=e5007]:
+            - generic [ref=e5009]: S2
+            - generic [ref=e5010]: 40 ms
+            - generic [ref=e5011]: 99,8%
+          - generic [ref=e5012]:
+            - generic [ref=e5014]: S3
+            - generic [ref=e5015]: 60 ms
+            - generic [ref=e5016]: 99,7%
+          - generic [ref=e5017]:
+            - generic [ref=e5019]: S4
+            - generic [ref=e5020]: 80 ms
+            - generic [ref=e5021]: 99,6%
+          - generic [ref=e5023]: "Latencia: cada salto suma"
+          - generic [ref=e5024]: 80 ms
+          - generic [ref=e5030]: Tiempo caído esperado en un año (la barra entera es un año)
+          - generic [ref=e5031]: 35,0 h
+        - generic [ref=e5035]:
+          - generic [ref=e5036]: Llamada que va
+          - generic [ref=e5038]: Respuesta que vuelve
+        - generic [ref=e5040]:
+          - generic [ref=e5041]:
+            - term [ref=e5042]: Latencia total
+            - definition [ref=e5043]: 80ms
+          - generic [ref=e5044]:
+            - term [ref=e5045]: Disponibilidad compuesta
+            - definition [ref=e5046]: 99,60%
+          - generic [ref=e5047]:
+            - term [ref=e5048]: Caída esperada por año
+            - definition [ref=e5049]: 35,0h
+          - generic [ref=e5050]:
+            - term [ref=e5051]: Servicios en la cadena
+            - definition [ref=e5052]: "4"
+        - generic [ref=e5053]:
+          - generic [ref=e5054]:
+            - generic [ref=e5055]:
+              - generic [ref=e5056]: Saltos (servicios)
+              - status [ref=e5057]: "4"
+            - slider "Saltos (servicios)" [ref=e5058] [cursor=pointer]: "4"
+          - generic [ref=e5059]:
+            - generic [ref=e5060]:
+              - generic [ref=e5061]: Latencia por salto
+              - status [ref=e5062]: 20 ms
+            - slider "Latencia por salto" [ref=e5063] [cursor=pointer]: "20"
+          - generic [ref=e5064]:
+            - generic [ref=e5065]:
+              - generic [ref=e5066]: Disponibilidad de cada servicio
+              - status [ref=e5067]: 99,9 %
+            - slider "Disponibilidad de cada servicio" [ref=e5068] [cursor=pointer]: "3"
+          - generic [ref=e5069] [cursor=pointer]:
+            - checkbox "Monolito (un solo salto, en memoria)" [ref=e5070]
+            - generic [ref=e5071]: Monolito (un solo salto, en memoria)
+        - button "Pausar" [ref=e5073] [cursor=pointer]
+        - paragraph [ref=e5077]: "La animación no va a escala: sirve para ver el recorrido de ida y vuelta, no los milisegundos reales."
+    - 'figure "Circuit breaker Probá: Mové un control y mirá qué cambia." [ref=e5078]':
+      - generic [ref=e5079]:
+        - paragraph [ref=e5080]: Circuit breaker
+        - paragraph [ref=e5081]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5083]:
+        - generic [ref=e5084]:
+          - generic [ref=e5085]:
+            - 'img "Diagrama de estados. Estado actual: cerrado." [ref=e5087]':
+              - generic [ref=e5099]: fallas ≥ umbral
+              - generic [ref=e5100]: pasa la espera
+              - generic [ref=e5101]: la prueba anda
+              - generic [ref=e5102]: la prueba falla
+              - generic [ref=e5103]: cerrado
+              - generic [ref=e5106]: abierto
+              - generic [ref=e5109]: semi-abierto
+            - generic [ref=e5112]:
+              - paragraph [ref=e5113]: "Últimos 20 pedidos que llegaron al servicio (umbral: 50 % de fallas)"
+              - img "0 fallas entre los últimos 0 pedidos" [ref=e5114]
+              - generic [ref=e5135]:
+                - generic [ref=e5136]: respondió bien
+                - generic [ref=e5138]: falló
+          - generic [ref=e5140]:
+            - generic [ref=e5141]:
+              - generic [ref=e5142]:
+                - term [ref=e5143]: Estado
+                - definition [ref=e5144]: cerrado
+              - generic [ref=e5145]:
+                - term [ref=e5146]: Transiciones
+                - definition [ref=e5147]: "0"
+              - generic [ref=e5148]:
+                - term [ref=e5149]: Fallas en la ventana
+                - definition [ref=e5150]: 0%
+              - generic [ref=e5151]:
+                - term [ref=e5152]: Rechazados al instante
+                - definition [ref=e5153]: "0"
+              - generic [ref=e5154]:
+                - term [ref=e5155]: Llamadas al servicio
+                - definition [ref=e5156]: "0"
+            - generic [ref=e5157]:
+              - generic [ref=e5158]:
+                - generic [ref=e5159]:
+                  - generic [ref=e5160]: Tasa de falla del servicio
+                  - status [ref=e5161]: 20 %
+                - slider "Tasa de falla del servicio" [ref=e5162] [cursor=pointer]: "20"
+              - generic [ref=e5163]:
+                - generic [ref=e5164]:
+                  - generic [ref=e5165]: Umbral (últimos 20 pedidos)
+                  - status [ref=e5166]: 50 %
+                - slider "Umbral (últimos 20 pedidos)" [ref=e5167] [cursor=pointer]: "50"
+              - generic [ref=e5168]:
+                - generic [ref=e5169]:
+                  - generic [ref=e5170]: Espera en abierto
+                  - status [ref=e5171]: 5 s
+                - slider "Espera en abierto" [ref=e5172] [cursor=pointer]: "5"
+            - generic [ref=e5173]:
+              - button "⏸ Pausar" [ref=e5174] [cursor=pointer]
+              - button "Esperar 10 s" [ref=e5175] [cursor=pointer]
+              - button "Empezar de nuevo" [ref=e5176] [cursor=pointer]
+        - generic [ref=e5177]:
+          - paragraph [ref=e5178]: Registro (hora simulada)
+          - log "Registro de transiciones" [ref=e5179]:
+            - listitem [ref=e5180]: "10:00:00 circuito cerrado: los pedidos pasan al servicio (10 por segundo)"
+    - 'figure "systemd Probá: Mové un control y mirá qué cambia." [ref=e5181]':
+      - generic [ref=e5182]:
+        - paragraph [ref=e5183]: systemd
+        - paragraph [ref=e5184]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5186]:
+        - generic [ref=e5187]:
+          - 'img "Diagrama de estados. Estado actual: active." [ref=e5190]':
+            - generic [ref=e5212]: start
+            - generic [ref=e5213]: arrancó
+            - generic [ref=e5214]: muere + Restart
+            - generic [ref=e5215]: stop · restart
+            - generic [ref=e5216]: paró
+            - generic [ref=e5217]: restart
+            - generic [ref=e5218]: muere
+            - generic [ref=e5219]: reset-failed
+            - generic [ref=e5220]: activating
+            - generic [ref=e5223]: active
+            - generic [ref=e5226]: inactive
+            - generic [ref=e5229]: deactivating
+            - generic [ref=e5232]: failed
+          - generic [ref=e5235]:
+            - generic [ref=e5236]:
+              - generic [ref=e5237]:
+                - term [ref=e5238]: Estado
+                - definition [ref=e5239]: active
+              - generic [ref=e5240]:
+                - term [ref=e5241]: Transiciones
+                - definition [ref=e5242]: "0"
+              - generic [ref=e5243]:
+                - term [ref=e5244]: Reinicios automáticos
+                - definition [ref=e5245]: "0"
+              - generic [ref=e5246]:
+                - term [ref=e5247]: Muertes en los últimos 10 s
+                - definition [ref=e5248]: "0"
+              - generic [ref=e5249]:
+                - term [ref=e5250]: Reloj simulado
+                - definition [ref=e5251]: 0,0s
+            - generic [ref=e5252]:
+              - generic [ref=e5253] [cursor=pointer]:
+                - checkbox "Restart=on-failure" [checked] [ref=e5254]
+                - generic [ref=e5255]: Restart=on-failure
+              - generic [ref=e5256] [cursor=pointer]:
+                - checkbox "StartLimitBurst=5 en StartLimitIntervalSec=10" [checked] [ref=e5257]
+                - generic [ref=e5258]: StartLimitBurst=5 en StartLimitIntervalSec=10
+            - generic [ref=e5259]:
+              - paragraph [ref=e5260]: Muertes en los últimos 10 s simulados (con 5 la unidad queda failed)
+              - img "0 muertes recientes" [ref=e5261]
+            - group "Eventos" [ref=e5267]:
+              - paragraph [ref=e5268]: Eventos (solo los que valen desde «active»)
+              - generic [ref=e5269]:
+                - button "systemctl start" [disabled] [ref=e5270]
+                - button "systemctl stop" [ref=e5271] [cursor=pointer]
+                - button "systemctl restart" [ref=e5272] [cursor=pointer]
+                - button "el proceso muere (exit 1)" [ref=e5273] [cursor=pointer]
+                - button "systemctl reset-failed" [disabled] [ref=e5274]
+            - generic [ref=e5275]:
+              - button "⏸ Pausar" [ref=e5276] [cursor=pointer]
+              - button "Esperar 10 s" [ref=e5277] [cursor=pointer]
+              - button "Empezar de nuevo" [ref=e5278] [cursor=pointer]
+            - figure "systemctl status app.service" [ref=e5279]:
+              - generic [ref=e5280]: $ systemctl status app.service
+              - generic [ref=e5281]: "● app.service - Aplicación de ejemplo Active: active (running) Restart: on-failure · StartLimitBurst=5 / 10 s"
+        - generic [ref=e5282]:
+          - paragraph [ref=e5283]: Registro (hora simulada)
+          - log "Registro de transiciones" [ref=e5284]:
+            - listitem [ref=e5285]: "10:00:00 servidor systemd[1]: Started app.service - Aplicación de ejemplo."
+    - 'figure "Proceso Linux Probá: Mové un control y mirá qué cambia." [ref=e5286]':
+      - generic [ref=e5287]:
+        - paragraph [ref=e5288]: Proceso Linux
+        - paragraph [ref=e5289]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5291]:
+        - generic [ref=e5292]:
+          - 'img "Diagrama de estados. Estado actual: ejecutable." [ref=e5295]':
+            - generic [ref=e5327]: pide disco
+            - generic [ref=e5328]: llega el dato
+            - generic [ref=e5329]: espera tecla
+            - generic [ref=e5330]: llega el dato
+            - generic [ref=e5331]: SIGSTOP
+            - generic [ref=e5332]: SIGCONT
+            - generic [ref=e5333]: SIGSTOP
+            - generic [ref=e5334]: SIGSTOP pendiente
+            - generic [ref=e5335]: exit
+            - generic [ref=e5336]: exit
+            - generic [ref=e5337]: wait()
+            - generic [ref=e5338]:
+              - generic [ref=e5340]: T
+              - generic [ref=e5341]: detenido
+            - generic [ref=e5342]:
+              - generic [ref=e5344]: S
+              - generic [ref=e5345]: durmiendo
+            - generic [ref=e5346]:
+              - generic [ref=e5348]: R
+              - generic [ref=e5349]: ejecutable
+            - generic [ref=e5350]:
+              - generic [ref=e5352]: D
+              - generic [ref=e5353]: espera de E/S
+            - generic [ref=e5354]:
+              - generic [ref=e5356]: Z
+              - generic [ref=e5357]: zombie
+            - generic [ref=e5358]:
+              - generic [ref=e5360]: fuera de
+              - generic [ref=e5361]: la tabla
+          - generic [ref=e5362]:
+            - generic [ref=e5363]:
+              - generic [ref=e5364]:
+                - term [ref=e5365]: Estado
+                - definition [ref=e5366]: ejecutable
+              - generic [ref=e5367]:
+                - term [ref=e5368]: Transiciones
+                - definition [ref=e5369]: "0"
+              - generic [ref=e5370]:
+                - term [ref=e5371]: PID
+                - definition [ref=e5372]: "4242"
+              - generic [ref=e5373]:
+                - term [ref=e5374]: STAT de ps
+                - definition [ref=e5375]: R
+              - generic [ref=e5376]:
+                - term [ref=e5377]: Señal pendiente
+                - definition [ref=e5378]: ninguna
+            - group "Eventos" [ref=e5379]:
+              - paragraph [ref=e5380]: Eventos (solo los que valen desde «ejecutable»)
+              - generic [ref=e5381]:
+                - button "pide disco" [ref=e5382] [cursor=pointer]
+                - button "llega el dato" [disabled] [ref=e5383]
+                - button "espera una tecla" [ref=e5384] [cursor=pointer]
+                - button "SIGSTOP" [ref=e5385] [cursor=pointer]
+                - button "SIGCONT" [disabled] [ref=e5386]
+                - button "termina (exit)" [ref=e5387] [cursor=pointer]
+                - button "el padre hace wait()" [disabled] [ref=e5388]
+            - button "Empezar de nuevo" [ref=e5390] [cursor=pointer]
+            - figure "ps -o pid,stat,cmd -p 4242" [ref=e5391]:
+              - generic [ref=e5392]: $ ps -o pid,stat,cmd -p 4242
+              - generic [ref=e5393]: PID STAT CMD 4242 R ./trabajador
+        - generic [ref=e5394]:
+          - paragraph [ref=e5395]: Registro (hora simulada)
+          - log "Registro de transiciones" [ref=e5396]:
+            - listitem [ref=e5397]: "10:00:00 proceso 4242 (trabajador) en ejecución: R"
+    - 'figure "Contenedor Probá: Mové un control y mirá qué cambia." [ref=e5398]':
+      - generic [ref=e5399]:
+        - paragraph [ref=e5400]: Contenedor
+        - paragraph [ref=e5401]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5403]:
+        - generic [ref=e5404]:
+          - 'img "Diagrama de estados. Estado actual: running." [ref=e5407]':
+            - generic [ref=e5438]: start
+            - generic [ref=e5439]: pause
+            - generic [ref=e5440]: unpause
+            - generic [ref=e5441]: stop · kill · exit
+            - generic [ref=e5442]: start · daemon
+            - generic [ref=e5443]: exit + política (≥ 10 s)
+            - generic [ref=e5444]: tras 1 s
+            - generic [ref=e5445]: stop
+            - generic [ref=e5446]: rm
+            - generic [ref=e5447]: rm
+            - generic [ref=e5448]: create
+            - generic [ref=e5449]: created
+            - generic [ref=e5452]: running
+            - generic [ref=e5455]: paused
+            - generic [ref=e5458]: removed
+            - generic [ref=e5461]: exited
+            - generic [ref=e5464]: restarting
+          - generic [ref=e5467]:
+            - generic [ref=e5468]:
+              - generic [ref=e5469]:
+                - term [ref=e5470]: Estado
+                - definition [ref=e5471]: running
+              - generic [ref=e5472]:
+                - term [ref=e5473]: Transiciones
+                - definition [ref=e5474]: "0"
+              - generic [ref=e5475]:
+                - term [ref=e5476]: Reinicios
+                - definition [ref=e5477]: "0"
+              - generic [ref=e5478]:
+                - term [ref=e5479]: Código de salida
+                - definition [ref=e5480]: —
+              - generic [ref=e5481]:
+                - term [ref=e5482]: Uptime (la política rige desde los 10 s)
+                - definition [ref=e5483]: 0,0s
+            - generic [ref=e5485]:
+              - generic [ref=e5486]: Política de reinicio (--restart)
+              - combobox "Política de reinicio (--restart)" [ref=e5488]:
+                - option "no" [selected]
+                - option "on-failure"
+                - option "always"
+                - option "unless-stopped"
+            - generic [ref=e5489]:
+              - paragraph [ref=e5490]: "Regla de los 10 s: la política de reinicio solo rige si el contenedor estuvo al menos 10 s en running"
+              - img "Uptime 0,0 de 10 segundos" [ref=e5491]
+              - paragraph [ref=e5492]: "Todavía no cuenta como arranque exitoso: si sale ahora, queda exited sin reinicio (faltan 10,0 s)."
+            - group "Eventos" [ref=e5493]:
+              - paragraph [ref=e5494]: Eventos (solo los que valen desde «running»)
+              - generic [ref=e5495]:
+                - button "docker create" [disabled] [ref=e5496]
+                - button "docker start" [disabled] [ref=e5497]
+                - button "docker stop" [ref=e5498] [cursor=pointer]
+                - button "docker pause" [ref=e5499] [cursor=pointer]
+                - button "docker unpause" [disabled] [ref=e5500]
+                - button "docker kill" [ref=e5501] [cursor=pointer]
+                - button "docker rm" [disabled] [ref=e5502]
+                - button "el proceso principal sale con código 1" [ref=e5503] [cursor=pointer]
+                - button "reiniciar el daemon" [disabled] [ref=e5504]
+            - generic [ref=e5505]:
+              - button "⏸ Pausar" [ref=e5506] [cursor=pointer]
+              - button "Esperar 10 s" [ref=e5507] [cursor=pointer]
+              - button "Empezar de nuevo" [ref=e5508] [cursor=pointer]
+            - figure "docker ps -a" [ref=e5509]:
+              - generic [ref=e5510]: $ docker ps -a
+              - generic [ref=e5511]: NOMBRE IMAGEN RESTART STATUS miapp miapp:1.4 no Up 0 seconds
+        - generic [ref=e5512]:
+          - paragraph [ref=e5513]: Registro (hora simulada)
+          - log "Registro de transiciones" [ref=e5514]:
+            - listitem [ref=e5515]: 10:00:00 contenedor miapp en ejecución (running), uptime 0,0 s
+    - 'figure "Incidente Probá: Mové un control y mirá qué cambia." [ref=e5516]':
+      - generic [ref=e5517]:
+        - paragraph [ref=e5518]: Incidente
+        - paragraph [ref=e5519]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5521]:
+        - generic [ref=e5522]:
+          - generic [ref=e5523]:
+            - 'img "Diagrama de estados. Estado actual: registrado." [ref=e5525]':
+              - generic [ref=e5545]: clasificar
+              - generic [ref=e5546]: asignar
+              - generic [ref=e5547]: pide datos
+              - generic [ref=e5548]: responde
+              - generic [ref=e5549]: solución
+              - generic [ref=e5550]: confirma
+              - generic [ref=e5551]: sigue fallando
+              - generic [ref=e5552]: asignar
+              - generic [ref=e5553]: registrado
+              - generic [ref=e5556]: clasificado
+              - generic [ref=e5559]: en-curso
+              - generic [ref=e5562]:
+                - generic [ref=e5564]: en espera
+                - generic [ref=e5565]: del usuario
+              - generic [ref=e5566]: cerrado
+              - generic [ref=e5569]: resuelto
+              - generic [ref=e5572]: reabierto
+            - paragraph [ref=e5575]: Flujo típico de una herramienta de mesa de ayuda; ITIL 4 no fija estos estados
+          - generic [ref=e5576]:
+            - generic [ref=e5577]:
+              - generic [ref=e5578]:
+                - term [ref=e5579]: Estado
+                - definition [ref=e5580]: registrado
+              - generic [ref=e5581]:
+                - term [ref=e5582]: Transiciones
+                - definition [ref=e5583]: "0"
+              - generic [ref=e5584]:
+                - term [ref=e5585]: Problemas abiertos
+                - definition [ref=e5586]: "0"
+              - generic [ref=e5587]:
+                - term [ref=e5588]: Cambios pedidos
+                - definition [ref=e5589]: "0"
+              - generic [ref=e5590]:
+                - term [ref=e5591]: Prioridad
+                - definition [ref=e5592]: —
+            - generic [ref=e5593]:
+              - generic [ref=e5594]:
+                - generic [ref=e5595]: Impacto
+                - combobox "Impacto" [ref=e5597]:
+                  - option "alto" [selected]
+                  - option "medio"
+                  - option "bajo"
+              - generic [ref=e5598]:
+                - generic [ref=e5599]: Urgencia
+                - combobox "Urgencia" [ref=e5601]:
+                  - option "alta"
+                  - option "media" [selected]
+                  - option "baja"
+            - group "Eventos" [ref=e5602]:
+              - paragraph [ref=e5603]: Eventos (solo los que valen desde «registrado»)
+              - generic [ref=e5604]:
+                - button "clasificar (impacto × urgencia)" [ref=e5605] [cursor=pointer]
+                - button "asignar y empezar" [disabled] [ref=e5606]
+                - button "pedir datos al usuario" [disabled] [ref=e5607]
+                - button "el usuario responde" [disabled] [ref=e5608]
+                - button "aplicar solución" [disabled] [ref=e5609]
+                - button "el usuario confirma" [disabled] [ref=e5610]
+                - button "el usuario dice que sigue fallando" [disabled] [ref=e5611]
+                - 'button "es recurrente: abrir problema" [ref=e5612] [cursor=pointer]'
+                - 'button "la solución necesita un cambio: pedir cambio" [ref=e5613] [cursor=pointer]'
+            - button "Empezar de nuevo" [ref=e5615] [cursor=pointer]
+            - figure "Ticket INC-0421" [ref=e5616]:
+              - generic [ref=e5617]: $ Ticket INC-0421
+              - generic [ref=e5618]: "Impresora fiscal de la caja 2 sin imprimir Estado: registrado · Prioridad: sin clasificar Problemas: ninguno Cambios: ninguno"
+        - generic [ref=e5619]:
+          - paragraph [ref=e5620]: Registro (hora simulada)
+          - log "Registro de transiciones" [ref=e5621]:
+            - listitem [ref=e5622]: "10:00:00 INC-0421 registrado: \"La impresora fiscal de la caja 2 no imprime\""
+    - 'figure "Pico breve Probá: Mové un control y mirá qué cambia." [ref=e5623]':
+      - generic [ref=e5624]:
+        - paragraph [ref=e5625]: Pico breve
+        - paragraph [ref=e5626]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5628]:
+        - generic [ref=e5629]:
+          - generic [ref=e5630]:
+            - generic [ref=e5631]: Uso de CPU
+            - generic [ref=e5633]: Alerta disparada
+            - generic [ref=e5635]: Umbral
+          - paragraph [ref=e5637]: Primer aviso a las 10:30; 1 alerta y 3 minutos en alerta.
+        - generic [ref=e5638]:
+          - generic [ref=e5639]:
+            - generic [ref=e5640]:
+              - generic [ref=e5641]: Umbral (%)
+              - status [ref=e5642]: "90"
+            - slider "Umbral (%)" [ref=e5643] [cursor=pointer]: "90"
+          - generic [ref=e5644]:
+            - generic [ref=e5645]:
+              - generic [ref=e5646]: Duración sostenida (for:)
+              - status [ref=e5647]: 0 min
+            - slider "Duración sostenida (for:)" [ref=e5648] [cursor=pointer]: "0"
+          - generic [ref=e5649]:
+            - generic [ref=e5650]:
+              - generic [ref=e5651]: Ventana de promedio
+              - status [ref=e5652]: 1 min
+            - slider "Ventana de promedio" [ref=e5653] [cursor=pointer]: "1"
+        - generic [ref=e5654]:
+          - generic [ref=e5655]:
+            - term [ref=e5656]: Alertas disparadas
+            - definition [ref=e5657]: "1"
+          - generic [ref=e5658]:
+            - term [ref=e5659]: Tiempo en alerta
+            - definition [ref=e5660]: 3min
+          - generic [ref=e5661]:
+            - term [ref=e5662]: Primer aviso
+            - definition [ref=e5663]: 10:30h
+    - 'figure "Disco Probá: Mové un control y mirá qué cambia." [ref=e5664]':
+      - generic [ref=e5665]:
+        - paragraph [ref=e5666]: Disco
+        - paragraph [ref=e5667]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5669]:
+        - generic [ref=e5670]:
+          - generic [ref=e5671]:
+            - generic [ref=e5672]: Uso de disco
+            - generic [ref=e5674]: Alerta disparada
+            - generic [ref=e5676]: Umbral
+          - paragraph [ref=e5678]: Primer aviso a las 20:00; 1 alerta y 240 minutos en alerta.
+        - generic [ref=e5679]:
+          - generic [ref=e5680]:
+            - generic [ref=e5681]:
+              - generic [ref=e5682]: Umbral (%)
+              - status [ref=e5683]: "90"
+            - slider "Umbral (%)" [ref=e5684] [cursor=pointer]: "90"
+          - generic [ref=e5685]:
+            - generic [ref=e5686]:
+              - generic [ref=e5687]: Duración sostenida (for:)
+              - status [ref=e5688]: 0 min
+            - slider "Duración sostenida (for:)" [ref=e5689] [cursor=pointer]: "0"
+          - generic [ref=e5690]:
+            - generic [ref=e5691]:
+              - generic [ref=e5692]: Ventana de promedio
+              - status [ref=e5693]: 1 min
+            - slider "Ventana de promedio" [ref=e5694] [cursor=pointer]: "1"
+          - generic [ref=e5695] [cursor=pointer]:
+            - checkbox "Alerta predictiva (avisa si se llena en menos de 4 h)" [ref=e5696]
+            - generic [ref=e5697]: Alerta predictiva (avisa si se llena en menos de 4 h)
+        - generic [ref=e5698]:
+          - generic [ref=e5699]:
+            - term [ref=e5700]: Alertas disparadas
+            - definition [ref=e5701]: "1"
+          - generic [ref=e5702]:
+            - term [ref=e5703]: Tiempo en alerta
+            - definition [ref=e5704]: 240min
+          - generic [ref=e5705]:
+            - term [ref=e5706]: Primer aviso
+            - definition [ref=e5707]: 20:00h
+          - generic [ref=e5708]:
+            - term [ref=e5709]: Anticipación (hasta el 100 %)
+            - definition [ref=e5710]: 2,0h
+    - 'figure "Carga Probá: Mové un control y mirá qué cambia." [ref=e5711]':
+      - generic [ref=e5712]:
+        - paragraph [ref=e5713]: Carga
+        - paragraph [ref=e5714]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5716]:
+        - generic [ref=e5717]:
+          - generic [ref=e5718]:
+            - generic [ref=e5719]: Load average
+            - generic [ref=e5721]: Alerta disparada
+            - generic [ref=e5723]: Umbral
+            - generic [ref=e5725]: Núcleos (4)
+          - paragraph [ref=e5727]: Primer aviso a las 13:04; 1 alerta y 58 minutos en alerta.
+        - generic [ref=e5728]:
+          - generic [ref=e5729]:
+            - generic [ref=e5730]:
+              - generic [ref=e5731]: Umbral (load)
+              - status [ref=e5732]: 4,0
+            - slider "Umbral (load)" [ref=e5733] [cursor=pointer]: "4"
+          - generic [ref=e5734]:
+            - generic [ref=e5735]:
+              - generic [ref=e5736]: Duración sostenida (for:)
+              - status [ref=e5737]: 0 min
+            - slider "Duración sostenida (for:)" [ref=e5738] [cursor=pointer]: "0"
+          - generic [ref=e5739]:
+            - generic [ref=e5740]:
+              - generic [ref=e5741]: Ventana de promedio
+              - status [ref=e5742]: 1 min
+            - slider "Ventana de promedio" [ref=e5743] [cursor=pointer]: "1"
+          - generic [ref=e5744]:
+            - generic [ref=e5745]: Promedio que vigila la alerta
+            - combobox "Promedio que vigila la alerta" [ref=e5747]:
+              - option "Load 1 min"
+              - option "Load 5 min" [selected]
+              - option "Load 15 min"
+        - generic [ref=e5748]:
+          - generic [ref=e5749]:
+            - term [ref=e5750]: Alertas disparadas
+            - definition [ref=e5751]: "1"
+          - generic [ref=e5752]:
+            - term [ref=e5753]: Tiempo en alerta
+            - definition [ref=e5754]: 58min
+          - generic [ref=e5755]:
+            - term [ref=e5756]: Primer aviso
+            - definition [ref=e5757]: 13:04h
+    - 'figure "Memoria Probá: Mové un control y mirá qué cambia." [ref=e5758]':
+      - generic [ref=e5759]:
+        - paragraph [ref=e5760]: Memoria
+        - paragraph [ref=e5761]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5763]:
+        - generic [ref=e5764]:
+          - generic [ref=e5765]:
+            - generic [ref=e5766]: Uso de memoria
+            - generic [ref=e5768]: Alerta disparada
+            - generic [ref=e5770]: Umbral
+          - paragraph [ref=e5772]: Primer aviso a las 17:34; 1 alerta y 146 minutos en alerta.
+        - generic [ref=e5773]:
+          - generic [ref=e5774]:
+            - generic [ref=e5775]:
+              - generic [ref=e5776]: Umbral (%)
+              - status [ref=e5777]: "90"
+            - slider "Umbral (%)" [ref=e5778] [cursor=pointer]: "90"
+          - generic [ref=e5779]:
+            - generic [ref=e5780]:
+              - generic [ref=e5781]: Duración sostenida (for:)
+              - status [ref=e5782]: 0 min
+            - slider "Duración sostenida (for:)" [ref=e5783] [cursor=pointer]: "0"
+          - generic [ref=e5784]:
+            - generic [ref=e5785]:
+              - generic [ref=e5786]: Ventana de promedio
+              - status [ref=e5787]: 1 min
+            - slider "Ventana de promedio" [ref=e5788] [cursor=pointer]: "1"
+        - generic [ref=e5789]:
+          - generic [ref=e5790]:
+            - term [ref=e5791]: Alertas disparadas
+            - definition [ref=e5792]: "1"
+          - generic [ref=e5793]:
+            - term [ref=e5794]: Tiempo en alerta
+            - definition [ref=e5795]: 146min
+          - generic [ref=e5796]:
+            - term [ref=e5797]: Primer aviso
+            - definition [ref=e5798]: 17:34h
+    - 'figure "Respaldo Probá: Mové un control y mirá qué cambia." [ref=e5799]':
+      - generic [ref=e5800]:
+        - paragraph [ref=e5801]: Respaldo
+        - paragraph [ref=e5802]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5804]:
+        - generic [ref=e5805]:
+          - generic [ref=e5806]:
+            - generic [ref=e5807]: Datos acumulados
+            - generic [ref=e5809]: Respaldo
+            - generic [ref=e5811]: Datos perdidos (RPO)
+            - generic [ref=e5813]: Restauración (sistema caído)
+          - paragraph [ref=e5815]: Se restaura el respaldo de la hora 24,0, 23,0 h antes del incidente. Perdés 23,0 h de datos y quedás 3,0 h caído.
+        - generic [ref=e5816]:
+          - generic [ref=e5817]:
+            - generic [ref=e5818]:
+              - generic [ref=e5819]: Un respaldo cada
+              - status [ref=e5820]: 24 h
+            - slider "Un respaldo cada" [ref=e5821] [cursor=pointer]: "24"
+          - generic [ref=e5822]:
+            - generic [ref=e5823]:
+              - generic [ref=e5824]: Momento del incidente
+              - status [ref=e5825]: hora 47,0
+            - slider "Momento del incidente" [ref=e5826] [cursor=pointer]: "47"
+          - generic [ref=e5827]:
+            - generic [ref=e5828]:
+              - generic [ref=e5829]: Duración de la restauración
+              - status [ref=e5830]: 3,0 h
+            - slider "Duración de la restauración" [ref=e5831] [cursor=pointer]: "3"
+          - generic [ref=e5832] [cursor=pointer]:
+            - checkbox "El respaldo fue probado (restauración de ensayo)" [checked] [ref=e5833]
+            - generic [ref=e5834]: El respaldo fue probado (restauración de ensayo)
+        - generic [ref=e5835]:
+          - generic [ref=e5836]:
+            - term [ref=e5837]: RPO real (objetivo 4,0 h)
+            - definition [ref=e5838]: 23,0h
+          - generic [ref=e5839]:
+            - term [ref=e5840]: RTO real (objetivo 2,0 h)
+            - definition [ref=e5841]: 3,0h
+          - generic [ref=e5842]:
+            - term [ref=e5843]: Cumple el RPO
+            - definition [ref=e5844]: "no"
+          - generic [ref=e5845]:
+            - term [ref=e5846]: Cumple el RTO
+            - definition [ref=e5847]: "no"
+    - 'figure "Recorrido Probá: Mové un control y mirá qué cambia." [ref=e5848]':
+      - generic [ref=e5849]:
+        - paragraph [ref=e5850]: Recorrido
+        - paragraph [ref=e5851]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5853]:
+        - generic [ref=e5854]:
+          - group "Mapa de ocho barrios con minutos de viaje" [ref=e5856]:
+            - generic [ref=e5859]: "6"
+            - generic [ref=e5864]: "7"
+            - generic [ref=e5869]: "8"
+            - generic [ref=e5874]: "7"
+            - generic [ref=e5879]: "5"
+            - generic [ref=e5884]: "9"
+            - generic [ref=e5888]: "6"
+            - generic [ref=e5893]: "4"
+            - generic [ref=e5898]: "9"
+            - generic [ref=e5903]: "7"
+            - generic [ref=e5908]: "5"
+            - generic [ref=e5913]: "8"
+            - generic [ref=e5918]: "12"
+            - button "Puerto, sin descubrir. Elegir como nodo inicial." [ref=e5921] [cursor=pointer]:
+              - generic: Puerto
+            - button "Norte, sin descubrir. Elegir como nodo inicial." [ref=e5923] [cursor=pointer]:
+              - generic: Norte
+            - button "Parque, sin descubrir. Elegir como nodo inicial." [ref=e5925] [cursor=pointer]:
+              - generic: Parque
+            - button "Colinas, sin descubrir. Elegir como nodo inicial." [ref=e5927] [cursor=pointer]:
+              - generic: Colinas
+            - button "Oeste, sin descubrir. Elegir como nodo inicial." [ref=e5929] [cursor=pointer]:
+              - generic: Oeste
+            - button "Centro, en la frontera, nodo inicial. Elegir como nodo inicial." [pressed] [ref=e5931] [cursor=pointer]:
+              - generic: Centro
+            - button "Mercado, sin descubrir. Elegir como nodo inicial." [ref=e5933] [cursor=pointer]:
+              - generic: Mercado
+            - button "Sur, sin descubrir. Elegir como nodo inicial." [ref=e5935] [cursor=pointer]:
+              - generic: Sur
+          - generic [ref=e5937]:
+            - generic [ref=e5938]:
+              - heading "Cola (sale el de la izquierda)" [level=4] [ref=e5939]
+              - list "Cola de nodos por visitar" [ref=e5940]:
+                - listitem [ref=e5941]: Centro
+            - generic [ref=e5942]:
+              - generic [ref=e5943]: Visitado (número = orden)
+              - generic [ref=e5945]: Recién visitado
+              - generic [ref=e5947]: En la frontera
+        - generic [ref=e5949]:
+          - generic [ref=e5950]:
+            - generic [ref=e5951]: Recorrido
+            - combobox "Recorrido" [ref=e5953]:
+              - 'option "BFS: a lo ancho (cola)" [selected]'
+              - 'option "DFS: a lo hondo (pila)"'
+          - generic [ref=e5954]:
+            - button "Paso" [ref=e5955] [cursor=pointer]
+            - button "Auto" [ref=e5956] [cursor=pointer]
+            - button "Reiniciar" [ref=e5957] [cursor=pointer]
+        - status [ref=e5958]: "Nodo inicial: Centro. Tocá “Paso” o “Auto”; para cambiar el inicio, tocá otro barrio."
+        - generic [ref=e5959]:
+          - generic [ref=e5960]:
+            - term [ref=e5961]: Orden de visita
+            - definition [ref=e5962]: —
+          - generic [ref=e5963]:
+            - term [ref=e5964]: En la cola
+            - definition [ref=e5965]: Centro
+    - 'figure "Camino mínimo Probá: Mové un control y mirá qué cambia." [ref=e5966]':
+      - generic [ref=e5967]:
+        - paragraph [ref=e5968]: Camino mínimo
+        - paragraph [ref=e5969]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e5971]:
+        - 'group "Mapa de ocho barrios: elegí origen y destino para ver el camino de menor costo" [ref=e5974]':
+          - generic [ref=e5977]: "6"
+          - generic [ref=e5982]: "7"
+          - generic [ref=e5987]: "8"
+          - generic [ref=e5992]: "7"
+          - generic [ref=e5997]: "5"
+          - generic [ref=e6002]: "9"
+          - generic [ref=e6006]: "6"
+          - generic [ref=e6011]: "4"
+          - generic [ref=e6016]: "9"
+          - generic [ref=e6021]: "7"
+          - generic [ref=e6026]: "5"
+          - generic [ref=e6031]: "8"
+          - generic [ref=e6036]: "12"
+          - button "Puerto. Elegir como origen." [ref=e6039] [cursor=pointer]:
+            - generic: Puerto
+          - button "Norte. Elegir como origen." [ref=e6041] [cursor=pointer]:
+            - generic: Norte
+          - button "Parque. Elegir como origen." [ref=e6043] [cursor=pointer]:
+            - generic: Parque
+          - button "Colinas, destino. Elegir como origen." [ref=e6045] [cursor=pointer]:
+            - generic: Colinas
+            - generic [ref=e6047]: B
+          - button "Oeste, origen. Elegir como origen." [ref=e6049] [cursor=pointer]:
+            - generic: Oeste
+            - generic [ref=e6051]: A
+          - button "Centro. Elegir como origen." [ref=e6053] [cursor=pointer]:
+            - generic: Centro
+          - button "Mercado. Elegir como origen." [ref=e6055] [cursor=pointer]:
+            - generic: Mercado
+          - button "Sur. Elegir como origen." [ref=e6057] [cursor=pointer]:
+            - generic: Sur
+        - generic [ref=e6059]:
+          - generic [ref=e6060]: Camino de menor costo
+          - generic [ref=e6062]: Avenida central (el tráfico la encarece)
+          - generic [ref=e6064]: Origen (A) y destino (B)
+        - generic [ref=e6066]:
+          - generic [ref=e6067]:
+            - generic [ref=e6068]: El próximo clic en el mapa elige…
+            - generic [ref=e6069]:
+              - button "el origen (A)" [pressed] [ref=e6070] [cursor=pointer]
+              - button "el destino (B)" [ref=e6071] [cursor=pointer]
+          - generic [ref=e6072]:
+            - generic [ref=e6073]:
+              - generic [ref=e6074]: Tráfico en la avenida central
+              - status [ref=e6075]: ×1,0
+            - slider "Tráfico en la avenida central" [ref=e6076] [cursor=pointer]: "1"
+          - generic [ref=e6077]:
+            - button "Paso" [ref=e6078] [cursor=pointer]
+            - button "Ver el resultado" [disabled] [ref=e6079]
+        - status [ref=e6080]: "Camino de menor costo: Oeste → Centro → Mercado → Colinas, 18 min."
+        - generic [ref=e6081]:
+          - generic [ref=e6082]:
+            - term [ref=e6083]: Costo del camino
+            - definition [ref=e6084]: 18min
+          - generic [ref=e6085]:
+            - term [ref=e6086]: Camino
+            - definition [ref=e6087]: Oeste → Centro → Mercado → Colinas
+    - 'figure "Orden topológico Probá: Mové un control y mirá qué cambia." [ref=e6088]':
+      - generic [ref=e6089]:
+        - paragraph [ref=e6090]: Orden topológico
+        - paragraph [ref=e6091]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e6093]:
+        - 'group "Dependencias entre ocho paquetes: cada flecha va del paquete que se instala antes al que lo necesita" [ref=e6096]':
+          - button "libc, disponible para instalar." [ref=e6122] [cursor=pointer]:
+            - generic: libc
+            - generic: disponible
+          - button "zlib, bloqueado, le faltan 1 dependencias." [ref=e6124] [cursor=pointer]:
+            - generic: zlib
+            - generic: espera 1
+          - button "openssl, bloqueado, le faltan 1 dependencias." [ref=e6126] [cursor=pointer]:
+            - generic: openssl
+            - generic: espera 1
+          - button "python, bloqueado, le faltan 1 dependencias." [ref=e6128] [cursor=pointer]:
+            - generic: python
+            - generic: espera 1
+          - button "curl, bloqueado, le faltan 1 dependencias." [ref=e6130] [cursor=pointer]:
+            - generic: curl
+            - generic: espera 1
+          - button "numpy, bloqueado, le faltan 1 dependencias." [ref=e6132] [cursor=pointer]:
+            - generic: numpy
+            - generic: espera 1
+          - button "requests, bloqueado, le faltan 2 dependencias." [ref=e6134] [cursor=pointer]:
+            - generic: requests
+            - generic: espera 2
+          - button "app, bloqueado, le faltan 2 dependencias." [ref=e6136] [cursor=pointer]:
+            - generic: app
+            - generic: espera 2
+        - generic [ref=e6138]:
+          - generic [ref=e6139]: Instalado (número = orden)
+          - generic [ref=e6141]: "Disponible: sin dependencias pendientes"
+          - generic [ref=e6143]: "Bloqueado: espera dependencias"
+        - generic [ref=e6145]:
+          - generic [ref=e6146]:
+            - button "Paso" [ref=e6147] [cursor=pointer]
+            - button "Reiniciar" [disabled] [ref=e6148]
+          - paragraph [ref=e6149]: “Paso” instala el primero disponible; también podés tocar vos un paquete disponible.
+        - status [ref=e6150]: "Solo libc no depende de nada: por ahí se empieza."
+        - generic [ref=e6151]:
+          - generic [ref=e6152]:
+            - term [ref=e6153]: Orden de instalación
+            - definition [ref=e6154]: —
+          - generic [ref=e6155]:
+            - term [ref=e6156]: Disponibles ahora
+            - definition [ref=e6157]: libc
+    - 'figure "Propagar falla Probá: Mové un control y mirá qué cambia." [ref=e6158]':
+      - generic [ref=e6159]:
+        - paragraph [ref=e6160]: Propagar falla
+        - paragraph [ref=e6161]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e6163]:
+        - 'group "Servicios de una tienda: el gateway llama a cinco servicios y estos a otros dos" [ref=e6166]':
+          - 'button "gateway: ok. Tocá para tirarlo." [ref=e6187] [cursor=pointer]':
+            - generic: gateway
+            - generic: ok
+          - 'button "catalogo: ok. Tocá para tirarlo." [ref=e6189] [cursor=pointer]':
+            - generic: catalogo
+            - generic: ok
+          - 'button "carrito: ok. Tocá para tirarlo." [ref=e6191] [cursor=pointer]':
+            - generic: carrito
+            - generic: ok
+          - 'button "pagos: ok. Tocá para tirarlo." [ref=e6193] [cursor=pointer]':
+            - generic: pagos
+            - generic: ok
+          - 'button "envios: ok. Tocá para tirarlo." [ref=e6195] [cursor=pointer]':
+            - generic: envios
+            - generic: ok
+          - 'button "usuarios: ok. Tocá para tirarlo." [ref=e6197] [cursor=pointer]':
+            - generic: usuarios
+            - generic: ok
+          - 'button "antifraude: ok. Tocá para tirarlo." [ref=e6199] [cursor=pointer]':
+            - generic: antifraude
+            - generic: ok
+          - 'button "inventario: ok. Tocá para tirarlo." [ref=e6201] [cursor=pointer]':
+            - generic: inventario
+            - generic: ok
+        - generic [ref=e6203]:
+          - generic [ref=e6204]: ok
+          - generic [ref=e6206]: degradado (anda con funciones recortadas)
+          - generic [ref=e6208]: caído
+        - generic [ref=e6210]:
+          - generic [ref=e6211] [cursor=pointer]:
+            - checkbox "Con timeouts y circuit breaker" [ref=e6212]
+            - generic [ref=e6213]: Con timeouts y circuit breaker
+          - button "Levantar todo" [disabled] [ref=e6215]
+        - status [ref=e6216]: Todo anda. Tocá un servicio para tirarlo y mirá hasta dónde llega la falla.
+        - generic [ref=e6217]:
+          - generic [ref=e6218]:
+            - term [ref=e6219]: Servicios caídos
+            - definition [ref=e6220]: "0"
+          - generic [ref=e6221]:
+            - term [ref=e6222]: Servicios degradados
+            - definition [ref=e6223]: "0"
+          - generic [ref=e6224]:
+            - term [ref=e6225]: Gateway
+            - definition [ref=e6226]: ok
+    - 'figure "Buscar falla Probá: Mové un control y mirá qué cambia." [ref=e6227]':
+      - generic [ref=e6228]:
+        - paragraph [ref=e6229]: Buscar falla
+        - paragraph [ref=e6230]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e6232]:
+        - group "Cadena de nueve equipos, de la PC al servidor, con una falla escondida en uno de los ocho tramos" [ref=e6235]:
+          - button "Probar hasta PC." [ref=e6236] [cursor=pointer]:
+            - generic: PC
+          - button "Probar hasta placa de red." [ref=e6238] [cursor=pointer]:
+            - generic: placa de red
+          - button "Probar hasta cable." [ref=e6240] [cursor=pointer]:
+            - generic: cable
+          - button "Probar hasta switch." [ref=e6242] [cursor=pointer]:
+            - generic: switch
+          - button "Probar hasta router." [ref=e6244] [cursor=pointer]:
+            - generic: router
+          - button "Probar hasta firewall." [ref=e6246] [cursor=pointer]:
+            - generic: firewall
+          - button "Probar hasta proveedor." [ref=e6248] [cursor=pointer]:
+            - generic: proveedor
+          - button "Probar hasta DNS." [ref=e6250] [cursor=pointer]:
+            - generic: DNS
+          - button "Probar hasta servidor." [ref=e6252] [cursor=pointer]:
+            - generic: servidor
+        - generic [ref=e6254]:
+          - generic [ref=e6255]: Tramo que todavía puede tener la falla
+          - generic [ref=e6257]: Tramo descartado
+          - generic [ref=e6259]: Falla encontrada
+        - generic [ref=e6261]:
+          - paragraph [ref=e6262]: "Tocá un equipo para “probar hasta acá”: te dice si la señal llega desde la PC hasta ahí."
+          - generic [ref=e6263]:
+            - button "Probar en la mitad" [ref=e6264] [cursor=pointer]
+            - button "Nueva falla" [ref=e6265] [cursor=pointer]
+        - status [ref=e6266]: Hay una falla escondida en un tramo. Probá hasta encontrarla con la menor cantidad de pruebas.
+        - generic [ref=e6267]:
+          - generic [ref=e6268]:
+            - term [ref=e6269]: Pruebas hechas
+            - definition [ref=e6270]: "0"
+          - generic [ref=e6271]:
+            - term [ref=e6272]: Mínimo teórico (⌈log₂ 8⌉)
+            - definition [ref=e6273]: "3"
+          - generic [ref=e6274]:
+            - term [ref=e6275]: Falla encontrada
+            - definition [ref=e6276]: "no"
+    - 'figure "Matriz Probá: Mové un control y mirá qué cambia." [ref=e6277]':
+      - generic [ref=e6278]:
+        - paragraph [ref=e6279]: Matriz
+        - paragraph [ref=e6280]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e6282]:
+        - generic [ref=e6283]:
+          - table "Prioridad según impacto y urgencia" [ref=e6284]:
+            - caption [ref=e6285]: Prioridad según impacto y urgencia
+            - rowgroup [ref=e6286]:
+              - row [ref=e6287]:
+                - cell [ref=e6288]
+                - columnheader "Urgencia alta" [ref=e6289]
+                - columnheader "Urgencia media" [ref=e6290]
+                - columnheader "Urgencia baja" [ref=e6291]
+            - rowgroup [ref=e6292]:
+              - row [ref=e6293]:
+                - rowheader "Impacto alto" [ref=e6294]
+                - 'cell "P1 Ticket 3: El sistema de facturación está caído" [ref=e6295]':
+                  - generic [ref=e6296]: P1
+                  - 'img "Ticket 3: El sistema de facturación está caído" [ref=e6298]': "3"
+                - 'cell "P2 Ticket 5: Todo anda lento desde hace una hora" [ref=e6299]':
+                  - generic [ref=e6300]: P2
+                  - 'img "Ticket 5: Todo anda lento desde hace una hora" [ref=e6302]': "5"
+                - cell "P3" [ref=e6303]
+              - row [ref=e6305]:
+                - rowheader "Impacto medio" [ref=e6306]
+                - 'cell "P2 Ticket 2: Un gerente no se conecta por VPN" [ref=e6307]':
+                  - generic [ref=e6308]: P2
+                  - 'img "Ticket 2: Un gerente no se conecta por VPN" [ref=e6310]': "2"
+                - cell "P3" [ref=e6311]
+                - cell "P4" [ref=e6313]
+              - row [ref=e6315]:
+                - rowheader "Impacto bajo" [ref=e6316]
+                - cell "P3" [ref=e6317]
+                - 'cell "P4 Ticket 1: La impresora del segundo piso no imprime Ticket 6: A un usuario no le llega el correo" [ref=e6319]':
+                  - generic [ref=e6320]: P4
+                  - generic [ref=e6321]:
+                    - 'img "Ticket 1: La impresora del segundo piso no imprime" [ref=e6322]': "1"
+                    - 'img "Ticket 6: A un usuario no le llega el correo" [ref=e6323]': "6"
+                - 'cell "P5 Ticket 4: Alta de usuario para alguien que entra el viernes" [ref=e6324]':
+                  - generic [ref=e6325]: P5
+                  - 'img "Ticket 4: Alta de usuario para alguien que entra el viernes" [ref=e6327]': "4"
+          - paragraph [ref=e6328]: Matriz de ejemplo; cada organización define la suya.
+        - generic [ref=e6329]:
+          - button "Avanzar el reloj" [ref=e6330] [cursor=pointer]
+          - button "Orden de llegada" [ref=e6331] [cursor=pointer]
+          - button "Ordenar por prioridad" [ref=e6332] [cursor=pointer]
+          - button "Reiniciar" [ref=e6333] [cursor=pointer]
+        - generic [ref=e6334]:
+          - generic [ref=e6335]:
+            - term [ref=e6336]: SLA incumplidos
+            - definition [ref=e6337]: "0"
+          - generic [ref=e6338]:
+            - term [ref=e6339]: Reloj (hh:mm desde las 09:00)
+            - definition [ref=e6340]: 00:00
+        - status [ref=e6341]: Un solo agente. Atiende de arriba hacia abajo y cada ticket consume su tiempo (25, 10, 12, 15, 15, 10 min).
+        - list "Cola de atención" [ref=e6342]:
+          - listitem [ref=e6343]:
+            - generic [ref=e6344]:
+              - generic "Lugar 1 en la cola" [ref=e6345]: "1"
+              - generic [ref=e6346]:
+                - strong [ref=e6347]: La impresora del segundo piso no imprime
+                - generic [ref=e6348]: Llegó 1.º · Contabilidad usa la del primer piso mientras tanto. · 25 min de atención
+              - generic "Prioridad P4" [ref=e6349]: P4
+            - generic [ref=e6350]:
+              - generic [ref=e6351]:
+                - generic [ref=e6352]: Impacto
+                - combobox "Impacto" [ref=e6354]:
+                  - option "Alto"
+                  - option "Medio"
+                  - option "Bajo" [selected]
+              - generic [ref=e6355]:
+                - generic [ref=e6356]: Urgencia
+                - combobox "Urgencia" [ref=e6358]:
+                  - option "Alta"
+                  - option "Media" [selected]
+                  - option "Baja"
+              - generic [ref=e6359]:
+                - 'button "Subir en la cola: La impresora del segundo piso no imprime" [disabled] [ref=e6360]': ↑
+                - 'button "Bajar en la cola: La impresora del segundo piso no imprime" [ref=e6361] [cursor=pointer]': ↓
+            - paragraph [ref=e6362]:
+              - generic [ref=e6363]: En plazo
+              - text: Es el próximo. Esperando; responder antes de los 480 min
+          - listitem [ref=e6364]:
+            - generic [ref=e6365]:
+              - generic "Lugar 2 en la cola" [ref=e6366]: "2"
+              - generic [ref=e6367]:
+                - strong [ref=e6368]: Un gerente no se conecta por VPN
+                - generic [ref=e6369]: Llegó 2.º · Está de viaje y presenta a las 11. · 10 min de atención
+              - generic "Prioridad P2" [ref=e6370]: P2
+            - generic [ref=e6371]:
+              - generic [ref=e6372]:
+                - generic [ref=e6373]: Impacto
+                - combobox "Impacto" [ref=e6375]:
+                  - option "Alto"
+                  - option "Medio" [selected]
+                  - option "Bajo"
+              - generic [ref=e6376]:
+                - generic [ref=e6377]: Urgencia
+                - combobox "Urgencia" [ref=e6379]:
+                  - option "Alta" [selected]
+                  - option "Media"
+                  - option "Baja"
+              - generic [ref=e6380]:
+                - 'button "Subir en la cola: Un gerente no se conecta por VPN" [ref=e6381] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: Un gerente no se conecta por VPN" [ref=e6382] [cursor=pointer]': ↓
+            - paragraph [ref=e6383]:
+              - generic [ref=e6384]: En plazo
+              - text: Esperando; responder antes de los 30 min
+          - listitem [ref=e6385]:
+            - generic [ref=e6386]:
+              - generic "Lugar 3 en la cola" [ref=e6387]: "3"
+              - generic [ref=e6388]:
+                - strong [ref=e6389]: El sistema de facturación está caído
+                - generic [ref=e6390]: Llegó 3.º · Nadie puede facturar, en ninguna sucursal. · 12 min de atención
+              - generic "Prioridad P1" [ref=e6391]: P1
+            - generic [ref=e6392]:
+              - generic [ref=e6393]:
+                - generic [ref=e6394]: Impacto
+                - combobox "Impacto" [ref=e6396]:
+                  - option "Alto" [selected]
+                  - option "Medio"
+                  - option "Bajo"
+              - generic [ref=e6397]:
+                - generic [ref=e6398]: Urgencia
+                - combobox "Urgencia" [ref=e6400]:
+                  - option "Alta" [selected]
+                  - option "Media"
+                  - option "Baja"
+              - generic [ref=e6401]:
+                - 'button "Subir en la cola: El sistema de facturación está caído" [ref=e6402] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: El sistema de facturación está caído" [ref=e6403] [cursor=pointer]': ↓
+            - paragraph [ref=e6404]:
+              - generic [ref=e6405]: En plazo
+              - text: Esperando; responder antes de los 15 min
+          - listitem [ref=e6406]:
+            - generic [ref=e6407]:
+              - generic "Lugar 4 en la cola" [ref=e6408]: "4"
+              - generic [ref=e6409]:
+                - strong [ref=e6410]: Alta de usuario para alguien que entra el viernes
+                - generic [ref=e6411]: Llegó 4.º · Cuenta, correo y permisos básicos. · 15 min de atención
+              - generic "Prioridad P5" [ref=e6412]: P5
+            - generic [ref=e6413]:
+              - generic [ref=e6414]:
+                - generic [ref=e6415]: Impacto
+                - combobox "Impacto" [ref=e6417]:
+                  - option "Alto"
+                  - option "Medio"
+                  - option "Bajo" [selected]
+              - generic [ref=e6418]:
+                - generic [ref=e6419]: Urgencia
+                - combobox "Urgencia" [ref=e6421]:
+                  - option "Alta"
+                  - option "Media"
+                  - option "Baja" [selected]
+              - generic [ref=e6422]:
+                - 'button "Subir en la cola: Alta de usuario para alguien que entra el viernes" [ref=e6423] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: Alta de usuario para alguien que entra el viernes" [ref=e6424] [cursor=pointer]': ↓
+            - paragraph [ref=e6425]:
+              - generic [ref=e6426]: En plazo
+              - text: Esperando; responder antes de los 1440 min
+          - listitem [ref=e6427]:
+            - generic [ref=e6428]:
+              - generic "Lugar 5 en la cola" [ref=e6429]: "5"
+              - generic [ref=e6430]:
+                - strong [ref=e6431]: Todo anda lento desde hace una hora
+                - generic [ref=e6432]: Llegó 5.º · Se queja toda la oficina; todavía se puede trabajar. · 15 min de atención
+              - generic "Prioridad P2" [ref=e6433]: P2
+            - generic [ref=e6434]:
+              - generic [ref=e6435]:
+                - generic [ref=e6436]: Impacto
+                - combobox "Impacto" [ref=e6438]:
+                  - option "Alto" [selected]
+                  - option "Medio"
+                  - option "Bajo"
+              - generic [ref=e6439]:
+                - generic [ref=e6440]: Urgencia
+                - combobox "Urgencia" [ref=e6442]:
+                  - option "Alta"
+                  - option "Media" [selected]
+                  - option "Baja"
+              - generic [ref=e6443]:
+                - 'button "Subir en la cola: Todo anda lento desde hace una hora" [ref=e6444] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: Todo anda lento desde hace una hora" [ref=e6445] [cursor=pointer]': ↓
+            - paragraph [ref=e6446]:
+              - generic [ref=e6447]: En plazo
+              - text: Esperando; responder antes de los 30 min
+          - listitem [ref=e6448]:
+            - generic [ref=e6449]:
+              - generic "Lugar 6 en la cola" [ref=e6450]: "6"
+              - generic [ref=e6451]:
+                - strong [ref=e6452]: A un usuario no le llega el correo
+                - generic [ref=e6453]: Llegó 6.º · Puede usar el celular mientras tanto. · 10 min de atención
+              - generic "Prioridad P4" [ref=e6454]: P4
+            - generic [ref=e6455]:
+              - generic [ref=e6456]:
+                - generic [ref=e6457]: Impacto
+                - combobox "Impacto" [ref=e6459]:
+                  - option "Alto"
+                  - option "Medio"
+                  - option "Bajo" [selected]
+              - generic [ref=e6460]:
+                - generic [ref=e6461]: Urgencia
+                - combobox "Urgencia" [ref=e6463]:
+                  - option "Alta"
+                  - option "Media" [selected]
+                  - option "Baja"
+              - generic [ref=e6464]:
+                - 'button "Subir en la cola: A un usuario no le llega el correo" [ref=e6465] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: A un usuario no le llega el correo" [disabled] [ref=e6466]': ↓
+            - paragraph [ref=e6467]:
+              - generic [ref=e6468]: En plazo
+              - text: Esperando; responder antes de los 480 min
+        - generic [ref=e6469]:
+          - table "SLA por prioridad (en este ejemplo)" [ref=e6470]:
+            - caption [ref=e6471]: SLA por prioridad (en este ejemplo)
+            - rowgroup [ref=e6472]:
+              - row [ref=e6473]:
+                - columnheader "Prioridad" [ref=e6474]
+                - columnheader "Responder en" [ref=e6475]
+                - columnheader "Resolver en" [ref=e6476]
+            - rowgroup [ref=e6477]:
+              - row [ref=e6478]:
+                - rowheader "P1" [ref=e6479]
+                - cell "15 min" [ref=e6481]
+                - cell "4 h" [ref=e6482]
+              - row [ref=e6483]:
+                - rowheader "P2" [ref=e6484]
+                - cell "30 min" [ref=e6486]
+                - cell "8 h" [ref=e6487]
+              - row [ref=e6488]:
+                - rowheader "P3" [ref=e6489]
+                - cell "2 h" [ref=e6491]
+                - cell "1 d" [ref=e6492]
+              - row [ref=e6493]:
+                - rowheader "P4" [ref=e6494]
+                - cell "8 h" [ref=e6496]
+                - cell "3 d" [ref=e6497]
+              - row [ref=e6498]:
+                - rowheader "P5" [ref=e6499]
+                - cell "1 d" [ref=e6501]
+                - cell "5 d" [ref=e6502]
+          - paragraph [ref=e6503]: Matriz de ejemplo; cada organización define la suya.
+    - 'figure "Caída parcial Probá: Mové un control y mirá qué cambia." [ref=e6504]':
+      - generic [ref=e6505]:
+        - paragraph [ref=e6506]: Caída parcial
+        - paragraph [ref=e6507]: "Probá: Mové un control y mirá qué cambia."
+      - generic [ref=e6509]:
+        - generic [ref=e6510]:
+          - table "Prioridad según impacto y urgencia" [ref=e6511]:
+            - caption [ref=e6512]: Prioridad según impacto y urgencia
+            - rowgroup [ref=e6513]:
+              - row [ref=e6514]:
+                - cell [ref=e6515]
+                - columnheader "Urgencia alta" [ref=e6516]
+                - columnheader "Urgencia media" [ref=e6517]
+                - columnheader "Urgencia baja" [ref=e6518]
+            - rowgroup [ref=e6519]:
+              - row [ref=e6520]:
+                - rowheader "Impacto alto" [ref=e6521]
+                - 'cell "P1 Ticket 3: El ERP no abre en la sucursal Norte Ticket 5: Las cajas de Norte no cobran con tarjeta" [ref=e6522]':
+                  - generic [ref=e6523]: P1
+                  - generic [ref=e6524]:
+                    - 'img "Ticket 3: El ERP no abre en la sucursal Norte" [ref=e6525]': "3"
+                    - 'img "Ticket 5: Las cajas de Norte no cobran con tarjeta" [ref=e6526]': "5"
+                - cell "P2" [ref=e6527]
+                - cell "P3" [ref=e6529]
+              - row [ref=e6531]:
+                - rowheader "Impacto medio" [ref=e6532]
+                - cell "P2" [ref=e6533]
+                - 'cell "P3 Ticket 4: El depósito no ve el stock actualizado" [ref=e6535]':
+                  - generic [ref=e6536]: P3
+                  - 'img "Ticket 4: El depósito no ve el stock actualizado" [ref=e6538]': "4"
+                - 'cell "P4 Ticket 1: El reporte mensual de ventas no carga" [ref=e6539]':
+                  - generic [ref=e6540]: P4
+                  - 'img "Ticket 1: El reporte mensual de ventas no carga" [ref=e6542]': "1"
+              - row [ref=e6543]:
+                - rowheader "Impacto bajo" [ref=e6544]
+                - cell "P3" [ref=e6545]
+                - 'cell "P4 Ticket 2: Un vendedor olvidó su clave del ERP" [ref=e6547]':
+                  - generic [ref=e6548]: P4
+                  - 'img "Ticket 2: Un vendedor olvidó su clave del ERP" [ref=e6550]': "2"
+                - cell "P5" [ref=e6551]
+          - paragraph [ref=e6553]: Matriz de ejemplo; cada organización define la suya.
+        - generic [ref=e6554]:
+          - button "Avanzar el reloj" [ref=e6555] [cursor=pointer]
+          - button "Orden de llegada" [ref=e6556] [cursor=pointer]
+          - button "Ordenar por prioridad" [ref=e6557] [cursor=pointer]
+          - button "Reiniciar" [ref=e6558] [cursor=pointer]
+        - generic [ref=e6559]:
+          - generic [ref=e6560]:
+            - term [ref=e6561]: SLA incumplidos
+            - definition [ref=e6562]: "0"
+          - generic [ref=e6563]:
+            - term [ref=e6564]: Reloj (hh:mm desde las 09:00)
+            - definition [ref=e6565]: 00:00
+        - status [ref=e6566]: Un solo agente. Atiende de arriba hacia abajo y cada ticket consume su tiempo (20, 10, 12, 15, 12 min).
+        - list "Cola de atención" [ref=e6567]:
+          - listitem [ref=e6568]:
+            - generic [ref=e6569]:
+              - generic "Lugar 1 en la cola" [ref=e6570]: "1"
+              - generic [ref=e6571]:
+                - strong [ref=e6572]: El reporte mensual de ventas no carga
+                - generic [ref=e6573]: Llegó 1.º · Se necesita para el cierre de la semana que viene. · 20 min de atención
+              - generic "Prioridad P4" [ref=e6574]: P4
+            - generic [ref=e6575]:
+              - generic [ref=e6576]:
+                - generic [ref=e6577]: Impacto
+                - combobox "Impacto" [ref=e6579]:
+                  - option "Alto"
+                  - option "Medio" [selected]
+                  - option "Bajo"
+              - generic [ref=e6580]:
+                - generic [ref=e6581]: Urgencia
+                - combobox "Urgencia" [ref=e6583]:
+                  - option "Alta"
+                  - option "Media"
+                  - option "Baja" [selected]
+              - generic [ref=e6584]:
+                - 'button "Subir en la cola: El reporte mensual de ventas no carga" [disabled] [ref=e6585]': ↑
+                - 'button "Bajar en la cola: El reporte mensual de ventas no carga" [ref=e6586] [cursor=pointer]': ↓
+            - paragraph [ref=e6587]:
+              - generic [ref=e6588]: En plazo
+              - text: Es el próximo. Esperando; responder antes de los 480 min
+          - listitem [ref=e6589]:
+            - generic [ref=e6590]:
+              - generic "Lugar 2 en la cola" [ref=e6591]: "2"
+              - generic [ref=e6592]:
+                - strong [ref=e6593]: Un vendedor olvidó su clave del ERP
+                - generic [ref=e6594]: Llegó 2.º · Hoy atiende por teléfono. · 10 min de atención
+              - generic "Prioridad P4" [ref=e6595]: P4
+            - generic [ref=e6596]:
+              - generic [ref=e6597]:
+                - generic [ref=e6598]: Impacto
+                - combobox "Impacto" [ref=e6600]:
+                  - option "Alto"
+                  - option "Medio"
+                  - option "Bajo" [selected]
+              - generic [ref=e6601]:
+                - generic [ref=e6602]: Urgencia
+                - combobox "Urgencia" [ref=e6604]:
+                  - option "Alta"
+                  - option "Media" [selected]
+                  - option "Baja"
+              - generic [ref=e6605]:
+                - 'button "Subir en la cola: Un vendedor olvidó su clave del ERP" [ref=e6606] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: Un vendedor olvidó su clave del ERP" [ref=e6607] [cursor=pointer]': ↓
+            - paragraph [ref=e6608]:
+              - generic [ref=e6609]: En plazo
+              - text: Esperando; responder antes de los 480 min
+          - listitem [ref=e6610]:
+            - generic [ref=e6611]:
+              - generic "Lugar 3 en la cola" [ref=e6612]: "3"
+              - generic [ref=e6613]:
+                - strong [ref=e6614]: El ERP no abre en la sucursal Norte
+                - generic [ref=e6615]: Llegó 3.º · Las cajas no pueden facturar ni consultar stock. · 12 min de atención
+              - generic "Prioridad P1" [ref=e6616]: P1
+            - generic [ref=e6617]:
+              - generic [ref=e6618]:
+                - generic [ref=e6619]: Impacto
+                - combobox "Impacto" [ref=e6621]:
+                  - option "Alto" [selected]
+                  - option "Medio"
+                  - option "Bajo"
+              - generic [ref=e6622]:
+                - generic [ref=e6623]: Urgencia
+                - combobox "Urgencia" [ref=e6625]:
+                  - option "Alta" [selected]
+                  - option "Media"
+                  - option "Baja"
+              - generic [ref=e6626]:
+                - 'button "Subir en la cola: El ERP no abre en la sucursal Norte" [ref=e6627] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: El ERP no abre en la sucursal Norte" [ref=e6628] [cursor=pointer]': ↓
+            - paragraph [ref=e6629]:
+              - generic [ref=e6630]: En plazo
+              - text: Esperando; responder antes de los 15 min
+          - listitem [ref=e6631]:
+            - generic [ref=e6632]:
+              - generic "Lugar 4 en la cola" [ref=e6633]: "4"
+              - generic [ref=e6634]:
+                - strong [ref=e6635]: El depósito no ve el stock actualizado
+                - generic [ref=e6636]: Llegó 4.º · Prepara pedidos con datos de ayer. · 15 min de atención
+              - generic "Prioridad P3" [ref=e6637]: P3
+            - generic [ref=e6638]:
+              - generic [ref=e6639]:
+                - generic [ref=e6640]: Impacto
+                - combobox "Impacto" [ref=e6642]:
+                  - option "Alto"
+                  - option "Medio" [selected]
+                  - option "Bajo"
+              - generic [ref=e6643]:
+                - generic [ref=e6644]: Urgencia
+                - combobox "Urgencia" [ref=e6646]:
+                  - option "Alta"
+                  - option "Media" [selected]
+                  - option "Baja"
+              - generic [ref=e6647]:
+                - 'button "Subir en la cola: El depósito no ve el stock actualizado" [ref=e6648] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: El depósito no ve el stock actualizado" [ref=e6649] [cursor=pointer]': ↓
+            - paragraph [ref=e6650]:
+              - generic [ref=e6651]: En plazo
+              - text: Esperando; responder antes de los 120 min
+          - listitem [ref=e6652]:
+            - generic [ref=e6653]:
+              - generic "Lugar 5 en la cola" [ref=e6654]: "5"
+              - generic [ref=e6655]:
+                - strong [ref=e6656]: Las cajas de Norte no cobran con tarjeta
+                - generic [ref=e6657]: Llegó 5.º · Cobran solo en efectivo; hay cola en el local. · 12 min de atención
+              - generic "Prioridad P1" [ref=e6658]: P1
+            - generic [ref=e6659]:
+              - generic [ref=e6660]:
+                - generic [ref=e6661]: Impacto
+                - combobox "Impacto" [ref=e6663]:
+                  - option "Alto" [selected]
+                  - option "Medio"
+                  - option "Bajo"
+              - generic [ref=e6664]:
+                - generic [ref=e6665]: Urgencia
+                - combobox "Urgencia" [ref=e6667]:
+                  - option "Alta" [selected]
+                  - option "Media"
+                  - option "Baja"
+              - generic [ref=e6668]:
+                - 'button "Subir en la cola: Las cajas de Norte no cobran con tarjeta" [ref=e6669] [cursor=pointer]': ↑
+                - 'button "Bajar en la cola: Las cajas de Norte no cobran con tarjeta" [disabled] [ref=e6670]': ↓
+            - paragraph [ref=e6671]:
+              - generic [ref=e6672]: En plazo
+              - text: Esperando; responder antes de los 15 min
+        - generic [ref=e6673]:
+          - table "SLA por prioridad (en este ejemplo)" [ref=e6674]:
+            - caption [ref=e6675]: SLA por prioridad (en este ejemplo)
+            - rowgroup [ref=e6676]:
+              - row [ref=e6677]:
+                - columnheader "Prioridad" [ref=e6678]
+                - columnheader "Responder en" [ref=e6679]
+                - columnheader "Resolver en" [ref=e6680]
+            - rowgroup [ref=e6681]:
+              - row [ref=e6682]:
+                - rowheader "P1" [ref=e6683]
+                - cell "15 min" [ref=e6685]
+                - cell "4 h" [ref=e6686]
+              - row [ref=e6687]:
+                - rowheader "P2" [ref=e6688]
+                - cell "30 min" [ref=e6690]
+                - cell "8 h" [ref=e6691]
+              - row [ref=e6692]:
+                - rowheader "P3" [ref=e6693]
+                - cell "2 h" [ref=e6695]
+                - cell "1 d" [ref=e6696]
+              - row [ref=e6697]:
+                - rowheader "P4" [ref=e6698]
+                - cell "8 h" [ref=e6700]
+                - cell "3 d" [ref=e6701]
+              - row [ref=e6702]:
+                - rowheader "P5" [ref=e6703]
+                - cell "1 d" [ref=e6705]
+                - cell "5 d" [ref=e6706]
+          - paragraph [ref=e6707]: Matriz de ejemplo; cada organización define la suya.
+```
+
+# Test source
+
+```ts
+  12  | });
+  13  | 
+  14  | test('tickets-sucios: quitar duplicados baja las filas de 200 a 192 y quitar faltantes a 186', async ({ page }) => {
+  15  |   const f = fig(page, 'Tickets');
+  16  |   await f.scrollIntoViewIfNeeded();
+  17  |   await expect(lectura(f, 'filas')).toHaveText('200');
+  18  |   await expect(lectura(f, 'faltantes')).toHaveText('6');
+  19  |   await control(f, 'quitar-duplicados').check();
+  20  |   await expect(lectura(f, 'filas')).toHaveText('192');
+  21  |   await control(f, 'quitar-faltantes').check();
+  22  |   await expect(lectura(f, 'filas')).toHaveText('186');
+  23  |   await expect(lectura(f, 'faltantes')).toHaveText('0');
+  24  | });
+  25  | 
+  26  | test('tickets-sucios: corregir unidades sube la media y marcar outliers encuentra los 2 atípicos', async ({ page }) => {
+  27  |   const f = fig(page, 'Tickets');
+  28  |   await f.scrollIntoViewIfNeeded();
+  29  |   const antes = await numero(f, 'media');
+  30  |   await control(f, 'corregir-unidades').check();
+  31  |   expect(await numero(f, 'media')).toBeGreaterThan(antes);
+  32  |   await control(f, 'quitar-duplicados').check();
+  33  |   await control(f, 'quitar-faltantes').check();
+  34  |   await control(f, 'marcar-outliers').check();
+  35  |   await expect(lectura(f, 'atipicos')).toHaveText('2');
+  36  | });
+  37  | 
+  38  | test('tickets-sucios: las vistas tabla, histograma y caja cambian con los botones', async ({ page }) => {
+  39  |   const f = fig(page, 'Tickets');
+  40  |   await f.scrollIntoViewIfNeeded();
+  41  |   await expect(f.locator('.sd-tabla')).toBeVisible();
+  42  |   await expect(f.locator('.sd-tabla tbody tr')).toHaveCount(200);
+  43  |   await expect(f.locator('.sd-tabla tr.sd-dup')).toHaveCount(8);
+  44  |   await control(f, 'vista-histograma').click();
+  45  |   await expect(f.locator('[data-testid="sd-grafico"] svg')).toBeVisible();
+  46  |   await expect(f.getByTestId('sd-fuera')).toContainText('2 valores');
+  47  |   await control(f, 'vista-caja').click();
+  48  |   await expect(f.locator('[data-testid="sd-grafico"] svg')).toBeVisible();
+  49  |   await expect(control(f, 'vista-caja')).toHaveAttribute('aria-pressed', 'true');
+  50  | });
+  51  | 
+  52  | test('latencias: la media queda a la derecha de la mediana y con valores extremos sube más de 200 ms', async ({ page }) => {
+  53  |   const f = fig(page, 'Latencias');
+  54  |   await f.scrollIntoViewIfNeeded();
+  55  |   await expect(lectura(f, 'filas')).toHaveText('500');
+  56  |   const media = await numero(f, 'media');
+  57  |   const mediana = await numero(f, 'mediana');
+  58  |   expect(media).toBeGreaterThan(mediana);
+  59  |   await control(f, 'extremos').check();
+  60  |   await expect(lectura(f, 'filas')).toHaveText('505');
+  61  |   expect((await numero(f, 'media')) - media).toBeGreaterThan(200);
+  62  |   expect(Math.abs((await numero(f, 'mediana')) - mediana)).toBeLessThan(2);
+  63  |   await expect(f.getByTestId('sd-fuera')).toBeVisible();
+  64  | });
+  65  | 
+  66  | test('latencias: el slider de bins cambia la cantidad de barras', async ({ page }) => {
+  67  |   const f = fig(page, 'Latencias');
+  68  |   await f.scrollIntoViewIfNeeded();
+  69  |   const barras = f.locator('[data-testid="sd-grafico"] [aria-label="rect"] rect');
+  70  |   await expect(barras).toHaveCount(20);
+  71  |   await control(f, 'bins').fill('35');
+  72  |   await expect(barras).toHaveCount(35);
+  73  |   await control(f, 'vista-caja').click();
+  74  |   await expect(f.locator('[data-testid="sd-grafico"] svg')).toBeVisible();
+  75  |   await expect(control(f, 'bins')).toHaveCount(0);
+  76  | });
+  77  | 
+  78  | test('anscombe: los cuatro cuartetos dan r = 0,82 y pendiente 0,50', async ({ page }) => {
+  79  |   const f = fig(page, 'Anscombe');
+  80  |   await f.scrollIntoViewIfNeeded();
+  81  |   for (const q of ['I', 'II', 'III', 'IV']) {
+  82  |     await control(f, 'cuarteto').selectOption(q);
+  83  |     await expect(lectura(f, 'r')).toHaveText('0,82');
+  84  |     await expect(lectura(f, 'pendiente')).toHaveText('0,50');
+  85  |     await expect(lectura(f, 'media')).toHaveText('7,50');
+  86  |     await expect(lectura(f, 'filas')).toHaveText('11');
+  87  |   }
+  88  | });
+  89  | 
+  90  | test('anscombe: "ver los cuatro juntos" dibuja los 44 puntos en una grilla de 2 × 2', async ({ page }) => {
+  91  |   const f = fig(page, 'Anscombe');
+  92  |   await f.scrollIntoViewIfNeeded();
+  93  |   await expect(f.locator('[data-testid="sd-grafico"] [aria-label="dot"] circle')).toHaveCount(11);
+  94  |   await control(f, 'cuatro').check();
+  95  |   await expect(f.locator('[data-testid="sd-grafico"] [aria-label="dot"] circle')).toHaveCount(44);
+  96  | });
+  97  | 
+  98  | test('confusora-temperatura: r alto en conjunto y casi nulo dentro de cada franja de temperatura', async ({ page }) => {
+  99  |   const f = fig(page, 'Confusora');
+  100 |   await f.scrollIntoViewIfNeeded();
+  101 |   expect(await numero(f, 'r')).toBeGreaterThan(0.8);
+  102 |   await expect(lectura(f, 'r-frio')).toHaveCount(0);
+  103 |   await control(f, 'colorear').check();
+  104 |   for (const franja of ['frio', 'templado', 'calor']) {
+  105 |     expect(Math.abs(await numero(f, `r-${franja}`))).toBeLessThan(0.2);
+  106 |   }
+  107 |   expect(await numero(f, 'r')).toBeGreaterThan(0.8);
+  108 | });
+  109 | 
+  110 | test('horas-y-notas: agregar un outlier suma un alumno y baja la pendiente', async ({ page }) => {
+  111 |   const f = fig(page, 'Horas y notas');
+> 112 |   await f.scrollIntoViewIfNeeded();
+      |           ^ Error: locator.scrollIntoViewIfNeeded: Test timeout of 45000ms exceeded.
+  113 |   await expect(lectura(f, 'filas')).toHaveText('60');
+  114 |   const antes = await numero(f, 'pendiente');
+  115 |   expect(antes).toBeGreaterThan(0.65);
+  116 |   await control(f, 'outlier').check();
+  117 |   await expect(lectura(f, 'filas')).toHaveText('61');
+  118 |   expect(await numero(f, 'pendiente')).toBeLessThan(antes - 0.1);
+  119 | });
+  120 | 
+  121 | test('ventas-mensuales: cambia de vista y cada una dibuja lo suyo', async ({ page }) => {
+  122 |   const f = fig(page, 'Ventas');
+  123 |   await f.scrollIntoViewIfNeeded();
+  124 |   await expect(lectura(f, 'filas')).toHaveText('72');
+  125 |   await expect(f.locator('[data-testid="sd-grafico"] svg')).toBeVisible(); // barras
+  126 |   await control(f, 'vista-torta').click();
+  127 |   await expect(f.locator('.sd-torta-svg circle')).toHaveCount(3);
+  128 |   await expect(f.locator('.sd-torta-ref li')).toHaveCount(3);
+  129 |   await control(f, 'vista-lineas').click();
+  130 |   await expect(f.locator('[data-testid="sd-grafico"] [aria-label="line"] path')).toHaveCount(3);
+  131 |   await control(f, 'vista-dispersion').click();
+  132 |   await expect(f.locator('[data-testid="sd-grafico"] [aria-label="dot"] circle')).toHaveCount(72);
+  133 | });
+  134 | 
+  135 | test('veredictos: la vista activa muestra su etiqueta y el porqué', async ({ page }) => {
+  136 |   const f = fig(page, 'Elegir el gráfico');
+  137 |   await f.scrollIntoViewIfNeeded();
+  138 |   await expect(f.getByTestId('sd-veredicto')).toContainText('Una torta no muestra');
+  139 |   await expect(lectura(f, 'veredicto')).toHaveText('mal');
+  140 |   await control(f, 'vista-lineas').click();
+  141 |   await expect(lectura(f, 'veredicto')).toHaveText('bien');
+  142 |   await expect(f.getByTestId('sd-veredicto')).toContainText('tendencia');
+  143 | });
+  144 | 
+  145 | test('las lecturas son aria-live y usan coma decimal', async ({ page }) => {
+  146 |   const f = fig(page, 'Latencias');
+  147 |   await f.scrollIntoViewIfNeeded();
+  148 |   await expect(f.locator('dl.sim-lecturas')).toHaveAttribute('aria-live', 'polite');
+  149 |   expect(await lectura(f, 'media').innerText()).toMatch(/^\d+,\d{2}$/);
+  150 | });
+  151 | 
+```

@@ -1,7 +1,10 @@
 ---
-import SimFigura from './SimFigura.astro';
+import SimMarco from './SimMarco.astro';
+import Isla from '../../simuladores/SimFuncion';
 import { validarPropsSimulador } from '../../simuladores/props';
 import { archivoDeTemaDesdeRuta } from '../../lib/errores';
 const props = validarPropsSimulador('SimFuncion', Astro.props, archivoDeTemaDesdeRuta(Astro.url.pathname));
 ---
-<SimFigura nombre="SimFuncion" titulo={props.titulo as string | undefined} consigna={props.consigna as string} props={props} />
+<SimMarco nombre="SimFuncion" titulo={props.titulo as string | undefined} consigna={props.consigna as string}>
+  <Isla client:visible {...(props as any)} />
+</SimMarco>
