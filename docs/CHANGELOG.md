@@ -9,6 +9,7 @@ kit 3.0.0-rc.6: adopción — piezas settings, hook-arranque, hook-escritura, ho
 ### Added
 - v1 publicada en https://jrobilara.github.io/campus-personal/: 24 temas en 6 áreas (284 tarjetas, 131 ejercicios, 61 problemas, 20 casos de guardia, 12 simuladores), cada tema con su informe de verificación en `docs/modulos/v1/verificacion/`.
 - `docs/referencia/GUIA-DEL-PROYECTO.md`: guía completa (qué hay, cómo está hecho, procedimiento para cargar temas, áreas y simuladores, metodología, operación). Queda como base de la futura skill del repo para crear/actualizar módulos (ítem v2 del TODO).
+- Prueba en vivo del cierre: service worker controlando a los ~43 s de la primera visita (160 archivos precacheados; una corrida justo post-deploy no llegó en 60 s) y búsqueda "varianza" sin red devuelve `variables-y-distribuciones`.
 - Test e2e: si falla IndexedDB al registrar un ejercicio, se ve el resultado y el aviso de que no se guardó.
 
 ### Changed

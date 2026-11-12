@@ -412,7 +412,7 @@ Siempre antes: `source ~/.nvm/nvm.sh && nvm use 24`.
 
 ### 6.4 Decisiones pendientes y límites conocidos
 - **Pendiente del usuario (en `docs/TODO.md`):** el precache del HTML. Hoy se precachea todo (~7 MB, ~160 archivos; el HTML pesa ~3,7 MB). Pasarlo a *runtime caching* bajaría a la mitad la primera instalación del service worker, pero se pierde el offline de los temas no visitados.
-- **Primera instalación del service worker:** SW_TIEMPO_PLACEHOLDER
+- **Primera instalación del service worker:** medida en vivo el 2026-11-12 (Chromium headless, primera visita, 160 archivos precacheados): el service worker pasó a controlar la página a los ~43 s. En otra corrida hecha justo después del deploy, a los 60 s todavía iba por 55 de 160 archivos. Es decir: hay que esperar de 40 s a más de 1 min con conexión la primera vez; después, todo anda sin red (búsqueda de "varianza" offline devuelve `variables-y-distribuciones`).
 - **Sin sincronización entre dispositivos** (decisión del SPEC-0): se pasa el progreso con exportar/importar.
 - **Un id publicado no se renombra:** renombrar una carpeta de tema o un id local rompe el progreso guardado (los ids globales son `<area>/<slug>#<id>`).
 - **Solo español y sin login:** decididos en el SPEC-0, no se reabren sin Arquitecto.
