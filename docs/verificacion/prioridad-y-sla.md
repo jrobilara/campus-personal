@@ -3,7 +3,7 @@
 - **Tema:** `soporte/prioridad-y-sla`
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (cierre de ronda 2 contra f7278ac: N1 y N2 cerrados; 1 abierto nuevo, N3)
+- **Veredicto:** APROBADO (1.ª pasada: OBSERVADO; cierre de ronda 3 contra d121bf1: 0 abiertos)
 
 **Método.** Abrí el artículo de la matriz y la guía de severidades de PagerDuty, las páginas de Atlassian (incidentes, SLO/SLA/SLI), los capítulos 4 y el Apéndice A del libro de SRE, el PDF del temario DevOps de PeopleCert (glosario p. 16), el artículo de PeopleCert 2023 y el glosario ITIL 4 Foundation de PeopleCert. Recalculé todas las respuestas numéricas con Python sin mirar las del autor. Contrasté la matriz y los SLA con `SIMULADORES.md` §2.12. No hay frases copiadas (fuentes en inglés, paráfrasis propia).
 
@@ -122,3 +122,13 @@ Verificación de las definiciones nuevas con `atlassian-impacto-urgencia` (✅):
 - Corrección propuesta: pasar la `fuente` del ejercicio a `atlassian-matriz` (o quitar el paréntesis), y ajustar la fila 20 de `FUENTES-soporte.md`.
 
 **Estado del tema: OBSERVADO** (1 abierto: N3).
+
+## Cierre de ronda 3 (2026-11-12, `git diff fb0d7ab..d121bf1`)
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| N3 asignación manual fuera de la fuente citada | CERRADO (d121bf1) | `e-quien-va-primero` pasó a `fuente: atlassian-matriz`. Esa página dice "You can manually assign priority levels, create an impact urgency priority matrix, or use Automation" y trae la matriz que traduce impacto y urgencia en prioridad. `FUENTES-soporte.md` lo refleja en la fila 22 nueva y la fila 20 quedó solo con el caso. |
+
+Hallazgos nuevos: ninguno.
+
+**Estado del tema: APROBADO** (0 abiertos).

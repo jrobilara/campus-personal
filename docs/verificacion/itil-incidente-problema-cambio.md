@@ -119,3 +119,13 @@ Sobre `itil4-capacitacion` (*Student Workbook* ITI4-223 v1.46, © AXELOS 2021, t
 Hallazgos nuevos: ninguno. Las citas a ITIL del tema descansan en el glosario ITIL 4 (`axelos-glosario`), el material de PeopleCert (`peoplecert-glosario`, `peoplecert-practicas-2023`) o el material de capacitación; lo que viene solo de Atlassian (cambio normal, CAB, trámite corto, motivo del renombre, "reemplazan procesos") está rotulado "según Atlassian".
 
 **Estado del tema: APROBADO** (0 abiertos).
+
+## Cierre de ronda 3 (2026-11-12, `git diff fb0d7ab..d121bf1`)
+
+| Punto | Estado | Evidencia |
+|---|---|---|
+| Nota sobre la ubicación de `itil4-capacitacion` (numeración "módulo 5, práctica 5.2.4" no verificable) | CERRADO (d121bf1) | La `ubicacion` y el `loc` de la cita quedaron genéricos ("sección sobre la práctica Change enablement"), sin números que no pude confirmar. El nombre *change enablement* sigue respaldado por el material equivalente que revisé en la ronda 2. `FUENTES-soporte.md` aclara que la ubicación se dejó genérica. |
+
+Hallazgos nuevos: ninguno.
+
+**Estado del tema: APROBADO** (0 abiertos).
