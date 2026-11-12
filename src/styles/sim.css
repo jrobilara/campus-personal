@@ -4,7 +4,7 @@
 .sim-titulo { font: 700 1.02rem/1.2 var(--f-titulo); margin: 0 0 0.25rem; }
 .sim-consigna { margin: 0; font-size: 0.95rem; color: var(--suave); }
 .sim-consigna::before { content: 'Probá: '; font-weight: 700; color: var(--tinta); }
-.sim-cuerpo { padding: 0.9rem 1.1rem 1.1rem; display: grid; gap: 1rem; }
+.sim-cuerpo { padding: 0.9rem 1.1rem 1.1rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
 .sim-lienzo { min-width: 0; width: 100%; }
 .sim-lienzo svg, .sim-lienzo canvas { display: block; width: 100%; height: auto; }
 .sim-lienzo figure { margin: 0; }
@@ -124,7 +124,7 @@
 
 /* ===== SimGrafo (prefijo sg-) ===== */
 .sg { container-type: inline-size; }
-.sg-envuelto { display: grid; gap: 0.9rem; align-items: start; }
+.sg-envuelto { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.9rem; align-items: start; }
 .sg-envuelto.una { max-width: 36rem; margin-inline: auto; width: 100%; }
 @container (min-width: 40rem) { .sg-envuelto:not(.una) { grid-template-columns: minmax(0, 1.7fr) minmax(11rem, 1fr); } }
 .sg-lienzo { background: var(--papel); border: 1px solid var(--linea); border-radius: 10px; padding: 0.3rem; }
@@ -231,7 +231,7 @@
 :root { --sd-c1: #2563eb; --sd-c2: #c2410c; --sd-c3: #0b7285; --sd-c4: #6d3fe0; --sd-c5: #a61e6b; }
 :root[data-theme='dark'] { --sd-c1: #60a5fa; --sd-c2: #ff9b4a; --sd-c3: #3bc9db; --sd-c4: #b8a1ff; --sd-c5: #f783ac; }
 .sd-vistas .sim-botones { gap: 0.4rem; }
-.sd-vista { display: grid; gap: 0.5rem; }
+.sd-vista { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
 .sd-subtitulo { margin: 0 0 0.25rem; font: 650 0.9rem var(--f-titulo); color: var(--suave); }
 .sd-solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .sd-fuera { background: var(--aviso-fondo); color: var(--tinta); border-left: 4px solid var(--aviso); border-radius: 6px; padding: 0.4rem 0.7rem; }
@@ -275,8 +275,8 @@
 .sd-controles .sim-toggle { align-self: center; }
 
 /* ===== SimMaquinaEstados: prefijo sm- ===== */
-.sm-grilla { display: grid; gap: 1rem; }
-.sm-izq, .sm-der { display: grid; gap: 0.8rem; min-width: 0; align-content: start; }
+.sm-grilla { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.sm-izq, .sm-der { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.8rem; min-width: 0; align-content: start; }
 @media (min-width: 880px) { .sm-grilla { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); align-items: start; } }
 .sm-lienzo { background: var(--papel); border: 1px solid var(--linea); border-radius: 10px; padding: 0.4rem; }
 .sm-svg { max-width: 46rem; margin-inline: auto; overflow: visible; }
@@ -301,12 +301,12 @@
 .sm-nota-nodo { font: 600 10.5px var(--f-mono); fill: var(--suave); }
 .sm-anillo { fill: none; stroke: var(--color-area); stroke-width: 2.5; pointer-events: none; }
 .sm-pulso { fill: var(--color-area); stroke: var(--papel); stroke-width: 2; pointer-events: none; }
-.sm-ventana { display: grid; gap: 0.3rem; }
-.sm-pedidos { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; }
+.sm-ventana { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
+.sm-pedidos { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; }
 .sm-pedido { display: block; aspect-ratio: 1 / 1.6; border-radius: 3px; border: 1px solid var(--linea); transition: background 0.15s; }
 .sm-pedido.ok { background: var(--ok); border-color: var(--ok); }
 .sm-pedido.falla { background: var(--mal); border-color: var(--mal); }
-.sm-medidor { display: grid; gap: 0.3rem; }
+.sm-medidor { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
 .sm-medidor .sim-nota { margin: 0; }
 .sm-barra { height: 0.8rem; border-radius: 999px; background: var(--linea); overflow: hidden; }
 .sm-barra i { display: block; height: 100%; background: var(--suave); border-radius: 999px; transition: width 0.1s linear, background 0.3s; }

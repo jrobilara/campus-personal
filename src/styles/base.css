@@ -146,7 +146,7 @@ main { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 .paso-progreso { margin-top: 0.7rem; display: flex; align-items: center; gap: 0.7rem; font-size: 0.85rem; color: var(--suave); }
 
 /* ---------- Página de tema ---------- */
-.tema-grid { display: grid; gap: 0; margin-inline: auto; max-width: 46rem; }
+.tema-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-inline: auto; max-width: 46rem; }
 @media (min-width: 70rem) { .tema-grid { grid-template-columns: 11rem minmax(0, 1fr); gap: 2.5rem; max-width: 60rem; } }
 .indice-tema { display: none; }
 @media (min-width: 70rem) {
@@ -186,7 +186,7 @@ main { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 .formula-donde { color: var(--suave); font-size: 0.95rem; }
 .formula-donde p:last-child { margin-bottom: 0.3rem; }
 .cita { font-size: 0.72em; }
-.cita a { color: var(--color-area); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.cita a { color: var(--color-area); text-decoration: none; font-weight: 600; overflow-wrap: anywhere; }
 .cita a:hover { text-decoration: underline; }
 :target { scroll-margin-top: calc(var(--alto-barra) + 1rem); }
 li:target, .fuente:target { background: var(--marca); color: var(--marca-tinta); }
