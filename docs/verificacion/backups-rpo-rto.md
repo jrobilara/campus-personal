@@ -3,7 +3,7 @@
 - **Tema:** servidores/backups-rpo-rto
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (ronda 2 sobre a7a54c4: solo queda abierto H8, menor)
+- **Veredicto:** APROBADO (ronda 3 sobre 0300f23; primera pasada: OBSERVADO)
 
 Alcance: `tema.mdx`, `practica.yaml` y las filas de `FUENTES-servidores.md`. NIST SP 800-34 Rev. 1 se descargó de nvlpubs.nist.gov y se leyó con `pdftotext` (149 páginas PDF; la numeración impresa va 14 páginas por detrás de la del PDF). *Data Backup Options* (US-CERT, 2012) se leyó del PDF. La guía #StopRansomware se leyó con WebFetch.
 
@@ -120,4 +120,16 @@ Hallazgos abiertos: H4 (reabierto, se resuelve con H6), H6, H7, H8.
 - Qué dice la fuente: CERT.ar, "Somos el Equipo de Respuesta ante Emergencias Informáticas nacional"; alcance: "gestión técnico-administrativa de los incidentes de seguridad informática en el Sector Público Nacional"; formulario "destinado al reporte público de un incidente o posible ciberataque".
 - Corrección propuesta: "su gestión técnica alcanza al Sector Público Nacional; el formulario se describe como de reporte público, y la página no aclara si lo puede usar una organización privada". En el caso, que el servidor sea de "la administración" no dice cuál es el sector: si se quiere mantener el paso "reporto al CERT.ar", conviene aclarar que la organización es del sector público o escribir "reporto al CERT.ar o a la autoridad que corresponda".
 
-Hallazgos abiertos: H8.
+Hallazgos abiertos: H8 (ver ronda 3).
+
+## Cierre ronda 3 — diff 723799c..0300f23
+
+`npm run build` en Node 24: verde.
+
+| Hallazgo | Estado | Verificación |
+|---|---|---|
+| H8 (alcance de CERT.ar) | CERRADO (0300f23) | Se quitó "así que también le sirve a una pyme". El Formal ahora dice que el reporte va a "la autoridad o CSIRT que corresponda a tu organización" y que, en el sector público nacional argentino, es el CERT.ar, que gestiona los incidentes de ese sector y tiene un formulario para el reporte público de un incidente o posible ciberataque y un correo de contacto. Eso es lo que dice la página (alcance: "Sector Público Nacional"; formulario "destinado al reporte público de un incidente o posible ciberataque"; correo reportes@cert.ar). La opción del caso quedó genérica ("a la autoridad o CSIRT que corresponda a mi organización") y FUENTES fila 19 coincide. No quedan menciones a pyme respecto de CERT.ar. |
+
+Nota sin impacto: `fuentes[cert-ar].titulo` ("Centro Nacional de Respuesta a Incidentes Informáticos") es el nombre que da el autor; la página se presenta como "Equipo de Respuesta ante Emergencias Informáticas nacional CERT.ar". Si se quiere ajustar, usar el nombre de la página.
+
+Hallazgos abiertos: ninguno.
