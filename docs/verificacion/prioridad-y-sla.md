@@ -3,7 +3,7 @@
 - **Tema:** `soporte/prioridad-y-sla`
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (1.ª pasada: OBSERVADO; re-verificación 2026-11-12 contra 0c54241: 5 cerrados, 2 abiertos nuevos)
+- **Veredicto:** OBSERVADO (cierre de ronda 2 contra f7278ac: N1 y N2 cerrados; 1 abierto nuevo, N3)
 
 **Método.** Abrí el artículo de la matriz y la guía de severidades de PagerDuty, las páginas de Atlassian (incidentes, SLO/SLA/SLI), los capítulos 4 y el Apéndice A del libro de SRE, el PDF del temario DevOps de PeopleCert (glosario p. 16), el artículo de PeopleCert 2023 y el glosario ITIL 4 Foundation de PeopleCert. Recalculé todas las respuestas numéricas con Python sin mirar las del autor. Contrasté la matriz y los SLA con `SIMULADORES.md` §2.12. No hay frases copiadas (fuentes en inglés, paráfrasis propia).
 
@@ -105,3 +105,20 @@ Verificación de las definiciones nuevas con `atlassian-impacto-urgencia` (✅):
 - Corrección propuesta: "…y la prioridad se calcula a partir del impacto y la urgencia, no de quién reclama más fuerte".
 
 **Estado del tema: OBSERVADO** (2 abiertos: N1, N2).
+
+## Cierre de ronda 2 (2026-11-12, `git diff ad4fcce..f7278ac`)
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| N1 ubicación y URL de la matriz | CERRADO (f7278ac) | Nueva fuente `atlassian-matriz` con la URL `…/docs/how-do-i-create-a-matrix-using-impact-and-urgency-values/`. Abrí la página: contiene la matriz de ejemplo (impacto: Extensive, Significant, Moderate, Minor; urgencia: Critical, High, Medium, Low, Lowest) y la nota "the priority values listed here are just examples". La `<Cita>` del `<Ojo>` y el problema `p-armar-matriz` apuntan ahora a esa página, y `atlassian-impacto-urgencia` queda con su propia página de definiciones. |
+| N2 "solo con esos dos factores" | CERRADO (f7278ac), con una observación nueva (N3) | La explicación dice "según Atlassian la prioridad se calcula en base a impacto y urgencia (aunque también se puede ajustar a mano)". La página de la matriz dice: "You can manually assign priority levels, create an impact urgency priority matrix, or use Automation". |
+
+### Hallazgo nuevo (abierto)
+
+**N3: la parte "se puede ajustar a mano" no está en la fuente que cita el ejercicio.**
+- Archivo y campo: `practica.yaml`, `ejercicios[4]` (`e-quien-va-primero`): `fuente: atlassian-impacto-urgencia` y `opciones[1].explicacion` ("…(aunque también se puede ajustar a mano)…"). Lo mismo en `FUENTES-soporte.md`, fila 20 (fuente `atlassian-impacto-urgencia`).
+- Qué está mal: la asignación manual de la prioridad aparece en la página de la matriz (`atlassian-matriz`), no en la de definiciones que el ejercicio cita; en esa no figura.
+- Qué dice la fuente: `atlassian-matriz`: "You can manually assign priority levels, create an impact urgency priority matrix, or use Automation to assign priorities".
+- Corrección propuesta: pasar la `fuente` del ejercicio a `atlassian-matriz` (o quitar el paréntesis), y ajustar la fila 20 de `FUENTES-soporte.md`.
+
+**Estado del tema: OBSERVADO** (1 abierto: N3).

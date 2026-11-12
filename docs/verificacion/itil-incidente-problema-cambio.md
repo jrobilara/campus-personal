@@ -3,7 +3,7 @@
 - **Tema:** `soporte/itil-incidente-problema-cambio`
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (1.ª pasada: OBSERVADO; re-verificación 2026-11-12 contra 0c54241: 6 cerrados, 1 abierto nuevo)
+- **Veredicto:** APROBADO (1.ª pasada y re-verificación: OBSERVADO; cierre de ronda 2 contra f7278ac: 0 abiertos)
 
 **Método.** Abrí cada fuente citada: PDF del temario DevOps de PeopleCert (con `pdftotext`, glosario §8, pp. 14-16 de 20), artículo de PeopleCert 2023, las cinco guías de Atlassian y el glosario de ITIL 4 Foundation de PeopleCert (Official Training Materials, copia en igen.nl) más el glosario público de AXELOS de enero de 2019 (copia en maxpert.de) para contrastar las definiciones atribuidas a ITIL. Recalculé el único número con Python. Contrasté los estados del simulador con `SIMULADORES.md` §2.9. No encontré frases copiadas: las fuentes están en inglés y el texto es paráfrasis propia en castellano (comprobé incidente, problema, gestión de incidentes, de problemas, control de cambios y gestión del conocimiento contra el glosario).
 
@@ -107,3 +107,15 @@ Releí el diff completo del tema y de `FUENTES-soporte.md` y contrasté cada def
 - Corrección propuesta: no atribuir esa entrada a la edición 2019. Decir que la edición de 2019 del glosario y el temario DevOps la llaman *change control* y que el glosario ITIL 4 Foundation actual de PeopleCert la llama *change enablement* (y rotular la fuente de esa entrada como glosario de PeopleCert), o aclarar en `edicion` que `axelos-glosario` agrupa el glosario de AXELOS 2019 y su versión actualizada por PeopleCert.
 
 **Estado del tema: OBSERVADO** (1 abierto: N1).
+
+## Cierre de ronda 2 (2026-11-12, `git diff ad4fcce..f7278ac`)
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| N1 *change enablement* atribuido al glosario de AXELOS 2019 | CERRADO (f7278ac) | `axelos-glosario` ahora cita la entrada *change control practice*, que existe en el glosario público de AXELOS de enero de 2019 con la definición del tema (leído en la copia de maxpert.de). El nombre *change enablement* pasó a la fuente nueva `itil4-capacitacion`. La tarjeta `t-change-enablement` se reformuló ("el glosario de 2019 llamaba *change control*, ¿cómo se llama en el material de ITIL 4 de 2021?") y su respuesta es única. |
+
+Sobre `itil4-capacitacion` (*Student Workbook* ITI4-223 v1.46, © AXELOS 2021, tipo libro sin URL): no pude abrir esa copia puntual, así que no verifiqué la numeración "módulo 5, práctica 5.2.4". Sí confirmé con material equivalente que el nombre y la definición son los que el tema afirma: el glosario ITIL 4 Foundation de PeopleCert (Official Training Materials) trae "change enablement practice" con exactamente la definición de *change control* de 2019; el ficha del curso acreditado con el mismo código ITI4-223 lista "Change enablement" entre las prácticas; la guía de práctica de AXELOS "Change Enablement" lleva fecha 9 de enero de 2020 y la certificación de AXELOS se llama "ITIL 4 Practitioner: Change Enablement". La afirmación "el material de 2021 la llama *change enablement*" es verdadera. El autor declara en `FUENTES-soporte.md` que leyó el workbook en una copia de terceros sin enlazarla.
+
+Hallazgos nuevos: ninguno. Las citas a ITIL del tema descansan en el glosario ITIL 4 (`axelos-glosario`), el material de PeopleCert (`peoplecert-glosario`, `peoplecert-practicas-2023`) o el material de capacitación; lo que viene solo de Atlassian (cambio normal, CAB, trámite corto, motivo del renombre, "reemplazan procesos") está rotulado "según Atlassian".
+
+**Estado del tema: APROBADO** (0 abiertos).
