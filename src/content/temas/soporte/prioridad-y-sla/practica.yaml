@@ -111,7 +111,7 @@ ejercicios:
         explicacion: Lo justo es lo que daña menos al negocio. Atender por llegada puede dejar parada una sucursal entera detrás de tickets que pueden esperar.
       - texto: Ninguno, hasta que el gerente y la sucursal se pongan de acuerdo.
         explicacion: Priorizar es tu trabajo. Esperar un acuerdo entre usuarios solo agrega demora.
-    fuente: atlassian-impacto-urgencia
+    fuente: atlassian-matriz
   - id: e-vf-sla-cumplido-satisfecho
     tipo: verdadero-falso
     enunciado: Si cerraste todos los tickets dentro del SLA, el servicio al usuario fue bueno.
