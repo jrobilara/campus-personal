@@ -3,7 +3,7 @@
 - **Tema:** `soporte/prioridad-y-sla`
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** OBSERVADO (1.ª pasada: OBSERVADO; re-verificación 2026-11-12 contra 0c54241: 5 cerrados, 2 abiertos nuevos)
 
 **Método.** Abrí el artículo de la matriz y la guía de severidades de PagerDuty, las páginas de Atlassian (incidentes, SLO/SLA/SLI), los capítulos 4 y el Apéndice A del libro de SRE, el PDF del temario DevOps de PeopleCert (glosario p. 16), el artículo de PeopleCert 2023 y el glosario ITIL 4 Foundation de PeopleCert. Recalculé todas las respuestas numéricas con Python sin mirar las del autor. Contrasté la matriz y los SLA con `SIMULADORES.md` §2.12. No hay frases copiadas (fuentes en inglés, paráfrasis propia).
 
@@ -75,3 +75,33 @@
 - Qué está mal: se afirma como categórica.
 - Qué dice la fuente: SRE cap. 4: "if there is no explicit consequence, then you are almost certainly looking at an SLO".
 - Corrección propuesta: "casi seguro es un SLO".
+
+## Re-verificación (2026-11-12, `git diff abd28de..0c54241`)
+
+Releí el diff completo del tema y de `FUENTES-soporte.md`. Contrasté el SLA con el glosario ITIL 4 Foundation de PeopleCert (igen.nl) y el de AXELOS 2019 (maxpert.de), y abrí las tres páginas de soporte de Atlassian (Jira Service Management Cloud) que ahora respaldan impacto, urgencia y la matriz. Verifiqué con `grep` que `pagerduty-matriz` ya no aparece en ninguna `<Cita>` ni `fuente:` (solo en el frontmatter como `blog` con `verMas: true`, y mencionada en `FUENTES-soporte.md` como "no se cita"). No pude correr `npm run build` (proceso terminado por el sistema, código 137).
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 procedencia de la tabla P1-P5 | CERRADO (0c54241) | El `<Ojo>` dice ahora que la tabla, los niveles P1 a P5 y los plazos son un ejemplo armado para el tema y "no son norma de ITIL ni de PagerDuty". La tarjeta ya no dice "ITIL". La cita de Atlassian respalda solo lo que dice la página: otra matriz (impacto en 4 niveles contra urgencia en 5) con la nota "the priority values listed here are just examples". |
+| H2 SLA según glosario ITIL 4 | CERRADO (0c54241) | Texto y tarjeta: "acuerdo documentado entre un proveedor de servicio y un cliente que identifica los servicios requeridos y el nivel de servicio esperado" = glosario (ambas copias). |
+| H3 clasificación de pagerduty-matriz | CERRADO (0c54241) | Pasó a `tipo: blog`, `verMas: true`, sin citas. Las citas a PagerDuty que quedan son a `response.pagerduty.com` (`pagerduty-severidad`). |
+| H4 incoherencia del caso del gerente | CERRADO (0c54241) | Opción 1 "Atiendo por orden de llegada, sin priorizar" y desenlace coherentes con su consecuencia. |
+| H5 "casi seguro es un SLO" | CERRADO (0c54241) | Tema y tarjeta lo dicen con el matiz de SRE. |
+
+Verificación de las definiciones nuevas con `atlassian-impacto-urgencia` (✅): prioridad = a partir de impacto y urgencia, "ensures requests with the highest priority are resolved first"; impacto = efecto sobre los procesos del negocio según la calidad del servicio; urgencia = tiempo hasta que el incidente afecta de forma significativa al negocio, con el ejemplo del fin del año financiero. Nota sin hallazgo: es documentación de producto (Jira Service Management) y el tema la usa como definición general; no la atribuye a ITIL.
+
+### Hallazgos nuevos (abiertos)
+
+**N1: la `ubicacion` de `atlassian-impacto-urgencia` y del problema `p-armar-matriz` nombra páginas que la `url` no es.**
+- Archivos y campos: `practica.yaml`, `problemas[1]` (`p-armar-matriz`): `ubicacion` nombra "How should my team define impact and urgency of requests?" y "Create an impact urgency priority matrix", pero `url` apunta a "How impact and urgency are used to calculate priority". `tema.mdx`: la `<Cita ... loc="Create an impact urgency priority matrix">` y la `ubicacion` del frontmatter apuntan a una página con otra dirección.
+- Qué está mal: el lector que abre la `url` no cae en las páginas que la `ubicacion` dice. Además la página "Create an impact urgency priority matrix" tiene otra dirección, que no figura en ningún campo.
+- Qué dice la fuente: las tres páginas existen y están enlazadas entre sí en la documentación de Atlassian: `…/docs/how-impact-and-urgency-are-used-to-calculate-priority/`, `…/docs/how-should-my-team-define-impact-and-urgency-of-requests/` y `…/docs/how-do-i-create-a-matrix-using-impact-and-urgency-values/`. La página de la matriz verifica lo que el tema dice (4 niveles de impacto, 5 de urgencia, valores solo de ejemplo). La de "define impact and urgency" recomienda definir los términos en la base de conocimiento y consultar a los interesados.
+- Corrección propuesta: en el problema, poner `url` de la página que da el material de la tarea (la de la matriz) y ajustar `ubicacion` a esa página; en el frontmatter, agregar la dirección de la página de la matriz a la `ubicacion` o citarla como fuente aparte.
+
+**N2: "la prioridad se calcula solo con esos dos factores" excede lo que dice la fuente.**
+- Archivo y campo: `practica.yaml`, `ejercicios[4]` (`e-quien-va-primero`), `opciones[1].explicacion` (la opción "El gerente primero, porque es el que más insiste").
+- Qué está mal: afirma que la prioridad se calcula "solo" con impacto y urgencia.
+- Qué dice la fuente: Atlassian: "Priority is based on impact and urgency", y la documentación admite asignar la prioridad a mano o por automatización. No dice que sea la única entrada.
+- Corrección propuesta: "…y la prioridad se calcula a partir del impacto y la urgencia, no de quién reclama más fuerte".
+
+**Estado del tema: OBSERVADO** (2 abiertos: N1, N2).

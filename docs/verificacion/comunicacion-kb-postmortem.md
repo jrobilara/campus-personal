@@ -3,7 +3,7 @@
 - **Tema:** `soporte/comunicacion-kb-postmortem`
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (1.ª pasada: OBSERVADO; re-verificación 2026-11-12 contra 0c54241: 3 cerrados, ninguno abierto)
 
 **Método.** Abrí los capítulos 14 y 15 del libro de SRE de Google y el capítulo 10 del *Workbook* (sre.google), la guía de respuesta a incidentes de PagerDuty (`response.pagerduty.com`: Postmortem Process y During an Incident), las páginas de Atlassian (comunicación y gestión del conocimiento), la página "The Solve Loop" de KCS v6 y el glosario del temario de PeopleCert (p. 15). Recalculé el único número con Python sin mirar el del autor. No hay frases copiadas: todas las fuentes están en inglés y el texto es paráfrasis propia. No hay comillas en inglés en el tema.
 
@@ -71,3 +71,17 @@
 - Qué está mal: la página citada describe las cuatro prácticas, pero no lista los campos del artículo. KCS v6 los define en "The KCS Article" y en la Técnica 2.1 como Issue, Environment, Resolution y Cause (la causa es opcional).
 - Qué dice la fuente: Técnica 2.1 "Use A Simple Template" y "The KCS Article" (`library.serviceinnovation.org/KCS/KCS_v6/KCS_v6_Practices_Guide/030/030/020/010` y `/030/020`).
 - Corrección propuesta: apuntar `ubicacion` y `url` a la Técnica 2.1, y redactar el enunciado con los campos de KCS (asunto o *issue* con las palabras del usuario, entorno, resolución y causa si se conoce), aclarando que el orden y los nombres son los de KCS.
+
+## Re-verificación (2026-11-12, `git diff abd28de..0c54241`)
+
+Releí el diff del tema, de la práctica y de `FUENTES-soporte.md`, y abrí de nuevo las páginas de Atlassian (comunicación) y KCS (Técnica 2.1). No pude correr `npm run build` (proceso terminado por el sistema, código 137).
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 generalización sobre el enojo | CERRADO (0c54241) | La frase de la idea ahora es "mantener informados a los usuarios baja mucho su reacción negativa", con cita a Atlassian ("much less negative reaction"). La analogía dice "muchas veces el enojo viene de la falta de información" (queda como analogía) y la lección empieza con "Según Atlassian…". La segunda mitad de la frase de la idea (la base de conocimiento evita resolver dos veces) cita KCS, que dice que reduce el retrabajo. |
+| H2 regla de la hora | CERRADO (0c54241) | La viñeta se limita a clientes externos con uso afectado, el frente de la tarjeta dice "clientes externos" y el texto aclara que extenderla a usuarios internos es criterio del tema, no de Atlassian. Coincide con la página ("External customers… never going more than one hour"). |
+| H3 plantilla KCS | CERRADO (0c54241) | El texto y el enunciado usan *issue*, *environment*, *resolution*, *cause* (opcional) y metadatos, con cita a la Técnica 2.1; `ubicacion` y `url` del problema apuntan a `…/030/030/020/010`. Verifiqué la página: define exactamente esos campos y marca la causa como opcional. |
+
+Hallazgos nuevos: ninguno. Sin otros cambios en el diff que alteren una afirmación de la tabla de la primera pasada.
+
+**Estado del tema: APROBADO** (0 abiertos).

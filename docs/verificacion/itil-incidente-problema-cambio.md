@@ -3,7 +3,7 @@
 - **Tema:** `soporte/itil-incidente-problema-cambio`
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** OBSERVADO (1.ª pasada: OBSERVADO; re-verificación 2026-11-12 contra 0c54241: 6 cerrados, 1 abierto nuevo)
 
 **Método.** Abrí cada fuente citada: PDF del temario DevOps de PeopleCert (con `pdftotext`, glosario §8, pp. 14-16 de 20), artículo de PeopleCert 2023, las cinco guías de Atlassian y el glosario de ITIL 4 Foundation de PeopleCert (Official Training Materials, copia en igen.nl) más el glosario público de AXELOS de enero de 2019 (copia en maxpert.de) para contrastar las definiciones atribuidas a ITIL. Recalculé el único número con Python. Contrasté los estados del simulador con `SIMULADORES.md` §2.9. No encontré frases copiadas: las fuentes están en inglés y el texto es paráfrasis propia en castellano (comprobé incidente, problema, gestión de incidentes, de problemas, control de cambios y gestión del conocimiento contra el glosario).
 
@@ -84,3 +84,26 @@
 - Archivo y campo: `practica.yaml`, `casos[1]` (`c-actualizacion-viernes-sin-registro`), `leccion`: "lo primero es revertirlo"; `fuente: atlassian-cambios`.
 - Qué está mal: atlassian-cambios respalda el cambio de emergencia con trámite corto, no "revertir primero". Lo que respalda investigar el último cambio es SRE cap. 12 ("What touched it last"), que no está en las fuentes de este tema. El libro dice que los cambios recientes son "un buen lugar para empezar", no que siempre se revierta.
 - Corrección propuesta: suavizar a "si algo falla justo después de un cambio, empezá por ahí: revertirlo, con registro y avisando, suele ser la mitigación más rápida", y respaldarlo con atlassian-problemas ("rolling back ... may get the service operating again") o sumar google-sre-troubleshooting a las fuentes del tema.
+
+## Re-verificación (2026-11-12, `git diff abd28de..0c54241`)
+
+Releí el diff completo del tema y de `FUENTES-soporte.md` y contrasté cada definición atribuida a ITIL 4 con el glosario ITIL 4 Foundation de PeopleCert (copia igen.nl) y el glosario público de AXELOS de enero de 2019 (copia maxpert.de). Releí también PagerDuty "Steps for Incident Commander", SRE cap. 12 y el artículo de PeopleCert 2023. No pude correr `npm run build` (el proceso fue terminado por el sistema, código 137); no verifiqué el esquema de la fuente `axelos-glosario` (tipo libro sin URL).
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 incidente | CERRADO (0c54241) | Ahora "interrupción no planificada de un servicio o una reducción de su calidad", cita `axelos-glosario`. Coincide en sentido con ambos glosarios. |
+| H2 definiciones solo-Atlassian | CERRADO (0c54241) | Cambio, estándar, emergencia y solicitud de servicio salen de `axelos-glosario` y coinciden en sentido con el glosario ("addition, modification, or removal…"; "low-risk, pre-authorized… well understood and fully documented"; "must be introduced as soon as possible"; "request from a user or a user's authorized representative that initiates a service action…"). Las 34 prácticas y "van más allá del proceso" se respaldan con PeopleCert 2023 (verificado). Normal, CAB, trámite corto y "reemplazan procesos" quedan rotulados "según Atlassian". Ninguna cita a ITIL descansa solo en Atlassian. |
+| H3 error conocido | CERRADO (0c54241) | "Problema que ya fue analizado pero todavía no se resolvió" = glosario; la definición v3 queda rotulada como clásica de ITIL v3 vía Atlassian (confirmado en la página). |
+| H4 tabla del problema | CERRADO (0c54241) | "La causa se eliminó (si no se puede, el problema sigue abierto como error conocido…)", coherente con Atlassian y con el YAML. |
+| H5 tarjeta del renombre | CERRADO (0c54241) | El dorso dice "según Atlassian… se interpretaba como controlar a los equipos", acorde a la cita de AXELOS que reproduce Atlassian. |
+| H6 lección del viernes | CERRADO (0c54241) | Lección suavizada ("empezá por ahí… suele ser la mitigación más rápida"); `fuente: pagerduty-durante` (verificado: "Bad Deployment: Roll it back") y SRE "What touched it last" en el cuerpo. |
+
+### Hallazgos nuevos (abiertos)
+
+**N1: *change enablement* atribuido a la edición 2019 del glosario de AXELOS, que usa *change control*.**
+- Archivos y campos: `tema.mdx`, frontmatter `fuentes` (`axelos-glosario`, `edicion: AXELOS / TSO, 2019`, `ubicacion` con "change enablement"); Formal, párrafo "La práctica que administra los cambios se llama habilitación del cambio (*change enablement*) en el glosario de ITIL 4"; `FUENTES-soporte.md`, fila 12.
+- Qué está mal: la entrada *change enablement practice* no está en el glosario público de AXELOS de enero de 2019. Ahí figura "change control practice", igual que en el temario DevOps de septiembre de 2019. La entrada con ese nombre está en el glosario ITIL 4 Foundation de PeopleCert (Official Training Materials, edición posterior). Citarla a "AXELOS / TSO, 2019" es inexacto para esa entrada.
+- Qué dice la fuente: AXELOS 2019, "change control practice: the practice of ensuring that risks are properly assessed, authorizing changes to proceed and managing a change schedule…"; PeopleCert Official Training Materials, "change enablement practice", misma definición.
+- Corrección propuesta: no atribuir esa entrada a la edición 2019. Decir que la edición de 2019 del glosario y el temario DevOps la llaman *change control* y que el glosario ITIL 4 Foundation actual de PeopleCert la llama *change enablement* (y rotular la fuente de esa entrada como glosario de PeopleCert), o aclarar en `edicion` que `axelos-glosario` agrupa el glosario de AXELOS 2019 y su versión actualizada por PeopleCert.
+
+**Estado del tema: OBSERVADO** (1 abierto: N1).

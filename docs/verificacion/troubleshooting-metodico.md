@@ -3,7 +3,7 @@
 - **Tema:** `soporte/troubleshooting-metodico`
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO
+- **Veredicto:** APROBADO (sin cambios en re-verificación 2026-11-12; el tema no cambió entre abd28de y 0c54241)
 
 **Método.** Abrí el capítulo 12 del libro de SRE de Google (sre.google), el PDF de la Recomendación UIT-T X.200 (47 páginas, con `pdftotext`), el RFC 1122, el capítulo de muestra de Cisco Press y las páginas de manual de `ping` y `dig` (Ubuntu 24.04). Recalculé las cuentas de bisección con Python sin mirar las del autor. Contrasté el simulador con `SIMULADORES.md` §2.11. No hay frases copiadas: las fuentes están en inglés y el texto es paráfrasis propia.
 
@@ -51,3 +51,9 @@
 ninguno.
 
 Notas no bloqueantes (ya en la tabla): filas 16 y 23. La fila 23 es una sugerencia de redacción, no un error de contenido.
+
+## Re-verificación (2026-11-12, `git diff abd28de..0c54241`)
+
+El tema (`tema.mdx` y `practica.yaml`) no cambió entre abd28de y 0c54241. Los dos cambios del autor que lo rozan (la fuente `google-sre-troubleshooting` que ahora también usa el tema 1 y el registro de `FUENTES-soporte.md`) no alteran ninguna afirmación de este informe. Sin hallazgos abiertos; las notas de las filas 16 y 23 siguen siendo sugerencias no bloqueantes.
+
+**Estado del tema: APROBADO** (0 abiertos).
