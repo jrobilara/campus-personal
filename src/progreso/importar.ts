@@ -4,6 +4,8 @@ import { esquemaProgresoV1, progresoVacio, VERSION_ACTUAL, type ProgresoV1 } fro
 import type { Catalogo } from './tipos';
 
 export const CLAVE_PROGRESO = 'campus:progreso';
+/** Copia del progreso guardado cuando no pasó el esquema, hecha antes de pisarlo con una escritura nueva. */
+export const CLAVE_PROGRESO_DANADO = 'campus:progreso-danado';
 export const CLAVE_ANTES = 'campus:progreso-antes-de-importar';
 
 export interface Almacen {
@@ -112,6 +114,7 @@ export async function deshacerImportacion(almacen: Almacen): Promise<boolean> {
 export async function reiniciarProgreso(almacen: Almacen): Promise<void> {
   await almacen.borrar(CLAVE_PROGRESO);
   await almacen.borrar(CLAVE_ANTES);
+  await almacen.borrar(CLAVE_PROGRESO_DANADO);
 }
 
 function idsDelCatalogo(c: Catalogo) {

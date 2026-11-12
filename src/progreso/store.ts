@@ -4,7 +4,7 @@ import { useSyncExternalStore } from 'react';
 import { esquemaProgresoV1, progresoVacio, type ProgresoV1 } from './esquema';
 import { calificarSync, crearPlanificador, type Nota } from './fsrs';
 import { diaLocal } from './fechas';
-import { CLAVE_PROGRESO, type Almacen } from './importar';
+import { CLAVE_PROGRESO, CLAVE_PROGRESO_DANADO, type Almacen } from './importar';
 
 export const almacenIdb: Almacen = {
   leer: (c) => get(c),
@@ -25,10 +25,21 @@ const interpretar = (crudo: unknown): ProgresoV1 => {
   return r.data;
 };
 
+/** Se incrementa cuando termina una escritura: una lectura que arrancó antes ya trae datos viejos y no puede pisar la caché. */
+let generacion = 0;
+
 export async function recargar(): Promise<ProgresoV1> {
-  cache = interpretar(await get(CLAVE_PROGRESO));
+  const g = generacion;
+  try {
+    const leido = interpretar(await get(CLAVE_PROGRESO));
+    if (g === generacion) cache = leido;
+  } catch (e) {
+    // IndexedDB bloqueado o sin espacio: sin esto la promesa queda rechazada para siempre y las islas se quedan en "Cargando…".
+    console.warn('[progreso] no pude leer el progreso guardado', e);
+    cache ??= progresoVacio();
+  }
   notificar();
-  return cache;
+  return cache!;
 }
 function asegurarCarga() {
   if (!cache && !cargando) cargando = recargar().then(() => { cargando = null; });
@@ -41,12 +52,21 @@ export async function leerProgreso(): Promise<ProgresoV1> {
 
 /** Escritura atómica (transacción de idb-keyval): dos pestañas no se pisan a mitad de una escritura. */
 export async function mutar(fn: (p: ProgresoV1) => ProgresoV1): Promise<ProgresoV1> {
+  await resguardarSiEstaDanado();
   let nuevo = progresoVacio();
   await update<unknown>(CLAVE_PROGRESO, (viejo) => { nuevo = fn(interpretar(viejo)); return nuevo; });
+  generacion++;
   cache = nuevo;
   notificar();
   canal?.postMessage('cambio');
   return nuevo;
+}
+
+/** Si lo guardado no pasa el esquema, `interpretar` lo trata como vacío y la próxima escritura lo borraría: antes se guarda una copia aparte. */
+async function resguardarSiEstaDanado() {
+  const guardado = await get(CLAVE_PROGRESO);
+  if (guardado === undefined || esquemaProgresoV1.safeParse(guardado).success) return;
+  if ((await get(CLAVE_PROGRESO_DANADO)) === undefined) await set(CLAVE_PROGRESO_DANADO, guardado);
 }
 
 /** Después de importar, deshacer o reiniciar: vuelve a leer y avisa a las demás pestañas. */
