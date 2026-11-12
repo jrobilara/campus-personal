@@ -56,3 +56,20 @@ test('todas las URLs del precache existen como archivo en el sitio publicado', a
   });
   expect(malas, 'URLs del precache sin archivo (GitHub Pages responde 404 y el service worker no se instala)').toEqual([]);
 });
+
+// El buscador necesita, además del índice, los wasm (.pagefind) y el filtro (.pf_filter): si no están en el precache, sin red no busca.
+test('offline: el buscador sigue encontrando "varianza" y el precache trae el wasm y el filtro de Pagefind', async ({ page, context }) => {
+  await page.goto('');
+  const sw = await (await page.request.get('sw.js')).text();
+  expect(sw).toMatch(/pagefind\/wasm\.[a-z]+\.pagefind/);
+  expect(sw).toMatch(/pagefind\/filter\/[^`"]+\.pf_filter/);
+
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller), { timeout: 15_000 }).toBe(true);
+
+  await context.setOffline(true);
+  await page.goto('buscar/');
+  await page.getByRole('searchbox').fill('varianza');
+  await expect(page.locator('[data-testid=resultados] a[href$="probabilidad-estadistica/variables-y-distribuciones/"]')).toBeVisible();
+});

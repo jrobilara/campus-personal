@@ -39,9 +39,14 @@ export default defineConfig({
       includeManifestIcons: false, // los íconos ya entran por globPatterns (svg y png): evita la entrada duplicada del precache
       maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       generateSW: {
-        globPatterns: ['**/*.{html,js,css,svg,png,woff,woff2,json,wasm,pf_meta,pf_index,pf_fragment}'],
+        // .pagefind = los wasm del buscador y .pf_filter = su filtro por área: sin ellos el buscador no anda offline.
+        // Sin .woff: todo navegador con service worker lee woff2 (KaTeX lo declara primero) y el .woff duplicaba ~300 KB.
+        globPatterns: ['**/*.{html,js,css,svg,png,woff2,json,wasm,pagefind,pf_meta,pf_filter,pf_index,pf_fragment}'],
         // 404.html se precachearía como `404/`, una URL que en GitHub Pages responde 404: el precache falla y el service worker nunca se instala.
-        globIgnores: ['404.html'],
+        // La interfaz lista de Pagefind no se usa (el buscador es propio): fuera del precache.
+        globIgnores: ['404.html', 'pagefind/pagefind-*ui*.{js,css}', 'pagefind/pagefind-highlight.js'],
+        // pagefind.js pide `pagefind-entry.json?ts=<reloj>` (anti-caché): sin ignorar `ts`, el precache no lo reconoce y sin red el buscador no arranca.
+        ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^ts$/],
         navigateFallback: null,
       },
     }),
