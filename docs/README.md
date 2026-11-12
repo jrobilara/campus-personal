@@ -2,6 +2,7 @@
 
 - Qué es este proyecto y qué no hace: [`NORTE.md`](NORTE.md)
 - Cómo se conecta por dentro y con otras apps: [`MAPA.md`](MAPA.md)
+- Cómo está hecho todo, qué hay, cómo se cargan temas y módulos y con qué metodología: [`referencia/GUIA-DEL-PROYECTO.md`](referencia/GUIA-DEL-PROYECTO.md)
 - Qué carpeta es cuál y qué manda sobre qué: el mapa de documentación del [`CLAUDE.md`](../CLAUDE.md) de la raíz
 
 ## Mudanza de rutas

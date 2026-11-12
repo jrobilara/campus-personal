@@ -14,4 +14,5 @@ Un campus personal de repaso: web instalable (PWA) que anda sin internet, en PC 
 - [Qué es y para quién](docs/NORTE.md)
 - [Mapa del proyecto](docs/MAPA.md)
 - [Índice de la documentación](docs/README.md)
+- [Guía completa del proyecto](docs/referencia/GUIA-DEL-PROYECTO.md): cómo está hecho, qué hay, cómo se cargan temas y módulos, metodología
 <!-- kit:portada 4be40c27c292 -->

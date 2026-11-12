@@ -3,23 +3,27 @@
 > Foto de dónde quedamos. `/cierre` lo SOBREESCRIBE ENTERO: acá no se apila historia (eso es el CHANGELOG). Tope 5.000 bytes, secciones fijas y en este orden. Si no entra: el detalle va al CHANGELOG, las trampas a `referencia/trampas.md` y los pendientes al TODO.
 
 ## Estado
-- Rama · entorno: main · local; el sitio va a GitHub Pages (`https://jrobilara.github.io/campus-personal/`)
+- Rama · entorno: main · local; el sitio está publicado en GitHub Pages (`https://jrobilara.github.io/campus-personal/`)
 - Accesos temporales a producción: ninguno
-- Producción: F6b en curso (repo público, Pages y primer deploy); chequeo completo verde antes de publicar (377 unit + 170 e2e)
+- Producción: v1 TERMINADA y publicada (módulo `COMPLETO 2026-11-12`). 24 temas en 6 áreas, verificados. Chequeo completo verde: astro check 0 errores, 381 unit, 174 e2e. Probado en vivo: portada, temas, "varianza", offline y export/import.
 
 ## Próximo paso
-F7 hecha (revisión de código y de UI, commits del 2026-11-12): confirmar que el workflow de main quedó verde y probar en el sitio vivo el buscador sin red (antes fallaba: faltaban wasm y filtro de Pagefind en el precache). Pendiente opcional: achicar el precache (~7 MB, 160 archivos; el HTML pesa 3,7 MB) si la primera instalación del service worker sigue lenta.
+Próxima sesión: construir con el Arquitecto (Modo B, spec delta sellado) la skill del repo para crear/actualizar módulos con la metodología v1, basada en docs/referencia/GUIA-DEL-PROYECTO.md (sección 'Hacia una skill de módulos'). Probarla de punta a punta sumando temas o contenido nuevo a un área existente.
+
+Dónde empezar a leer, en este orden: 1) `docs/referencia/GUIA-DEL-PROYECTO.md` (todo el proyecto y el procedimiento P0-P8; sección 7 = insumo de la skill); 2) `docs/TODO.md` (ítems v2, incluida la skill); 3) `docs/modulos/v1/README.md` (ficha, manual del módulo cerrado).
 
 ## Bloqueos
 - ninguno
 
 ## Te espera
-- Vetar o ajustar la lista de temas de v1 (SPEC-0, "Temas de v1") cuando vuelvas.
+- Decidir el precache del HTML: pasarlo a runtime caching bajaría a la mitad la primera instalación del service worker, pero se pierde el offline de los temas no visitados (está en el TODO).
+- Vetar o ajustar la lista de temas de v1 (SPEC-0, "Temas de v1"), sigue abierto en el TODO.
 
 ## En curso
-- nada: montaje terminado, la construcción arranca dirigida desde la sesión del Arquitecto.
+- nada: v1 cerrada. El SPEC de v1 quedó `COMPLETO`; `ready --pendientes` no lista nada.
 
 ## Contexto
-- La sesión del Arquitecto pasa a director por pedido del dueño: lanza subagentes (Opus medio planifica, Sonnet alto ejecuta) y no escribe código ni contenido.
-- Repo público `jrobilara/campus-personal` autorizado; `gh` ya autenticado con `repo` y `workflow`.
-- Trampas del stack (Astro 7 sin remark por defecto, ts-fsrs 6 con API nueva, @vite-pwa/astro con export nombrado, TS ^6, katex 0.16.47): `docs/modulos/v1/investigacion/stack-verificado.md`.
+- Metodología: director que no construye, Opus medio planifica y Sonnet alto ejecuta; el verificador es siempre distinto del autor; cero hallazgos abiertos para dar un tema por terminado.
+- Repo público `jrobilara/campus-personal`; `gh` autenticado con `repo` y `workflow`. Push a `main` despliega solo.
+- Un proceso pesado por vez (build y Playwright juntos dan exit 137). Node 24 con nvm.
+- Trampas del stack: `docs/modulos/v1/investigacion/stack-verificado.md` y `docs/referencia/trampas.md`.

@@ -69,3 +69,14 @@ test('tarjetas: el dorso está en el HTML (para el buscador) dentro de un <detai
   await ficha.getByText('Ver respuesta').click();
   await expect(ficha).toContainText('Sumás todos los datos');
 });
+
+test('ejercicio: si falla el guardado en IndexedDB, muestra el resultado y avisa que no se guardó', async ({ page }) => {
+  await page.goto('ejemplo/');
+  const vf = page.locator('.ejercicio[data-tipo=verdadero-falso]');
+  await hidratado(vf);
+  await page.evaluate(() => { IDBObjectStore.prototype.put = () => { throw new Error('simulado'); }; });
+  await vf.getByRole('button', { name: 'Verdadero' }).click();
+  await expect(vf.getByTestId('resultado-ejercicio')).toBeVisible();
+  await expect(vf.getByRole('alert')).toContainText('No pude guardar este resultado');
+  await expect(vf.getByTestId('intentos')).toHaveText('Intentos: 0 · Aciertos: 0');
+});

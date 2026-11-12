@@ -23,12 +23,21 @@ export default function Ejercicio(props: PropsEjercicio) {
   const [elegida, setElegida] = useState<number | null>(null);
   const [hecho, setHecho] = useState<null | { ok: boolean; html: string; extra?: string }>(null);
   const [error, setError] = useState('');
+  const [errorGuardar, setErrorGuardar] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultadoRef = useRef<HTMLDivElement>(null);
   // al corregir se van el botón (o el campo se deshabilita) con el foco puesto: se lleva el foco al resultado para no dejar al teclado en el aire
   useEffect(() => { if (hecho) resultadoRef.current?.focus(); }, [hecho]);
 
-  const reiniciar = () => { setHecho(null); setEntrada(''); setElegida(null); setError(''); setTimeout(() => inputRef.current?.focus(), 0); };
+  const reiniciar = () => { setHecho(null); setEntrada(''); setElegida(null); setError(''); setErrorGuardar(false); setTimeout(() => inputRef.current?.focus(), 0); };
+
+  // el resultado se muestra siempre; si no se pudo guardar, un aviso discreto (como en Repaso) en vez de perderlo en silencio
+  const guardar = (ok: boolean) => {
+    registrar(ok).then(
+      () => setErrorGuardar(false),
+      (e) => { console.warn('[ejercicio] no pude guardar el resultado', e); setErrorGuardar(true); },
+    );
+  };
 
   function corregirNum(e: { preventDefault(): void }) {
     e.preventDefault();
@@ -37,7 +46,7 @@ export default function Ejercicio(props: PropsEjercicio) {
     if (r.estado === 'invalido') { setError('Escribí un número, con coma o con punto (por ejemplo 12,5).'); return; }
     setError('');
     const ok = r.estado === 'ok';
-    registrar(ok);
+    guardar(ok);
     const especifica = r.estado === 'error' && r.errorComun !== undefined ? props.erroresComunes[r.errorComun]!.explicacionHtml : null;
     setHecho({ ok, html: especifica ?? props.explicacionHtml, extra: especifica ? props.explicacionHtml : undefined });
   }
@@ -45,14 +54,14 @@ export default function Ejercicio(props: PropsEjercicio) {
     e.preventDefault();
     if (props.tipo !== 'opcion-multiple' || elegida === null) return;
     const o = props.opciones[elegida]!;
-    registrar(o.correcta);
+    guardar(o.correcta);
     const correcta = props.opciones.find((x) => x.correcta)!;
     setHecho({ ok: o.correcta, html: o.explicacionHtml, extra: o.correcta ? undefined : correcta.explicacionHtml });
   }
   function responderVF(v: boolean) {
     if (props.tipo !== 'verdadero-falso') return;
     const ok = v === props.respuesta;
-    registrar(ok);
+    guardar(ok);
     setHecho({ ok, html: props.justificacionHtml });
   }
 
@@ -112,6 +121,8 @@ export default function Ejercicio(props: PropsEjercicio) {
           </div>
         )}
       </div>
+
+      {errorGuardar && <p className="error-campo" role="alert">No pude guardar este resultado en el navegador, así que no va a contar en tu progreso.</p>}
 
       <div className="ejercicio-pie">
         <span data-testid="intentos">Intentos: {intentos} · Aciertos: {aciertos}</span>

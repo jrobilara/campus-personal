@@ -1,6 +1,6 @@
 # SPEC-0: campus-personal
 Sistema personal de apuntes y repaso interactivo (gráficos, animaciones, explicaciones en criollo) por área y contenido, para mantenerse afilado en Ing. en Informática y Lic. en Gestión de Tecnología (UNLaM).
-- Estado: READY
+- Estado: COMPLETO 2026-11-12
 - Fecha: 2026-11-11
 - Sello del Arquitecto: `arquitecto: 2026-11-11 · kit 3.0.0-rc.6 · chequeos: tamaño ✅ · entorno ✅ · tope ✅ · hash 3e797a169430`
 

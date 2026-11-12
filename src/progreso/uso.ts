@@ -6,7 +6,8 @@ export type ResultadoCaso = 'bien' | 'regular' | 'mal';
 export function useEjercicio(id: string) {
   const p = useProgreso();
   const e = p?.ejercicios[id];
-  return { intentos: e?.intentos ?? 0, aciertos: e?.aciertos ?? 0, registrar: (ok: boolean) => void registrarEjercicio(id, ok) };
+  return { intentos: e?.intentos ?? 0, aciertos: e?.aciertos ?? 0, /** Devuelve la promesa: quien llama decide qué avisar si el guardado falla. */
+    registrar: (ok: boolean) => registrarEjercicio(id, ok) };
 }
 
 export function useCaso(id: string) {
