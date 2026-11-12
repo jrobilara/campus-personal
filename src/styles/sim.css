@@ -304,6 +304,7 @@
 .sm-ventana { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
 .sm-pedidos { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; }
 .sm-pedido { display: block; aspect-ratio: 1 / 1.6; border-radius: 3px; border: 1px solid var(--linea); transition: background 0.15s; }
+.sm-pedido.vacio { padding: 0; background: transparent; border: 1px solid var(--linea); border-radius: 3px; text-align: initial; } /* anula el .vacio global (estado vacío de pantalla) */
 .sm-pedido.ok { background: var(--ok); border-color: var(--ok); }
 .sm-pedido.falla { background: var(--mal); border-color: var(--mal); }
 .sm-medidor { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
