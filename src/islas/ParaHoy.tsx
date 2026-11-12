@@ -1,15 +1,17 @@
 import { url } from '../lib/url';
+import { useCatalogo } from '../progreso/catalogo-cliente';
 import { useParaHoy } from '../progreso/hooks';
 
 export default function ParaHoy() {
   const hoy = useParaHoy();
+  const sinCatalogo = useCatalogo() === undefined; // falló la descarga (por ejemplo, sin red y sin primera visita)
   const n = hoy?.total;
   return (
     <div className="hoy">
       <div className="hoy-n" aria-live="polite">
         <strong data-testid="para-hoy">{n ?? '–'}</strong>
         <span>
-          {n === undefined ? 'cargando' : n === 1 ? 'tarjeta' : 'tarjetas'}
+          {sinCatalogo ? 'sin datos' : n === undefined ? 'cargando' : n === 1 ? 'tarjeta' : 'tarjetas'}
           <br />
           para hoy
         </span>

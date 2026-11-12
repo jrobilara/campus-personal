@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { corregirNumerico, type Tolerancia } from '../lib/correccion';
 import { useEjercicio } from '../progreso/uso';
 
@@ -24,6 +24,9 @@ export default function Ejercicio(props: PropsEjercicio) {
   const [hecho, setHecho] = useState<null | { ok: boolean; html: string; extra?: string }>(null);
   const [error, setError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultadoRef = useRef<HTMLDivElement>(null);
+  // al corregir se van el botón (o el campo se deshabilita) con el foco puesto: se lleva el foco al resultado para no dejar al teclado en el aire
+  useEffect(() => { if (hecho) resultadoRef.current?.focus(); }, [hecho]);
 
   const reiniciar = () => { setHecho(null); setEntrada(''); setElegida(null); setError(''); setTimeout(() => inputRef.current?.focus(), 0); };
 
@@ -102,7 +105,7 @@ export default function Ejercicio(props: PropsEjercicio) {
 
       <div role="status" aria-live="polite">
         {hecho && (
-          <div className={`resultado ${hecho.ok ? 'ok' : 'mal'}`} data-testid="resultado-ejercicio" data-ok={hecho.ok}>
+          <div ref={resultadoRef} tabIndex={-1} className={`resultado ${hecho.ok ? 'ok' : 'mal'}`} data-testid="resultado-ejercicio" data-ok={hecho.ok}>
             <strong className="veredicto">{hecho.ok ? 'Bien' : props.tipo === 'opcion-multiple' || props.tipo === 'verdadero-falso' ? 'No era esa' : 'No da'}</strong>
             <Html html={hecho.html} />
             {hecho.extra && <div className="por-opcion"><strong>La cuenta correcta</strong><Html html={hecho.extra} /></div>}

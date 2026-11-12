@@ -51,7 +51,8 @@ export default function PanelAjustes() {
     e.target.value = '';
     if (!f) return;
     setPendiente(null);
-    const texto = await f.text();
+    let texto: string;
+    try { texto = await f.text(); } catch { setMensaje({ tipo: 'mal', texto: 'No pude leer el archivo. Tu progreso sigue igual.' }); return; }
     const a = analizarImport(texto, cat ?? undefined);
     if (!a.ok) { setMensaje({ tipo: 'mal', texto: `No importé nada y tu progreso sigue igual. ${a.error}` }); return; }
     const actual = await leerProgreso();
@@ -156,7 +157,7 @@ export default function PanelAjustes() {
         <h2 id="reini-t">Reiniciar progreso</h2>
         <p className="meta">Borra tus tarjetas, ejercicios, casos y días de estudio de este navegador. No se puede deshacer: exportá antes si querés guardar una copia. Para confirmar, escribí <code>REINICIAR</code>.</p>
         <div className="fila-acciones">
-          <input className="campo-simple" style={{ width: '11rem' }} value={textoReiniciar} onChange={(e) => setTextoReiniciar(e.target.value)} aria-label="Escribí REINICIAR para confirmar" autoComplete="off" />
+          <input className="campo-simple" style={{ width: '11rem' }} value={textoReiniciar} onChange={(e) => setTextoReiniciar(e.target.value)} aria-label="Escribí REINICIAR para confirmar" autoComplete="off" spellCheck={false} />
           <button type="button" className="btn btn-peligro" disabled={textoReiniciar !== 'REINICIAR'} onClick={reiniciar}>Reiniciar progreso</button>
         </div>
       </section>
