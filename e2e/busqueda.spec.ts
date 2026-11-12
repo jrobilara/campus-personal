@@ -15,7 +15,7 @@ test('el buscador encuentra páginas del sitio construido y los resultados respe
 
 test('sin coincidencias, el buscador lo dice y sugiere qué probar', async ({ page }) => {
   await page.goto('buscar/');
-  await page.getByRole('searchbox').fill('zzzqqqxxx');
+  await page.getByRole('searchbox').fill('qwxjkvbnm');
   await expect(page.getByRole('heading', { name: /No encontré nada/ })).toBeVisible();
 });
 
@@ -29,8 +29,8 @@ test('el índice no incluye el repaso, el progreso, los ajustes, el buscador ni 
   }
 });
 
-// se activa cuando entre el contenido de F3: el director lo destraba en F6
-test.fixme('buscar "varianza" devuelve el tema que la trata (y "varianzas" también)', async ({ page }) => {
+// criterio 7 del SPEC: con el contenido real de F3 (destrabado en F6a)
+test('buscar "varianza" devuelve el tema que la trata (y "varianzas" también)', async ({ page }) => {
   await page.goto('buscar/');
   await page.getByRole('searchbox').fill('varianza');
   await expect(page.locator('[data-testid=resultados] a[href$="probabilidad-estadistica/variables-y-distribuciones/"]')).toBeVisible();
