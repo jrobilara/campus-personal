@@ -3,7 +3,7 @@
 - **Tema:** arquitecturas/escalabilidad-balanceo-cache
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO tras la re-verificación del commit 2294204 (H1–H4 cerrados). Veredicto inicial (aaa7ad0): OBSERVADO.
+- **Veredicto:** APROBADO (re-verificación de 2294204; sin cambios en la ronda 2, bc6bfef). Veredicto inicial (aaa7ad0): OBSERVADO.
 
 Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a texto con títulos. NGINX: leí `load_balancing.html` y `ngx_http_upstream_module.html`. No pude ejecutar `nginx -t` (no hay nginx instalado y el usuario no tiene permiso sobre el socket de Docker), así que la configuración se contrastó con la documentación directiva por directiva. Números recalculados con Python.
 

@@ -3,7 +3,7 @@
 - **Tema:** arquitecturas/monolito-y-microservicios
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO tras la re-verificación del commit 2294204 (H1–H5 y H7 cerrados; H6 diferido a la pasada de retipado a `articulo` del director, no bloquea). Veredicto inicial (aaa7ad0): OBSERVADO.
+- **Veredicto:** APROBADO (re-verificación de 2294204 y cierre de ronda 2 en bc6bfef; H6 diferido a la pasada de retipado a `articulo` del director, no bloquea). Veredicto inicial (aaa7ad0): OBSERVADO.
 
 Método: las fuentes se abrieron con `curl` sobre el HTML original y se convirtieron a texto con los títulos de sección (no resúmenes de WebFetch); así se confirmó cada título citado. Los números se recalcularon con Python sin mirar la cuenta del autor. Los simuladores aún no existen: sus lecturas se contrastaron con `SIMULADORES.md` §2.8 y §2.11, no con el componente real.
 
@@ -83,5 +83,5 @@ H7 — menor, `practica.yaml`, tarjeta `t-disponibilidad-independencia`: el dors
 
 Respuesta del autor: corregido: la tarjeta pregunta solo por la independencia y se agregó `t-dependencia-dura-definicion`.
 
-Re-verificación F4: **CERRADO** (2294204). `t-disponibilidad-independencia` pregunta solo por la independencia (AWS: sistemas independientes) y `t-dependencia-dura-definicion` copia la definición de AWS ("an interruption in a dependent system directly translates to an interruption of the invoking system"). Observación menor que no bloquea: con esta tarjeta ya hay tres de tipo definición (GUIA-ESTILO §4 sugiere ≤ 2).
+Re-verificación F4: **CERRADO** (2294204). `t-disponibilidad-independencia` pregunta solo por la independencia (AWS: sistemas independientes) y `t-dependencia-dura-definicion` copia la definición de AWS ("an interruption in a dependent system directly translates to an interruption of the invoking system"). Ronda 2 (bc6bfef): la tarjeta pasó a `t-dependencia-blanda-aplicacion` (caso de aplicación: checkout con recomendaciones opcionales; respuesta "blanda"), correcta según AWS ("soft dependency, where a failure of the dependent system is compensated for in the application"), con una sola respuesta y atómica; las tarjetas de definición vuelven a ser dos. Sigue **CERRADO**.
 Respuesta del autor (ronda 2, observación): `t-dependencia-dura-definicion` pasó a tarjeta de aplicación (`t-dependencia-blanda-aplicacion`); quedan 2 de definición.
