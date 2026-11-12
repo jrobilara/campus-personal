@@ -20,11 +20,11 @@ tarjetas:
   - id: t-tcl-enunciado
     frente: ¿Qué dice el teorema central del límite sobre el promedio de muchos datos independientes?
     dorso: |
-      Que su distribución se acerca a una normal con media $\mu$ y varianza $\sigma^2/n$, sea cual sea la forma de la población.
+      Que, para $n$ grande, su distribución se acerca a una normal con media $\mu$ y varianza $\sigma^2/n$, sea cual sea la forma de la población (con media y varianza finitas).
     fuente: mit1805
   - id: t-tcl-poblacion-asimetrica
     frente: Si los datos tienen una cola larga a la derecha, ¿qué regla práctica se sigue para confiar en la normalidad de la media?
-    dorso: Que $n$ sea de al menos 30; con menos datos la aproximación puede ser mala.
+    dorso: Que $n$ sea de al menos 30, como guía práctica; con asimetría fuerte conviene más.
     fuente: mendenhall
   - id: t-ic-formula
     frente: |
@@ -110,7 +110,7 @@ ejercicios:
       absoluta: 0.1
     unidad: puntos
     explicacion: |
-      $1/\sqrt{400} = 1/20 = 0{,}05$, o sea 5 puntos porcentuales. El intervalo queda de 13 % a 23 %.
+      $1/\sqrt{400} = 1/20 = 0{,}05$, o sea 5 puntos porcentuales. El intervalo queda de 13 % a 23 %. Es una cota conservadora (el peor caso, $p = 0{,}5$): con $\hat{p} = 18\ \%$ el margen exacto ronda 3,8 puntos.
     erroresComunes:
       - valor: 0.25
         explicacion: Dividiste por $n$ en lugar de por la raíz de $n$.

@@ -51,7 +51,7 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 - `mit1805`: Orloff y Bloom, *18.05 Introduction to Probability and Statistics*, MIT OpenCourseWare, Spring 2022 (CC BY-NC-SA). Acceso: PDF libre; usé Reading 4a (`mit18_05_s22_class04-prep-a.pdf`), 5a (`…class05-prep-a.pdf`) y 6b (`…class06-prep-b.pdf`) en https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/. Leídos completos.
 - `soong`: T. T. Soong, *Fundamentals of Probability and Statistics for Engineers*, Wiley, 2004. Acceso: copia en PDF de la biblioteca del dueño; leí §4.1.2, §6.1.1, §6.3, §6.3.2, §7.2 y §9.1.2. Ojo: en esa copia las letras griegas y los signos de las fórmulas salieron mal en la extracción de texto, así que verifiqué las fórmulas con las lecturas de MIT, con NIST y con cálculo propio.
 - `mendenhall`: Mendenhall, Beaver y Beaver, *Introducción a la probabilidad y estadística*, 13.ª ed. en español, Cengage Learning, 2010 (traducción de *Introduction to Probability and Statistics*, 13th ed.). Acceso: copia en PDF de la biblioteca del dueño; leí §2.3, §4.8, §5.2, §5.3, §6.3 y §6.4.
-- `nist-distribuciones`: NIST/SEMATECH e-Handbook of Statistical Methods, §1.3.6.6.18 y §1.3.6.6.19. Acceso: web, leídas.
+- `nist-distribuciones`: NIST/SEMATECH e-Handbook of Statistical Methods, §1.3.6.6.18 (`eda366i.htm`) y §1.3.6.6.19 (`eda366j.htm`, es la URL del frontmatter). Acceso: web, leídas.
 
 ### Números y datos inventados para ejemplos
 - 12 tickets por hora, 22 tickets en la última hora, 17 de 22 con VPN: ilustrativos.
@@ -65,7 +65,7 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 | 3 | Ley de los grandes números: P(|X̄n−μ|<a)→1. | Formal | mit1805 | Reading 6b, §3 y §3.1 | Leí. |
 | 4 | TCL: X̄≈N(μ,σ²/n) y Z_n≈N(0,1) para n grande, con v.a. i.i.d. de media y varianza finitas. | Formal, Formula TCL | mit1805 | Reading 6b, §5.2 | Leí. |
 | 5 | La versión formal: la función de distribución de Z_n converge a la normal estándar. | Formal | soong | §7.2.1, Teorema 7.1, p. 199 | Leí el enunciado y la prueba. |
-| 6 | Población normal → X̄ normal para todo n; simétrica → n chico; asimétrica → n≥30. | Formal | mendenhall | §7.4, p. 266-267 | Leí las guías. |
+| 6 | Población normal → X̄ normal para todo n; simétrica → n chico; asimétrica → n≥30 como guía, con más (50-100 en el ejemplo exponencial) si la asimetría es fuerte. | Formal | mendenhall; mit1805 | Mendenhall §7.4, p. 266-267; MIT Reading 23b, §4, ejemplo 3 | Leí las guías y la conclusión de MIT ("n entre 50 y 100 es suficiente para la mayoría de los usos"). |
 | 7 | Con exponenciales, el IC de 95 % cubre 90,5 % con n=20 y 93,8 % con n=100. | Formal | mit1805 | Reading 23b, §4, ejemplo 3 (tabla) | Leí la tabla; reproduje con simulación propia: 0,906 (n=20) y 0,937 (n=100), 20.000 réplicas. |
 | 8 | IC z para la media: x̄ ± z_{α/2}σ/√n (datos normales, σ conocida). | Formal, Formula IC | mit1805 | Reading 22, §4.1 | Leí. Mendenhall §8.5 p. 310 da la misma fórmula. |
 | 9 | Con σ desconocida y n≥30 se usa s. | Formal | mendenhall | §8.5, p. 310 | Leí el recuadro. |
@@ -89,7 +89,7 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 | 27 | e-error-estandar-tickets: 3,48; error 0,55 (22/40). | ejercicio | mendenhall | §7.5, p. 267 | Cálculo propio. |
 | 28 | e-margen-95: 6,8. | ejercicio | mit1805 | Reading 22, §4.1 | Cálculo propio. |
 | 29 | e-tamano-muestra: 465; errores 21,56 y 327 (z=1,645). | ejercicio | mendenhall | §8.9, p. 330-331 | (1,645·22/2)²=327,4. |
-| 30 | e-regla-pulgar-reabiertos: 1/√400=0,05 → 5 puntos; error 0,25 puntos. | ejercicio | mit1805 | Reading 23b, §3.3 | Cálculo propio. |
+| 30 | e-regla-pulgar-reabiertos: 1/√400=0,05 → 5 puntos; error 0,25 puntos. Es cota conservadora: con p̂=18 % el margen exacto es 1,96·√(0,18·0,82/400)=3,8 puntos. | ejercicio | mit1805 | Reading 23b, §3.1 y §3.3 | Cálculo propio (3,76 puntos). |
 | 31 | e-interpretar-ic: el 95 % describe el método. | ejercicio | mendenhall | §8.5, p. 311-312 | Igual que #14. |
 | 32 | e-vf-tcl-n5 y e-vf-cuadruplicar | ejercicios | mendenhall | §7.4 p. 266; §8.9 p. 330 | Igual que #6 y #22. |
 | 33 | c-informe-del-jueves: IC de la diferencia incluye 0; para margen 2 con la diferencia hacen falta ≈930 por mes. | caso | mendenhall | §8.6, p. 318-319; §8.9, p. 331 | Cálculo propio: n=2·(1,96·22/2)²=929,7; con 930 el margen es 1,9996. Datos ficticios. |
@@ -113,16 +113,16 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 | 5 | Los métodos frecuentistas no dan la probabilidad de la hipótesis. | Formal | mit1805 | Reading 20, §5 ("Mind your p's") | Leí. |
 | 6 | No rechazar ≠ aceptar. | Formal | mendenhall | §9.3, p. 356 | Leí. MIT 17b §3.1 lo dice igual. |
 | 7 | Error tipo I (prob. α), tipo II (β), potencia = 1−β. | Formal | mit1805 | Reading 17b, §4.2-4.3 | Leí. Mendenhall §9.3 p. 356 da las mismas definiciones. |
-| 8 | La potencia sube con más datos y con efectos mayores; el n se calcula de antemano. | Formal | mit1805 | Reading 17b, §4.3 | Leí. |
-| 9 | Con 8 % vs 11 % y 300 por grupo la potencia es ≈24 %; para 80 % hacen falta ≈1500 por grupo. | Formal y Profundizar | cálculo propio | Python (aprox. normal) y Monte Carlo | Potencia 0,2402; n=1498,4 (fórmula) y 1495,6 (fórmula simple); Monte Carlo 8.000 réplicas con n=300: 0,234. **La fórmula de n es derivación propia, no de un libro**; se declara en el texto. |
-| 10 | Significativo no es importante. | Formal | mendenhall | §9.5, p. 370 | Leí el párrafo "Significancia estadística e importancia práctica". El ejemplo de "millones de visitas" es mío. |
+| 8 | La potencia sube con más datos y con efectos mayores; el n se calcula de antemano. | Formal y Ojo | mit1805 | Reading 17b, §4.3 (efecto más lejos) y §4.4.2 (más datos; determinar el n de antemano) | Leí. |
+| 9 | Con 8 % vs 11 % y 300 por grupo la potencia es ≈24 %; para 80 % hacen falta ≈1500 por grupo, con la fórmula usual de tamaño de muestra por potencia. | Formal y Profundizar | nist-handbook; mendenhall; cálculo propio | NIST §7.2.4.2 (fórmula de una proporción, derivación en Fleiss, Levin y Paik pp. 30-34); Mendenhall §9.6 p. 373-374 (proporción conjunta bajo la nula) | Leí la página de NIST. Para dos grupos el término de la nula usa √(2p̄(1−p̄)). Cuenta mía: n=1498,4 con z_β=0,8416; potencia con 300 por grupo 0,2402 y con 1500 por grupo 0,8004; Monte Carlo 8.000 réplicas con n=300: 0,234. |
+| 10 | Significativo (p<α) solo dice que, sin efecto, un resultado tan extremo sería poco común; no que el efecto sea grande o valga la pena. | Formal | mit1805; mendenhall | MIT Reading 17b, §7 (definición de p-valor); Mendenhall §9.5, p. 370 | Leí ambos. Corregida la redacción anterior ("probablemente no fue casualidad") por la definición de MIT. El ejemplo de "millones de visitas" es mío. |
 | 11 | Cada prueba con α=0,05 rechaza 5 % de las veces una nula verdadera; con 20 métricas independientes, P(al menos una)=1−0,95²⁰≈0,64. | Formal | mit1805 | Reading 17b, §4.3 (definición de α); el 0,64 es cálculo propio | 1−0,95^20=0,6415. Supone independencia, y el texto lo dice. |
 | 12 | El p-valor depende de la regla de parada: con los mismos datos, 0,11 vs 0,03. | Formal | mit1805 | Reading 20, §6 | Leí; los p son 0,1094 y 0,0313. |
-| 13 | Con monitoreo continuo los p-valores e intervalos habituales no son confiables. | Formal y Ojo | johari-peeking | resumen (abstract) | Abrí la página de arXiv y leí el resumen. **No leí el paper completo.** |
-| 14 | Simulación A/A (10 % vs 10 %, hasta 3000 por grupo, cortar con el primer p<0,05): 1 mirada 4,9 %; 2 miradas 8,4 %; 5 miradas 13,8 %; 30 miradas 28,1 %. | Formal, tabla | cálculo propio | Python, 40.000 repeticiones, semilla 2026 | Ruido de simulación ≈±0,2 puntos; corrí también 1.500 por mirada (2 miradas) y 500 por mirada (6 miradas, 15,4 %). |
+| 13 | Con monitoreo continuo los p-valores e intervalos habituales no son confiables; incluso con 10.000 muestras el error tipo I puede multiplicarse por cinco. | Formal y Ojo | johari-peeking | resumen e introducción (p. 3 del PDF) | Descargué el PDF y leí el resumen y la introducción. **No leí el resto del paper.** |
+| 14 | Simulación A/A (10 % vs 10 %, hasta 3000 por grupo, prueba z de dos proporciones con p̂ conjunta, dos colas, α=0,05, cortar con el primer p<0,05; miradas equiespaciadas): 1 mirada 4,9 %; 2 miradas 8,4 %; 5 miradas 13,8 %; 30 miradas 28,1 %. **El 28 % es de mi simulación, no de Johari.** | Formal, tabla; ejercicio e-peeking-falsos-positivos | cálculo propio | Python, 40.000 repeticiones por fila, semilla 2026 fijada una sola vez (ver el script al final de esta sección) | Ruido de simulación ≈±0,2 puntos; corrí también 1.500 por mirada (2 miradas) y 500 por mirada (6 miradas, 15,4 %). |
 | 15 | Hipótesis nula como "acusado inocente"; no culpable no prueba inocencia. | Intuición, Analogía | mit1805 | Reading 17b, §4.3 (analogía del juicio) | La idea es de la lectura; la redacción y el mapeo son míos. |
-| 16 | Tarjetas t-hipotesis-nula, t-pvalor-definicion, t-pvalor-no-es, t-nivel-significancia, t-error-tipo-ii, t-potencia, t-regla-de-parada | tarjetas | mit1805 | Reading 17b §3.1, §7, §4.2-4.3; Reading 20 §5 y §6 | Igual que #4, #5, #7, #12. |
-| 17 | Tarjetas t-potencia-n, t-no-rechazar, t-significativo-importante, t-condicion-prueba-z | tarjetas | mendenhall | §9.3 p. 356; §9.5 p. 370; §9.6 p. 374 | Igual que #2, #6, #10. |
+| 16 | Tarjetas t-hipotesis-nula, t-pvalor-definicion, t-pvalor-no-es, t-pvalor-no-es-prob-nula (qué NO es el p-valor: no es P(H0\|datos)), t-nivel-significancia, t-error-tipo-ii, t-potencia, t-regla-de-parada | tarjetas | mit1805 | Reading 17b §3.1, §7, §4.2-4.3; Reading 20 §5 y §6 | Igual que #4, #5, #7, #12. |
+| 17 | Tarjetas t-potencia-n, t-no-rechazar, t-significativo-importante (dorso corregido: "un resultado así sería raro si no hubiera efecto"), t-condicion-prueba-z | tarjetas | mendenhall | §9.3 p. 356; §9.5 p. 370; §9.6 p. 374 | Igual que #2, #6, #10. |
 | 18 | Tarjeta t-peeking | tarjeta | johari-peeking | resumen | Igual que #13. |
 | 19 | Tarjeta t-metricas-multiples (≈64 %) | tarjeta | mit1805 | Reading 17b, §4.3 | Igual que #11. |
 | 20 | e-z-boton-verde: z=1,25; errores 1,77 (SE de un solo grupo) y 0,03. | ejercicio | mendenhall | §9.6, p. 374 | Cálculo propio: 0,03/0,016929=1,772. |
@@ -130,17 +130,40 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 | 22 | e-z-test-grande: z=2,86 (400/4000 vs 480/4000); error 4,04. | ejercicio | mendenhall | §9.6, p. 374 | Cálculo propio: 0,02/0,006996=2,859; p=0,0043. |
 | 23 | e-metricas-multiples: 64,2 %; errores 5 y 100. | ejercicio | mit1805 | Reading 17b, §4.3 | 1−0,95^20=0,6415. |
 | 24 | e-interpretar-pvalor | ejercicio | mit1805 | Reading 17b, §7; Reading 20, §5 | Igual que #4 y #5. |
-| 25 | e-peeking-falsos-positivos | ejercicio | johari-peeking | resumen; el 28 % es de la simulación #14 | Igual que #13 y #14. |
+| 25 | e-peeking-falsos-positivos: la respuesta correcta es "queda claramente por encima del 5 %"; el 28 % de la explicación es de la simulación propia #14 (y así lo dice la explicación). | ejercicio | johari-peeking; cálculo propio | resumen e introducción; simulación #14 | Igual que #13 y #14. |
 | 26 | e-vf-no-significativo-iguales | ejercicio | mendenhall | §9.3, p. 356 | Igual que #6. |
 | 27 | c-cortar-el-test: día 3 con 48 vs 70 sobre 600 (z=2,13; p=0,033); final 126 vs 165 sobre 1500 (z=2,41; p=0,016; IC de la diferencia 0,5 a 4,7 puntos). | caso | johari-peeking | resumen (principio); números: cálculo propio | Python: z=2,1328 (p=0,0329); z=2,4059 (p=0,0161); IC sin conjuntar [0,0048; 0,0472]. Todo ficticio. |
 
 ### Fuentes del tema
 - `mit1805`: Readings 17b (`…class17-prep-b.pdf`), 20 (`…class20-prep.pdf`) y 22 en https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/. Leídas.
 - `mendenhall`: ver arriba; en este tema, §9.3, §9.5, §9.6 (p. 351-352, 356, 370, 373-376).
-- `johari-peeking`: R. Johari, L. Pekelis y D. J. Walsh, *Always Valid Inference: Bringing Sequential Analysis to A/B Testing*, preprint arXiv:1512.04922 (v3, 2019), https://arxiv.org/abs/1512.04922. Acceso: solo el resumen. El esquema de fuentes no tiene un tipo "paper", así que lo cargué como `doc-oficial`.
+- `nist-handbook`: NIST/SEMATECH e-Handbook, §7.2.4.2 "Sample sizes required" (https://www.itl.nist.gov/div898/handbook/prc/section2/prc242.htm). Acceso: web, leída; trae la fórmula de una proporción y remite a Fleiss, Levin y Paik, pp. 30-34, que no abrí.
+- `johari-peeking`: R. Johari, L. Pekelis y D. J. Walsh, *Always Valid Inference: Bringing Sequential Analysis to A/B Testing*, preprint arXiv:1512.04922 (v3, 2019), https://arxiv.org/abs/1512.04922. Acceso: PDF descargado; leí resumen e introducción. El esquema de fuentes no tiene un tipo "paper", así que lo cargué como `doc-oficial`.
 
 ### Números y datos inventados para ejemplos
 - 300 visitas por versión, 24 y 33 compras; 4000 visitas por versión; 20 métricas; test planificado de 1500 por versión y sus resultados parciales: ilustrativos.
+
+Script de la simulación de peeking (tabla del Formal), tal como la corrí:
+
+```python
+import random
+from math import sqrt
+random.seed(2026)                      # una sola vez, antes de las cinco corridas
+def peek(p, step, maxn, reps):
+    hit = 0
+    for _ in range(reps):
+        c1 = c2 = n = 0
+        while n < maxn:
+            c1 += random.binomialvariate(step, p); c2 += random.binomialvariate(step, p); n += step
+            pp = (c1 + c2) / (2 * n)
+            if pp in (0, 1): continue
+            z = (c2 - c1) / n / sqrt(pp * (1 - pp) * 2 / n)
+            if abs(z) > 1.96: hit += 1; break   # dos colas, alfa 0,05
+    return hit / reps
+for step in (100, 600, 3000, 500, 1500):        # 30, 5, 1, 6 y 2 miradas
+    print(step, peek(0.10, step, 3000, 40000))
+```
+Resultado: 28,1 % (30 miradas), 13,8 % (5), 4,9 % (1), 15,4 % (6), 8,4 % (2). El verificador F4 la reprodujo con su propio código: 28,1 / 14,0 / 4,9 / 8,2 %.
 
 ## bayes-falsos-positivos
 | # | Afirmación clave (tu paráfrasis) | Dónde está | Fuente (id) | Ubicación exacta | Cómo la verificaste |
@@ -156,13 +179,13 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 | 9 | Tabla de 10.000: 49 / 199 / 248; 1 / 9751 / 9752. | Formal, tabla | cálculo propio | Python | 49+1=50; 9950·0,02=199; 9950−199=9751. Mismo método de tabla que MIT 3 §7.1. |
 | 10 | Odds posteriores = factor de Bayes × odds previos. | Formal, Formula odds | mit1805 | Reading 12b, §4 | Leí la deducción. |
 | 11 | Odds previos 0,005/0,995≈0,005; factor 49; odds posteriores 0,246 ⇒ 19,8 %. | Formal | cálculo propio | Python | 0,24623 → 0,19758. |
-| 12 | Con una segunda alerta independiente el VPP pasa de 19,8 % a ≈92,3 %; solo se multiplican evidencias independientes. | Formal, Profundizar | mit1805 | Reading 12b, §4 (cita de MacKay sobre multiplicar razones de verosimilitud de evidencias independientes) | Cálculo propio: 0,92346. La aclaración sobre motores con las mismas firmas es mía. |
-| 13 | Con prevalencia baja, la especificidad pesa más que la sensibilidad. | Intuición | cálculo propio | Python | Subir sensibilidad 98→99,9 % deja el VPP en 20,1 %; bajar falsas alarmas 2→0,1 % lo lleva a 83,1 %. |
+| 12 | Los factores de Bayes se multiplican si las alertas son condicionalmente independientes dado el estado real (P(D1,D2\|H)=P(D1\|H)P(D2\|H) para cada hipótesis); entonces el VPP pasa de 19,8 % a ≈92,3 %. Dos alertas sobre el mismo archivo no son independientes a secas. | Formal, Profundizar; tarjeta t-evidencia-independiente; caso c-alerta-del-edr | mit1805 | Reading 12b, §4.1 ("Updating again and again") | Leí la definición de independencia condicional y el comentario de los dados. Cálculo propio: 0,92346. La aclaración sobre motores con las mismas firmas (errores correlacionados) es mía. |
+| 13 | Con prevalencia baja, la especificidad pesa más que la sensibilidad: con los números del caso, sensibilidad 98→99,9 % deja el VPP en 20 %; falsas alarmas 2→0,1 % lo sube a 83 % (el texto lo dice con esos números y lo rotula "cuenta propia"). | Intuición | cálculo propio | Python | Subir sensibilidad 98→99,9 % deja el VPP en 20,1 %; bajar falsas alarmas 2→0,1 % lo lleva a 83,1 %. |
 | 14 | Detector de humo y tostadas. | Intuición, Analogía | — | analogía propia | No afirma datos. |
 | 15 | Tarjetas t-p-a-dado-b-vs-b-dado-a, t-sensibilidad, t-especificidad, t-vpp-definicion, t-falacia-tasa-base, t-vpp-baja-prevalencia, t-frecuencias-naturales | tarjetas | mit1805 | Reading 3, §7 y §7.1 | Igual que #1, #5, #6, #8, #9. |
 | 16 | Tarjetas t-bayes-formula | tarjeta | soong | §2.4, p. 25 | Igual que #2. |
 | 17 | Tarjetas t-ley-prob-total y t-falso-positivo | tarjetas | mendenhall | §4.7, p. 159-160 | Igual que #3 y #4. |
-| 18 | Tarjetas t-factor-bayes y t-evidencia-independiente | tarjetas | mit1805 | Reading 12b, §4 | Igual que #10 y #12. |
+| 18 | Tarjetas t-factor-bayes y t-evidencia-independiente | tarjetas | mit1805 | Reading 12b, §4 y §4.1 | Igual que #10 y #12. |
 | 19 | e-vpp-antivirus: 49/248=19,8 %; errores 98 y 2. | ejercicio | mit1805 | Reading 3, §7.1 | Cálculo propio. |
 | 20 | e-falsas-alarmas-dia: 9950·0,02=199; errores 49 y 248. | ejercicio | mit1805 | Reading 3, §7.1 (método de tabla) | Cálculo propio. |
 | 21 | e-vpp-prevalencia-alta: 980/(980+180)=84,5 %. | ejercicio | mit1805 | Reading 3, §7.1 | 0,84483. |
@@ -170,7 +193,7 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 | 23 | e-mejorar-especificidad: 49/(49+9,95)=83,1 %. | ejercicio | mit1805 | Reading 3, §7.1 | 0,83121. |
 | 24 | e-leer-sensibilidad | ejercicio | mit1805 | Reading 3, §7.1 | Igual que #5. |
 | 25 | e-vf-99-99: con prevalencia 1/1000, el VPP ≈ 9,0 %. | ejercicio | mit1805 | Reading 3, §7.1 | 0,09016. |
-| 26 | c-alerta-del-edr: VPP casi 20 %; reaccionar según la tasa base; repetir el mismo escaneo no suma evidencia independiente. | caso | mit1805 | Reading 3, §7.1 y Reading 12b, §4 | Cálculo propio. Escenario ficticio. |
+| 26 | c-alerta-del-edr: VPP casi 20 %; reaccionar según la tasa base; repetir el mismo escaneo no suma evidencia nueva porque sus errores están correlacionados con los del primero. | caso | mit1805 | Reading 3, §7.1 y Reading 12b, §4.1 | Cálculo propio. Escenario ficticio. |
 
 ### Fuentes del tema
 - `mit1805`: Readings 3 (`…class03-prep.pdf`) y 12b (`…class12-prep-b.pdf`) en https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/. Leídas completas. Problema recomendado: Class 11 in-class problems, Problem 1 (`…class11_pset.pdf`).
@@ -181,8 +204,8 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 - Prevalencia de 0,5 %, sensibilidad de 98 % y 2 % de falsa alarma de un antivirus: ilustrativos (no corresponden a ningún producto).
 
 ## Lo que no pude verificar
-- **Peeking**: solo leí el resumen del preprint de Johari, Pekelis y Walsh. El libro de referencia, Kohavi, Tang y Xu, *Trustworthy Online Controlled Experiments* (Cambridge, 2020), no lo tuve. Los porcentajes de falsos positivos con miradas repetidas son de mi simulación.
-- **Fórmula del tamaño de muestra por potencia** (Profundizar de pruebas-de-hipotesis-ab): derivación propia; la comprobé con Monte Carlo pero no la tomé de un libro.
+- **Peeking**: leí el resumen y la introducción del preprint de Johari, Pekelis y Walsh, no el resto. El libro de referencia, Kohavi, Tang y Xu, *Trustworthy Online Controlled Experiments* (Cambridge, 2020), no lo tuve. Los porcentajes de falsos positivos con miradas repetidas son de mi simulación.
+- **Fórmula del tamaño de muestra por potencia** (Profundizar de pruebas-de-hipotesis-ab): es la fórmula usual (NIST §7.2.4.2 da la de una proporción); la adaptación a dos grupos con proporción conjunta la comprobé con Monte Carlo y no abrí Fleiss, Levin y Paik, que NIST cita para la derivación.
 - **Soong**: la extracción de texto de la copia perdió símbolos matemáticos; las fórmulas las contrasté con MIT, NIST y cálculo propio.
 - **Khan Academy**: su sitio no devuelve contenido a un lector automático, así que no la cité.
 - **OpenIntro Statistics, Blitzstein-Hwang y OpenStax**: no los abrí; no están citados.

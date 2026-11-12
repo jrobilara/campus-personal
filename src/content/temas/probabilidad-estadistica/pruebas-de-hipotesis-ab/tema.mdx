@@ -32,12 +32,18 @@ fuentes:
     edicion: 13.ª ed. (en español), 2010
     editorial: Cengage Learning
     ubicacion: cap. 9 §9.3, §9.5 y §9.6
+  - id: nist-handbook
+    tipo: doc-oficial
+    autor: NIST/SEMATECH
+    titulo: e-Handbook of Statistical Methods, Sample sizes required (proporciones)
+    url: https://www.itl.nist.gov/div898/handbook/prc/section2/prc242.htm
+    ubicacion: §7.2.4.2
   - id: johari-peeking
     tipo: doc-oficial
     autor: Ramesh Johari, Leo Pekelis y David J. Walsh
     titulo: "Always Valid Inference: Bringing Sequential Analysis to A/B Testing (preprint)"
     url: https://arxiv.org/abs/1512.04922
-    ubicacion: resumen (abstract)
+    ubicacion: resumen e introducción
     edicion: arXiv:1512.04922, v3, 2019
 fechaVerificacion: 2026-11-11
 ejemplo: false
@@ -76,7 +82,7 @@ Hay tres cosas para notar. Con pocas visitas, aun cuando el verde sea mejor, la 
 
 <Ojo>
 
-Mirar el tablero todos los días y cortar el test en cuanto el p-valor baja de 0,05 (*peeking*) rompe la garantía del 5 %. El umbral vale para un test con tamaño de muestra decidido de antemano<Cita f="johari-peeking" loc="resumen" />.
+Mirar el tablero todos los días y cortar el test en cuanto el p-valor baja de 0,05 (*peeking*) rompe la garantía del 5 %. El umbral vale para un test con tamaño de muestra decidido de antemano<Cita f="mit1805" loc="Reading 17b, §4.3 y §4.4.2" />, y los p-valores habituales dejan de ser confiables si lo vas mirando<Cita f="johari-peeking" loc="resumen" />.
 
 </Ojo>
 
@@ -104,25 +110,25 @@ El p-valor es una probabilidad de datos dada la hipótesis, no una probabilidad 
 
 ### Errores y potencia
 
-El error tipo I es rechazar $H_0$ siendo cierta, y su probabilidad es $\alpha$. El error tipo II es no rechazarla siendo falsa, con probabilidad $\beta$. La potencia (*power*) es $1-\beta$, la probabilidad de detectar un efecto que existe<Cita f="mit1805" loc="Reading 17b, §4.2-4.3" />. La potencia sube con más datos y con efectos más grandes, y por eso el tamaño de muestra se calcula antes del experimento<Cita f="mit1805" loc="Reading 17b, §4.3" />.
+El error tipo I es rechazar $H_0$ siendo cierta, y su probabilidad es $\alpha$. El error tipo II es no rechazarla siendo falsa, con probabilidad $\beta$. La potencia (*power*) es $1-\beta$, la probabilidad de detectar un efecto que existe<Cita f="mit1805" loc="Reading 17b, §4.2-4.3" />. La potencia sube con más datos y con efectos más grandes, y por eso el tamaño de muestra se calcula antes del experimento<Cita f="mit1805" loc="Reading 17b, §4.3 y §4.4.2" />.
 
-Con 8 % contra 11 % y 300 visitas por grupo, la potencia es de unos 24 % (cálculo propio con la aproximación normal): tres de cada cuatro veces el test no detectaría una mejora real de ese tamaño. Para llegar a 80 % hacen falta unas 1500 visitas por grupo.
+Con 8 % contra 11 % y 300 visitas por grupo, la potencia es de unos 24 % (cálculo propio con la aproximación normal): tres de cada cuatro veces el test no detectaría una mejora real de ese tamaño. Para llegar a 80 % hacen falta unas 1500 visitas por grupo<Cita f="nist-handbook" loc="§7.2.4.2" />.
 
 <Profundizar titulo="¿De dónde salen esas 1500 visitas?">
 
-Es una derivación propia a partir de la definición de potencia y de la aproximación normal del estadístico de la prueba, no una fórmula tomada de un libro. Se busca el $n$ por grupo tal que, bajo $H_a$, la probabilidad de superar el valor crítico sea el 80 %:
+Es la fórmula usual de tamaño de muestra por potencia. NIST trae la versión para una proporción, que combina el valor crítico bajo $H_0$ con el de la potencia bajo $H_a$<Cita f="nist-handbook" loc="§7.2.4.2" />; para dos grupos, el término de la nula usa la proporción conjunta, como en la prueba z<Cita f="mendenhall" loc="§9.6, p. 373-374" />. Se busca el $n$ por grupo tal que, bajo $H_a$, la probabilidad de superar el valor crítico sea el 80 %:
 
 $$
 n \approx \frac{\left(z_{\alpha/2}\sqrt{2\bar{p}(1-\bar{p})} + z_{\beta}\sqrt{p_A(1-p_A)+p_B(1-p_B)}\right)^2}{(p_B-p_A)^2}
 $$
 
-Con $p_A = 0{,}08$, $p_B = 0{,}11$, $\bar{p} = 0{,}095$, $z_{\alpha/2} = 1{,}96$ y $z_\beta = 0{,}84$ da $n \approx 1498$. Lo verifiqué con una simulación de Monte Carlo: con 300 por grupo rechaza $H_0$ en 23 % de los experimentos, parecido al 24 % teórico.
+Con $p_A = 0{,}08$, $p_B = 0{,}11$, $\bar{p} = 0{,}095$, $z_{\alpha/2} = 1{,}96$ y $z_\beta = 0{,}84$ da $n \approx 1498$ (cuenta mía con esa fórmula). La verifiqué con una simulación de Monte Carlo: con 300 por grupo rechaza $H_0$ en 23 % de los experimentos, parecido al 24 % teórico.
 
 </Profundizar>
 
 ### Significativo no es importante
 
-Que un resultado sea estadísticamente significativo solo dice que probablemente no ocurrió por casualidad, no que sea grande ni que valga la pena<Cita f="mendenhall" loc="§9.5, p. 370" />. Con millones de visitas, hasta una diferencia diminuta sale significativa, y puede no justificar el costo de cambiar nada; por eso conviene mirar el intervalo de confianza de la diferencia además del p-valor.
+Que un resultado sea estadísticamente significativo solo dice que, si no hubiera ningún efecto, un resultado tan extremo sería poco común (el p-valor es menor que $\alpha$)<Cita f="mit1805" loc="Reading 17b, §7" />. No dice que el efecto sea grande ni que valga la pena<Cita f="mendenhall" loc="§9.5, p. 370" />. Con millones de visitas, hasta una diferencia diminuta sale significativa, y puede no justificar el costo de cambiar nada; por eso conviene mirar el intervalo de confianza de la diferencia además del p-valor.
 
 ### Muchas métricas, muchos falsos positivos
 
@@ -130,9 +136,9 @@ Cada prueba hecha con $\alpha = 0{,}05$ tiene un 5 % de rechazar una nula verdad
 
 ### Mirar a cada rato
 
-El p-valor depende de cómo se decidió cuándo parar: con los mismos datos, dos reglas de parada distintas pueden dar p-valores de 0,11 y 0,03<Cita f="mit1805" loc="Reading 20, §6" />. Cuando se elige el tamaño de muestra mirando el test de forma continua, los p-valores y los intervalos habituales dejan de ser confiables<Cita f="johari-peeking" loc="resumen" />.
+El p-valor depende de cómo se decidió cuándo parar: con los mismos datos, dos reglas de parada distintas pueden dar p-valores de 0,11 y 0,03<Cita f="mit1805" loc="Reading 20, §6" />. Cuando se elige el tamaño de muestra mirando el test de forma continua, los p-valores y los intervalos habituales dejan de ser confiables<Cita f="johari-peeking" loc="resumen" />; los autores señalan que incluso con 10.000 muestras el error tipo I puede multiplicarse por cinco<Cita f="johari-peeking" loc="introducción" />.
 
-Para dimensionarlo, simulé (resultado propio, 40.000 repeticiones con semilla fija) un test sin diferencia real, con 10 % de conversión en las dos versiones y hasta 3000 visitas por grupo, cortando en la primera mirada con $p < 0{,}05$:
+Para dimensionarlo, simulé (resultado propio, no de los autores) un test sin diferencia real, con 10 % de conversión en las dos versiones y hasta 3000 visitas por grupo. En cada mirada se hace la prueba z de dos proporciones con proporción conjunta, de dos colas con $\alpha = 0{,}05$, y se corta en la primera con $p < 0{,}05$. Las miradas son equiespaciadas (1 mirada: al final; 2: cada 1500 visitas por grupo; 5: cada 600; 30: cada 100). Son 40.000 repeticiones por fila, con semilla 2026 en Python:
 
 | Cantidad de miradas | Falsos positivos |
 |---|---|

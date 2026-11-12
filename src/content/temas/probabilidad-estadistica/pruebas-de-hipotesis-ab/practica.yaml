@@ -11,6 +11,11 @@ tarjetas:
     frente: Un test da p = 0,03. ¿Es correcto decir que hay 3 % de probabilidad de que la hipótesis nula sea cierta?
     dorso: No; el p-valor es una probabilidad de los datos dada la nula, no una probabilidad de la hipótesis.
     fuente: mit1805
+  - id: t-pvalor-no-es-prob-nula
+    frente: ¿Qué NO es el p-valor?
+    dorso: |
+      No es la probabilidad de que la hipótesis nula sea cierta, $P(H_0 \mid \text{datos})$; es una probabilidad de los datos suponiendo la nula.
+    fuente: mit1805
   - id: t-nivel-significancia
     frente: |
       Fijás $\alpha = 0{,}05$ y A y B son idénticas. Si repetís el test 1000 veces, ¿en cuántas esperás rechazar la nula?
@@ -36,7 +41,7 @@ tarjetas:
     fuente: mendenhall
   - id: t-significativo-importante
     frente: ¿"Estadísticamente significativo" quiere decir "importante"?
-    dorso: No; solo dice que el resultado probablemente no fue casualidad, aunque la diferencia pueda ser chica.
+    dorso: No; solo dice que un resultado así sería raro si no hubiera efecto, aunque la diferencia pueda ser chica.
     fuente: mendenhall
   - id: t-condicion-prueba-z
     frente: ¿Qué condición de tamaño hay que chequear antes de usar la prueba z de dos proporciones?
@@ -139,7 +144,7 @@ ejercicios:
         explicacion: El 5 % vale para una única decisión con tamaño de muestra fijo; con muchas miradas, cada una es una nueva oportunidad de error.
       - texto: Queda claramente por encima del 5 %.
         correcta: true
-        explicacion: En una simulación con 30 miradas llegó a cerca de 28 %.
+        explicacion: En la simulación propia del tema (tabla de "Mirar a cada rato"), con 30 miradas llegó a cerca de 28 %.
       - texto: Baja, porque tenés más datos a medida que pasan los días.
         explicacion: Más datos mejoran la estimación, pero la regla de parar al primer p bajo hace que el ruido te dé un "ganador" más seguido.
     fuente: johari-peeking
@@ -168,7 +173,7 @@ casos:
             consecuencia: Lanzás sin saber cuánto de ese resultado era ruido.
           - texto: Seguir hasta las 1500 visitas planificadas y mirar el resultado una sola vez.
             va: resultado-final
-            consecuencia: A los 12 días llegan 1500 por versión. A tuvo 126 compras (8,4 %) y B tuvo 165 (11,0 %).
+            consecuencia: A los 8 días llegan 1500 por versión. A tuvo 126 compras (8,4 %) y B tuvo 165 (11,0 %).
           - texto: Mirar el tablero todos los días y cortar el primer día que p baje de 0,05.
             va: final-regular
             consecuencia: El tercer día ya cumple la condición, así que cortás ahí.

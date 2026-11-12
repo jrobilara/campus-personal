@@ -48,8 +48,8 @@ tarjetas:
       Por 49, porque $0{,}98/0{,}02 = 49$ (el factor de Bayes).
     fuente: mit1805
   - id: t-evidencia-independiente
-    frente: Dos antivirus que usan las mismas firmas marcan el mismo archivo. ¿Se pueden multiplicar sus factores de Bayes como si fueran evidencias separadas?
-    dorso: No; solo se multiplican las evidencias independientes, y dos motores con las mismas firmas no lo son.
+    frente: Dos antivirus que usan las mismas firmas marcan el mismo archivo. ¿Se pueden multiplicar sus factores de Bayes?
+    dorso: No; hace falta que los errores de cada motor sean independientes entre sí dado el estado real del archivo, y con las mismas firmas se equivocan juntos.
     fuente: mit1805
 
 ejercicios:
@@ -172,16 +172,16 @@ casos:
         tipo: decision
         texto: No es 98 % ni 0 %, es una de cada cinco. ¿Cómo seguís?
         opciones:
-          - texto: Aíslo solo ese equipo, analizo el archivo en un entorno aislado y pido una segunda opinión de una fuente independiente.
+          - texto: Aíslo solo ese equipo, analizo el archivo en un entorno aislado y pido una segunda opinión con un método distinto.
             va: final-bien
-            consecuencia: El análisis independiente tarda 15 minutos y el resto de contabilidad sigue trabajando.
+            consecuencia: El análisis en entorno aislado tarda 15 minutos y el resto de contabilidad sigue trabajando.
           - texto: Vuelvo a pasar el mismo antivirus para confirmar.
             va: final-regular
-            consecuencia: Da lo mismo que la primera vez, porque usa las mismas firmas; no sumó evidencia nueva.
+            consecuencia: Da lo mismo que la primera vez, porque usa las mismas firmas; sus errores están correlacionados con los del primer escaneo y no suma evidencia nueva.
       - id: final-bien
         tipo: desenlace
         resultado: bien
-        texto: El análisis independiente muestra que era una macro legítima. Cerrás la alerta con evidencia y la empresa no perdió tiempo.
+        texto: El análisis en entorno aislado muestra que era una macro legítima. Cerrás la alerta con evidencia y la empresa no perdió tiempo.
       - id: final-regular
         tipo: desenlace
         resultado: regular
@@ -191,7 +191,7 @@ casos:
         resultado: mal
         texto: Una decisión sin mirar la tasa base. O frenaste a toda el área por una falsa alarma, o dejaste pasar una amenaza real.
     leccion: |
-      Una alerta no vale lo que dice la ficha del producto: vale lo que dice la ficha combinada con cuán común es el problema. Calculá el VPP antes de decidir cuánto reaccionar, y confirmá con una evidencia que sea de verdad independiente.
+      Una alerta no vale lo que dice la ficha del producto: vale lo que dice la ficha combinada con cuán común es el problema. Calculá el VPP antes de decidir cuánto reaccionar, y confirmá con una evidencia cuyos errores no estén correlacionados con los del primer motor.
     fuente: mit1805
 
 problemas:

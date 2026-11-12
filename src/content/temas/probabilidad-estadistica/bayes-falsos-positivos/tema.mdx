@@ -73,7 +73,7 @@ Probalo moviendo la prevalencia (la fracción de archivos realmente maliciosos):
   contexto="alerta-seguridad"
 />
 
-Lo que tenés que notar es que, cuando lo que buscás es raro, la especificidad (no dar falsas alarmas) pesa mucho más que la sensibilidad. Y que el mismo test, en un lugar donde el problema es más común, sirve mucho más.
+Lo que tenés que notar es que, cuando lo que buscás es raro, la especificidad (no dar falsas alarmas) pesa mucho más que la sensibilidad. Con los números del caso, subir la sensibilidad de 98 % a 99,9 % deja el VPP en 20 %; bajar las falsas alarmas de 2 % a 0,1 % lo sube a 83 % (cuenta propia). Y que el mismo test, en un lugar donde el problema es más común, sirve mucho más.
 
 <Ojo>
 
@@ -135,7 +135,7 @@ Acá: odds previos $0{,}005/0{,}995 \approx 0{,}005$, factor de Bayes $0{,}98/0{
 
 <Profundizar titulo="Encadenar alertas: ¿y si otro motor también marca el archivo?">
 
-Si una segunda alerta fuera evidencia independiente de la primera, se multiplican los factores de Bayes de cada una<Cita f="mit1805" loc="Reading 12b, §4" />: el VPP pasa de 19,8 % a $\approx 92{,}3\ \%$ (actualizando el 19,8 % como nueva prevalencia, con el mismo test). La palabra clave es independiente: dos productos que se basan en las mismas firmas o en la misma heurística no aportan evidencia nueva, y repetir el mismo escaneo tampoco.
+Si una segunda alerta se suma como evidencia, se multiplican los factores de Bayes, siempre que las dos alertas sean condicionalmente independientes dado el estado real del archivo (que sea o no malware): que el segundo motor acierte o falle no puede depender de lo que hizo el primero<Cita f="mit1805" loc="Reading 12b, §4.1" />. En ese caso el VPP pasa de 19,8 % a $\approx 92{,}3\ \%$ (actualizando el 19,8 % como nueva prevalencia, con el mismo test). Dos alertas sobre el mismo archivo nunca son independientes a secas, porque las dos dependen de si es malware; lo que importa es que, sabiéndolo, sus errores no estén correlacionados. Dos productos con las mismas firmas se equivocan juntos, y repetir el mismo escaneo tampoco aporta evidencia nueva.
 
 </Profundizar>
 
