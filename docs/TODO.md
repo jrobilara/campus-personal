@@ -13,5 +13,7 @@
 ## 🟢 Ideas / algún día
 - [ ] v2: mapa de conexiones entre temas (grafo)
 - [ ] v2: recordatorio diario de repaso (notificación)
+- [ ] v2: el dueño deja libros nuevos en una carpeta (Kleppmann, Newman, ITIL 4 Foundation, Strang/Grossman, Rosen, Ross/Walpole) para reforzar citas
+- [ ] v2: simuladores de reintentos con jitter, partición de red (CAP) y peeking en A/B (tests A/A)
 
 ## Reportado por el usuario
