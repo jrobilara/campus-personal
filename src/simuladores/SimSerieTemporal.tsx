@@ -153,7 +153,7 @@ function opcionesAlertas({ ancho, c, esc, a, umbral, nucleos, esLoad, serieId, v
   }
   marks.push(Plot.dot(avisos, { x: 'x', y: 'y', r: 5, fill: c.mal, stroke: c.superficie, strokeWidth: 2 }));
   return {
-    width: ancho, height: angosto ? 250 : 310, marginLeft: 38, marginRight: 22, marginTop: 14, marginBottom: 32, // marginRight 22: la etiqueta '24:00' del borde derecho necesita ~16 px a cada lado del tick
+    width: ancho, height: angosto ? 250 : 310, marginLeft: esc.unidad === '%' ? 48 : 38, marginRight: 22, marginTop: 14, marginBottom: 32, // marginRight 22: '24:00' del borde derecho necesita ~16 px; marginLeft 48 con '%': '100 %' no entra en 38
     x: { domain: [0, 24], ticks: angosto ? [0, 6, 12, 18, 24] : [0, 3, 6, 9, 12, 15, 18, 21, 24], tickFormat: hh, label: null },
     y: { domain: [0, ymax], grid: true, label: null, tickFormat: esc.unidad === '%' ? (d: number) => `${d} %` : (d: number) => String(d) },
     marks,

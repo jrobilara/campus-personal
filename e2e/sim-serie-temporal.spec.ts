@@ -110,15 +110,19 @@ test.describe('respaldo', () => {
 
 test.describe('a 390 px', () => {
   test.use({ viewport: { width: 390, height: 800 } });
-  test('la etiqueta "24:00" del eje no queda cortada', async ({ page }) => {
-    await abrir(page);
-    const fig = await figura(page, 'Carga');
-    // el gráfico se redibuja al medir el ancho (reemplaza el <svg>): se mide dentro de la página y se reintenta hasta que se estabiliza
-    await expect.poll(async () => fig.locator('[data-testid="grafico-alertas"]').evaluate((cont) => {
-      const svg = cont.querySelector('svg');
-      const t = [...(svg?.querySelectorAll('text') ?? [])].find((x) => x.textContent?.trim() === '24:00');
-      if (!svg || !t) return null;
-      return Math.round((svg.getBoundingClientRect().right - t.getBoundingClientRect().right) * 10) / 10; // px que sobran a la derecha
-    }), { message: 'la etiqueta 24:00 se sale del SVG por la derecha' }).toBeGreaterThanOrEqual(0);
-  });
+  // las etiquetas de los ejes ("24:00" a la derecha, "100 %" a la izquierda) no quedan cortadas
+  for (const titulo of ['Carga', 'Pico breve']) {
+    test(`las etiquetas de los ejes no quedan cortadas: ${titulo}`, async ({ page }) => {
+      await abrir(page);
+      const fig = await figura(page, titulo);
+      // el gráfico se redibuja al medir el ancho (reemplaza el <svg>): se mide dentro de la página y se reintenta hasta que se estabiliza
+      await expect.poll(async () => fig.locator('[data-testid="grafico-alertas"]').evaluate((cont) => {
+        const svg = cont.querySelector('svg');
+        const cajas = [...(svg?.querySelectorAll('text') ?? [])].map((t) => t.getBoundingClientRect());
+        if (!svg || cajas.length < 5) return null;
+        const m = svg.getBoundingClientRect();
+        return Math.round(Math.min(m.right - Math.max(...cajas.map((c) => c.right)), Math.min(...cajas.map((c) => c.left)) - m.left) * 10) / 10; // px de margen mínimo
+      }), { message: 'una etiqueta se sale del SVG' }).toBeGreaterThanOrEqual(0);
+    });
+  }
 });
