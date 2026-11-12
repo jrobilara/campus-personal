@@ -4,7 +4,10 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 const URL = 'ejemplo/simuladores/';
 
-const figura = (page: Page, titulo: string) => page.locator('figure.sim', { hasText: titulo }).first();
+const escapar = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Título exacto: "Cola" no debe confundirse con "Cola de tickets" ni con la lectura "En cola" del balanceador.
+const figura = (page: Page, titulo: string) =>
+  page.locator('figure.sim').filter({ has: page.locator('.sim-titulo', { hasText: new RegExp(`^${escapar(titulo)}$`) }) });
 const control = (fig: Locator, clave: string) => fig.locator(`[data-control="${clave}"]`);
 const lectura = async (fig: Locator, clave: string) => {
   const t = (await fig.locator(`[data-lectura="${clave}"]`).textContent()) ?? '';
@@ -12,10 +15,17 @@ const lectura = async (fig: Locator, clave: string) => {
 };
 const texto = async (fig: Locator, clave: string) => (await fig.locator(`[data-lectura="${clave}"]`).textContent()) ?? '';
 
+/** Con `client:visible`, mientras el <astro-island> tenga `ssr` React todavía no tomó el control: hay que esperar. */
+async function hidratada(fig: Locator) {
+  await expect(fig).toHaveCount(1);
+  await fig.scrollIntoViewIfNeeded();
+  await expect(fig.locator('astro-island[ssr]')).toHaveCount(0);
+}
+
 async function abrir(page: Page, titulo: string) {
   await page.goto(URL);
   const fig = figura(page, titulo);
-  await fig.scrollIntoViewIfNeeded();
+  await hidratada(fig);
   await expect(control(fig, 'pausa')).toBeVisible();
   await control(fig, 'pausa').click(); // pausado: lo demás lo mueve el botón "Adelantar"
   await expect(control(fig, 'pausa')).toHaveText(/Reanudar/);
@@ -90,7 +100,7 @@ test.describe('SimFlujo · balanceador', () => {
   test('pausar y reanudar cambia el botón', async ({ page }) => {
     await page.goto(URL);
     const fig = figura(page, 'Balanceador');
-    await fig.scrollIntoViewIfNeeded();
+    await hidratada(fig);
     await expect(control(fig, 'pausa')).toHaveText(/Pausar/);
     await control(fig, 'pausa').click();
     await expect(control(fig, 'pausa')).toHaveText(/Reanudar/);
@@ -117,12 +127,12 @@ test.describe('SimFlujo · cola', () => {
     await control(fig, 'tiempo-proceso').fill('0.8');
     await correr(fig, 1);
     await control(fig, 'consumidor-caido').check();
-    await adelantar(fig, 2);
+    await adelantar(fig, 4); // 40 s con un solo consumidor (1,25/s) contra 2 llegadas por segundo
     const acumulado = await lectura(fig, 'en-cola');
     expect(acumulado).toBeGreaterThan(8);
     expect(await lectura(fig, 'perdidos')).toBe(0);
     await control(fig, 'consumidor-caido').uncheck();
-    await adelantar(fig, 4);
+    await adelantar(fig, 8); // con los dos consumidores (2,5/s) se drena de a 0,5 por segundo
     expect(await lectura(fig, 'en-cola')).toBeLessThan(acumulado / 3);
     expect(await lectura(fig, 'perdidos')).toBe(0);
   });
@@ -184,7 +194,7 @@ test.describe('SimFlujo · cadena', () => {
   test('con 5 saltos de 99,9 % la disponibilidad compuesta es 99,50 % y cada salto suma latencia', async ({ page }) => {
     await page.goto(URL);
     const fig = figura(page, 'Cadena');
-    await fig.scrollIntoViewIfNeeded();
+    await hidratada(fig);
     await control(fig, 'saltos').fill('5');
     await control(fig, 'disponibilidad').fill('3'); // tres nueves: 99,9 %
     expect(await texto(fig, 'disponibilidad-compuesta')).toBe('99,50');
@@ -198,7 +208,7 @@ test.describe('SimFlujo · cadena', () => {
   test('el monolito es un solo salto en memoria de 1 ms', async ({ page }) => {
     await page.goto(URL);
     const fig = figura(page, 'Cadena');
-    await fig.scrollIntoViewIfNeeded();
+    await hidratada(fig);
     await control(fig, 'monolito').check();
     expect(await texto(fig, 'latencia-total')).toBe('1');
     expect(await texto(fig, 'disponibilidad-compuesta')).toBe('99,90');
@@ -211,6 +221,7 @@ test('con movimiento reducido las lecturas siguen funcionando y no hay errores e
   const errores: string[] = [];
   page.on('pageerror', (e) => errores.push(String(e)));
   const fig = await abrir(page, 'Cola');
+  await control(fig, 'tasa-llegada').fill('30'); // 30 mensajes/s contra 4 por segundo: la cola crece sí o sí
   await correr(fig, 1);
   expect(await lectura(fig, 'en-cola')).toBeGreaterThan(0);
   expect(errores).toEqual([]);

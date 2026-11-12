@@ -1,6 +1,6 @@
 // SimFlujo, modo "cola": productor → cola (bloques apilados) → consumidores.
 // Con etiquetas="tickets" el tiempo del motor está en horas (tasa en tickets/hora, proceso en minutos) y corre 15 min por segundo.
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { useMenosMovimiento } from '../../lib/tema';
 import { Interruptor, Leyenda, Lecturas, Slider, type ItemLectura } from '../ui';
@@ -57,7 +57,8 @@ export default function VistaCola(props: Props) {
   });
   const { motor, lect } = sim;
 
-  useEffect(() => {
+  // useLayoutEffect: los parámetros llegan al motor antes de que un botón (p. ej. "Adelantar") lo haga avanzar.
+  useLayoutEffect(() => {
     motor.setParams(aMotor());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasa, consumidores, proceso, kb, caido, motor]);

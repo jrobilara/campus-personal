@@ -1,5 +1,5 @@
 // SimFlujo, modo "balanceador": clientes → balanceador → (caché) → servidores, con una barra de cola por servidor.
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useMenosMovimiento } from '../../lib/tema';
 import { Boton, Interruptor, Leyenda, Lecturas, Selector, Slider, type ItemLectura } from '../ui';
 import { num } from '../formato';
@@ -37,7 +37,8 @@ export default function VistaBalanceador(props: Props) {
   });
   const { motor, lect } = sim;
 
-  useEffect(() => {
+  // useLayoutEffect: los parámetros llegan al motor antes de que un botón (p. ej. "Adelantar") lo haga avanzar.
+  useLayoutEffect(() => {
     motor.setParams(params);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [servidores, algoritmo, tasa, lento, cache, acierto, motor]);

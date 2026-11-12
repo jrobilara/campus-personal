@@ -1,6 +1,6 @@
 // SimFlujo, modo "sincrono-vs-asincrono": dos carriles con el mismo flujo de pedidos.
 // Arriba: Cliente → A → B (A espera a B). Abajo: Cliente → A → cola → B (A contesta enseguida).
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { useMenosMovimiento } from '../../lib/tema';
 import { Interruptor, Leyenda, Lecturas, Slider, type ItemLectura } from '../ui';
@@ -33,7 +33,8 @@ export default function VistaSincrono(props: Props) {
   });
   const { motor, lect } = sim;
 
-  useEffect(() => {
+  // useLayoutEffect: los parámetros llegan al motor antes de que un botón (p. ej. "Adelantar") lo haga avanzar.
+  useLayoutEffect(() => {
     motor.setLatenciaB(latencia);
     motor.setCaidoB(caido);
   }, [latencia, caido, motor]);
