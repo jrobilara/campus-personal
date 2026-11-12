@@ -138,7 +138,7 @@ Convenciones. Las páginas de **Mendenhall** son las impresas del libro (la copi
 - `mit1805`: Readings 17b (`…class17-prep-b.pdf`), 20 (`…class20-prep.pdf`) y 22 en https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/. Leídas.
 - `mendenhall`: ver arriba; en este tema, §9.3, §9.5, §9.6 (p. 351-352, 356, 370, 373-376).
 - `nist-handbook`: NIST/SEMATECH e-Handbook, §7.2.4.2 "Sample sizes required" (https://www.itl.nist.gov/div898/handbook/prc/section2/prc242.htm). Acceso: web, leída; trae la fórmula de una proporción y remite a Fleiss, Levin y Paik, pp. 30-34, que no abrí.
-- `johari-peeking`: R. Johari, L. Pekelis y D. J. Walsh, *Always Valid Inference: Bringing Sequential Analysis to A/B Testing*, preprint arXiv:1512.04922 (v3, 2019), https://arxiv.org/abs/1512.04922. Acceso: PDF descargado; leí resumen e introducción. El esquema de fuentes no tiene un tipo "paper", así que lo cargué como `doc-oficial`.
+- `johari-peeking`: R. Johari, L. Pekelis y D. J. Walsh, *Always Valid Inference: Bringing Sequential Analysis to A/B Testing*, preprint arXiv:1512.04922 (v3, 2019), https://arxiv.org/abs/1512.04922. Acceso: PDF descargado; leí resumen e introducción. Tipo `articulo` en el frontmatter (retipado F6a; el autor lo había cargado como `doc-oficial` porque el esquema no tenía tipo para papers).
 
 ### Números y datos inventados para ejemplos
 - 300 visitas por versión, 24 y 33 compras; 4000 visitas por versión; 20 métricas; test planificado de 1500 por versión y sus resultados parciales: ilustrativos.
@@ -217,7 +217,7 @@ Resultado: 28,1 % (30 miradas), 13,8 % (5), 4,9 % (1), 15,4 % (6), 8,4 % (2). El
 - Montgomery y Runger, *Applied Statistics and Probability for Engineers*: para intervalos, pruebas y tamaño de muestra con ejemplos de ingeniería.
 
 ## Pedidos al director
-- **Tipo de fuente para papers**: el esquema solo tiene libro, doc-oficial, curso-abierto, video y blog. Cargué el preprint de arXiv de Johari et al. como `doc-oficial`. Si querés distinguirlo, haría falta un tipo `paper`.
+- **Tipo de fuente para papers**: RESUELTO en F6a: el preprint de Johari et al. pasó al tipo `articulo`.
 - **Simuladores**: usé `SimDistribucion` (2 usos), `SimInferencia` (3 usos: `tcl`, `intervalos`, `ab`) y `SimBayes` (1 uso). No pedí ningún simulador nuevo. Para v2, útil: un modo de `SimInferencia` con "mirar a cada rato" (peeking) que corra tests A/A con cortes tempranos.
 - **Prerrequisitos**: `tcl-e-intervalos` depende de `variables-y-distribuciones` y `pruebas-de-hipotesis-ab` de `tcl-e-intervalos`; los tres existen en esta área. `bayes-falsos-positivos` no tiene prerrequisitos.
 - **Modo estricto** (`CAMPUS_ESTRICTO=1 npm run build`): en este worktree solo falla por las otras cinco áreas, que todavía no tienen temas (reglas I12 e I13). Esta área no genera ningún error.

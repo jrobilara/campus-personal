@@ -220,7 +220,7 @@ Convenciones de este archivo. Las páginas de libros son las **impresas**, no el
 
 ### Fuentes del tema
 - `smith-dsp`: Smith, *The Scientist and Engineer's Guide to Digital Signal Processing*, California Technical Publishing, © 1997-2011. Acceso: PDF libre de los capítulos 3, 14 y 22 (dspguide.com); la edición exacta no figura en el sitio. Páginas = las impresas.
-- `shannon`: Shannon, "A Mathematical Theory of Communication", *Bell System Technical Journal* 27, 1948. Acceso: reimpresión con correcciones (PDF de Harvard). La p. 43 es la de la reimpresión, no la de la revista. Está clasificada como `libro` en el frontmatter porque el contrato no tiene un tipo para artículos.
+- `shannon`: Shannon, "A Mathematical Theory of Communication", *Bell System Technical Journal* 27, 1948. Acceso: reimpresión con correcciones (PDF de Harvard). La p. 43 es la de la reimpresión, no la de la revista. Tipo `articulo` en el frontmatter (retipado F6a; antes `libro`, cuando el contrato no tenía ese tipo).
 - `openstax-up1`, `openstax-up2`: *University Physics* vol. 1 (§15.1) y vol. 2 (§15.1), OpenStax. Acceso: páginas web abiertas. Ya no se cita §17.3.
 
 ### Números y datos inventados para ejemplos

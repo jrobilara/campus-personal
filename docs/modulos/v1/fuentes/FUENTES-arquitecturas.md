@@ -213,7 +213,7 @@
 - Tanenbaum y van Steen, *Distributed Systems* (distributed-systems.net, versión descargable): no lo consulté para este tema.
 
 ## Pedidos al director
-- El esquema de fuentes no tiene un tipo "artículo/paper". Tipé como `doc-oficial` los artículos de Fowler, las páginas de microservices.io (Richardson), el paper de Gilbert y Lynch y el artículo de Brewer. Si se prefiere otro tipo, hay que ampliar el esquema.
+- RESUELTO en F6a: los artículos de Fowler, las páginas de microservices.io (Richardson), el paper de Gilbert y Lynch y el artículo de Brewer pasaron al tipo `articulo` (con `edicion`).
 - Los sitios `sre.google` (libro SRE) están tipados como `libro` porque tienen capítulo, con URL.
 - Los simuladores aún no existen en este worktree ("simulador en construcción"): sus lecturas están tomadas del contrato `SIMULADORES.md`. Verificar contra el real cuando F2 los termine, sobre todo: `cadena` (99,50 % con 5 saltos), `propagar-falla` (con timeouts, tirar antifraude deja pagos degradado y gateway ok), `cola` (2 consumidores a 0,5 s con llegada 5), `balanceador` (servidor lento y caché) y `circuit-breaker`.
 - Prerrequisitos: los 4 temas encadenan entre sí (`arquitecturas/monolito-y-microservicios` ← `sincrono-vs-asincrono` ← los otros dos); no hay prerrequisitos a otras áreas.

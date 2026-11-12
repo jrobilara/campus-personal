@@ -110,6 +110,19 @@ Lo crea F2 con este contenido exacto. Sumar un área es sumar un bloque acá (y 
 | Tarjetas, ejercicios, casos de guardia, problemas recomendados | `practica.yaml` (hermano de `tema.mdx`) | Son datos estructurados con ids estables. En YAML, Zod valida cada campo y los mínimos (`.min(6)`), y el build rompe con el archivo y la ruta exacta (`tarjetas.3.dorso`). En componentes MDX no se podrían validar mínimos ni ids en el build. |
 | Práctica y Fuentes (secciones 4 y 5 de la lección) | las **dibuja el layout**, a partir de `practica.yaml` y de `fuentes` del frontmatter | Así el orden caso real → intuición → formal → práctica → fuentes queda forzado por construcción: el escritor no puede desordenarlo ni olvidarse una parte. |
 
+**Tipos de fuente** (campo `tipo` de cada entrada de `fuentes`):
+
+| `tipo` | Qué es | Campos obligatorios (además de `id`, `autor`, `titulo`) | ¿Respalda un dato? |
+|---|---|---|---|
+| `libro` | Libro o capítulo de libro (incluye ediciones libres online, como el libro SRE de Google) | `edicion`, `ubicacion` | Sí |
+| `doc-oficial` | Documentación de un proyecto, proveedor, estándar o ente (man pages, RFC, Azure Architecture Center, NIST) | `url` | Sí |
+| `curso-abierto` | Curso universitario abierto (MIT OCW, Khan Academy) | `url` | Sí |
+| `articulo` | Artículo o paper de autor: revista, conferencia, preprint (Brewer, Gilbert-Lynch, Shannon 1948, Johari et al.) y artículos de autor reconocido en su sitio (Fowler, microservices.io) | `edicion` (revista, volumen y año, o fecha de publicación) | Sí |
+| `video` | Video | `url`, `verMas: true` | No, solo "para ver más" |
+| `blog` | Blog o artículo comercial sin revisión editorial | `url`, `verMas: true` | No, solo "para ver más" |
+
+Un artículo de autor se tipa `articulo`, no `doc-oficial`: `doc-oficial` queda para documentación institucional (de un proveedor, un proyecto o un ente de normas).
+
 ---
 
 ## 3. Esquemas Zod (F2 los copia tal cual)
@@ -190,6 +203,15 @@ const fuenteCursoAbierto = z.object({
   edicion: texto.optional(), // "Fall 2010"
   verMas: z.boolean().default(false),
 });
+// Artículo o paper (revista, conferencia, preprint) y artículos de autor reconocido (Fowler, Richardson): fuente válida, con DOI o URL si existe.
+const fuenteArticulo = z.object({
+  ...baseFuente,
+  tipo: z.literal('articulo'),
+  edicion: texto, // revista, volumen y año, o fecha de publicación: "Communications of the ACM 56(2), 2013"
+  ubicacion: texto.optional(), // sección o páginas
+  url: url.optional(),
+  verMas: z.boolean().default(false),
+});
 const verMasObligatorio = z.literal(true, {
   error: 'videos y blogs solo pueden ir como "para ver más": poné verMas: true',
 });
@@ -213,6 +235,7 @@ export const esquemaFuente = z.discriminatedUnion('tipo', [
   fuenteLibro,
   fuenteDocOficial,
   fuenteCursoAbierto,
+  fuenteArticulo,
   fuenteVideo,
   fuenteBlog,
 ]);
@@ -1068,6 +1091,7 @@ Lo que el SPEC dejaba abierto y quedó decidido acá (todas reversibles salvo qu
 5. **Reglas cruzadas en una función pura `verificarIntegridad`**, llamada desde todas las páginas: un error tira el build con archivo, campo y regla.
 6. **Modo estricto solo en CI** (`CAMPUS_ESTRICTO=1`): ≥3 temas por área, ≥2 simuladores por área y prerrequisitos existentes. En local, apagado, para que F2 y cada escritor construyan en paralelo sin depender del resto.
 7. **Videos y blogs son tipos de fuente con `verMas: true` obligatorio**; no se pueden citar con `<Cita>` ni respaldar problemas.
+    - Agregado en F6a: tipo `articulo` (papers y artículos de autor), que sí respalda datos; `edicion` es obligatoria.
 8. **Toda fuente principal tiene que usarse** (cita en el cuerpo o fuente de una pieza de práctica), y `<Formal>` lleva ≥1 cita. Así F4 siempre tiene de dónde agarrar cada afirmación.
 9. **La marca de cita muestra el id de la fuente** (`[ross, §2.3]`) en vez de un número: no necesita contexto entre componentes y se lee bien.
 10. **Sin imports ni imágenes en los temas.** Los visuales salen del catálogo de 12 simuladores; los componentes llegan inyectados.
