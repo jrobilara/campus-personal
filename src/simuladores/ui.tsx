@@ -91,10 +91,21 @@ export function Lecturas({ items }: { items: ItemLectura[] }) {
   );
 }
 
-export function Leyenda({ items }: { items: { color: string; texto: string }[] }) {
+/** `trazo`: la muestra es un segmento de línea (continua, de puntos o de guiones) en vez de un cuadradito de color. */
+export type ItemLeyenda = { color: string; texto: string; trazo?: 'continuo' | 'puntos' | 'guiones' };
+
+export function Leyenda({ items }: { items: ItemLeyenda[] }) {
+  const estilo = { continuo: 'solid', puntos: 'dotted', guiones: 'dashed' } as const;
   return (
     <div className="sim-leyenda">
-      {items.map((i) => <span key={i.texto}><i style={{ background: i.color }} />{i.texto}</span>)}
+      {items.map((i) => (
+        <span key={i.texto}>
+          {i.trazo
+            ? <i className="sim-trazo" style={{ borderTopColor: i.color, borderTopStyle: estilo[i.trazo] }} />
+            : <i style={{ background: i.color }} />}
+          {i.texto}
+        </span>
+      ))}
     </div>
   );
 }

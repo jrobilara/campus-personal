@@ -32,6 +32,7 @@
 .lectura.alerta { border-color: var(--mal); background: var(--mal-fondo); }
 .lectura.buena { border-color: var(--ok); background: var(--ok-fondo); }
 .sim-leyenda { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; font-size: 0.82rem; color: var(--suave); }
+.sim-leyenda i.sim-trazo { width: 1.5rem; height: 0; background: none; border-radius: 0; border-top-width: 3px; vertical-align: 0.2em; }
 .sim-leyenda i { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 3px; margin-right: 0.35rem; vertical-align: -0.1em; }
 .sim-nota { font-size: 0.82rem; color: var(--suave); margin: 0; }
 .sim-log { font: 0.82rem/1.5 var(--f-mono); background: var(--papel); border: 1px solid var(--linea); border-radius: 8px; padding: 0.5rem 0.7rem; max-height: 9.5rem; overflow-y: auto; margin: 0; list-style: none; }

@@ -67,7 +67,13 @@ function Alertas({ escenario, nucleos = 4, umbral: umbralProp, duracionMin = 0, 
           testid="grafico-alertas"
         />
         <Leyenda items={[
-          { color: 'var(--color-area)', texto: esLoad ? 'Load average' : esc.metrica },
+          ...(esLoad
+            ? esc.series.map((x) => ({
+                color: x.id === serieId ? 'var(--color-area)' : 'var(--suave)',
+                texto: x.id === serieId ? `${x.etiqueta} (vigilado)` : x.etiqueta,
+                trazo: x.id === 'load1' ? ('puntos' as const) : x.id === 'load15' ? ('guiones' as const) : ('continuo' as const),
+              }))
+            : [{ color: 'var(--color-area)', texto: esc.metrica }]),
           { color: 'color-mix(in srgb, var(--mal) 28%, transparent)', texto: 'Alerta disparada' },
           { color: 'var(--mal)', texto: 'Umbral' },
           ...(esLoad ? [{ color: 'var(--suave)', texto: `Núcleos (${nucleos})` }] : []),
@@ -147,7 +153,7 @@ function opcionesAlertas({ ancho, c, esc, a, umbral, nucleos, esLoad, serieId, v
   }
   marks.push(Plot.dot(avisos, { x: 'x', y: 'y', r: 5, fill: c.mal, stroke: c.superficie, strokeWidth: 2 }));
   return {
-    width: ancho, height: angosto ? 250 : 310, marginLeft: 38, marginRight: 14, marginTop: 14, marginBottom: 32,
+    width: ancho, height: angosto ? 250 : 310, marginLeft: 38, marginRight: 22, marginTop: 14, marginBottom: 32, // marginRight 22: la etiqueta '24:00' del borde derecho necesita ~16 px a cada lado del tick
     x: { domain: [0, 24], ticks: angosto ? [0, 6, 12, 18, 24] : [0, 3, 6, 9, 12, 15, 18, 21, 24], tickFormat: hh, label: null },
     y: { domain: [0, ymax], grid: true, label: null, tickFormat: esc.unidad === '%' ? (d: number) => `${d} %` : (d: number) => String(d) },
     marks,

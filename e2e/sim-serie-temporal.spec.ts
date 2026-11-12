@@ -35,6 +35,17 @@ test.describe('alertas', () => {
     expect(alertas15).toBeLessThanOrEqual(alertas1);
   });
 
+  test('carga-sostenida: la leyenda distingue las curvas de 1, 5 y 15 min', async ({ page }) => {
+    const fig = await figura(page, 'Carga');
+    const leyenda = fig.locator('.sim-leyenda');
+    for (const t of ['Load 1 min', 'Load 5 min', 'Load 15 min']) await expect(leyenda.getByText(t)).toBeVisible();
+    // cada curva tiene su trazo (de puntos, continuo, de guiones) y el que vigila la alerta se marca
+    await expect(leyenda.locator('.sim-trazo')).toHaveCount(3);
+    await expect(leyenda.getByText('Load 5 min (vigilado)')).toBeVisible();
+    await control(fig, 'metrica').selectOption({ index: 2 });
+    await expect(leyenda.getByText('Load 15 min (vigilado)')).toBeVisible();
+  });
+
   test('fuga-memoria: sube hasta el reinicio y el umbral dispara una vez', async ({ page }) => {
     const fig = await figura(page, 'Memoria');
     await expect(lectura(fig, 'alertas')).toBeVisible();
@@ -94,5 +105,18 @@ test.describe('respaldo', () => {
     await control(fig, 'probado').uncheck();
     expect(await fig.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await expect(fig.locator('[data-testid="nota-rto"]')).toBeVisible();
+  });
+});
+
+test.describe('a 390 px', () => {
+  test.use({ viewport: { width: 390, height: 800 } });
+  test('la etiqueta "24:00" del eje no queda cortada', async ({ page }) => {
+    await abrir(page);
+    const fig = await figura(page, 'Carga');
+    const svg = fig.locator('[data-testid="grafico-alertas"] svg').first();
+    await expect(svg).toBeVisible();
+    const marco = (await svg.boundingBox())!;
+    const etiqueta = (await svg.getByText('24:00').first().boundingBox())!;
+    expect(etiqueta.x + etiqueta.width, 'la etiqueta se sale del SVG por la derecha').toBeLessThanOrEqual(marco.x + marco.width);
   });
 });
