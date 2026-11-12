@@ -3,7 +3,7 @@
 - **Tema:** arquitecturas/escalabilidad-balanceo-cache
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (cifras y configuración correctas; hallazgos menores de ubicación, una tarjeta imprecisa y dos detalles de consigna/problema)
+- **Veredicto:** APROBADO tras la re-verificación del commit 2294204 (H1–H4 cerrados). Veredicto inicial (aaa7ad0): OBSERVADO.
 
 Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a texto con títulos. NGINX: leí `load_balancing.html` y `ngx_http_upstream_module.html`. No pude ejecutar `nginx -t` (no hay nginx instalado y el usuario no tiene permiso sobre el socket de Docker), así que la configuración se contrastó con la documentación directiva por directiva. Números recalculados con Python.
 
@@ -45,15 +45,23 @@ Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a text
 
 Respuesta del autor: corregido: dos citas ("Configure scaling" y "Test scaling") y el nexo marcado como conclusión propia; tarjeta partida en `t-colchon-capacidad` y `t-escalado-demora`.
 
+Re-verificación F4: **CERRADO** (2294204). Dos citas ("Configure scaling" para el colchón, "Test scaling" para la demora) y el nexo queda como conclusión propia ("En criollo"); tarjetas `t-colchon-capacidad` y `t-escalado-demora` atómicas y fieles a "Use a buffer" y "It takes time for scaling to complete, so test the effects of scaling delays".
+
 **H2** — `escalabilidad-balanceo-cache/practica.yaml`, tarjeta `t-max-fails-fail-timeout`. Qué está mal: (a) dos ideas en una tarjeta (GUIA-ESTILO §4 regla 1); (b) "fallas seguidas": la guía de balanceo de nginx dice "consecutive unsuccessful attempts", pero la referencia del módulo upstream dice "unsuccessful attempts … in the duration set by fail_timeout" (sin "consecutivas"), y `fail_timeout` cumple dos roles: la ventana de conteo y el tiempo que el servidor queda como no disponible (por defecto 10 s; `max_fails` por defecto 1). Corrección: dos tarjetas, o un dorso exacto ("`max_fails` es cuántos intentos fallidos dentro de la ventana de `fail_timeout` marcan al servidor como no disponible, y `fail_timeout` también es cuánto dura ese estado").
 
 Respuesta del autor: corregido: dos tarjetas con la formulación exacta de `max_fails` y de `fail_timeout`, y el texto del tema ajustado.
+
+Re-verificación F4: **CERRADO** (2294204). Texto y tarjetas conforme a la referencia de `ngx_http_upstream_module` (intentos fallidos dentro de la duración de `fail_timeout`; `fail_timeout` es también el período como no disponible); sin "seguidas"; dos tarjetas.
 
 **H3** — `escalabilidad-balanceo-cache/tema.mdx`, Intuición, segundo `<SimFlujo>`: pasa `servidorLento={true}` y la consigna dice "Activá 'servidor lento'". Con el valor inicial en `true` el toggle ya está activado. Corrección: quitar `servidorLento={true}` o cambiar la consigna a "Con 'servidor lento' activado, compará…". Menor.
 
 Respuesta del autor: corregido: se quitó `servidorLento={true}`.
 
+Re-verificación F4: **CERRADO** (2294204). Se quitó `servidorLento={true}`; la consigna "Activá 'servidor lento'" ahora es coherente.
+
 **H4** — `escalabilidad-balanceo-cache/practica.yaml`, problema `p-nginx-tres-backends`. Qué está mal (expectativa): con `curl` uno por vez no hay conexiones simultáneas, así que `least_conn` se comporta como round-robin y el alumno no va a ver diferencia. Qué dice la fuente: `least_conn` actúa "cuando algunos pedidos tardan más" (nginx-balanceo, "Least connected load balancing"). Corrección: pedir pedidos concurrentes (`xargs -P`/`ab`) y que uno de los backends demore (por ejemplo con un `sleep`), o avisar que con pedidos secuenciales el reparto es igual. Menor.
 
 
 Respuesta del autor: corregido: el problema pide pedidos concurrentes y un backend que demore, y avisa que en secuencial least_conn reparte igual.
+
+Re-verificación F4: **CERRADO** (2294204). El problema pide pedidos concurrentes y un backend lento, y avisa que en secuencial `least_conn` reparte como round-robin (cierto: con empate nginx cae en round-robin ponderado).

@@ -3,7 +3,7 @@
 - **Tema:** arquitecturas/sincrono-vs-asincrono
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (cifras correctas; hay una afirmación sobre Kafka sobredicha, un caso de guardia con números que no cierran y un par de precisiones de ubicación y de simulador)
+- **Veredicto:** OBSERVADO tras la re-verificación del commit 2294204: H1–H7 cerrados; H8 diferido (no bloquea); H9 NUEVO (menor, un nodo del caso de guardia).
 
 Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a texto con títulos (no resúmenes). Kafka 4.4: intro, Design y Quickstart leídos completos. Números recalculados con Python. Los simuladores no existen aún: se contrastó con `SIMULADORES.md` §2.8.
 
@@ -46,31 +46,49 @@ Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a text
 
 Respuesta del autor: corregido: se reescribió con lo que dice Kafka (at-least-once por defecto, exactly-once entre tópicos, cooperación externa) y la idempotencia se respalda con RabbitMQ.
 
+Re-verificación F4: **CERRADO** (2294204). Texto reescrito conforme a "Message Delivery Semantics" (at-least-once por defecto; exactly-once entre tópicos con transacciones; hacia sistemas externos requiere cooperación). La recomendación de idempotencia ahora se respalda con RabbitMQ ("consumers must be prepared to handle redeliveries and otherwise be implemented with idempotence in mind").
+
 **H2** — mismo archivo, Formal, `<Cita f="rabbitmq-confirmaciones" loc="Consumer Acknowledgements" />`, y `fuentes[].ubicacion` de `rabbitmq-confirmaciones`. Qué está mal: el contenido citado está en otra sección. Qué dice la fuente: el título de la página es "Consumer Acknowledgements and Publisher Confirms"; la requeue automática y la propiedad `redeliver` están en "When Consumers Fail or Lose Connection: Automatic Requeueing". Corrección: `loc="When Consumers Fail or Lose Connection: Automatic Requeueing"` y mismo ajuste en `ubicacion`.
 
 Respuesta del autor: corregido: `loc` y `ubicacion` apuntan a "When Consumers Fail or Lose Connection: Automatic Requeueing".
+
+Re-verificación F4: **CERRADO** (2294204). `loc` y `ubicacion` = "When Consumers Fail or Lose Connection: Automatic Requeueing" (título confirmado en el HTML).
 
 **H3** — mismo archivo, Formal, "Broker y log de eventos": "Cada partición la consume un solo consumidor por grupo". Qué está mal: es válido para grupos de consumidores clásicos, pero Kafka 4.4 documenta en el mismo Design la sección "The Share Consumer" (share groups), donde varios consumidores comparten los registros. Corrección: decir "por grupo de consumidores (*consumer group*)" y, si se quiere, una línea de que existen los share groups.
 
 Respuesta del autor: corregido: se acotó a grupos de consumidores clásicos.
 
+Re-verificación F4: **CERRADO** (2294204). Ahora dice "dentro de un grupo de consumidores (*consumer group*) clásico".
+
 **H4** — mismo archivo, Intuición, segundo `<SimFlujo modo="cola">` y el párrafo siguiente ("Cuando el consumidor cae, los mensajes se acumulan y se drenan al volver"; consigna "comprobá si se pierden mensajes"). Qué está mal: con `tasaLlegada={5}` y `capacidadCola={50}` la cola se llena en 10 s con el consumidor caído; el contrato de `SIMULADORES.md` §2.8 dice que `perdidos` cuenta cuando se llena la cola. Con una caída de más de 10 s sí se pierden mensajes, contra lo que afirma el texto. Qué dice la fuente: Azure advierte que el patrón depende de la durabilidad y de los límites de tamaño de la cola ("Problems and considerations"). Corrección: subir `capacidadCola` (p. ej. 500) o agregar "mientras la cola no se llene; si se llena, se pierde o se rechaza".
 
 Respuesta del autor: corregido: se precisa que con 5 msg/s y capacidad 50 un corte total llena la cola en 10 s y desde ahí se pierden mensajes; el texto y la consigna lo reflejan.
+
+Re-verificación F4: **CERRADO** (2294204). El texto agrega que con 5 msg/s y capacidad 50 un corte total llena la cola en 50/5 = 10 s (Python: 10,0) y desde ahí se pierden mensajes; la consigna pide mirar cuánto tarda en llegar al tope. Falta contrastarlo con el simulador real (su contrato, SIMULADORES.md §2.8, todavía dice que con consumidor caído no se pierden mensajes: conviene alinear el contrato).
 
 **H5** — `sincrono-vs-asincrono/practica.yaml`, tarjeta `t-cuando-no-cola`: el dorso da dos respuestas ("respuesta síncrona de baja latencia, o carga baja y estable"). Viola GUIA-ESTILO §4 reglas 1 y 3. Corrección: dividir en dos tarjetas (la fuente "When to use this pattern" lista ambas).
 
 Respuesta del autor: corregido: dividida en `t-cuando-no-cola` y `t-cuando-no-cola-carga-estable`.
 
+Re-verificación F4: **CERRADO** (2294204). Dos tarjetas atómicas, ambas con respuesta única y con `fuente: azure-colas` ("The caller requires a low-latency, synchronous response" / "workload volume is predictably low and stable").
+
 **H6** — `sincrono-vs-asincrono/practica.yaml`, caso `c-cola-mails-crece`, desenlace `final-bien` y la `consecuencia` de la opción que repone y escala consumidores. Qué está mal: con entradas de 30 msg/s y 2 consumidores sanos que sacan 8 msg/s (4 msg/s cada uno), 4 consumidores sacan 16 msg/s y la cola seguiría creciendo; "empieza a bajar" y "se drena en pocos minutos" solo valen si se escala bastante (con 12 consumidores: 48 − 30 = 18 msg/s netos, 18.000 / 18 ≈ 1.000 s ≈ 17 min). Corrección: poner cifras coherentes ("con 12 consumidores sanos la cola baja unos 18 mensajes por segundo y se vacía en unos 17 minutos") o cambiar "en pocos minutos" por "de a poco".
 
 Respuesta del autor: corregido: cada consumidor procesa 4 msg/s; con 12 sanos salen 48/s contra 30, la cola baja 18/s y se vacía en unos 17 minutos (cuenta con Python).
+
+Re-verificación F4: **CERRADO** (2294204). Recalculado con Python: 12 consumidores × 4/s = 48/s; 48 − 30 = 18/s; 18.000 / 18 = 1.000 s = 16,7 min ≈ 17 min; 2 sanos × 4 = 8/s coincide con "salen 8". Los números del caso ahora cierran en el camino bueno. Ver H9 por un nodo vecino.
 
 **H7** — `sincrono-vs-asincrono/practica.yaml`, problema `p-kafka-quickstart`. Qué está mal: pide "levantá un broker con Docker" y luego usar el productor y consumidor de consola, pero los comandos del Quickstart (`bin/kafka-topics.sh`, etc.) son relativos a la distribución descargada del Paso 1 y la página no explica cómo correrlos contra el contenedor. Qué dice la fuente: Step 1 descarga el tar, Step 2 ofrece scripts locales o Docker; Steps 3 a 5 usan `bin/*.sh`. Corrección: aclarar "descargá el tar del Paso 1 para tener los scripts y usá Docker solo para el broker", o indicar cómo ejecutarlos dentro del contenedor (no verifiqué la ruta de los scripts dentro de la imagen).
 
 Respuesta del autor: corregido: el enunciado pide descargar la distribución del Paso 1 para tener los scripts y deja el broker a elección.
 
+Re-verificación F4: **CERRADO** (2294204). El enunciado pide la distribución del Paso 1 (trae `bin/*.sh`) y deja el broker a elección (scripts o Docker, Paso 2); con el puerto 9092 publicado los scripts locales con `--bootstrap-server localhost:9092` funcionan.
+
 **H8** — `sincrono-vs-asincrono/tema.mdx`, frontmatter: `richardson-rpi` y `richardson-mensajeria` tipados `doc-oficial`; microservices.io es un sitio de autor. Misma observación de política que H6 del tema monolito-y-microservicios: decisión del director (ampliar el esquema con "artículo" o pasar a `verMas`).
 
 
 Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.
+
+Re-verificación F4: **DIFERIDO**: se cierra en la pasada de retipado a `articulo` del director; no bloquea el veredicto.
+
+**H9** (nuevo en la re-verificación, menor) — `src/content/temas/arquitecturas/sincrono-vs-asincrono/practica.yaml`, caso `c-cola-mails-crece`, nodo `escalar-a-ciegas`, texto: "Con 20 consumidores configurados la cola casi no baja y la mitad está reiniciando". Qué está mal: ahora que el contexto fija 4 mensajes por segundo por consumidor, 10 consumidores sanos sacan 40/s contra 30/s que entran: la cola baja unos 10/s (18.000 / 10 = 1.800 s, 30 minutos), o sea baja; "casi no baja" contradice la cuenta que el propio caso hace en el camino bueno (12 sanos, 18/s). Corrección: decir "la cola baja muy despacio" (o "apenas se mueve porque cada reinicio pierde trabajo") y, si se quiere conservar el efecto del mensaje venenoso, aclarar que cada consumidor sano se cae y reinicia al recibirlo. Estado: **ABIERTO** (nuevo, no bloqueante en contenido pero deja el veredicto en OBSERVADO).

@@ -3,7 +3,7 @@
 - **Tema:** arquitecturas/resiliencia-y-cap
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (el contenido técnico y el tratamiento de CAP son correctos y la fórmula de backoff quedó respaldada; hay ubicaciones imprecisas, una afirmación sin cita y detalles de tarjetas)
+- **Veredicto:** OBSERVADO tras la re-verificación del commit 2294204: H1, H2, H4 y H5 cerrados; H6 diferido (no bloquea); H3 REABIERTO (menor: falta la cita a Brewer para el contraste con ACID y completar la revista en el frontmatter).
 
 Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a texto con títulos; Gilbert y Lynch leído completo con `pdftotext`; Brewer en la reproducción de InfoQ; RFC 9110 completo. La fórmula de backoff se verificó contra la imagen original de Brooker y contra el simulador oficial de AWS (ver #6). Números recalculados con Python.
 
@@ -51,23 +51,35 @@ Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a text
 
 Respuesta del autor: corregido: FUENTES fila 6 actualizada con la fórmula confirmada y el texto nombra a Brooker como lectura adicional.
 
+Re-verificación F4: **CERRADO** (2294204). Fila 6 de FUENTES actualizada con la verificación y el texto nombra a Brooker como "full jitter" en lectura adicional, sin `Cita` (es blog).
+
 **H2** — `resiliencia-y-cap/tema.mdx`, Formal, "CAP, sin simplificar", segundo párrafo: `<Cita f="brewer-cap" loc="Why '2 of 3' is misleading" />` cubre también "la partición, en la práctica, es un timeout: o cancelás o seguís". Esa idea está en "CAP-latency connection". La tarjeta `t-cap-particion-timeout` (misma fuente, sin `loc`) depende de esa sección. Corrección: `loc="Why '2 of 3' is misleading y CAP-latency connection"` (o dos citas).
 
 Respuesta del autor: corregido: `loc` incluye "CAP-latency connection".
+
+Re-verificación F4: **CERRADO** (2294204). `loc` = "Why '2 of 3' is misleading y CAP-latency connection".
 
 **H3** — `resiliencia-y-cap/tema.mdx`, Formal, `<Profundizar titulo="¿CP y AP como etiqueta de productos?">`: "consistencia es atomicidad, no la C de ACID" y "muchos sistemas no entran en ninguna caja" no llevan cita (Kleppmann es blog y no puede respaldar). Corrección: agregar `<Cita f="gilbert-lynch-cap" loc="§2" />` a la afirmación de que la consistencia de CAP es la atómica (la definición está ahí) y dejar a Kleppmann solo como "para ver más". Opcional: completar la ficha de `gilbert-lynch-cap` con la revista (IEEE Computer, 2012; no figura en el PDF de MIT y no lo pude confirmar en línea, el escritor tampoco).
 
 Respuesta del autor: corregido: la afirmación sobre la consistencia atómica lleva `Cita` a Gilbert-Lynch §2 y Kleppmann queda como "para ver más". Sobre la revista de `gilbert-lynch-cap`: no pude confirmarla, queda sin nombrar.
 
+Re-verificación F4: **REABIERTO** (menor). La nueva cita `<Cita f="gilbert-lynch-cap" loc="§2" />` respalda que la consistencia del teorema es la atómica, pero §2 no menciona ACID; la contraposición con la "C" de ACID está en Brewer, sección "ACID, BASE, and CAP" ("the C in CAP refers only to single-copy consistency, a strict subset of ACID consistency"). Corrección: citar también `<Cita f="brewer-cap" loc="ACID, BASE, and CAP" />` en esa oración. Publicación del paper, confirmada: Seth Gilbert y Nancy Lynch, "Perspectives on the CAP Theorem", *Computer* (IEEE Computer Society) 45(2), febrero de 2012, pp. 30–36 (DSpace@MIT, handle 1721.1/79112, e IEEE Xplore). El frontmatter de `gilbert-lynch-cap` sigue diciendo "artículo de 2012": completar `edicion` con "IEEE Computer 45(2), febrero de 2012, pp. 30–36". La parte de Kleppmann (muchos sistemas no son ni CP ni AP) sí está en su artículo.
+
 **H4** — `resiliencia-y-cap/practica.yaml`, tarjeta `t-cap-por-operacion`. Qué está mal: pregunta con dos mitades ("qué datos toleran… y cuáles requieren…") y dorso con dos listas, contra GUIA-ESTILO §4 reglas 1 y 2; además "Tolera lo del carrito" debería concordar ("Toleran…"). Corrección: una tarjeta por dato ("En una tienda online, ¿qué nivel de consistencia exige el cobro?" / "¿Y el carrito?").
 
 Respuesta del autor: corregido: dos tarjetas, una por dato.
+
+Re-verificación F4: **CERRADO** (2294204). Dos tarjetas atómicas: cobro/facturación ("check-out/billing/shipping records… strongly consistent") y carrito ("highly available… losing a recent update"), con `fuente: gilbert-lynch-cap` (§4.4).
 
 **H5** — `resiliencia-y-cap/tema.mdx`, Formal, "Circuit breaker": "Cada vez que se abre, debería saltar una alerta de monitoreo". Qué dice la fuente: Fowler escribe "usually you'll also want some kind of monitor alert if the circuit breaker trips" y "any change in breaker state should be logged". Corrección: "suele convenir una alerta cada vez que se abre, y los cambios de estado deberían registrarse". Menor.
 
 Respuesta del autor: corregido: "suele convenir una alerta" y "deberían registrarse".
 
+Re-verificación F4: **CERRADO** (2294204). "Suele convenir una alerta… deberían registrarse" coincide con "usually you'll also want some kind of monitor alert" y "any change in breaker state should be logged".
+
 **H6** — `resiliencia-y-cap/tema.mdx`, frontmatter: `fowler-circuit-breaker` (bliki), `gilbert-lynch-cap` y `brewer-cap` (artículos de IEEE Computer reproducidos en PDF de autor / InfoQ) tipados `doc-oficial`. Los dos de CAP son artículos revisados de revista, no blogs; el de Fowler sí es sitio de autor. Misma observación de política que en los otros temas: decisión del director (tipo "artículo" en el esquema, o `verMas` para Fowler y respaldar el breaker solo con Azure, que ya lo cubre completo).
 
 
 Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.
+
+Re-verificación F4: **DIFERIDO**: se cierra en la pasada de retipado a `articulo` del director; no bloquea el veredicto.
