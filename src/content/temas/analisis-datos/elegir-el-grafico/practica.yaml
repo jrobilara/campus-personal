@@ -16,7 +16,7 @@ tarjetas:
     fuente: wilke
   - id: t-linea-tiempo
     frente: ¿Cuándo es apropiado un gráfico de líneas?
-    dorso: Cuando el eje horizontal es el tiempo u otra cantidad ordenada que solo crece.
+    dorso: Cuando el eje horizontal es el tiempo u otra cantidad con un orden natural, como una dosis.
     fuente: wilke
   - id: t-torta-cuando
     frente: ¿En qué situación funciona bien una torta?

@@ -15,7 +15,7 @@ materias:
     nombre: Explotación y Administración de BD
 prerrequisitos: []
 nivel: intermedio
-minutos: 25
+minutos: 15
 fuentes:
   - id: pg-ventana
     tipo: doc-oficial
@@ -145,7 +145,7 @@ GROUP BY region
 HAVING sum(monto) > 4000;
 ```
 
-Devuelve Norte (5 ventas, 4300) y Sur (4 ventas, 4500); el Centro suma 2500 y queda afuera. Tres reglas del manual: en una consulta agrupada, toda columna que no esté en el `GROUP BY` solo puede aparecer dentro de un agregado<Cita f="pg-agrupar" loc="§7.2.3" />; `WHERE` filtra filas antes de agrupar y `HAVING` filtra grupos ya agregados<Cita f="pg-agrupar" loc="tutorial §2.7" />; y por eso no podés poner un agregado en `WHERE`.
+Devuelve Norte (5 ventas, 4300) y Sur (4 ventas, 4500); el Centro suma 2500 y queda afuera. Tres reglas del manual: en general, en una consulta agrupada toda columna que no esté en el `GROUP BY` solo puede aparecer dentro de un agregado (salvo las que dependen funcionalmente de la clave primaria por la que agrupás)<Cita f="pg-agrupar" loc="§7.2.3" />; `WHERE` filtra filas antes de agrupar y `HAVING` filtra grupos ya agregados<Cita f="pg-agrupar" loc="tutorial §2.7" />; y por eso no podés poner un agregado en `WHERE`.
 
 ### Ventanas: la sintaxis
 
@@ -162,7 +162,7 @@ La venta de Eva del 23/03 (1100) aparece con total_region 2500 y pct 44,0. Ningu
 
 ### Rankings: row_number, rank y dense_rank
 
-Las tres numeran filas dentro de la partición según el `ORDER BY`, pero tratan distinto los empates<Cita f="pg-funciones" loc="§9.22" />. `row_number()` da números únicos y desempata de forma arbitraria. `rank()` da el mismo número a los empatados y deja un hueco después. `dense_rank()` da el mismo número a los empatados y no deja hueco. Con los montos del Norte ordenados de mayor a menor:
+Las tres numeran filas dentro de la partición según el `ORDER BY`, pero tratan distinto los empates. `row_number()` da números únicos y, entre filas empatadas, el orden queda sin especificar<Cita f="pg-ventana" loc="§3.5" />. `rank()` da el mismo número a los empatados y deja un hueco después. `dense_rank()` da el mismo número a los empatados y no deja hueco<Cita f="pg-funciones" loc="§9.22" />. Con los montos del Norte ordenados de mayor a menor:
 
 | monto | row_number | rank | dense_rank |
 |---|---|---|---|

@@ -22,9 +22,13 @@ tarjetas:
     dorso: |
       Por el punto de las medias, $(\bar{x}, \bar{y})$.
     fuente: openintro
-  - id: t-r-solo-lineal
-    frente: ¿Qué mide el coeficiente de correlación r y qué no capta bien?
-    dorso: Mide la fuerza de una relación lineal, de −1 a 1; no describe bien relaciones curvas.
+  - id: t-r-mide-que
+    frente: ¿Qué mide el coeficiente de correlación r?
+    dorso: La fuerza y la dirección de una relación lineal, con valores entre −1 y 1.
+    fuente: openintro
+  - id: t-r-engana-con-curvas
+    frente: ¿Por qué r puede engañar cuando la relación entre las variables es curva?
+    dorso: Porque solo mide fuerza lineal, así que una relación fuerte pero curva puede dar un r que no refleja lo fuerte que es.
     fuente: openintro
   - id: t-r-cuadrado-significado
     frente: Una regresión simple da R² = 0,25. ¿Qué significa?

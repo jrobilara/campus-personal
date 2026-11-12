@@ -40,8 +40,8 @@ tarjetas:
     dorso: Repetís el análisis con y sin ellos y comparás los resultados.
     fuente: r4ds
   - id: t-unidades-antes-que-outliers
-    frente: ¿Por qué conviene corregir las unidades mezcladas antes de buscar valores extremos?
-    dorso: Porque un valor en la unidad equivocada puede parecer un extremo, o esconderse entre los normales, y lo diagnosticarías mal.
+    frente: ¿Por qué conviene corregir las unidades mezcladas antes de calcular las vallas del IQR?
+    dorso: Porque las vallas tienen que calcularse sobre datos en la misma unidad; además el IQR no marca un valor chico en la unidad equivocada, que se esconde entre los normales.
 
 ejercicios:
   - id: e-media-sin-cuelgue

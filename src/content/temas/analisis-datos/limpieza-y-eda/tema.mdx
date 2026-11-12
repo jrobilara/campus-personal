@@ -15,7 +15,7 @@ materias:
     nombre: Inteligencia de Negocios
 prerrequisitos: []
 nivel: basico
-minutos: 15
+minutos: 10
 fuentes:
   - id: r4ds
     tipo: libro
@@ -23,7 +23,7 @@ fuentes:
     titulo: R for Data Science
     edicion: 2.ª ed. (versión abierta online)
     editorial: O'Reilly
-    ubicacion: cap. 10 (Exploratory data analysis), §10.4
+    ubicacion: cap. 10 (Exploratory data analysis), §10.3.2 y §10.4
     url: https://r4ds.hadley.nz/EDA.html
   - id: emc-ds
     tipo: libro
@@ -108,7 +108,7 @@ Fijate en dos cosas. Quitar duplicados baja las filas de 200 a 192, y quitar los
 
 **1. Duplicados.** Son filas repetidas por una carga doble o una unión mal hecha. En pandas, `drop_duplicates` compara todas las columnas por defecto, o solo las del argumento `subset`, y conserva la primera aparición<Cita f="pandas-docs" loc="DataFrame.drop_duplicates" />. Ojo con el "duplicado" que en realidad es el mismo `id` con minutos distintos: ese no es un repetido, es un conflicto que hay que resolver con quien carga los datos.
 
-**2. Faltantes (*missing values*).** En pandas, `isna` marca los valores faltantes, y `dropna` descarta por defecto las filas que tengan alguno; con `subset` mirás solo las columnas que te importan<Cita f="pandas-docs" loc="DataFrame.dropna" />. Los estadísticos descriptivos de pandas ignoran los faltantes salvo que pidas lo contrario con `skipna=False`<Cita f="pandas-docs" loc="Calculations with NA" />. En R, en cambio, `mean` devuelve `NA` si hay algún faltante, y hay que pasarle `na.rm=TRUE`<Cita f="emc-ds" loc="§3.2.2, p. 86" />. Lo traicionero es el faltante disfrazado: un pico de clientes con edad cero o negativa suele ser un faltante que algún sistema guardó como 0 o −1<Cita f="emc-ds" loc="§3.2.2, pp. 85-86" />. Revisá siempre el histograma antes de confiar en un promedio.
+**2. Faltantes (*missing values*).** En pandas, `isna` marca los valores faltantes, y `dropna` descarta por defecto las filas que tengan alguno; con `subset` mirás solo las columnas que te importan<Cita f="pandas-docs" loc="DataFrame.dropna" />. Los estadísticos descriptivos de pandas ignoran los faltantes salvo que pidas lo contrario con `skipna=False`<Cita f="pandas-docs" loc="Calculations with missing data" />. En R, en cambio, `mean` devuelve `NA` si hay algún faltante, y hay que pasarle `na.rm=TRUE`<Cita f="emc-ds" loc="§3.2.2, p. 86" />. Lo traicionero es el faltante disfrazado: un pico de clientes con edad cero o negativa suele ser un faltante que algún sistema guardó como 0 o −1<Cita f="emc-ds" loc="§3.2.2, pp. 85-86" />. Revisá siempre el histograma antes de confiar en un promedio.
 
 **3. Unidades mezcladas.** No hay función mágica: se detectan comparando con lo que el negocio sabe. Si la mediana ronda los 50 minutos y tres tickets dicen "2" o "3", lo razonable es sospechar que están en horas. Los autores del libro de EMC recomiendan contrastar los datos raros con el conocimiento del dominio antes de decidir si se eliminan<Cita f="emc-ds" loc="§3.2.2, p. 87" />. Corregí solo después de confirmarlo con quien cargó los datos.
 
@@ -120,7 +120,7 @@ donde $Q_1$ y $Q_3$ son el primer y el tercer cuartil (los valores que dejan por
 
 </Formula>
 
-Marcado no es borrado. El *e-Handbook* del NIST pide investigar por qué apareció un valor atípico antes de sacarlo, porque a veces es justamente lo más informativo del proceso<Cita f="nist-outliers" loc="§7.1.6" />. Una práctica razonable es reemplazar el valor sospechoso por un faltante en lugar de descartar la fila entera, porque un valor malo no vuelve inválido al resto de la fila; y repetir el análisis con y sin los extremos para ver si las conclusiones cambian<Cita f="r4ds" loc="§10.4" />.
+Marcado no es borrado. El *e-Handbook* del NIST pide investigar por qué apareció un valor atípico antes de sacarlo, porque a veces es justamente lo más informativo del proceso<Cita f="nist-outliers" loc="§7.1.6" />. Una práctica razonable es reemplazar el valor sospechoso por un faltante en lugar de descartar la fila entera, porque un valor malo no vuelve inválido al resto de la fila; y repetir el análisis con y sin los extremos para ver si las conclusiones cambian<Cita f="r4ds" loc="§10.3.2 y §10.4" />.
 
 ### Un orden de trabajo posible
 
@@ -141,7 +141,7 @@ fuera = df[(df["minutos_resolucion"] < q1 - 1.5 * iqr)
 print(fuera)                          # a mirar de a uno, no a borrar
 ```
 
-Corregir unidades va antes de buscar extremos: si no, un "3" que en realidad es 180 minutos cae bajo la valla inferior y lo tomás por un error cuando era una unidad mal puesta. Y cada paso conviene dejarlo escrito (en el script, no en el Excel a mano), así otra persona puede repetirlo y ver qué sacaste.
+Corregir unidades va antes de calcular las vallas: así los cuartiles se calculan sobre datos que están en la misma unidad. Pero ojo, el IQR no atrapa ese error. Con tiempos positivos, la valla inferior suele dar negativa (con $Q_1 = 40$ y $Q_3 = 130$ da $-95$), así que un "3" que en realidad son 180 minutos no queda marcado: se esconde entre los valores normales. Esos errores se detectan con reglas de validación del negocio (por ejemplo, "ningún ticket se resuelve en menos de 5 minutos"), con el histograma o preguntándole a quien carga los datos. Y cada paso conviene dejarlo escrito (en el script, no en el Excel a mano), así otra persona puede repetirlo y ver qué sacaste.
 
 <Profundizar titulo="¿Por qué los cuartiles pueden dar distinto según la herramienta?">
 

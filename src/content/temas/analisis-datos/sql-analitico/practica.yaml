@@ -26,22 +26,30 @@ tarjetas:
     frente: ¿Cuál es la diferencia entre WHERE y HAVING?
     dorso: WHERE filtra filas antes de agrupar; HAVING filtra grupos después de calcular los agregados.
     fuente: pg-agrupar
+  - id: t-ventana-clausulas-permitidas
+    frente: ¿En qué dos cláusulas de una consulta se permiten las funciones de ventana?
+    dorso: Solo en el SELECT y en el ORDER BY.
+    fuente: pg-ventana
   - id: t-ventana-no-en-where
-    frente: ¿En qué cláusulas se permiten las funciones de ventana y por qué no en WHERE?
-    dorso: Solo en SELECT y en ORDER BY, porque se ejecutan después de WHERE, GROUP BY y HAVING.
+    frente: ¿Por qué no podés usar una función de ventana en el WHERE?
+    dorso: Porque se ejecutan después de WHERE, GROUP BY y HAVING, así que todavía no existen cuando se filtra.
     fuente: pg-ventana
   - id: t-top-n-subconsulta
     frente: ¿Cómo te quedás con las dos mejores filas de cada grupo?
     dorso: Calculás la posición con `row_number()` en una subconsulta y filtrás `pos <= 2` en la consulta de afuera.
     fuente: pg-ventana
   - id: t-rank-hueco
-    frente: Dos filas empatan en el primer puesto. ¿Qué número recibe la siguiente con `rank()` y con `dense_rank()`?
-    dorso: Con `rank()` recibe el 3 (deja hueco); con `dense_rank()` recibe el 2.
+    frente: Dos filas empatan en el primer puesto. ¿Qué número recibe la siguiente con `rank()`?
+    dorso: El 3, porque `rank()` deja un hueco después del empate.
+    fuente: pg-funciones
+  - id: t-dense-rank-sin-hueco
+    frente: Dos filas empatan en el primer puesto. ¿Qué número recibe la siguiente con `dense_rank()`?
+    dorso: El 2, porque `dense_rank()` no deja huecos.
     fuente: pg-funciones
   - id: t-row-number-desempate
     frente: ¿Qué pasa con `row_number()` cuando dos filas empatan en el ORDER BY?
-    dorso: Les da números distintos pero el orden entre ellas es arbitrario, salvo que agregues un criterio de desempate.
-    fuente: pg-funciones
+    dorso: Les da números distintos pero el orden entre ellas no está especificado, salvo que agregues un criterio de desempate.
+    fuente: pg-ventana
   - id: t-marco-por-defecto
     frente: Una suma con ORDER BY y sin marco explícito, ¿hasta dónde llega para cada fila?
     dorso: Hasta la fila actual y todas las que empatan con ella en el ORDER BY.
