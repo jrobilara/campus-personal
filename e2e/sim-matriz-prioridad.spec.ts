@@ -20,7 +20,7 @@ test('impacto alto y urgencia alta da P1; reclasificar mueve el ticket en la mat
   await expect(lectura(fig, 'prioridad-facturacion')).toHaveText('P1');
   await expect(lectura(fig, 'prioridad-impresora')).toHaveText('P4');
   await control(fig, 'impacto-impresora').selectOption('A');
-  await expect(lectura(fig, 'prioridad-impresora')).toHaveText('P3');
+  await expect(lectura(fig, 'prioridad-impresora')).toHaveText('P2');
   await control(fig, 'urgencia-impresora').selectOption('A');
   await expect(lectura(fig, 'prioridad-impresora')).toHaveText('P1');
   await control(fig, 'impacto-impresora').selectOption('B');

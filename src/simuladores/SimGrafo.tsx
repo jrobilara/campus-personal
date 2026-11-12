@@ -126,7 +126,7 @@ function Recorrido({ g }: { g: GrafoDef }) {
           onChange={(v) => reiniciar({ tipo: v })}
         />
         <Botones>
-          <Boton clave="paso" onClick={() => { setAuto(false); setPaso(Math.min(p + 1, ultimo)); }} deshabilitado={fin}>Paso</Boton>
+          <Boton clave="paso" onClick={() => { setAuto(false); setPaso((x) => Math.min(x + 1, ultimo)); }} deshabilitado={fin}>Paso</Boton>
           <Boton clave="auto" onClick={alAuto} activo={auto && !fin}>{auto && !fin ? 'Pausar' : 'Auto'}</Boton>
           <Boton clave="reiniciar" onClick={() => reiniciar()}>Reiniciar</Boton>
         </Botones>
@@ -227,7 +227,7 @@ function CaminoMinimo({ g }: { g: GrafoDef }) {
           formato={(v) => `×${num(v, 1)}`} onChange={(v) => setFactor(v)}
         />
         <Botones>
-          <Boton clave="paso" onClick={() => setPaso(paso === null ? 1 : Math.min(paso + 1, ultimo))} deshabilitado={paso !== null && p >= ultimo}>Paso</Boton>
+          <Boton clave="paso" onClick={() => setPaso((x) => (x === null ? 1 : Math.min(x + 1, ultimo)))} deshabilitado={paso !== null && p >= ultimo}>Paso</Boton>
           <Boton clave="resultado" onClick={() => setPaso(null)} deshabilitado={paso === null}>Ver el resultado</Boton>
         </Botones>
       </div>

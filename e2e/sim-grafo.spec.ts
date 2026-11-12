@@ -58,6 +58,7 @@ test.describe('recorrido', () => {
     const fig = await lista(figura(page, 'Recorrido'));
     await page.clock.install();
     await boton(fig, 'auto').click();
+    await expect(boton(fig, 'auto')).toHaveText('Pausar'); // el efecto del bucle ya corrió
     await page.clock.runFor(2000);
     const parcial = (await lectura(fig, 'orden-visita').innerText()).split(', ').length;
     expect(parcial).toBeGreaterThan(1);
