@@ -1,0 +1,229 @@
+tarjetas:
+  - id: t-variable-aleatoria
+    frente: ¿Qué es una variable aleatoria?
+    dorso: Una regla que le asigna un número a cada resultado de algo que no controlás, como los tickets que entran en una hora.
+    fuente: mit1805
+  - id: t-varianza-definicion
+    frente: ¿Cómo se define la varianza de una variable aleatoria $X$ con media $\mu$?
+    dorso: |
+      Es el promedio de las distancias al cuadrado a la media: $\operatorname{Var}(X) = E[(X-\mu)^2]$.
+    fuente: mit1805
+  - id: t-varianza-unidades
+    frente: Si $X$ está en milisegundos, ¿en qué unidades queda la varianza?
+    dorso: En milisegundos al cuadrado; por eso se mira también el desvío estándar, que vuelve a milisegundos.
+    fuente: mit1805
+  - id: t-varianza-escala
+    frente: Si pasás una latencia de segundos a milisegundos (la multiplicás por 1000), ¿por cuánto se multiplica la varianza?
+    dorso: |
+      Por 1.000.000, porque $\operatorname{Var}(aX) = a^2\operatorname{Var}(X)$.
+    fuente: mit1805
+  - id: t-varianza-cero
+    frente: ¿Qué significa que una variable aleatoria tenga varianza 0?
+    dorso: Que no varía; siempre toma el mismo valor.
+    fuente: mit1805
+  - id: t-varianza-muestral-n-menos-1
+    frente: ¿Por qué la varianza muestral se divide por $n-1$ y no por $n$?
+    dorso: Para que, en promedio, la varianza muestral acierte la varianza verdadera.
+    fuente: soong
+  - id: t-binomial-sin-reposicion
+    frente: Sacás dos pastillas al azar, sin reponerlas, de un frasco de 20 con 2 genéricas. ¿Por qué no es un experimento binomial?
+    dorso: Porque los intentos no son independientes; la probabilidad del segundo depende de lo que salió en el primero.
+    fuente: mendenhall
+  - id: t-binomial-media
+    frente: Una binomial con $n = 200$ y $p = 0{,}03$, ¿cuánto vale la media?
+    dorso: |
+      $np = 200 \cdot 0{,}03 = 6$.
+    fuente: mit1805
+  - id: t-binomial-varianza
+    frente: |
+      Una binomial con $n = 100$ y $p = 0{,}5$, ¿cuánto vale la varianza?
+    dorso: |
+      $np(1-p) = 100 \cdot 0{,}5 \cdot 0{,}5 = 25$.
+    fuente: mit1805
+  - id: t-poisson-media-varianza
+    frente: Los tickets por hora siguen una Poisson de media 12. ¿Cuánto vale el desvío estándar?
+    dorso: |
+      $\sqrt{12} \approx 3{,}5$, porque en una Poisson la varianza también vale 12.
+    fuente: soong
+  - id: t-poisson-independencia
+    frente: Un solo incidente genera 15 tickets en cinco minutos. ¿Qué supuesto de Poisson deja de cumplirse?
+    dorso: La independencia; los tickets dejan de ocurrir al azar uno del otro.
+    fuente: mendenhall
+  - id: t-poisson-vs-binomial
+    frente: ¿Cuándo se puede aproximar una binomial con una Poisson, y con qué $\lambda$?
+    dorso: |
+      Cuando $n$ es grande y $p$ chico (regla práctica: $n$ mayor que 10 y $p$ menor que 0,1), con $\lambda = np$.
+    fuente: soong
+  - id: t-z-score
+    frente: ¿Qué te dice un puntaje z igual a 2?
+    dorso: Que el valor está 2 desvíos estándar por encima de la media.
+    fuente: mendenhall
+  - id: t-regla-95
+    frente: En una distribución normal, ¿qué fracción de los datos queda a menos de 2 desvíos de la media?
+    dorso: Cerca del 95 %.
+    fuente: mit1805
+
+ejercicios:
+  - id: e-poisson-ticket-raro
+    tipo: numerico
+    enunciado: |
+      La mesa de ayuda recibe en promedio 12 tickets por hora y se asume que llegan de forma independiente (Poisson con $\lambda = 12$). ¿Qué probabilidad hay de que en una hora entren **22 o más** tickets? Dala en %, con dos decimales.
+    respuesta: 0.61
+    tolerancia:
+      absoluta: 0.05
+    unidad: "%"
+    explicacion: |
+      Te conviene el complemento: $P(X \ge 22) = 1 - P(X \le 21)$. Sumando $\frac{12^k e^{-12}}{k!}$ para $k = 0, \dots, 21$ da 0,9939, así que $P(X \ge 22) \approx 0{,}0061 = 0{,}61\ \%$. Es una hora de cada 165 aproximadamente.
+    erroresComunes:
+      - valor: 0.30
+        explicacion: Calculaste $P(X = 22)$ o $P(X \ge 23)$. Pedimos 22 **o más**, así que 22 también cuenta.
+      - valor: 1.16
+        explicacion: Calculaste $P(X \ge 21)$. Te pasaste un valor para abajo.
+    fuente: soong
+  - id: e-binomial-servidores
+    tipo: numerico
+    enunciado: |
+      Tenés 50 servidores. Cada uno falla en el mes con probabilidad 0,02, de forma independiente. ¿Qué probabilidad hay de que fallen **3 o más** en el mismo mes? Dala en %, con dos decimales.
+    respuesta: 7.84
+    tolerancia:
+      absoluta: 0.1
+    unidad: "%"
+    explicacion: |
+      Es una binomial con $n = 50$ y $p = 0{,}02$. $P(X \ge 3) = 1 - [P(0) + P(1) + P(2)] = 1 - [0{,}3642 + 0{,}3716 + 0{,}1858] = 0{,}0784$, es decir 7,84 %.
+    erroresComunes:
+      - valor: 6.07
+        explicacion: Ese es $P(X = 3)$ exacto. Te pide 3 o más.
+      - valor: 8.03
+        explicacion: Usaste la aproximación de Poisson con $\lambda = 1$. Sirve y queda cerca, pero la cuenta exacta es la binomial.
+    fuente: mendenhall
+  - id: e-varianza-binomial
+    tipo: numerico
+    enunciado: |
+      De cada lote de 200 pedidos, cada uno se devuelve con probabilidad 0,03 y de forma independiente. Sea $X$ la cantidad de pedidos devueltos por lote. ¿Cuánto vale la **varianza** de $X$?
+    respuesta: 5.82
+    tolerancia:
+      absoluta: 0.01
+    unidad: ""
+    explicacion: |
+      Es una binomial: $\operatorname{Var}(X) = np(1-p) = 200 \cdot 0{,}03 \cdot 0{,}97 = 5{,}82$.
+    erroresComunes:
+      - valor: 6
+        explicacion: Ese es $np$, la media. Falta multiplicar por $(1-p)$.
+      - valor: 2.41
+        explicacion: Ese es el desvío estándar, la raíz de la varianza.
+    fuente: mit1805
+  - id: e-varianza-tabla
+    tipo: numerico
+    enunciado: |
+      La cantidad $X$ de tickets que un técnico cierra por turno tiene esta distribución: 0 tickets con prob. 0,1; 1 con 0,4; 2 con 0,3; 3 con 0,2. Calculá la **varianza** de $X$.
+    respuesta: 0.84
+    tolerancia:
+      absoluta: 0.01
+    unidad: ""
+    explicacion: |
+      La media es $0{,}4 + 0{,}6 + 0{,}6 = 1{,}6$. Después $E[X^2] = 0{,}4 + 1{,}2 + 1{,}8 = 3{,}4$, y $\operatorname{Var}(X) = E[X^2] - \mu^2 = 3{,}4 - 2{,}56 = 0{,}84$.
+    erroresComunes:
+      - valor: 3.4
+        explicacion: Ese es $E[X^2]$. Falta restar la media al cuadrado.
+      - valor: 0.9165
+        explicacion: Ese es el desvío estándar, la raíz de la varianza.
+    fuente: mendenhall
+  - id: e-normal-z-score
+    tipo: numerico
+    enunciado: |
+      Un proceso batch tarda en promedio 120 ms, con desvío estándar de 20 ms. Suponé distribución normal. ¿Qué probabilidad hay de que una corrida tarde **más de 160 ms**? Dala en %, con dos decimales.
+    respuesta: 2.28
+    tolerancia:
+      absoluta: 0.05
+    unidad: "%"
+    explicacion: |
+      El puntaje z es $(160-120)/20 = 2$. En la normal estándar $P(Z > 2) \approx 0{,}0228$, o sea 2,28 %.
+    erroresComunes:
+      - valor: 4.55
+        explicacion: Ese es el área de las dos colas ($|Z| > 2$). Pedimos solo la cola derecha.
+    fuente: mendenhall
+  - id: e-elegir-distribucion
+    tipo: opcion-multiple
+    enunciado: Querés modelar la cantidad de tickets que entran en una hora a la mesa de ayuda, sin un tope fijo de tickets posibles. ¿Qué distribución es el punto de partida más natural?
+    opciones:
+      - texto: Binomial, con $n$ igual al total de usuarios.
+        explicacion: Se podría forzar, pero no hay un $n$ de intentos bien definido; lo que contás son eventos en un intervalo.
+      - texto: Poisson, con $\lambda$ igual al promedio de tickets por hora.
+        correcta: true
+        explicacion: Cuenta eventos en un intervalo con un promedio conocido, bajo el supuesto de que ocurren al azar y de forma independiente.
+      - texto: Normal, porque los tickets forman una campana.
+        explicacion: La normal es continua y la cantidad de tickets es un entero; además la cola izquierda llegaría a valores negativos.
+    fuente: mendenhall
+  - id: e-vf-duplicar-varianza
+    tipo: verdadero-falso
+    enunciado: Si duplicás todos los tiempos de respuesta de un servicio, la varianza también se duplica.
+    respuesta: false
+    justificacion: |
+      La varianza escala con el cuadrado del factor: $\operatorname{Var}(2X) = 4\operatorname{Var}(X)$. Lo que se duplica es el desvío estándar.
+    fuente: mit1805
+
+casos:
+  - id: c-rafaga-de-tickets
+    titulo: 22 tickets en una hora
+    rol: Sos quien atiende la guardia de la mesa de ayuda un lunes a la mañana.
+    contexto: |
+      Son las 10:05. El promedio histórico es de 12 tickets por hora y en la última hora entraron 22. Tu supervisor dice que "es lunes, pasa". No hay alertas de monitoreo.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Qué hacés primero?
+        opciones:
+          - texto: Calculo qué tan raro es ver 22 con un promedio de 12 por hora, usando Poisson.
+            va: es-raro
+            consecuencia: La probabilidad de 22 o más es de alrededor de 0,6 %, una hora de cada 165. Con ese promedio no parece azar.
+          - texto: Espero otra hora a ver si se normaliza.
+            va: final-mal
+            consecuencia: Mientras tanto siguen entrando tickets y nadie mira qué los une.
+          - texto: Pido refuerzos para atender más rápido, sin mirar de qué son.
+            va: final-regular
+            consecuencia: La cola baja un rato, pero seguís sin saber por qué entran tantos.
+      - id: es-raro
+        tipo: decision
+        texto: Ya sabés que 22 es muy raro si todo sigue igual. ¿Y ahora?
+        opciones:
+          - texto: Agrupo los tickets por texto y por servicio para ver si comparten causa.
+            va: final-bien
+            consecuencia: 17 de los 22 mencionan la VPN. Abrís un incidente en vez de atenderlos uno por uno.
+          - texto: Pienso que en 40 horas por semana una hora así sale cada tanto, y lo dejo pasar.
+            va: final-regular
+            consecuencia: Es cierto que en 40 horas hay cerca de 22 % de chances de ver alguna hora así, pero esta hora ya está pasando y los tickets siguen entrando.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El equipo de redes corrige la VPN en 20 minutos y los reclamos paran. Dejás anotado que 22 tickets/hora es un umbral de alerta razonable.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Atendés la cola, pero la causa raíz sigue ahí y a la tarde se repite el pico.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Una hora más tarde hay 40 tickets de la misma falla y los usuarios dejaron de confiar en la mesa de ayuda.
+    leccion: |
+      Un promedio solo no te dice si un número es raro; necesitás saber cómo se reparte el conteo. Y si los eventos tienen una causa común, no son independientes, así que el modelo de azar deja de aplicar y hay que buscar la causa.
+    fuente: mendenhall
+
+problemas:
+  - id: p-mit-varianza-bernoulli
+    enunciado: Resolvé el problema de pizarrón 1 de la clase 5. Primero la varianza de una Bernoulli(p) y después mostrá que la binomial tiene varianza $np(1-p)$. Pasalo a un caso tuyo, como una flota de servidores.
+    fuente: mit1805
+    ubicacion: Class 5 in-class problems, Board questions, Problem 1
+    url: https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class05a_pset.pdf
+    dificultad: intermedio
+  - id: p-soong-poisson
+    enunciado: Resolvé los problemas 6.23 y 6.24 de Soong (accidentes con tasa promedio) y reescribilos con tickets o caídas por mes. Decí qué supuesto de independencia tendrías que defender en cada caso.
+    fuente: soong
+    ubicacion: cap. 6, problemas 6.23 y 6.24, p. 187
+    dificultad: basico
+  - id: p-simular-poisson
+    enunciado: Con una planilla o con Python, simulá 10.000 horas con 12 tickets por hora de promedio (Poisson). Contá en cuántas entran 22 o más y compará con la probabilidad teórica. Calculá también la media y la varianza de tus datos.
+    fuente: nist-distribuciones
+    ubicacion: §1.3.6.6.19 (Poisson) para la fórmula
+    url: https://www.itl.nist.gov/div898/handbook/eda/section3/eda366j.htm
+    dificultad: basico

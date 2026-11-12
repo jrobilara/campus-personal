@@ -1,0 +1,211 @@
+tarjetas:
+  - id: t-media-es-aleatoria
+    frente: ¿Por qué el promedio de una muestra es una variable aleatoria?
+    dorso: Porque con otra muestra te da otro valor; la media muestral cambia cada vez que cambian los datos.
+    fuente: soong
+  - id: t-error-estandar
+    frente: Los tiempos de resolución tienen desvío de 22 minutos y auditaste 100 tickets. ¿Cuánto vale el error estándar de la media?
+    dorso: |
+      $22/\sqrt{100} = 2{,}2$ minutos.
+    fuente: mendenhall
+  - id: t-media-varianza-sobre-n
+    frente: Si cada dato tiene varianza $\sigma^2$, ¿cuánto vale la varianza de la media de $n$ datos independientes?
+    dorso: |
+      $\sigma^2/n$; se reparte entre los $n$ datos.
+    fuente: soong
+  - id: t-cuadruplicar-n
+    frente: Querés dividir a la mitad el margen de error de un intervalo. ¿Cuánto tenés que multiplicar $n$?
+    dorso: Por cuatro, porque el margen depende de la raíz de $n$.
+    fuente: mendenhall
+  - id: t-tcl-enunciado
+    frente: ¿Qué dice el teorema central del límite sobre el promedio de muchos datos independientes?
+    dorso: |
+      Que, para $n$ grande, su distribución se acerca a una normal con media $\mu$ y varianza $\sigma^2/n$, sea cual sea la forma de la población (con media y varianza finitas).
+    fuente: mit1805
+  - id: t-tcl-poblacion-asimetrica
+    frente: Si los datos tienen una cola larga a la derecha, ¿qué regla práctica se sigue para confiar en la normalidad de la media?
+    dorso: Que $n$ sea de al menos 30, como guía práctica; con asimetría fuerte conviene más.
+    fuente: mendenhall
+  - id: t-ic-formula
+    frente: |
+      Media muestral 50, $\sigma = 10$, $n = 100$. ¿Cuál es el intervalo de confianza de 95 % aproximado?
+    dorso: |
+      $50 \pm 1{,}96 \cdot 10/\sqrt{100}$, o sea de unos 48,0 a 52,0.
+    fuente: mit1805
+  - id: t-ic-interpretacion
+    frente: ¿Qué significa realmente "intervalo de confianza del 95 %"?
+    dorso: Que el método acierta a la media verdadera en el 95 % de las repeticiones; no es la probabilidad de que la media esté en este intervalo.
+    fuente: mendenhall
+  - id: t-ic-ancho-confianza
+    frente: Si subís la confianza de 95 % a 99 % con los mismos datos, ¿qué le pasa al intervalo?
+    dorso: Se ensancha, porque el valor crítico $z$ crece.
+    fuente: mendenhall
+  - id: t-t-student
+    frente: ¿Cuándo se usa la distribución $t$ en lugar de la normal para un intervalo de la media?
+    dorso: Cuando los datos son normales, $\sigma$ no se conoce y la muestra es chica; se usa con $n-1$ grados de libertad.
+    fuente: mit1805
+  - id: t-regla-pulgar-proporcion
+    frente: Encuestaste a 100 usuarios. ¿Cuánto vale, de forma aproximada, el margen de error al 95 % para una proporción?
+    dorso: |
+      $1/\sqrt{100} = 0{,}1$, o sea unos 10 puntos porcentuales.
+    fuente: mit1805
+  - id: t-sesgo-muestreo
+    frente: Si la muestra se eligió mal (por ejemplo, solo los tickets más fáciles), ¿lo arregla un intervalo de confianza?
+    dorso: No; el intervalo mide el azar del muestreo, no el sesgo de cómo elegiste los datos.
+    fuente: mit1805
+
+ejercicios:
+  - id: e-error-estandar-tickets
+    tipo: numerico
+    enunciado: |
+      Auditás 40 tickets y los tiempos de resolución tienen un desvío estándar de 22 minutos. ¿Cuánto vale el error estándar de la media? Dalo en minutos, con dos decimales.
+    respuesta: 3.48
+    tolerancia:
+      absoluta: 0.01
+    unidad: min
+    explicacion: |
+      Error estándar $= \sigma/\sqrt{n} = 22/\sqrt{40} = 22/6{,}325 = 3{,}48$ minutos.
+    erroresComunes:
+      - valor: 0.55
+        explicacion: Dividiste por $n$ en lugar de por la raíz de $n$.
+      - valor: 22
+        explicacion: Ese es el desvío de los tickets individuales, no el de la media.
+    fuente: mendenhall
+  - id: e-margen-95
+    tipo: numerico
+    enunciado: |
+      Con la media muestral de 38 minutos, el desvío de 22 minutos y 40 tickets, ¿cuánto vale el **margen** (la mitad del ancho) del intervalo de confianza de 95 %? Usá $z = 1{,}96$ y dalo en minutos, con un decimal.
+    respuesta: 6.8
+    tolerancia:
+      absoluta: 0.1
+    unidad: min
+    explicacion: |
+      Margen $= 1{,}96 \cdot 22/\sqrt{40} = 1{,}96 \cdot 3{,}48 = 6{,}8$ minutos, así que el intervalo es de 31,2 a 44,8.
+    erroresComunes:
+      - valor: 3.5
+        explicacion: Ese es el error estándar. Falta multiplicarlo por $z = 1{,}96$.
+    fuente: mit1805
+  - id: e-tamano-muestra
+    tipo: numerico
+    enunciado: |
+      Querés estimar el tiempo medio de resolución con un margen de error de 2 minutos al 95 % de confianza. Suponé $\sigma = 22$ minutos. ¿Cuántos tickets necesitás como mínimo? Redondeá hacia arriba.
+    respuesta: 465
+    tolerancia:
+      absoluta: 1
+    unidad: tickets
+    explicacion: |
+      $n \ge (z\sigma/B)^2 = (1{,}96 \cdot 22/2)^2 = 21{,}56^2 = 464{,}8$, y se redondea a 465.
+    erroresComunes:
+      - valor: 21.56
+        explicacion: Te faltó elevar al cuadrado; eso es $z\sigma/B$.
+      - valor: 327
+        explicacion: Usaste $z = 1{,}645$, que es el valor de una confianza de 90 %. Para 95 % corresponde 1,96.
+    fuente: mendenhall
+  - id: e-regla-pulgar-reabiertos
+    tipo: numerico
+    enunciado: |
+      Auditás 400 tickets y encontrás que el 18 % se reabrió. Con la regla práctica $\hat{p} \pm 1/\sqrt{n}$ para una confianza de 95 %, ¿cuántos **puntos porcentuales** vale el margen de error?
+    respuesta: 5
+    tolerancia:
+      absoluta: 0.1
+    unidad: puntos
+    explicacion: |
+      $1/\sqrt{400} = 1/20 = 0{,}05$, o sea 5 puntos porcentuales. El intervalo queda de 13 % a 23 %. Es una cota conservadora (el peor caso, $p = 0{,}5$): con $\hat{p} = 18\ \%$ el margen exacto ronda 3,8 puntos.
+    erroresComunes:
+      - valor: 0.25
+        explicacion: Dividiste por $n$ en lugar de por la raíz de $n$.
+    fuente: mit1805
+  - id: e-interpretar-ic
+    tipo: opcion-multiple
+    enunciado: Calculás un intervalo de confianza de 95 % para el tiempo medio de resolución y te da de 31,2 a 44,8 minutos. ¿Qué afirmación es correcta?
+    opciones:
+      - texto: Hay un 95 % de probabilidad de que la media verdadera esté entre 31,2 y 44,8.
+        explicacion: La media verdadera es un número fijo; ya sabés el intervalo, así que no hay una probabilidad de 95 % sobre este caso particular.
+      - texto: Si repitieras el muestreo muchas veces con el mismo método, cerca del 95 % de los intervalos contendrían la media verdadera.
+        correcta: true
+        explicacion: La confianza describe el procedimiento a largo plazo, no cada intervalo suelto.
+      - texto: El 95 % de los tickets tardan entre 31,2 y 44,8 minutos.
+        explicacion: El intervalo es sobre la media, no sobre los tickets individuales, que se desparraman mucho más.
+      - texto: La media muestral tiene un 95 % de probabilidad de estar en ese intervalo.
+        explicacion: La media muestral es 38 y está en el centro del intervalo con total certeza; la incertidumbre es sobre la media verdadera.
+    fuente: mendenhall
+  - id: e-vf-tcl-n5
+    tipo: verdadero-falso
+    enunciado: Con 5 tickets de una población con cola larga a la derecha, el teorema central del límite garantiza que el promedio es prácticamente normal.
+    respuesta: false
+    justificacion: |
+      El teorema habla de $n$ grande. Con poblaciones asimétricas se pide al menos unos 30 datos; con 5 la aproximación puede ser pobre.
+    fuente: mendenhall
+  - id: e-vf-cuadruplicar
+    tipo: verdadero-falso
+    enunciado: Para reducir a la mitad el margen de error de un intervalo de confianza para la media hay que cuadruplicar la cantidad de datos.
+    respuesta: true
+    justificacion: |
+      El margen es $z\sigma/\sqrt{n}$. Si $n$ se multiplica por 4, la raíz se multiplica por 2 y el margen se divide por 2.
+    fuente: mendenhall
+
+casos:
+  - id: c-informe-del-jueves
+    titulo: El mail de festejo
+    rol: Sos quien prepara el informe mensual de la mesa de ayuda.
+    contexto: |
+      Tu jefe quiere avisar que "bajamos el tiempo de resolución en 3 minutos". Tenés 40 tickets auditados por mes: media de 41 minutos el mes pasado y de 38 este mes, con desvío de 22 minutos en ambos.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Qué hacés antes de mandar el mail?
+        opciones:
+          - texto: Calculo el intervalo de confianza de la diferencia entre los dos meses.
+            va: ic-calculado
+            consecuencia: El error estándar de la diferencia es 4,9 minutos y el intervalo al 95 % va de aproximadamente −6,6 a +12,6 minutos.
+          - texto: Mando el mail; 38 es menos que 41.
+            va: final-mal
+            consecuencia: Al mes siguiente el promedio vuelve a 42 y quedás como quien festejó un ruido.
+      - id: ic-calculado
+        tipo: decision
+        texto: El intervalo incluye al cero. ¿Qué concluís?
+        opciones:
+          - texto: Que con estos datos no se puede afirmar ni una mejora ni su ausencia, y calculo cuántos tickets más necesito para detectar un cambio de ese tamaño.
+            va: final-bien
+            consecuencia: Con unos 930 tickets por mes el margen de la diferencia baja a 2 minutos, y lo ponés en el informe como pedido de muestra.
+          - texto: Que no hubo mejora, y desactivo la base de conocimiento.
+            va: final-regular
+            consecuencia: Un intervalo que incluye al cero no prueba que no haya mejora; solo dice que estos datos no alcanzan para verla.
+          - texto: Elijo los 40 tickets más cortos del mes para que la media dé mejor.
+            va: final-mal
+            consecuencia: El promedio queda sesgado y cualquier auditoría posterior lo desarma.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El informe dice "la media bajó 3 minutos, con un margen de error que todavía no permite afirmarlo", y propone auditar más tickets. Nadie festeja en falso.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Dejás de usar una herramienta que quizás sí ayudaba, porque tomaste la falta de evidencia por evidencia de que no sirve.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Se publica una conclusión que no resiste el mes siguiente y se pierde la confianza en los números del área.
+    leccion: |
+      Una diferencia entre dos promedios sólo vale si es grande comparada con su error estándar. Un intervalo que incluye al cero no dice que no haya efecto, dice que faltan datos.
+    fuente: mendenhall
+
+problemas:
+  - id: p-mit-polling
+    enunciado: Resolvé el problema 3 de la clase 22 (encuestas). Calculá cuántas personas hay que encuestar para un margen de 0,01 al 95 % y al 80 %, y los intervalos con n = 900. Después traducilo a una encuesta de satisfacción a tus usuarios.
+    fuente: mit1805
+    ubicacion: Class 22 in-class problems, Board questions, Problem 3
+    url: https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class22_pset.pdf
+    dificultad: intermedio
+  - id: p-mendenhall-ancho-ic
+    enunciado: Resolvé los ejercicios 8.27 a 8.29 de Mendenhall y armá una tabla en una planilla con el ancho del intervalo para n = 100, 200 y 400, y confianza de 90 %, 95 % y 99 %. Anotá qué efecto tiene cada cambio.
+    fuente: mendenhall
+    ubicacion: cap. 8, ejercicios 8.27 a 8.29, p. 316
+    dificultad: basico
+  - id: p-simular-cobertura
+    enunciado: Con Python o una planilla, generá 1000 muestras de n = 20 de una exponencial con media 1, armá el intervalo de 95 % con la fórmula grande-n en cada una y contá en cuántas contiene a 1. Repetí con n = 100 y compará con la tabla de la lectura.
+    fuente: mit1805
+    ubicacion: Reading 23b, §4, ejemplo 3
+    url: https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class23-prep-b.pdf
+    dificultad: intermedio
