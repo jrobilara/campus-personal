@@ -8,7 +8,7 @@
 - Producción: F6b en curso (repo público, Pages y primer deploy); chequeo completo verde antes de publicar (377 unit + 170 e2e)
 
 ## Próximo paso
-Confirmar el deploy en el sitio vivo (portada con las 6 áreas, un tema por área, buscador "varianza", offline, export/import) y, si todo anda, avanzar a F7 (revisión de código y de UI) según `docs/modulos/v1/README.md`.
+F7 hecha (revisión de código y de UI, commits del 2026-11-12): confirmar que el workflow de main quedó verde y probar en el sitio vivo el buscador sin red (antes fallaba: faltaban wasm y filtro de Pagefind en el precache). Pendiente opcional: achicar el precache (~7 MB, 160 archivos; el HTML pesa 3,7 MB) si la primera instalación del service worker sigue lenta.
 
 ## Bloqueos
 - ninguno
