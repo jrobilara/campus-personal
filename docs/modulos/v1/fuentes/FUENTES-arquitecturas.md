@@ -7,32 +7,33 @@
 | # | Afirmación clave (tu paráfrasis) | Dónde está | Fuente (id) | Ubicación exacta | Cómo la verificaste |
 |---|---|---|---|---|---|
 | 1 | Un monolito es un componente desplegable único, con una sola base, que contiene todos los subdominios; las operaciones son locales. | Formal, Las tres formas | richardson-monolito | párrafo de definición | Leí la página (WebFetch, resumen). |
-| 2 | Microservicios: servicios pequeños y autónomos, una capacidad de negocio en un bounded context, datos propios, despliegue separado, APIs bien definidas. | Formal, Las tres formas | azure-microservicios | "What are microservices?" y el párrafo inicial | Texto completo de la página. |
+| 2 | Microservicios: servicios pequeños y autónomos, una capacidad de negocio en un bounded context, datos propios, despliegue separado, APIs bien definidas. | Formal, Las tres formas | azure-microservicios | introducción (párrafo sin título) y "What are microservices?" | Texto completo de la página; corregido tras F4 (el bounded context está en el párrafo inicial). |
 | 3 | Monolito modular: un solo despliegue con límites claros en las APIs y en el almacenamiento, lo que hace relativamente simple partirlo. | Formal, Las tres formas | fowler-monolith-first | pasaje sobre modularidad en API y capa de datos (el artículo no tiene subtítulos que haya podido confirmar) | Resumen del artículo con WebFetch. |
 | 4 | No cualquier sistema se puede partir: la mayoría acumula demasiadas dependencias entre módulos. | Formal, Las tres formas | fowler-monolith-first | mismo pasaje | Idem. |
 | 5 | Ventajas/desventajas del monolito: despliegue que obliga a construir y probar todo, equipos que coordinan más, operaciones ACID locales, depuración más simple. | Formal, tabla (columna monolito) | richardson-monolito | "Resulting context" | Leí la página. |
 | 6 | Ventajas/desafíos de microservicios: despliegue independiente, equipos autónomos, escalado selectivo, consistencia eventual, más piezas (descubrimiento, logs correlacionados, versionado). | Formal, tabla (columna microservicios) | azure-microservicios | "Benefits" y "Challenges" | Texto completo. |
 | 7 | En el monolito un cambio chico ata todo el ciclo de despliegue y se escala la aplicación entera. | Formal, tras la tabla | fowler-microservices | introducción (primeros párrafos) | Resumen con WebFetch. |
-| 8 | Pasar llamadas en memoria a remotas las encarece, pide APIs más gruesas y una conversión ingenua da comunicación "chatty". | Formal, El costo escondido | fowler-microservices | "Componentization via Services" | Idem. |
-| 9 | Una charla excesiva entre servicios es síntoma de acoplamiento fuerte y baja cohesión. | Formal, El costo escondido | azure-microservicios | "Best practices" (viñeta sobre loose coupling y high functional cohesion) | Texto completo. |
+| 8 | Pasar llamadas en memoria a remotas las encarece y pide APIs más gruesas; una conversión ingenua da comunicación "chatty". | Formal, El costo escondido | fowler-microservices | "Componentization via Services" (costo y APIs gruesas) y "Smart endpoints and dumb pipes" (chatty) | Corregido tras F4 (H1). |
+| 9 | Una charla excesiva entre servicios puede ser síntoma de acoplamiento fuerte y baja cohesión (la fuente dice "might be"). | Formal, El costo escondido | azure-microservicios | "Best practices" (viñeta sobre loose coupling y high functional cohesion) | Texto completo; corregido tras F4 (H5). |
 | 10 | Con dependencias duras en serie, la disponibilidad es el producto de las disponibilidades; AWS la plantea para sistemas independientes. | Formal, Disponibilidad compuesta | aws-disponibilidad | "Calculating availability with hard dependencies" | Resumen/lectura de la página; el ejemplo 99,99 %³ = 99,97 % figura ahí. |
 | 11 | 0,999^5 = 0,9950 (99,50 %); ≈ 44 h/año caído; un componente 99,9 % ≈ 8,8 h/año. | Formal; Intuición (lectura del simulador) | aws-disponibilidad | cuenta propia con Python; la tabla de AWS da 99,9 % = 8 h 45 min por año | `python3`: 0,999**5 = 0,99501; (1-0,99501)*8760 = 43,7 h. |
 | 12 | Encadenar llamadas síncronas multiplica la caída; salidas: asíncronas o administrar la caída. | Formal | fowler-microservices | barra lateral "Synchronous calls considered harmful" | Resumen con WebFetch. |
-| 13 | Casi todas las historias exitosas de microservicios partieron de un monolito; los armados desde cero tendieron a terminar mal; consejo: monolito primero y bien modularizado. | Formal, Cuándo conviene | fowler-monolith-first | cuerpo del artículo (argumento central) | Resumen con WebFetch. |
+| 13 | Casi todas las historias exitosas de microservicios partieron de un monolito; los armados desde cero tendieron a terminar mal; consejo: monolito primero y bien modularizado. Es una observación anecdótica y Fowler la da como tentativa (el texto lo dice, tras F4 H4). | Formal, Cuándo conviene | fowler-monolith-first | cuerpo del artículo (argumento central y cautelas finales) | Resumen con WebFetch; matiz confirmado por el verificador F4. |
 | 14 | Razones: no sabés si el producto funcionará; límites difíciles de acertar y más caros de corregir entre servicios. | Formal, Cuándo conviene | fowler-monolith-first | "YAGNI" y "service boundaries" del artículo | Idem. |
 | 15 | El "premium": despliegue automatizado, monitoreo, fallas, consistencia eventual; se justifica con complejidad real (equipos grandes, escala, tamaño). | Formal, Cuándo conviene | fowler-premium | cuerpo del artículo | Resumen con WebFetch. |
 | 16 | Hace falta cultura DevOps madura y evaluar la experiencia del equipo. | Formal, Cuándo conviene | azure-microservicios | "Challenges" (Management, Skill set) | Texto completo. |
 | 17 | Existe la estrategia de desprender servicios desde los bordes de a poco. | Formal, Cuándo conviene | fowler-monolith-first | pasaje "Other strategies" | Resumen. |
 | 18 | Modelar servicios por dominio (DDD), evitar servicios demasiado finos; lo que cambia junto debe vivir junto. | Formal, Profundizar | azure-microservicios | "Best practices" | Texto completo. |
-| 19 | Partir un monolito enredado reparte el enredo por la red. | Intuición, Ojo | fowler-monolith-first | pasaje sobre dependencias entre módulos (inferencia mía a partir de la advertencia de Fowler) | Inferencia, marcada: F4 puede pedir suavizar. |
+| 19 | Fowler advierte que la mayoría de los sistemas tiene demasiadas dependencias entre módulos para partirse con sentido y que los intentos terminaron seguido en un lío. La metáfora "reparte el enredo por la red" es inferencia mía, separada en el texto con "En criollo:". | Intuición, Ojo | fowler-monolith-first | nota al pie 1 (la inferencia no se cita) | Corregido tras F4 (H3). |
 | 20 | Con 5 saltos de 99,9 % la disponibilidad compuesta da 99,50 %; con timeouts y circuit breaker, tirar antifraude deja pagos degradado y el gateway ok. | Intuición (lectura de simuladores) | — | SIMULADORES.md §2.8 y §2.11 (contrato del simulador) | Lo dice el contrato; verificar contra el simulador real cuando exista. |
 | t-monolito-modular-definicion | Monolito modular = un despliegue + límites claros en APIs y datos. | tarjeta | fowler-monolith-first | idem #3 | idem |
 | t-monolith-first-razon | Razón del monolith-first. | tarjeta | fowler-monolith-first | idem #14 | idem |
 | t-premium-microservicios | Qué es el premium. | tarjeta | fowler-premium | idem #15 | idem |
 | t-disponibilidad-serie-tres | 0,999^3 ≈ 0,997. | tarjeta | aws-disponibilidad | idem #10 | Cuenta con Python: 0,997003. |
-| t-disponibilidad-independencia | Supuesto de independencia y dependencias duras. | tarjeta | aws-disponibilidad | idem #10 | idem |
+| t-disponibilidad-independencia | Supuesto de independencia de las fallas (una sola idea tras F4 H7). | tarjeta | aws-disponibilidad | idem #10 | idem |
+| t-dependencia-dura-definicion | Dependencia dura: la caída del sistema del que dependés se traduce directamente en una caída del tuyo. | tarjeta | aws-disponibilidad | "Calculating availability with hard dependencies" | Texto completo. |
 | t-base-por-servicio-costo | Con base por servicio se pierde ACID entre servicios (queda consistencia eventual). | tarjeta | azure-microservicios | "Challenges", Data integrity | Texto completo. |
-| t-charla-excesiva-sintoma | Charla excesiva = síntoma de acoplamiento. | tarjeta | azure-microservicios | idem #9 | idem |
+| t-charla-excesiva-sintoma | Charla excesiva puede ser síntoma de acoplamiento. | tarjeta | azure-microservicios | idem #9 | idem |
 | t-escalar-parte | Escalado selectivo de microservicios vs escalar el monolito entero. | tarjeta | fowler-microservices | introducción | Resumen. |
 | t-llamada-remota-costo | Llamadas remotas cuestan más; APIs más gruesas; chatty. | tarjeta | fowler-microservices | "Componentization via Services" | Resumen. |
 | e-disponibilidad-seis-servicios | 0,999^6 = 99,40 %. | ejercicio | aws-disponibilidad | idem #10 | Python: 0,994015. |
@@ -67,16 +68,16 @@
 | 5 | Si la tasa media de llegada supera la de consumo, la cola crece y sube la latencia; monitorear profundidad, escalar con límite o descartar en el productor. | Formal | azure-colas | "Problems and considerations" | Texto completo. |
 | 6 | $\mu = c/t$, $T = Q/(\lambda-\mu)$; 50 s con los números del simulador. | Formal, Fórmula | — | aritmética propia | Python: 2/0,5 = 4; 50/(5-4) = 50. Además corrí un script con queue.Queue: crece ~1/s. |
 | 7 | Kafka: eventos con clave, valor y marca de tiempo; tópicos con muchos productores/suscriptores; el evento leído no se borra, vence por retención; particiones; misma clave a la misma partición; orden solo dentro de una partición. | Formal, Broker y log | kafka-intro | "Main Concepts and Terminology" | Resumen de la página. |
-| 8 | Cada partición la consume un consumidor por grupo; posición = offset; se puede retroceder; los consumidores hacen pull. | Formal | kafka-diseno | "Consumer Position and Offsets", "Push vs. Pull" | Resumen de la página (Kafka 4.4). |
-| 9 | RabbitMQ: con ack manual, entregas sin confirmar vuelven a la cola si se cierra el canal o la conexión; el reentregado viene marcado. | Formal | rabbitmq-confirmaciones | "Consumer Acknowledgements" (modo manual, flag redelivered, requeue automático) | Resumen. |
+| 8 | Dentro de un grupo de consumidores clásico (*consumer group*), cada partición la consume un solo consumidor; posición = offset; se puede retroceder; los consumidores hacen pull. | Formal | kafka-diseno | "Consumer Position and Offsets", "Push vs. Pull" | Resumen (Kafka 4.4); acotado a grupos clásicos tras F4 H3 (existen los share groups). |
+| 9 | RabbitMQ: con ack manual, entregas sin confirmar vuelven a la cola si se cierra el canal o la conexión; el reentregado viene marcado; los consumidores deben estar preparados para reentregas y diseñarse con idempotencia en mente. | Formal | rabbitmq-confirmaciones | "When Consumers Fail or Lose Connection: Automatic Requeueing" | Resumen; sección corregida tras F4 (H2). |
 | 10 | La mayoría de los brokers (Kafka, RabbitMQ incluidos) entrega al menos una vez; exactly-once de punta a punta es impracticable porque el broker solo controla lo propio. | Formal, Duplicados | azure-idempotente | "Context and problem" | Texto completo. |
-| 11 | Kafka: at-least-once por defecto; idempotencia vuelve inocuos los duplicados. | Formal | kafka-diseno | "Message Delivery Semantics" | Resumen. |
+| 11 | Kafka: al-menos-una-vez es la garantía por defecto; ofrece exactly-once entre tópicos con transacciones, pero hacia sistemas externos requiere la cooperación de ellos; por eso el consumidor idempotente sigue siendo la defensa. | Formal | kafka-diseno | "Message Delivery Semantics" | Resumen; reescrito tras F4 (H1). El pedido de idempotencia se respalda con #9, no con Kafka. |
 | 12 | Consumidor idempotente: procesar dos veces = una vez. | Formal | azure-idempotente | "Solution" | Texto completo. |
 | 13 | Preferir operaciones naturalmente idempotentes (upsert, valor absoluto) o clave de deduplicación estable. | Formal | azure-idempotente | "Problems and considerations", "Choose a stable deduplication key" | Texto completo. |
 | 14 | La restricción de unicidad hace que la base arbitre duplicados concurrentes; el marcador y el efecto van en la misma transacción. | Formal (SQL) | azure-idempotente | "Guard against concurrent duplicates" y "Commit the processed key and the side effects atomically" | Texto completo. El SQL es mío (PostgreSQL estándar). |
 | 15 | Dead-letter queue para mensajes imposibles de procesar, monitoreada; el orden no se conserva siempre con consumidores paralelos; las colas son de una vía. | Formal, Otros cuidados | azure-colas | "Problems and considerations" | Texto completo. |
 | 16 | No conviene cola cuando se necesita respuesta síncrona de baja latencia. | Intuición, Ojo; tarjeta | azure-colas | "When to use this pattern" | Texto completo. |
-| 17 | Lecturas del simulador: la espera síncrona sube con la latencia de B y la asíncrona no; con B caído suma errores/pendientes; 2 consumidores a 0,5 s procesan 4/s; con "consumidor caído" no se pierden mensajes. | Intuición | — | SIMULADORES.md §2.8 | Contrato del simulador; falta verificar contra el real. |
+| 17 | Lecturas del simulador: la espera síncrona sube con la latencia de B y la asíncrona no; con B caído suma errores/pendientes; 2 consumidores a 0,5 s procesan 4/s; con "consumidor caído" los mensajes se acumulan y se drenan al volver mientras la cola tenga lugar. Con llegada de 5/s y capacidad 50, un corte total del consumo llena la cola en 50/5 = 10 s y desde ahí se pierden mensajes (`perdidos`). | Intuición | — | SIMULADORES.md §2.8 | Contrato del simulador; cuenta con Python; falta verificar contra el real. |
 | t-broker-ventaja, t-broker-costo | ver #3 | tarjetas | richardson-mensajeria | idem | idem |
 | t-cola-crece-sin-parar | ver #5 | tarjeta | azure-colas | idem | idem |
 | t-tasa-consumo-calculo | 2 / 0,5 = 4. | tarjeta | — | aritmética | Mental/Python. |
@@ -84,13 +85,13 @@
 | t-redelivery-crash | Un consumidor que se cae sin confirmar provoca reentrega. | tarjeta | rabbitmq-confirmaciones | idem #9 | idem |
 | t-consumidor-idempotente, t-exactly-once-limite | ver #12 y #10 | tarjetas | azure-idempotente | idem | idem |
 | t-kafka-no-borra, t-kafka-orden-particion | ver #7 | tarjetas | kafka-intro | idem | idem |
-| t-cuando-no-cola | ver #16 | tarjeta | azure-colas | idem | idem |
+| t-cuando-no-cola, t-cuando-no-cola-carga-estable | ver #16 (dos tarjetas, una por caso, tras F4 H5) | tarjetas | azure-colas | "When to use this pattern" | Texto completo. |
 | e-tiempo-llenar-cola | 50 s. | ejercicio | azure-colas | idem #5, #6 | Python. |
 | e-consumidores-necesarios | 30 · 0,4 = 12. | ejercicio | azure-colas | aritmética | Python. |
 | e-evitar-doble-cobro | Clave única en la misma transacción. | ejercicio | azure-idempotente | idem #14 | idem |
 | e-vf-kafka-borra | El evento no se borra al leerse. | ejercicio | kafka-intro | idem #7 | idem |
-| c-cola-mails-crece | Diagnosticar tasas, aislar mensajes venenosos en dead-letter, escalar con límite; purgar pierde mensajes. | caso | azure-colas | "Problems and considerations" | Texto completo. Cifras ilustrativas. |
-| p-kafka-quickstart | Pasos del Quickstart (Docker, crear tópico, productor y consumidor de consola, --from-beginning). | problema | kafka-quickstart | pasos 1 a 5 | Resumen con los comandos. No lo ejecuté. |
+| c-cola-mails-crece | Diagnosticar tasas, aislar mensajes venenosos en dead-letter, escalar con límite; purgar pierde mensajes. Cuenta (F4 H6): cada consumidor 4 msg/s; 2 sanos = 8/s; con 12 sanos = 48/s contra 30 que entran, la cola baja 18/s y 18.000 / 18 = 1.000 s ≈ 17 min. | caso | azure-colas | "Problems and considerations" | Texto completo; cuenta con Python. Cifras ilustrativas. |
+| p-kafka-quickstart | Pasos del Quickstart (descargar la distribución con los scripts bin/, broker con scripts o Docker, crear tópico, productor y consumidor de consola, --from-beginning). | problema | kafka-quickstart | pasos 1 a 5 | Resumen con los comandos; enunciado aclarado tras F4 H7. No lo ejecuté. |
 | p-cola-python | Simulación con queue.Queue. | problema | azure-colas | "Problems and considerations" | Corrí el script: la cola crece ~1/s con 2 consumidores. |
 
 ### Fuentes del tema
@@ -111,9 +112,9 @@
 | 2 | Hay que evitar sesión en el servidor (externalizarla) y la afinidad de cliente. | Formal | azure-escalado | "Design application to scale" | Texto completo. |
 | 3 | Evitar singletons cuello de botella. | Formal | azure-escalado | "Design infrastructure to scale" (Avoid singletons) | Texto completo. |
 | 4 | $\rho=\lambda/(N\mu)$ y $N \ge \lceil \lambda/(\mu\rho_{obj})\rceil$; 600 / (50·0,7) = 17,1 → 18. | Formal, Fórmula | — | aritmética propia | Python: 17,14. |
-| 5 | El autoscaling tarda; recomienda un colchón de capacidad y probar demoras. | Formal | azure-escalado | "Configure scaling" (Use a buffer) y "Test scaling" (It takes time for scaling to complete) | Texto completo. |
+| 5 | Azure recomienda un colchón de capacidad libre para absorber picos inesperados, y advierte que completar un escalado lleva tiempo y hay que probar el efecto de esas demoras. La conclusión "como tarda, el colchón te cubre mientras tanto" es mía y está marcada "En criollo". | Formal | azure-escalado | "Configure scaling" (Use a buffer) y "Test scaling" (It takes time for scaling to complete) | Texto completo; corregido tras F4 (E-H1). |
 | 6 | Si un clúster cae y el otro recibe +20 % de tráfico, puede no absorberlo. | Formal | sre-cascadas | "Server Overload" | Resumen. |
-| 7 | NGINX: round-robin por defecto; least_conn al de menos conexiones activas (ayuda con pedidos largos); ip_hash persistencia; weight; max_fails/fail_timeout. | Formal, Balanceo | nginx-balanceo | "Load balancing methods", "Health checks" | Resumen. La configuración de ejemplo es propia y usa solo directivas descritas ahí; no la ejecuté (no hay nginx en la PC). |
+| 7 | NGINX: round-robin por defecto; least_conn al de menos conexiones activas (ayuda con pedidos largos); ip_hash persistencia; weight; chequeos pasivos: `max_fails` intentos fallidos dentro de la ventana de `fail_timeout` marcan al servidor como no disponible, y `fail_timeout` es también cuánto dura ese estado. | Formal, Balanceo | nginx-balanceo | "Load balancing methods", "Health checks"; la precisión sobre la ventana viene de la referencia del módulo upstream, según el verificador F4 | Resumen. La configuración de ejemplo es propia y usa solo directivas descritas ahí; no la ejecuté (no hay nginx en la PC). |
 | 8 | Un algoritmo mal elegido puede fijar artificialmente clientes en una instancia. | Formal | azure-escalado | "Review your load balancing algorithm" | Texto completo. |
 | 9 | Dos réplicas independientes de 99,9 % dan 99,9999 %. | Formal | aws-disponibilidad | "Calculating availability with redundant components" | Texto completo del ejemplo. |
 | 10 | Cache-aside: mirar la caché, ante miss leer la base, guardar y devolver; al escribir, escribir en la base y luego invalidar. | Formal, Caché | azure-cache-aside | "Solution" | Texto completo. |
@@ -125,8 +126,8 @@
 | 16 | Lecturas del simulador (colas crecen si λ > servidores × capacidad; con caché 80 % baja la utilización; con servidor lento menos-conexiones tiene p95 menor que round-robin). | Intuición | — | SIMULADORES.md §2.8 | Contrato del simulador; falta verificar contra el real. |
 | t-escala-vertical-horizontal | ver #1 | tarjeta | azure-escalado | idem | idem |
 | t-sesion-afinidad | ver #2 | tarjeta | azure-escalado | idem | idem |
-| t-autoscaler-tarda | ver #5 | tarjeta | azure-escalado | idem | idem |
-| t-nginx-default, t-least-conn-cuando, t-ip-hash-para-que, t-max-fails-fail-timeout | ver #7 | tarjetas | nginx-balanceo | idem | idem |
+| t-colchon-capacidad, t-escalado-demora | ver #5 (una tarjeta por idea, tras F4 E-H1) | tarjetas | azure-escalado | idem | idem |
+| t-nginx-default, t-least-conn-cuando, t-ip-hash-para-que, t-max-fails-fail-timeout, t-fail-timeout-doble-rol | ver #7 | tarjetas | nginx-balanceo | idem | idem |
 | t-cache-miss-pasos, t-cache-orden-escritura | ver #10 y #11 | tarjetas | azure-cache-aside | idem | idem |
 | t-carga-base-acierto | 100 × 0,2 = 20. | tarjeta | — | aritmética | mental |
 | t-cache-fria | ver #14 | tarjeta | sre-cascadas | idem | idem |
@@ -156,7 +157,7 @@
 | 3 | Propagar el plazo restante: 30 s con 7 gastados deja 23. | Formal | sre-cascadas | "Latency and Deadlines" | Resumen. |
 | 4 | Retry: cancelar, reintentar de inmediato o con demora (que puede crecer exponencialmente). | Formal, Reintentos | azure-retry | "Retry strategies" | Texto completo. |
 | 5 | Una política agresiva degrada más a un servicio al límite. | Formal | azure-retry | "Impact on performance" | Texto completo. |
-| 6 | Usar siempre backoff exponencial aleatorizado; el azar evita sincronización. | Formal | sre-cascadas | "Retries" | Resumen. La fórmula full jitter es una forma común; la vi descrita en el blog de Brooker (para ver más), pero la imagen de la fórmula no estaba en el texto que recibí: la fórmula es la usual y la probé con un script, no la cito como respaldada por esa fuente. |
+| 6 | Usar siempre backoff exponencial aleatorizado; el azar evita sincronización. Fórmula `espera = aleatorio(0, min(tope, base·2^n))`: es la variante "Full Jitter" del artículo de Brooker (para ver más). | Formal | sre-cascadas | "Retries" (concepto); la fórmula, en brooker-jitter (blog, sin `Cita`) | Concepto: resumen de SRE. Fórmula: confirmada por el verificador F4 contra el artículo de Brooker (sleep = random_between(0, min(cap, base * 2 ** attempt))); el texto del tema ahora nombra la fuente. |
 | 7 | 3 reintentos (4 intentos) en 3 capas = 64 intentos en la base. | Formal | sre-cascadas | "Retries" | Resumen; Python: 4**3 = 64. |
 | 8 | Reintentar solo en la capa inmediatamente superior, máx. 3 intentos por pedido, presupuesto por cliente de 10 %. | Formal | sre-sobrecarga | "Deciding to Retry" | Resumen. |
 | 9 | Reintento solo donde se conoce el contexto: capas anidadas agregan demoras. | Formal | azure-retry | "General guidance" | Texto completo. |
@@ -166,11 +167,11 @@
 | 13 | Circuit breaker con tres estados y sus transiciones. | Formal | azure-circuit-breaker | "Solution" | Texto completo. |
 | 14 | Contador temporal en cerrado; semiabierto evita inundar al servicio que se recupera. | Formal | azure-circuit-breaker | "Solution" | Texto completo. |
 | 15 | No usar para recursos locales ni como sustituto del manejo de excepciones; quien llama necesita plan (degradar, alternativa, avisar). | Formal | azure-circuit-breaker | "Problems and considerations" (Exception handling) y "When to use this pattern" | Texto completo. |
-| 16 | Una apertura debería generar alerta y los cambios de estado se registran. | Formal | fowler-circuit-breaker | sección de monitoreo del artículo | Resumen. |
+| 16 | Suele convenir una alerta de monitoreo cada vez que se abre el breaker, y los cambios de estado deberían registrarse. | Formal | fowler-circuit-breaker | sección de monitoreo del artículo | Resumen; verbo ajustado tras F4 (R-H5). |
 | 17 | CAP (Gilbert-Lynch): consistencia atómica, disponibilidad = todo pedido recibe respuesta eventualmente, partición = red que demora o pierde mensajes; imposible garantizar respuesta a todo pedido con atomicidad en una red con fallas. | Formal, CAP | gilbert-lynch-cap | §2 (Consistency, Availability, Partition-tolerance y "The CAP Theorem" con el esquema de prueba) | Leí el texto completo (pdftotext del PDF). |
-| 18 | Brewer: "2 de 3" engaña; solo se renuncia a una de las dos durante la partición; la partición es un timeout; la decisión es por operación/dato/usuario; manejo: detectar, modo de partición, recuperar. | Formal; Intuición, Ojo | brewer-cap | "Why '2 of 3' is misleading", "Managing partitions" | Resumen de la reproducción en InfoQ. |
+| 18 | Brewer: "2 de 3" engaña; solo se renuncia a una de las dos durante la partición; la partición es un timeout; la decisión es por operación/dato/usuario; manejo: detectar, modo de partición, recuperar. | Formal; Intuición, Ojo | brewer-cap | "Why '2 of 3' is misleading", "CAP-latency connection" (partición = timeout), "Managing partitions" | Resumen de la reproducción en InfoQ; sección corregida tras F4 (R-H2). |
 | 19 | Carrito disponible aunque pierda una actualización; info de producto algo vieja; cobro y facturación fuertemente consistentes. | Formal | gilbert-lynch-cap | §4.4 "Segmenting Consistency and Availability" (Data partitioning) | Leí el texto completo. |
-| 20 | Kleppmann cuestiona las etiquetas CP/AP (para ver más). | Formal, Profundizar | kleppmann-cap | artículo completo | Resumen de WebFetch. No se usa para respaldar un dato. |
+| 20 | La consistencia del teorema CAP es la atómica (no la "C" de ACID). Kleppmann argumenta que por eso muchos sistemas no entran en CP/AP (solo "para ver más", sin `Cita`). | Formal, Profundizar | gilbert-lynch-cap | §2 (definición de consistencia); kleppmann-cap solo como lectura adicional | Texto completo del PDF; reescrito tras F4 (R-H3). |
 | 21 | El breaker del simulador mide el umbral sobre los últimos 20 pedidos; abierto: las llamadas al servicio dejan de crecer; pasa por semiabierto. | Intuición; Formal | — | SIMULADORES.md §2.9 | Contrato del simulador; falta verificar contra el real. |
 | t-timeout-sin-limite | ver #1 | tarjeta | azure-circuit-breaker | idem | idem |
 | t-breaker-abierto-rapido, t-breaker-semiabierto, t-breaker-contador-temporal | ver #13 y #14 | tarjetas | azure-circuit-breaker | idem | idem |
@@ -180,7 +181,7 @@
 | t-http-idempotentes | ver #11 | tarjeta | rfc9110 | §9.2.2 | idem |
 | t-presupuesto-reintentos | ver #8 | tarjeta | sre-sobrecarga | idem | idem |
 | t-cap-eleccion-real, t-cap-particion-timeout | ver #18 | tarjetas | brewer-cap | idem | idem |
-| t-cap-por-operacion | ver #19 | tarjeta | gilbert-lynch-cap | §4.4 | idem |
+| t-cap-cobro-consistente, t-cap-carrito-disponible | ver #19 (una tarjeta por dato, tras F4 R-H4) | tarjetas | gilbert-lynch-cap | §4.4 | idem |
 | e-intentos-multiplicados | 4³ = 64. | ejercicio | sre-cascadas | ver #7 | Python. |
 | e-carga-por-reintentos | 400 · 4 = 1600. | ejercicio | azure-retry | ver #5 (política agresiva) | Python. |
 | e-espera-backoff | 200 · 2³ = 1600 ms. | ejercicio | azure-retry | ver #4 | Python. |

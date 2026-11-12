@@ -43,8 +43,17 @@ Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a text
 
 **H1** — `src/content/temas/arquitecturas/escalabilidad-balanceo-cache/tema.mdx`, Formal, "Cuántos servidores hacen falta": "el escalado automático tarda en completarse, así que la guía de Azure recomienda un colchón de capacidad libre para los picos y probar el efecto de esas demoras<Cita f="azure-escalado" loc="Configure scaling" />"; la tarjeta `t-autoscaler-tarda` en `practica.yaml` repite el nexo causal. Qué está mal: el "así que" no está en la fuente y las dos ideas están en secciones distintas. Qué dice la fuente: "Use a buffer" (bajo "Configure scaling") recomienda capacidad libre "para manejar picos inesperados"; "It takes time for scaling to complete, so test the effects of scaling delays" está en "Test scaling". Corrección: dos citas ("Configure scaling" para el colchón, "Test scaling" para la demora) y reformular el nexo como conclusión propia ("como el escalado automático tarda, un colchón tiene sentido").
 
+Respuesta del autor: corregido: dos citas ("Configure scaling" y "Test scaling") y el nexo marcado como conclusión propia; tarjeta partida en `t-colchon-capacidad` y `t-escalado-demora`.
+
 **H2** — `escalabilidad-balanceo-cache/practica.yaml`, tarjeta `t-max-fails-fail-timeout`. Qué está mal: (a) dos ideas en una tarjeta (GUIA-ESTILO §4 regla 1); (b) "fallas seguidas": la guía de balanceo de nginx dice "consecutive unsuccessful attempts", pero la referencia del módulo upstream dice "unsuccessful attempts … in the duration set by fail_timeout" (sin "consecutivas"), y `fail_timeout` cumple dos roles: la ventana de conteo y el tiempo que el servidor queda como no disponible (por defecto 10 s; `max_fails` por defecto 1). Corrección: dos tarjetas, o un dorso exacto ("`max_fails` es cuántos intentos fallidos dentro de la ventana de `fail_timeout` marcan al servidor como no disponible, y `fail_timeout` también es cuánto dura ese estado").
+
+Respuesta del autor: corregido: dos tarjetas con la formulación exacta de `max_fails` y de `fail_timeout`, y el texto del tema ajustado.
 
 **H3** — `escalabilidad-balanceo-cache/tema.mdx`, Intuición, segundo `<SimFlujo>`: pasa `servidorLento={true}` y la consigna dice "Activá 'servidor lento'". Con el valor inicial en `true` el toggle ya está activado. Corrección: quitar `servidorLento={true}` o cambiar la consigna a "Con 'servidor lento' activado, compará…". Menor.
 
+Respuesta del autor: corregido: se quitó `servidorLento={true}`.
+
 **H4** — `escalabilidad-balanceo-cache/practica.yaml`, problema `p-nginx-tres-backends`. Qué está mal (expectativa): con `curl` uno por vez no hay conexiones simultáneas, así que `least_conn` se comporta como round-robin y el alumno no va a ver diferencia. Qué dice la fuente: `least_conn` actúa "cuando algunos pedidos tardan más" (nginx-balanceo, "Least connected load balancing"). Corrección: pedir pedidos concurrentes (`xargs -P`/`ab`) y que uno de los backends demore (por ejemplo con un `sleep`), o avisar que con pedidos secuenciales el reparto es igual. Menor.
+
+
+Respuesta del autor: corregido: el problema pide pedidos concurrentes y un backend que demore, y avisa que en secuencial least_conn reparte igual.

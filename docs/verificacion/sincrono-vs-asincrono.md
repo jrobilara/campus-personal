@@ -44,16 +44,33 @@ Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a text
 
 **H1** — `src/content/temas/arquitecturas/sincrono-vs-asincrono/tema.mdx`, Formal, "Duplicados e idempotencia": "Kafka lo reconoce: al-menos-una-vez es su modo por defecto, y recomienda procesamiento idempotente<Cita f="kafka-diseno" loc="Message Delivery Semantics" />". Qué está mal: (a) Kafka no "recomienda" idempotencia en esa sección; solo observa que con clave primaria las actualizaciones suelen ser idempotentes. (b) Se omite que Kafka sí ofrece exactly-once dentro de Kafka (productor idempotente y transacciones, Kafka Streams) y que hacia sistemas externos requiere cooperación de ellos: sin esa aclaración el lector puede entender que Kafka no tiene exactly-once. Qué dice la fuente: "Kafka guarantees at-least-once delivery by default"; exactly-once al leer-procesar-escribir en tópicos de Kafka con transacciones; "para otros sistemas de destino generalmente requiere cooperación con esos sistemas". Corrección: "Kafka documenta que al-menos-una-vez es su garantía por defecto; ofrece exactly-once al leer, procesar y escribir entre tópicos con transacciones, pero hacia sistemas externos hace falta la cooperación de esos sistemas, así que el consumidor idempotente sigue siendo la defensa". Para respaldar "recomienda idempotencia" usar RabbitMQ: "consumers must be prepared to handle redeliveries and otherwise be implemented with idempotence in mind" (rabbitmq-confirmaciones, sección de H2).
 
+Respuesta del autor: corregido: se reescribió con lo que dice Kafka (at-least-once por defecto, exactly-once entre tópicos, cooperación externa) y la idempotencia se respalda con RabbitMQ.
+
 **H2** — mismo archivo, Formal, `<Cita f="rabbitmq-confirmaciones" loc="Consumer Acknowledgements" />`, y `fuentes[].ubicacion` de `rabbitmq-confirmaciones`. Qué está mal: el contenido citado está en otra sección. Qué dice la fuente: el título de la página es "Consumer Acknowledgements and Publisher Confirms"; la requeue automática y la propiedad `redeliver` están en "When Consumers Fail or Lose Connection: Automatic Requeueing". Corrección: `loc="When Consumers Fail or Lose Connection: Automatic Requeueing"` y mismo ajuste en `ubicacion`.
+
+Respuesta del autor: corregido: `loc` y `ubicacion` apuntan a "When Consumers Fail or Lose Connection: Automatic Requeueing".
 
 **H3** — mismo archivo, Formal, "Broker y log de eventos": "Cada partición la consume un solo consumidor por grupo". Qué está mal: es válido para grupos de consumidores clásicos, pero Kafka 4.4 documenta en el mismo Design la sección "The Share Consumer" (share groups), donde varios consumidores comparten los registros. Corrección: decir "por grupo de consumidores (*consumer group*)" y, si se quiere, una línea de que existen los share groups.
 
+Respuesta del autor: corregido: se acotó a grupos de consumidores clásicos.
+
 **H4** — mismo archivo, Intuición, segundo `<SimFlujo modo="cola">` y el párrafo siguiente ("Cuando el consumidor cae, los mensajes se acumulan y se drenan al volver"; consigna "comprobá si se pierden mensajes"). Qué está mal: con `tasaLlegada={5}` y `capacidadCola={50}` la cola se llena en 10 s con el consumidor caído; el contrato de `SIMULADORES.md` §2.8 dice que `perdidos` cuenta cuando se llena la cola. Con una caída de más de 10 s sí se pierden mensajes, contra lo que afirma el texto. Qué dice la fuente: Azure advierte que el patrón depende de la durabilidad y de los límites de tamaño de la cola ("Problems and considerations"). Corrección: subir `capacidadCola` (p. ej. 500) o agregar "mientras la cola no se llene; si se llena, se pierde o se rechaza".
+
+Respuesta del autor: corregido: se precisa que con 5 msg/s y capacidad 50 un corte total llena la cola en 10 s y desde ahí se pierden mensajes; el texto y la consigna lo reflejan.
 
 **H5** — `sincrono-vs-asincrono/practica.yaml`, tarjeta `t-cuando-no-cola`: el dorso da dos respuestas ("respuesta síncrona de baja latencia, o carga baja y estable"). Viola GUIA-ESTILO §4 reglas 1 y 3. Corrección: dividir en dos tarjetas (la fuente "When to use this pattern" lista ambas).
 
+Respuesta del autor: corregido: dividida en `t-cuando-no-cola` y `t-cuando-no-cola-carga-estable`.
+
 **H6** — `sincrono-vs-asincrono/practica.yaml`, caso `c-cola-mails-crece`, desenlace `final-bien` y la `consecuencia` de la opción que repone y escala consumidores. Qué está mal: con entradas de 30 msg/s y 2 consumidores sanos que sacan 8 msg/s (4 msg/s cada uno), 4 consumidores sacan 16 msg/s y la cola seguiría creciendo; "empieza a bajar" y "se drena en pocos minutos" solo valen si se escala bastante (con 12 consumidores: 48 − 30 = 18 msg/s netos, 18.000 / 18 ≈ 1.000 s ≈ 17 min). Corrección: poner cifras coherentes ("con 12 consumidores sanos la cola baja unos 18 mensajes por segundo y se vacía en unos 17 minutos") o cambiar "en pocos minutos" por "de a poco".
+
+Respuesta del autor: corregido: cada consumidor procesa 4 msg/s; con 12 sanos salen 48/s contra 30, la cola baja 18/s y se vacía en unos 17 minutos (cuenta con Python).
 
 **H7** — `sincrono-vs-asincrono/practica.yaml`, problema `p-kafka-quickstart`. Qué está mal: pide "levantá un broker con Docker" y luego usar el productor y consumidor de consola, pero los comandos del Quickstart (`bin/kafka-topics.sh`, etc.) son relativos a la distribución descargada del Paso 1 y la página no explica cómo correrlos contra el contenedor. Qué dice la fuente: Step 1 descarga el tar, Step 2 ofrece scripts locales o Docker; Steps 3 a 5 usan `bin/*.sh`. Corrección: aclarar "descargá el tar del Paso 1 para tener los scripts y usá Docker solo para el broker", o indicar cómo ejecutarlos dentro del contenedor (no verifiqué la ruta de los scripts dentro de la imagen).
 
+Respuesta del autor: corregido: el enunciado pide descargar la distribución del Paso 1 para tener los scripts y deja el broker a elección.
+
 **H8** — `sincrono-vs-asincrono/tema.mdx`, frontmatter: `richardson-rpi` y `richardson-mensajeria` tipados `doc-oficial`; microservices.io es un sitio de autor. Misma observación de política que H6 del tema monolito-y-microservicios: decisión del director (ampliar el esquema con "artículo" o pasar a `verMas`).
+
+
+Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.

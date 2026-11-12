@@ -97,7 +97,6 @@ Ahora el reparto: qué pasa cuando un servidor anda lento.
   algoritmo="round-robin"
   tasaLlegada={20}
   capacidadPorServidor={10}
-  servidorLento={true}
 />
 
 Con un servidor lento, repartir "uno a cada uno" le sigue mandando su parte de pedidos; mandar al que tiene menos conexiones activas evita acumular espera en el lento.
@@ -128,11 +127,11 @@ donde $\lambda$ es la tasa de llegada (pedidos/s), $\mu$ lo que resuelve un serv
 
 </Formula>
 
-Con 600 pedidos/s, servidores de 50 y un objetivo del 70 %: $\lceil 600 / (50 \cdot 0{,}7) \rceil = 18$ servidores. El margen no es capricho: el escalado automático tarda en completarse, así que la guía de Azure recomienda un colchón de capacidad libre para los picos y probar el efecto de esas demoras<Cita f="azure-escalado" loc="Configure scaling" />. Y si un grupo de servidores cae, su carga pasa al resto: en el ejemplo de Google, una falla que sube el tráfico de un clúster en un 20 % puede ser más de lo que ese clúster absorbe<Cita f="sre-cascadas" loc="Server Overload" />.
+Con 600 pedidos/s, servidores de 50 y un objetivo del 70 %: $\lceil 600 / (50 \cdot 0{,}7) \rceil = 18$ servidores. El margen no es capricho. La guía de Azure recomienda un colchón de capacidad libre para absorber picos inesperados<Cita f="azure-escalado" loc="Configure scaling" /> y advierte que completar un escalado lleva tiempo, por lo que hay que probar el efecto de esas demoras<Cita f="azure-escalado" loc="Test scaling" />. En criollo: como el autoscaler no responde al instante, el colchón es lo que te cubre mientras tanto. Y si un grupo de servidores cae, su carga pasa al resto: en el ejemplo de Google, una falla que sube el tráfico de un clúster en un 20 % puede ser más de lo que ese clúster absorbe<Cita f="sre-cascadas" loc="Server Overload" />.
 
 ### Balanceo de carga
 
-NGINX reparte por defecto en orden circular (*round-robin*). Con `least_conn`, cada pedido nuevo va al servidor con menos conexiones activas, lo que ayuda cuando algunos pedidos tardan mucho más que otros. Con `ip_hash`, el cliente va siempre al mismo servidor mientras esté disponible (persistencia de sesión). El parámetro `weight` inclina el reparto, y los chequeos de salud pasivos marcan un servidor como caído tras `max_fails` fallas durante `fail_timeout`<Cita f="nginx-balanceo" loc="Load balancing methods y Health checks" />.
+NGINX reparte por defecto en orden circular (*round-robin*). Con `least_conn`, cada pedido nuevo va al servidor con menos conexiones activas, lo que ayuda cuando algunos pedidos tardan mucho más que otros. Con `ip_hash`, el cliente va siempre al mismo servidor mientras esté disponible (persistencia de sesión). El parámetro `weight` inclina el reparto, y los chequeos de salud pasivos marcan un servidor como caído cuando acumula `max_fails` intentos fallidos dentro de la ventana de `fail_timeout`, y ese mismo plazo es lo que dura marcado como caído<Cita f="nginx-balanceo" loc="Load balancing methods y Health checks" />.
 
 ```nginx
 upstream tienda {

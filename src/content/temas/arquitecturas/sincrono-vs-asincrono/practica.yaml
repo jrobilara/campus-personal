@@ -39,8 +39,12 @@ tarjetas:
     dorso: Solo dentro de una partición, no entre particiones distintas.
     fuente: kafka-intro
   - id: t-cuando-no-cola
-    frente: ¿Cuándo NO conviene poner una cola entre dos servicios?
-    dorso: Cuando quien llama necesita una respuesta síncrona de baja latencia, o cuando la carga es baja y estable.
+    frente: Si quien llama necesita la respuesta ya, con baja latencia, ¿conviene poner una cola entre los servicios?
+    dorso: No, porque la cola desacopla en el tiempo y la respuesta deja de ser inmediata.
+    fuente: azure-colas
+  - id: t-cuando-no-cola-carga-estable
+    frente: Si la carga es baja y estable, ¿qué aporta una cola entre dos servicios?
+    dorso: Poco, porque la complejidad que suma casi no se compensa con ningún beneficio.
     fuente: azure-colas
 
 ejercicios:
@@ -102,7 +106,7 @@ casos:
     rol: Sos quien atiende la guardia de una tienda online con una cola de mails.
     contexto: |
       Martes 14:20. Salta la alerta: la cola de mails de confirmación tiene 18.000 mensajes y sigue subiendo. Las compras andan bien, pero soporte recibe reclamos de "no me llegó el mail".
-      Hay 4 consumidores configurados, y cada uno registra el id de los mensajes que ya procesó.
+      Hay 4 consumidores configurados; cada uno procesa unos 4 mensajes por segundo y registra el id de los mensajes que ya procesó.
     inicio: primer-paso
     nodos:
       - id: primer-paso
@@ -114,7 +118,7 @@ casos:
             consecuencia: Se borran 18.000 confirmaciones que ya habían quedado registradas como pendientes de envío.
           - texto: Comparo cuántos mensajes entran por segundo contra cuántos salen, y reviso el estado de los consumidores.
             va: diagnostico
-            consecuencia: Entran 30 mensajes por segundo y salen 8. De los 4 consumidores, 2 están en un bucle de reinicios.
+            consecuencia: Entran 30 mensajes por segundo y salen 8, porque los 2 consumidores sanos procesan 4 por segundo cada uno. Los otros 2 están en un bucle de reinicios.
           - texto: Subo los consumidores de 4 a 20 sin mirar nada más.
             va: escalar-a-ciegas
             consecuencia: Los consumidores nuevos arrancan y varios se caen enseguida, igual que dos de los que ya estaban.
@@ -132,9 +136,9 @@ casos:
         tipo: decision
         texto: Hay un mensaje con un contenido mal formado que hace caer al consumidor cada vez que lo recibe. ¿Qué hacés?
         opciones:
-          - texto: Muevo ese mensaje a la dead-letter queue, repongo los consumidores y los escalo con un límite mientras vigilo la profundidad de la cola.
+          - texto: Muevo ese mensaje a la dead-letter queue, repongo los consumidores y los llevo a 12 mientras vigilo la profundidad de la cola.
             va: final-bien
-            consecuencia: Los consumidores dejan de caerse y la cola empieza a bajar. El mensaje queda guardado para investigarlo.
+            consecuencia: Los consumidores dejan de caerse. Con 12 sanos salen unos 48 mensajes por segundo contra 30 que entran, así que la cola baja unos 18 por segundo. El mensaje queda guardado para investigarlo.
           - texto: Borro todos los mensajes de ese tipo para limpiar la cola.
             va: final-regular
             consecuencia: La cola se normaliza, pero borraste confirmaciones válidas que nunca se mandaron.
@@ -144,7 +148,7 @@ casos:
       - id: final-bien
         tipo: desenlace
         resultado: bien
-        texto: La cola se drena en pocos minutos. Como los consumidores ignoran los ids ya procesados, nadie recibe mails duplicados, y el mensaje problemático queda aislado para que el equipo lo analice.
+        texto: La cola se vacía en unos 17 minutos (18.000 mensajes a 18 por segundo son 1.000 segundos). Como los consumidores ignoran los ids ya procesados, nadie recibe mails duplicados, y el mensaje problemático queda aislado para que el equipo lo analice.
       - id: final-regular
         tipo: desenlace
         resultado: regular
@@ -159,7 +163,7 @@ casos:
 
 problemas:
   - id: p-kafka-quickstart
-    enunciado: Siguiendo el Quickstart de Kafka, levantá un broker con Docker, creá un tópico, escribí cinco eventos con el productor de consola y leelos con el consumidor de consola usando --from-beginning. Repetí la lectura en una segunda terminal y anotá qué pasa con los eventos ya leídos. Después dejá un consumidor abierto y escribí un evento nuevo desde otro lado.
+    enunciado: Siguiendo el Quickstart de Kafka, descargá la distribución del Paso 1 (trae los scripts de bin/), levantá el broker como prefieras (con esos scripts o con Docker, Paso 2), creá un tópico, escribí cinco eventos con el productor de consola y leelos con el consumidor de consola usando --from-beginning. Repetí la lectura en una segunda terminal y anotá qué pasa con los eventos ya leídos. Después dejá un consumidor abierto y escribí un evento nuevo desde otro lado.
     fuente: kafka-quickstart
     ubicacion: pasos 1 a 5 del Quickstart
     url: https://kafka.apache.org/quickstart

@@ -17,15 +17,19 @@ tarjetas:
       Cerca de 99,7 %, porque se multiplican $0{,}999^3 \approx 0{,}997$.
     fuente: aws-disponibilidad
   - id: t-disponibilidad-independencia
-    frente: ¿Qué supuesto esconde multiplicar las disponibilidades de los servicios de una cadena?
-    dorso: Que las fallas son independientes entre sí y que cada dependencia es "dura" (si cae, cae la operación).
+    frente: ¿Qué supuesto sobre las fallas esconde multiplicar las disponibilidades de los servicios de una cadena?
+    dorso: Que las fallas son independientes entre sí.
+    fuente: aws-disponibilidad
+  - id: t-dependencia-dura-definicion
+    frente: ¿Qué es una dependencia "dura" (hard dependency) entre dos sistemas?
+    dorso: Una en la que la caída del sistema del que dependés se traduce directamente en una caída del tuyo.
     fuente: aws-disponibilidad
   - id: t-base-por-servicio-costo
     frente: Si cada microservicio tiene su propia base, ¿qué perdés respecto de un monolito con una sola base?
     dorso: Las transacciones ACID entre módulos; lo que cruza servicios queda con consistencia eventual.
     fuente: azure-microservicios
   - id: t-charla-excesiva-sintoma
-    frente: Dos servicios se llaman entre sí todo el tiempo. ¿De qué suele ser síntoma?
+    frente: Dos servicios se llaman entre sí todo el tiempo. ¿De qué puede ser síntoma?
     dorso: De un corte mal hecho, con demasiado acoplamiento y poca cohesión entre ellos.
     fuente: azure-microservicios
   - id: t-escalar-parte

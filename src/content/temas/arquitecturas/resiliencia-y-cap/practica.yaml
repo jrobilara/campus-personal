@@ -44,9 +44,13 @@ tarjetas:
     frente: ¿Por qué un timeout es en la práctica una decisión de CAP?
     dorso: Porque al vencer no sabés si el otro lado está lento o incomunicado, y tenés que cancelar (menos disponibilidad) o seguir (riesgo de inconsistencia).
     fuente: brewer-cap
-  - id: t-cap-por-operacion
-    frente: En una tienda online, ¿qué datos toleran estar algo desactualizados y cuáles requieren consistencia fuerte?
-    dorso: Tolera lo del carrito y la información de producto; requieren consistencia fuerte el cobro y la facturación.
+  - id: t-cap-cobro-consistente
+    frente: En una tienda online, ¿qué nivel de consistencia necesitan el cobro y la facturación?
+    dorso: Consistencia fuerte, porque un pedido confirmado tiene que reflejar lo que el cliente quiso comprar.
+    fuente: gilbert-lynch-cap
+  - id: t-cap-carrito-disponible
+    frente: En una tienda online, ¿por qué se puede aceptar que el carrito sea muy disponible aunque a veces pierda una actualización?
+    dorso: Porque lo que importa ahí es responder rápido, y perder un cambio ocasional se tolera mejor que no responder.
     fuente: gilbert-lynch-cap
 
 ejercicios:

@@ -59,7 +59,7 @@ fuentes:
     autor: Equipo de RabbitMQ
     titulo: Consumer Acknowledgements and Publisher Confirms (RabbitMQ)
     url: https://www.rabbitmq.com/docs/confirms
-    ubicacion: "Consumer Acknowledgements"
+    ubicacion: "When Consumers Fail or Lose Connection: Automatic Requeueing"
   - id: fowler-microservices
     tipo: doc-oficial
     autor: Martin Fowler y James Lewis
@@ -109,14 +109,14 @@ Ahora el límite de la cola: no hace magia, solo reparte el tiempo.
   modo="cola"
   etiquetas="mensajes"
   titulo="Una cola entre el productor y los consumidores"
-  consigna="Con 5 mensajes por segundo y 2 consumidores que tardan 0,5 s cada uno, mirá cómo crece la cola. Sumá un consumidor y fijate si se vacía. Después activá 'consumidor caído' y comprobá si se pierden mensajes."
+  consigna="Con 5 mensajes/s y 2 consumidores de 0,5 s, mirá crecer la cola. Sumá un consumidor y fijate si se vacía. Después activá 'consumidor caído' y mirá cuánto tarda la cola en llegar al tope y mostrar mensajes perdidos."
   tasaLlegada={5}
   consumidores={2}
   tiempoProceso={0.5}
   capacidadCola={50}
 />
 
-Dos consumidores de 0,5 s procesan 4 mensajes por segundo, y llegan 5: la cola crece. Con tres procesan 6 y se vacía. Cuando el consumidor cae, los mensajes se acumulan y se drenan al volver.
+Dos consumidores de 0,5 s procesan 4 mensajes por segundo, y llegan 5: la cola crece. Con tres procesan 6 y se vacía. Cuando el consumidor cae, los mensajes se acumulan y se drenan al volver, mientras la cola tenga lugar: con 5 mensajes por segundo y capacidad para 50, si el consumo se corta del todo la cola llega al tope en $50/5 = 10$ segundos y desde ahí empieza a perder mensajes.
 
 <Ojo>
 
@@ -150,13 +150,13 @@ Con los números del simulador: $\mu = 2/0{,}5 = 4$ mensajes/s, $\lambda = 5$, $
 
 ### Broker de mensajes y log de eventos
 
-Apache Kafka guarda **eventos** (clave, valor, marca de tiempo) en **tópicos** (*topics*), con muchos productores y muchos suscriptores por tópico. Un evento leído no se borra: se descarta recién cuando vence la retención configurada. Cada tópico se reparte en **particiones**; los eventos con la misma clave van a la misma partición, y el orden solo está garantizado dentro de una partición<Cita f="kafka-intro" loc="Main Concepts and Terminology" />. Cada partición la consume un solo consumidor por grupo, la posición es un número (el *offset*) y se puede retroceder para releer; los consumidores tiran (*pull*) de los brokers a su propio ritmo<Cita f="kafka-diseno" loc="Consumer Position y Push vs. Pull" />.
+Apache Kafka guarda **eventos** (clave, valor, marca de tiempo) en **tópicos** (*topics*), con muchos productores y muchos suscriptores por tópico. Un evento leído no se borra: se descarta recién cuando vence la retención configurada. Cada tópico se reparte en **particiones**; los eventos con la misma clave van a la misma partición, y el orden solo está garantizado dentro de una partición<Cita f="kafka-intro" loc="Main Concepts and Terminology" />. Dentro de un grupo de consumidores (*consumer group*) clásico, cada partición la consume un solo consumidor; la posición es un número (el *offset*) y se puede retroceder para releer; los consumidores tiran (*pull*) de los brokers a su propio ritmo<Cita f="kafka-diseno" loc="Consumer Position y Push vs. Pull" />.
 
-En RabbitMQ, con confirmación manual, las entregas sin confirmar vuelven a la cola si el canal o la conexión se cierran, y el mensaje reentregado viene marcado como tal<Cita f="rabbitmq-confirmaciones" loc="Consumer Acknowledgements" />.
+En RabbitMQ, con confirmación manual, las entregas sin confirmar vuelven a la cola si el canal o la conexión se cierran, y el mensaje reentregado viene marcado como tal<Cita f="rabbitmq-confirmaciones" loc="When Consumers Fail or Lose Connection: Automatic Requeueing" />.
 
 ### Duplicados e idempotencia
 
-La mayoría de los brokers (incluidos Kafka y RabbitMQ) entregan **al menos una vez** (*at-least-once*); garantizar *exactly-once* de punta a punta en un sistema distribuido es impracticable, porque el broker solo controla lo que hace él y no los efectos del consumidor en sistemas externos<Cita f="azure-idempotente" loc="Context and problem" />. Kafka lo reconoce: al-menos-una-vez es su modo por defecto, y recomienda procesamiento idempotente<Cita f="kafka-diseno" loc="Message Delivery Semantics" />. La solución es un **consumidor idempotente** (*idempotent consumer*): procesar dos veces el mismo mensaje da el mismo resultado que procesarlo una<Cita f="azure-idempotente" loc="Solution" />.
+La mayoría de los brokers (incluidos Kafka y RabbitMQ) entregan **al menos una vez** (*at-least-once*); garantizar *exactly-once* de punta a punta en un sistema distribuido es impracticable, porque el broker solo controla lo que hace él y no los efectos del consumidor en sistemas externos<Cita f="azure-idempotente" loc="Context and problem" />. Kafka documenta que al-menos-una-vez es su garantía por defecto; ofrece *exactly-once* al leer, procesar y escribir entre tópicos con transacciones, pero hacia sistemas externos hace falta la cooperación de esos sistemas<Cita f="kafka-diseno" loc="Message Delivery Semantics" />. Por eso el consumidor idempotente sigue siendo la defensa, y RabbitMQ lo pide explícitamente: los consumidores tienen que estar preparados para recibir reentregas y diseñarse con idempotencia en mente<Cita f="rabbitmq-confirmaciones" loc="When Consumers Fail or Lose Connection: Automatic Requeueing" />. La solución es un **consumidor idempotente** (*idempotent consumer*): procesar dos veces el mismo mensaje da el mismo resultado que procesarlo una<Cita f="azure-idempotente" loc="Solution" />.
 
 Dos caminos: elegir operaciones naturalmente idempotentes (un *upsert* por clave de negocio, fijar un valor absoluto en lugar de sumar) o guardar una clave de deduplicación estable y chequearla de forma atómica<Cita f="azure-idempotente" loc="Problems and considerations" />:
 

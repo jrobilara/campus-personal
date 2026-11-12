@@ -7,9 +7,13 @@ tarjetas:
     frente: ¿Por qué guardar la sesión del usuario en la memoria del servidor complica escalar para afuera?
     dorso: Porque ata al usuario a esa instancia (afinidad); conviene externalizar la sesión a una caché distribuida o a una base.
     fuente: azure-escalado
-  - id: t-autoscaler-tarda
-    frente: ¿Por qué conviene dejar un colchón de capacidad libre aunque tengas autoscaling?
-    dorso: Porque el escalado automático tarda en completarse, y el pico puede llegar antes de que las instancias nuevas estén listas.
+  - id: t-colchon-capacidad
+    frente: Además del escalado automático, ¿qué recomienda la guía de Azure para absorber picos inesperados?
+    dorso: Mantener un colchón (buffer) de capacidad libre.
+    fuente: azure-escalado
+  - id: t-escalado-demora
+    frente: ¿Qué advierte la guía de Azure sobre el tiempo que lleva un escalado?
+    dorso: Que completarlo lleva tiempo, así que hay que probar el efecto de esas demoras.
     fuente: azure-escalado
   - id: t-nginx-default
     frente: ¿Qué algoritmo de reparto usa NGINX si no configurás ninguno?
@@ -24,8 +28,12 @@ tarjetas:
     dorso: Para que un mismo cliente vaya siempre al mismo servidor (persistencia de sesión) mientras ese servidor esté disponible.
     fuente: nginx-balanceo
   - id: t-max-fails-fail-timeout
-    frente: ¿Qué hacen max_fails y fail_timeout en una línea server de NGINX?
-    dorso: Definen cuántas fallas seguidas marcan al servidor como caído y por cuánto tiempo se lo evita.
+    frente: En una línea server de NGINX, ¿qué define max_fails?
+    dorso: Cuántos intentos fallidos dentro de la ventana de fail_timeout marcan al servidor como no disponible.
+    fuente: nginx-balanceo
+  - id: t-fail-timeout-doble-rol
+    frente: En una línea server de NGINX, ¿qué dos cosas define fail_timeout?
+    dorso: La ventana en la que se cuentan las fallas y también cuánto tiempo queda marcado como no disponible el servidor.
     fuente: nginx-balanceo
   - id: t-cache-miss-pasos
     frente: En cache-aside, ¿qué hace la aplicación ante un cache miss?
@@ -157,7 +165,7 @@ casos:
 
 problemas:
   - id: p-nginx-tres-backends
-    enunciado: Levantá tres servidores con "python3 -m http.server" en los puertos 8081, 8082 y 8083, cada uno sirviendo una carpeta cuyo index diga su número. Poné NGINX (instalado o con docker) delante con un upstream de los tres. Hacé 30 pedidos con curl y anotá cómo se reparten con round-robin; después probá least_conn y weight=3 en uno de ellos y compará el reparto.
+    enunciado: Levantá tres servidores con "python3 -m http.server" en los puertos 8081, 8082 y 8083, cada uno sirviendo una carpeta cuyo index diga su número. Poné NGINX (instalado o con docker) delante con un upstream de los tres. Hacé 30 pedidos con curl y anotá cómo se reparten con round-robin. Después probá least_conn con pedidos concurrentes (por ejemplo con xargs -P 10 o ab) haciendo que uno de los backends demore a propósito (un servidor de Python propio con time.sleep(1)), y probá weight=3 en otro. Ojo, con pedidos secuenciales least_conn reparte igual que round-robin.
     fuente: nginx-balanceo
     ubicacion: página completa (métodos de balanceo, pesos y chequeos de salud)
     url: https://nginx.org/en/docs/http/load_balancing.html

@@ -44,14 +44,29 @@ Método: las fuentes se abrieron con `curl` sobre el HTML original y se convirti
 
 **H1** — `src/content/temas/arquitecturas/monolito-y-microservicios/tema.mdx`, Formal, sección "El costo escondido", primera `<Cita f="fowler-microservices" loc="Componentization via Services" />` (misma ubicación en la tarjeta `t-llamada-remota-costo`, que no lleva `loc`). Qué está mal: "comunicación chatty" no está en esa sección. Qué dice la fuente: en "Componentization via Services" dice que las llamadas remotas son más caras y las APIs deben ser más gruesas; la frase sobre la conversión ingenua de llamadas en memoria a RPC que produce comunicación "chatty" está en "Smart endpoints and dumb pipes". Corrección: `loc="Componentization via Services y Smart endpoints and dumb pipes"`.
 
+Respuesta del autor: corregido: `loc` ahora cita las dos secciones.
+
 **H2** — mismo archivo, Formal, "Las tres formas", `<Cita f="azure-microservicios" loc="What are microservices?" />`. Qué está mal: "bounded context" y "una capacidad de negocio" aparecen en el párrafo inicial de la página, que no tiene título; bajo "What are microservices?" figuran equipos chicos, repositorios separados, datos propios y APIs. Corrección: quitar el `loc` o escribir "introducción y What are microservices?".
+
+Respuesta del autor: corregido: `loc` = "introducción y What are microservices?".
 
 **H3** — mismo archivo, Intuición, `<Ojo>`: "reparte el enredo por la red<Cita f="fowler-monolith-first" />". Qué está mal: es una inferencia del autor (lo admite en FUENTES #19), pero queda citada como si fuera de Fowler. Qué dice la fuente (nota al pie 1): no se puede asumir que un sistema arbitrario se parte; la mayoría acumula demasiadas dependencias y los intentos de descomponer terminaron rápido "en un lío". Corrección: reescribir pegado a la fuente ("Fowler advierte que la mayoría de los sistemas tiene tantas dependencias entre módulos que no se pueden partir con sentido, y que intentarlo terminó seguido en un lío") y dejar la metáfora de la red sin cita o fuera de la oración citada.
 
+Respuesta del autor: corregido: la oración citada sigue a Fowler y la metáfora va aparte, marcada "En criollo".
+
 **H4** — mismo archivo, Formal, "Cuándo conviene cada una", primer párrafo. Qué está mal: se presenta la regla "monolito primero" sin su matiz. Qué dice la fuente: Fowler dice que son "early days", que no tiene suficientes anécdotas, que el consejo debe leerse como tentativo, que no es unánime (hay colegas que prefieren empezar con microservicios) y que ve difícil lograr un monolito modular que se pueda partir. Corrección: agregar una oración: "Es una observación basada en anécdotas, y el propio Fowler la da como tentativa."
+
+Respuesta del autor: corregido: se agregó que es una observación anecdótica y tentativa según Fowler.
 
 **H5** — `monolito-y-microservicios/tema.mdx` (Formal, "El costo escondido", "suele ser síntoma") y `practica.yaml`, tarjeta `t-charla-excesiva-sintoma` (frente "suele ser síntoma"). Qué está mal: sobreafirma. Qué dice la fuente: "Overly chatty communication between two services might be a symptom of tight coupling and low cohesion". Corrección: "puede ser síntoma" en ambos lugares.
 
+Respuesta del autor: corregido: "puede ser síntoma" en el texto y en la tarjeta.
+
 **H6** — `monolito-y-microservicios/tema.mdx`, frontmatter `fuentes`: `fowler-monolith-first`, `fowler-premium`, `fowler-microservices` y `richardson-monolito` tipados `doc-oficial`. Qué está mal: `GUIA-ESTILO.md` §3 admite como respaldo de datos libros, documentación oficial y cursos; las entradas de la "bliki" de Fowler y microservices.io son artículos de autor (blog/sitio personal). Qué dice la regla: blogs solo como "para ver más". Corrección: decisión del director: (a) aceptar un tipo "artículo" de autores reconocidos y ampliar el esquema (ya pedido por el escritor), o (b) pasar a `verMas: true` y respaldar con Azure Architecture Center y con Newman (libro) cuando el dueño lo provea. El contenido de las afirmaciones es correcto; es un tema de política.
 
+Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.
+
 H7 — menor, `practica.yaml`, tarjeta `t-disponibilidad-independencia`: el dorso lleva dos ideas (independencia y dependencia dura). Corrección: dividir en dos tarjetas o preguntar solo por la independencia.
+
+
+Respuesta del autor: corregido: la tarjeta pregunta solo por la independencia y se agregó `t-dependencia-dura-definicion`.

@@ -161,7 +161,7 @@ El patrón de reintento (*retry*) maneja fallas transitorias: cancelar si no es 
 
 <Formula nombre="Espera con backoff exponencial y jitter" tex="\text{espera}_n = \text{aleatorio}\bigl(0,\ \min(\text{tope},\ \text{base} \cdot 2^{\,n})\bigr)">
 
-donde $n = 0, 1, 2, \dots$ es el número de reintento, `base` la espera inicial (por ejemplo 0,2 s) y `tope` la espera máxima. Es una forma común de escribirlo (la llaman *full jitter*); hay otras variantes.
+donde $n = 0, 1, 2, \dots$ es el número de reintento, `base` la espera inicial (por ejemplo 0,2 s) y `tope` la espera máxima. Es la variante que Brooker llama *full jitter* en el artículo de la lista "para ver más" (ver fuentes); hay otras variantes.
 
 </Formula>
 
@@ -194,19 +194,19 @@ El *circuit breaker* es un *proxy* con tres estados<Cita f="azure-circuit-breake
 | Abierto (*open*) | Rechaza el pedido de inmediato, sin llamar al servicio. Al vencer el temporizador, pasa a semiabierto. |
 | Semiabierto (*half-open*) | Deja pasar unos pocos pedidos de prueba. Si andan, vuelve a cerrado y reinicia el contador; si uno falla, vuelve a abierto y reinicia el temporizador. |
 
-El contador del estado cerrado es temporal (se reinicia cada tanto) para que fallas ocasionales no abran el breaker, y el estado semiabierto evita inundar a un servicio que se está recuperando<Cita f="azure-circuit-breaker" loc="Solution" />. No conviene usarlo para recursos locales ni como reemplazo del manejo de excepciones del negocio, y quien llama necesita un plan para cuando el breaker está abierto (degradar, usar una alternativa o avisar al usuario)<Cita f="azure-circuit-breaker" loc="Problems and considerations" />. Cada vez que se abre, debería saltar una alerta de monitoreo, y los cambios de estado se registran<Cita f="fowler-circuit-breaker" />. En el simulador, el umbral se mide sobre los últimos 20 pedidos.
+El contador del estado cerrado es temporal (se reinicia cada tanto) para que fallas ocasionales no abran el breaker, y el estado semiabierto evita inundar a un servicio que se está recuperando<Cita f="azure-circuit-breaker" loc="Solution" />. No conviene usarlo para recursos locales ni como reemplazo del manejo de excepciones del negocio, y quien llama necesita un plan para cuando el breaker está abierto (degradar, usar una alternativa o avisar al usuario)<Cita f="azure-circuit-breaker" loc="Problems and considerations" />. Suele convenir una alerta de monitoreo cada vez que se abre, y los cambios de estado deberían registrarse<Cita f="fowler-circuit-breaker" />. En el simulador, el umbral se mide sobre los últimos 20 pedidos.
 
 ### CAP, sin simplificar
 
 Gilbert y Lynch definen tres propiedades. **Consistencia** (atómica): el servicio se comporta como si hubiera un solo servidor. **Disponibilidad**: todo pedido recibe respuesta, tarde o temprano. **Tolerancia a particiones**: la red puede demorar o perder mensajes y dejar grupos de servidores incomunicados<Cita f="gilbert-lynch-cap" loc="§2" />. El teorema dice que en una red con fallas de comunicación es imposible que un servicio de ese tipo garantice respuesta a todos los pedidos y a la vez sea atómico: el servidor aislado no puede saber cuál fue la última escritura, así que o responde (y arriesga un dato viejo) o no responde<Cita f="gilbert-lynch-cap" loc="§2" />.
 
-Brewer lo aclara: "elegir dos de tres" engaña, porque solo hay que renunciar a una de las dos cuando hay partición; fuera de ella no hay motivo para sacrificar ninguna, y la partición, en la práctica, es un timeout: o cancelás (menos disponibilidad) o seguís (riesgo de inconsistencia)<Cita f="brewer-cap" loc="Why '2 of 3' is misleading" />. La decisión se puede tomar por operación, dato o usuario, y se maneja detectando la partición, entrando en un modo que limita operaciones y recuperando después<Cita f="brewer-cap" loc="Managing partitions" />.
+Brewer lo aclara: "elegir dos de tres" engaña, porque solo hay que renunciar a una de las dos cuando hay partición; fuera de ella no hay motivo para sacrificar ninguna, y la partición, en la práctica, es un timeout: o cancelás (menos disponibilidad) o seguís (riesgo de inconsistencia)<Cita f="brewer-cap" loc="Why '2 of 3' is misleading y CAP-latency connection" />. La decisión se puede tomar por operación, dato o usuario, y se maneja detectando la partición, entrando en un modo que limita operaciones y recuperando después<Cita f="brewer-cap" loc="Managing partitions" />.
 
 Un ejemplo de e-commerce: el carrito puede ser muy disponible aunque a veces pierda una actualización, la información de producto puede estar algo desactualizada, pero el cobro y la facturación tienen que ser fuertemente consistentes<Cita f="gilbert-lynch-cap" loc="§4.4" />.
 
 <Profundizar titulo="¿CP y AP como etiqueta de productos?">
 
-Es tentador clasificar bases de datos como "CP" o "AP", pero las definiciones de CAP son estrechas (por ejemplo, consistencia es atomicidad, no la "C" de ACID) y muchos sistemas no entran en ninguna caja. Kleppmann lo explica en un artículo para ver más (ver fuentes). La salida práctica es la de arriba: decidir por operación qué hacer durante una partición.
+Es tentador clasificar bases de datos como "CP" o "AP", pero las definiciones de CAP son estrechas: la consistencia que usa el teorema es la atómica, no la "C" de ACID<Cita f="gilbert-lynch-cap" loc="§2" />. Kleppmann argumenta que por eso muchos sistemas no entran en ninguna de las dos cajas; está en el artículo de la lista "para ver más" (ver fuentes). La salida práctica es la de arriba: decidir por operación qué hacer durante una partición.
 
 </Profundizar>
 

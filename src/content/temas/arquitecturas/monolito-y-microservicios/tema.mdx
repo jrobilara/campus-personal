@@ -115,7 +115,7 @@ Con timeouts y circuit breaker, caído `antifraude` deja a `pagos` degradado (an
 
 <Ojo>
 
-Partir en servicios un monolito enredado no lo ordena: reparte el enredo por la red<Cita f="fowler-monolith-first" />. El trabajo difícil es el mismo en los dos mundos: trazar bien los límites.
+Fowler advierte que la mayoría de los sistemas acumula tantas dependencias entre módulos que no se pueden partir con sentido, y que los intentos de hacerlo terminaron seguido en un lío<Cita f="fowler-monolith-first" />. En criollo: partir un monolito enredado no lo ordena, solo reparte el enredo por la red. El trabajo difícil es el mismo en los dos mundos: trazar bien los límites.
 
 </Ojo>
 
@@ -127,7 +127,7 @@ Partir en servicios un monolito enredado no lo ordena: reparte el enredo por la 
 
 Un **monolito** (*monolithic architecture*) es una aplicación de un solo componente desplegable, con una única base de datos, que contiene todos los subdominios del negocio; todas las operaciones corren de forma local<Cita f="richardson-monolito" />.
 
-Una arquitectura de **microservicios** (*microservices*) es un conjunto de servicios pequeños y autónomos. Cada uno implementa una capacidad de negocio dentro de un contexto delimitado (*bounded context*), guarda sus propios datos y se despliega por separado; se hablan por APIs bien definidas<Cita f="azure-microservicios" loc="What are microservices?" />.
+Una arquitectura de **microservicios** (*microservices*) es un conjunto de servicios pequeños y autónomos. Cada uno implementa una capacidad de negocio dentro de un contexto delimitado (*bounded context*), guarda sus propios datos y se despliega por separado; se hablan por APIs bien definidas<Cita f="azure-microservicios" loc="introducción y What are microservices?" />.
 
 El **monolito modular** (*modular monolith*) no es una tercera tecnología: sigue siendo un solo despliegue, pero con límites claros entre módulos tanto en las APIs internas como en el almacenamiento de datos, de modo que partirlo después sea relativamente simple<Cita f="fowler-monolith-first" />. Ojo con la letra chica: Fowler advierte que no cualquier sistema se puede partir, porque la mayoría acumula demasiadas dependencias cruzadas entre módulos<Cita f="fowler-monolith-first" />.
 
@@ -145,7 +145,7 @@ La columna del monolito sale de las ventajas y desventajas que lista Richardson<
 
 ### El costo escondido: la red
 
-Reemplazar llamadas en memoria por llamadas remotas encarece cada interacción, así que las APIs entre servicios tienen que ser más gruesas; una conversión ingenua termina en comunicación "charlatana" (*chatty*) que rinde mal<Cita f="fowler-microservices" loc="Componentization via Services" />. Si dos servicios se hablan todo el tiempo, suele ser síntoma de que el corte está mal hecho: demasiado acoplamiento y poca cohesión<Cita f="azure-microservicios" loc="Best practices" />.
+Reemplazar llamadas en memoria por llamadas remotas encarece cada interacción, así que las APIs entre servicios tienen que ser más gruesas; una conversión ingenua termina en comunicación "charlatana" (*chatty*) que rinde mal<Cita f="fowler-microservices" loc="Componentization via Services y Smart endpoints and dumb pipes" />. Si dos servicios se hablan todo el tiempo, puede ser síntoma de que el corte está mal hecho: demasiado acoplamiento y poca cohesión<Cita f="azure-microservicios" loc="Best practices" />.
 
 ### Disponibilidad compuesta
 
@@ -169,7 +169,7 @@ Fowler y Lewis lo llaman el efecto multiplicador de las llamadas síncronas enca
 
 ### Cuándo conviene cada una
 
-Fowler observa que casi todas las historias exitosas de microservicios empezaron como un monolito que creció, mientras que los sistemas armados como microservicios desde cero solían terminar en graves problemas; de ahí su consejo de empezar por un monolito bien modularizado<Cita f="fowler-monolith-first" />. Sus razones: al principio no sabés si el producto va a funcionar, y los límites entre servicios son difíciles de acertar y mucho más caros de corregir que los de un módulo.
+Fowler observa que casi todas las historias exitosas de microservicios empezaron como un monolito que creció, mientras que los sistemas armados como microservicios desde cero solían terminar en graves problemas; de ahí su consejo de empezar por un monolito bien modularizado<Cita f="fowler-monolith-first" />. Es una observación basada en anécdotas, y el propio Fowler la da como tentativa: reconoce que es pronto para tener evidencia y que hay quienes prefieren arrancar con microservicios. Sus razones: al principio no sabés si el producto va a funcionar, y los límites entre servicios son difíciles de acertar y mucho más caros de corregir que los de un módulo.
 
 El "premium" de los microservicios es el costo extra de automatizar despliegues, monitorear, manejar fallas parciales y convivir con consistencia eventual; solo se justifica cuando la complejidad real lo pide (equipos grandes, necesidades de escalado distintas, tamaño)<Cita f="fowler-premium" />. Azure suma que exige una cultura DevOps madura y que conviene evaluar si el equipo tiene la experiencia<Cita f="azure-microservicios" loc="Challenges" />.
 

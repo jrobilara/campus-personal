@@ -49,12 +49,25 @@ Método: fuentes abiertas con `curl` sobre el HTML original y convertidas a text
 
 **H1** — `docs/modulos/v1/fuentes/FUENTES-arquitecturas.md`, tema resiliencia-y-cap, fila 6 (columna "Cómo la verificaste"), y `src/content/temas/arquitecturas/resiliencia-y-cap/tema.mdx`, Formal, `<Formula nombre="Espera con backoff exponencial y jitter">`. Qué está mal: el registro dice que la fórmula "no está respaldada" y el texto la presenta sin fuente. Qué dice la fuente: la fórmula es exactamente la "Full Jitter" de Brooker: `sleep = random_between(0, min(cap, base * 2 ** attempt))` (imagen del artículo y simulador oficial de AWS). Corrección: no hace falta cambiar la fórmula ni el código. Actualizar la fila 6 con esta verificación y, en el texto, nombrar la fuente como lectura adicional ("la llaman *full jitter* en el artículo de Brooker, ver fuentes"). Se mantiene sin `<Cita>` porque es un blog (solo "para ver más" según GUIA-ESTILO §3); el respaldo citable del concepto es SRE cap. 22 "Retries".
 
+Respuesta del autor: corregido: FUENTES fila 6 actualizada con la fórmula confirmada y el texto nombra a Brooker como lectura adicional.
+
 **H2** — `resiliencia-y-cap/tema.mdx`, Formal, "CAP, sin simplificar", segundo párrafo: `<Cita f="brewer-cap" loc="Why '2 of 3' is misleading" />` cubre también "la partición, en la práctica, es un timeout: o cancelás o seguís". Esa idea está en "CAP-latency connection". La tarjeta `t-cap-particion-timeout` (misma fuente, sin `loc`) depende de esa sección. Corrección: `loc="Why '2 of 3' is misleading y CAP-latency connection"` (o dos citas).
+
+Respuesta del autor: corregido: `loc` incluye "CAP-latency connection".
 
 **H3** — `resiliencia-y-cap/tema.mdx`, Formal, `<Profundizar titulo="¿CP y AP como etiqueta de productos?">`: "consistencia es atomicidad, no la C de ACID" y "muchos sistemas no entran en ninguna caja" no llevan cita (Kleppmann es blog y no puede respaldar). Corrección: agregar `<Cita f="gilbert-lynch-cap" loc="§2" />` a la afirmación de que la consistencia de CAP es la atómica (la definición está ahí) y dejar a Kleppmann solo como "para ver más". Opcional: completar la ficha de `gilbert-lynch-cap` con la revista (IEEE Computer, 2012; no figura en el PDF de MIT y no lo pude confirmar en línea, el escritor tampoco).
 
+Respuesta del autor: corregido: la afirmación sobre la consistencia atómica lleva `Cita` a Gilbert-Lynch §2 y Kleppmann queda como "para ver más". Sobre la revista de `gilbert-lynch-cap`: no pude confirmarla, queda sin nombrar.
+
 **H4** — `resiliencia-y-cap/practica.yaml`, tarjeta `t-cap-por-operacion`. Qué está mal: pregunta con dos mitades ("qué datos toleran… y cuáles requieren…") y dorso con dos listas, contra GUIA-ESTILO §4 reglas 1 y 2; además "Tolera lo del carrito" debería concordar ("Toleran…"). Corrección: una tarjeta por dato ("En una tienda online, ¿qué nivel de consistencia exige el cobro?" / "¿Y el carrito?").
+
+Respuesta del autor: corregido: dos tarjetas, una por dato.
 
 **H5** — `resiliencia-y-cap/tema.mdx`, Formal, "Circuit breaker": "Cada vez que se abre, debería saltar una alerta de monitoreo". Qué dice la fuente: Fowler escribe "usually you'll also want some kind of monitor alert if the circuit breaker trips" y "any change in breaker state should be logged". Corrección: "suele convenir una alerta cada vez que se abre, y los cambios de estado deberían registrarse". Menor.
 
+Respuesta del autor: corregido: "suele convenir una alerta" y "deberían registrarse".
+
 **H6** — `resiliencia-y-cap/tema.mdx`, frontmatter: `fowler-circuit-breaker` (bliki), `gilbert-lynch-cap` y `brewer-cap` (artículos de IEEE Computer reproducidos en PDF de autor / InfoQ) tipados `doc-oficial`. Los dos de CAP son artículos revisados de revista, no blogs; el de Fowler sí es sitio de autor. Misma observación de política que en los otros temas: decisión del director (tipo "artículo" en el esquema, o `verMas` para Fowler y respaldar el breaker solo con Azure, que ya lo cubre completo).
+
+
+Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.
