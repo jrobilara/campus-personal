@@ -3,7 +3,7 @@
 - **Tema:** servidores/backups-rpo-rto
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (re-verificación sobre a78c34f; quedan abiertos: H4, H6, H7 y H8)
+- **Veredicto:** OBSERVADO (ronda 2 sobre a7a54c4: solo queda abierto H8, menor)
 
 Alcance: `tema.mdx`, `practica.yaml` y las filas de `FUENTES-servidores.md`. NIST SP 800-34 Rev. 1 se descargó de nvlpubs.nist.gov y se leyó con `pdftotext` (149 páginas PDF; la numeración impresa va 14 páginas por detrás de la del PDF). *Data Backup Options* (US-CERT, 2012) se leyó del PDF. La guía #StopRansomware se leyó con WebFetch.
 
@@ -104,3 +104,20 @@ Revisé solo lo que cambió. `npm run build` en Node 24: verde. Releí la guía 
 - Corrección propuesta: `autor: Jefatura de Gabinete de Ministros, Centro Nacional de Ciberseguridad (CERT.ar)` y una frase aclarando que el formulario admite reportes públicos.
 
 Hallazgos abiertos: H4 (reabierto, se resuelve con H6), H6, H7, H8.
+
+## Cierre ronda 2 — diff 65908e2..a7a54c4
+
+`npm run build` en Node 24: verde. Releí el Ransomware Response Checklist de CISA (orden de la ronda anterior) y la página de CERT.ar.
+
+| Hallazgo | Estado | Verificación |
+|---|---|---|
+| H4 / H6 (orden del caso, lección y Formal) | CERRADO (a7a54c4) | El caso ahora sigue a CISA: aislar sin apagar (Detection and Analysis) → nodo `reportar` (aviso interno y CERT.ar; Reporting and Notification) → `tomar-evidencia` (imagen y memoria de una muestra; Containment and Eradication) → reconstruir desde imagen limpia → restaurar en carpeta de prueba (Recovery). La lección dice "aislar, reportar, guardar evidencia, reconstruir limpio y restaurar", igual que el Formal. El Formal aclara que la imagen/memoria es condicional ("If no initial mitigation actions appear possible"); la aclaración "es decir, cuando va a haber que investigar" es interpretación razonable. Se quitó la afirmación sobre consultar a las fuerzas de seguridad "antes" y la de pagar queda solo como "esa guía no da una pauta", que es lo que dice la guía. `final-sin-reporte` (regular) está definido y es alcanzable. |
+| H7 (`t-321-falta-uno`) | CERRADO (a7a54c4) | Original en disco, copia en cintas y copia en NAS, ambas en la misma sala: tres copias y dos medios (disco y cinta); solo falta el 1. Respuesta única. |
+| H8 (autor de CERT.ar y alcance) | REABIERTO (parcial, menor) | El autor ahora es "Jefatura de Gabinete de Ministros, Centro Nacional de Ciberseguridad (CERT.ar)", que coincide con la página y sus migas de pan. Pero la frase nueva "el formulario es de reporte público, así que también le sirve a una pyme" va más allá de la fuente: la página dice que CERT.ar gestiona los incidentes del Sector Público Nacional, describe el formulario como "destinado al reporte público de un incidente o posible ciberataque" y no aclara si organizaciones privadas pueden usarlo. |
+
+**H8** — `tema.mdx`, Formal "Cuando ya pasó" (frase "así que también le sirve a una pyme") y `FUENTES-servidores.md` fila 19.
+- Qué está mal: se presenta como hecho una inferencia. La fuente no dice que una empresa privada pueda o deba reportar por ese formulario.
+- Qué dice la fuente: CERT.ar, "Somos el Equipo de Respuesta ante Emergencias Informáticas nacional"; alcance: "gestión técnico-administrativa de los incidentes de seguridad informática en el Sector Público Nacional"; formulario "destinado al reporte público de un incidente o posible ciberataque".
+- Corrección propuesta: "su gestión técnica alcanza al Sector Público Nacional; el formulario se describe como de reporte público, y la página no aclara si lo puede usar una organización privada". En el caso, que el servidor sea de "la administración" no dice cuál es el sector: si se quiere mantener el paso "reporto al CERT.ar", conviene aclarar que la organización es del sector público o escribir "reporto al CERT.ar o a la autoridad que corresponda".
+
+Hallazgos abiertos: H8.
