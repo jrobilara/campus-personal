@@ -27,7 +27,7 @@ test('rotación de 90°: área 1,00 y no se deforma; Av = (−1; 1) para v = (1;
   await expect(lectura(fig, 'area')).toHaveText('1,00');
   await expect(lectura(fig, 'det')).toHaveText('1,00');
   await expect(lectura(fig, 'orientacion')).toHaveText('se mantiene');
-  await expect(lectura(fig, 'av')).toHaveText('(−1,00; 1,00)');
+  await expect(lectura(fig, 'av')).toHaveText('(-1,00; 1,00)');
   await expect(lectura(fig, 'autovalores')).toHaveText('complejos');
 });
 
@@ -35,7 +35,7 @@ test('reflexión: la orientación se invierte', async ({ page }) => {
   const fig = await figura(page, 'Transformación');
   await control(fig, 'preset-reflexion').click();
   await expect(lectura(fig, 'orientacion')).toHaveText('se invierte');
-  await expect(lectura(fig, 'det')).toHaveText('−1,00');
+  await expect(lectura(fig, 'det')).toHaveText('-1,00');
   await expect(lectura(fig, 'area')).toHaveText('1,00');
 });
 
@@ -58,7 +58,7 @@ test('los sliders a, b, c, d editan la matriz: a = 2 duplica el área; b y c cru
   await fijar(fig, 'd', 0);
   await fijar(fig, 'b', 1);
   await fijar(fig, 'c', 1);
-  await expect(lectura(fig, 'det')).toHaveText('−1,00');
+  await expect(lectura(fig, 'det')).toHaveText('-1,00');
   await expect(lectura(fig, 'orientacion')).toHaveText('se invierte');
   await expect(lectura(fig, 'av')).toHaveText('(1,00; 1,00)'); // intercambia las coordenadas de (1; 1)
 });
@@ -67,7 +67,7 @@ test('autovectores en "escala": un v sobre el eje x queda sobre el eje x despué
   const fig = await figura(page, 'Autovectores sobre el eje');
   await expect(lectura(fig, 'av')).toHaveText('(2,00; 0,00)');
   await expect(lectura(fig, 'autovalores')).toHaveText('2,00; 0,50');
-  await expect(fig.locator('svg.MafsView')).toBeVisible();
+  await expect(fig.locator('.MafsView svg')).toBeVisible();
   // las dos rectas punteadas de autovectores están dibujadas
   await expect(fig.getByText(/λ = 2,00/)).toBeVisible();
   await expect(fig.getByText(/λ = 0,50/)).toBeVisible();

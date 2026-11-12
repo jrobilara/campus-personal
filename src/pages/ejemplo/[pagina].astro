@@ -34,6 +34,8 @@ const consigna = 'Mové un control y mirá qué cambia.';
     <C.SimDatos consigna={consigna} titulo="Elegir el gráfico" dataset="ventas-mensuales" vistas={['torta', 'lineas']} veredictos={{ torta: { nota: 'mal', porque: 'Una torta no muestra cómo cambian las ventas mes a mes.' }, lineas: { nota: 'bien', porque: 'La línea deja ver la tendencia y la estacionalidad de cada región.' } }} />
     <C.SimTablaSQL consigna={consigna} titulo="GROUP BY" tabla="ventas" operacion="group-by" editable />
     <C.SimTablaSQL consigna={consigna} titulo="Ventana" tabla="ventas" operacion="ventana" funcion="suma-acumulada" editable />
+    <C.SimTablaSQL consigna={consigna} titulo="Numerar por región" tabla="ventas" operacion="ventana" funcion="row_number" particionarPor="region" ordenarPor="fecha" />
+    <C.SimTablaSQL consigna={consigna} titulo="Promedio móvil" tabla="tickets" operacion="ventana" funcion="promedio-movil" marco={2} ordenarPor="fecha" editable />
     <C.SimFlujo consigna={consigna} titulo="Balanceador" modo="balanceador" cache />
     <C.SimFlujo consigna={consigna} titulo="Cola" modo="cola" />
     <C.SimFlujo consigna={consigna} titulo="Cola de tickets" modo="cola" etiquetas="tickets" slaMinutos={240} kb />

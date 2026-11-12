@@ -363,3 +363,79 @@
 .sfl-capacidad.alerta { color: var(--mal); font-weight: 600; }
 .sfl-insignia { fill: var(--marca); stroke: var(--tinta); stroke-width: 1; }
 .sfl-etq.insignia { font: 700 10px var(--f-titulo); fill: var(--marca-tinta, var(--tinta)); }
+
+/* ---- SimTablaSQL (prefijo sq-) ---- */
+.sq { --sq-c0: var(--sd-c1); --sq-c1: var(--sd-c2); --sq-c2: var(--sd-c3); --sq-c3: var(--sd-c4); --sq-c4: var(--sd-c5); --sq-c5: var(--color-area); }
+.sq-sql-caja { min-width: 0; }
+.sq-sql { margin: 0; padding: 0.75rem 0.95rem; background: var(--papel); border: 1px solid var(--linea-fuerte); border-radius: 10px; font: 500 0.88rem/1.55 var(--f-mono); color: var(--tinta); overflow-x: auto; white-space: pre; tab-size: 2; }
+.sq-sql code { font: inherit; background: none; padding: 0; }
+.sq-kw { color: var(--sq-c0); font-weight: 700; }
+.sq-fn { color: var(--sq-c1); font-weight: 700; }
+.sq-tablas { display: grid; gap: 1rem; min-width: 0; }
+.sq[data-operacion='group-by'] .sq-tablas { align-items: start; }
+@media (min-width: 680px) { .sq[data-operacion='group-by'] .sq-tablas { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); } }
+.sq-bloque { min-width: 0; }
+.sq-titulo-tabla { margin: 0 0 0.3rem; font: 650 0.85rem var(--f-titulo); color: var(--tinta); }
+.sq-titulo-tabla span { color: var(--suave); font-weight: 500; }
+.sq-titulo-tabla code { font: 700 0.85rem var(--f-mono); }
+.sq-tabla { border: 1px solid var(--linea); border-radius: 10px; background: var(--superficie); }
+.sq-tabla table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.sq-tabla th { font: 700 0.76rem var(--f-mono); text-align: left; color: var(--suave); padding: 0.35rem 0.55rem; border-bottom: 2px solid var(--linea-fuerte); background: var(--papel); }
+.sq-tabla th.sq-clave { color: var(--tinta); box-shadow: inset 0 -3px 0 var(--sq-c0); }
+.sq-tabla th.sq-clave-orden { color: var(--tinta); box-shadow: inset 0 -3px 0 var(--sq-c1); }
+.sq-tabla th.sq-nueva { color: var(--marca-tinta); background: var(--marca); }
+.sq-tabla td { padding: 0.25rem 0.55rem; border-bottom: 1px solid var(--linea); white-space: nowrap; font-family: var(--f-mono); font-size: 0.8rem; }
+.sq-tabla tbody tr:last-child td { border-bottom: 0; }
+.sq-tabla .sq-num { text-align: right; font-variant-numeric: tabular-nums; }
+.sq-tabla .sq-marca { width: 1.7rem; padding: 0.25rem 0.3rem; text-align: center; color: var(--tinta); font-size: 0.75rem; }
+.sq-fila.sq-con-color td:first-child { box-shadow: inset 4px 0 0 var(--sq-col); }
+.sq-fila.sq-con-color { background: color-mix(in srgb, var(--sq-col) 9%, transparent); }
+.sq-fila.sq-marco { background: color-mix(in srgb, var(--marca) 55%, var(--superficie)); }
+.sq-fila.sq-marco td { font-weight: 700; }
+.sq-fila.sq-actual { outline: 2px solid var(--tinta); outline-offset: -2px; }
+.sq-colapso { display: inline-block; font: 700 0.72rem var(--f-mono); padding: 0.05rem 0.4rem; border-radius: 999px; background: var(--tinta); color: var(--papel); }
+.sq-valor { font-weight: 700; }
+.sq-celda-btn { font: inherit; font-weight: 700; color: var(--tinta); background: transparent; border: 1px dashed transparent; border-radius: 6px; padding: 0.1rem 0.4rem; min-width: 2.4rem; text-align: right; cursor: pointer; }
+.sq-celda-btn:hover:not([disabled]) { border-color: var(--linea-fuerte); background: var(--papel); }
+.sq-celda-btn[aria-pressed='true'] { border: 1px solid var(--tinta); background: color-mix(in srgb, var(--marca) 55%, var(--superficie)); }
+.sq-celda-btn[disabled] { cursor: default; opacity: 1; }
+.sq-nulo { color: var(--suave); font-style: italic; }
+.sq-celda-btn:focus-visible, .sq-sql:focus-visible { outline: 3px solid var(--color-area); outline-offset: 2px; }
+.sq-solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.sq-explica { min-height: 2.6em; }
+.sq-controles { align-items: end; }
+/* La columna nueva queda fija a la derecha: en pantallas angostas la tabla se desliza, pero el resultado siempre se ve. */
+.sq-tabla th.sq-nueva { position: sticky; right: 0; z-index: 1; }
+.sq-tabla td.sq-valor { background: color-mix(in srgb, var(--sq-col, var(--superficie)) 9%, var(--superficie)); }
+.sq-tabla td.sq-valor:last-child { position: sticky; right: 0; box-shadow: -6px 0 6px -6px color-mix(in srgb, var(--tinta) 35%, transparent); }
+.sq-fila.sq-actual td.sq-valor { background: color-mix(in srgb, var(--marca) 55%, var(--superficie)); }
+@media (max-width: 520px) {
+  .sq-sql { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.82rem; }
+  .sq-tabla td, .sq-tabla th { padding: 0.22rem 0.32rem; font-size: 0.74rem; }
+  .sq-tabla .sq-marca { width: 1.2rem; padding: 0.22rem 0.1rem; }
+}
+.sq-suspensivos { color: var(--suave); }
+@media (max-width: 520px) {
+  .sd-tabla th { white-space: normal; vertical-align: bottom; line-height: 1.15; }
+  .sd-tabla td, .sd-tabla th { padding: 0.25rem 0.35rem; font-size: 0.78rem; }
+  .sd-tabla .sd-n { width: 1.6rem; padding-inline: 0.2rem; }
+}
+
+/* SimSerieTemporal: valores de los sliders en una sola línea y aire entre leyenda y notas */
+.sst-controles .sim-control > label output { white-space: nowrap; flex: none; }
+.sst-controles .sim-control > label { align-items: flex-start; }
+.sst-nota { margin-top: 0.5rem; }
+
+/* SimTransformacion2D: las lecturas con pares (x; y) no se parten en dos renglones */
+[data-modo='transformacion'] .lectura dd { overflow-wrap: normal; }
+[data-modo='transformacion'] .lectura dd:has([data-lectura='av']),
+[data-modo='transformacion'] .lectura dd:has([data-lectura='autovalores']) { white-space: nowrap; font-size: 1rem; }
+
+/* SimFlujo en pantallas angostas: el dibujo se achica con el ancho, así que las etiquetas se agrandan para seguir legibles */
+@media (max-width: 520px) {
+  .sfl-nodo-t { font-size: 13px; }
+  .sfl-nodo-t.chico { font-size: 11.5px; }
+  .sfl-etq { font-size: 12.5px; }
+  .sfl-etq.fuerte { font-size: 12.5px; }
+  .sfl-etq.insignia { font-size: 11px; }
+}

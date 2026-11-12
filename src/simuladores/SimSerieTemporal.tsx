@@ -7,7 +7,7 @@ import { Interruptor, Leyenda, Lecturas, Selector, Slider, type ItemLectura } fr
 import { num } from './formato';
 import type { PropsSimSerieTemporal } from './props';
 import {
-  analizarEscenario, generarEscenario, horaHHMM, MIN_DIA, pendienteRegresion, type Escenario, type EscenarioSerie,
+  analizarEscenario, generarEscenario, horaHHMM, MIN_DIA, pendienteRegresion, type Escenario,
 } from './serie-temporal/series';
 import { calcularRespaldo, HORAS_VENTANA, type ResultadoRespaldo } from './serie-temporal/respaldo';
 
@@ -75,7 +75,7 @@ function Alertas({ escenario, nucleos = 4, umbral: umbralProp, duracionMin = 0, 
         ]} />
         <p className="sim-nota" data-testid="resumen-alertas">{resumen}</p>
       </div>
-      <div className="sim-controles">
+      <div className="sim-controles sst-controles">
         <Slider clave="umbral" etiqueta={`Umbral (${esLoad ? 'load' : unidad})`} valor={umbral} min={0} max={umbralMax} paso={unidad === '%' ? 1 : 0.5}
           formato={(v) => num(v, unidad === '%' ? 0 : 1)} onChange={setUmbral} deshabilitado={conPredictiva} />
         <Slider clave="duracion" etiqueta="Duración sostenida (for:)" valor={duracion} min={0} max={30} paso={1} formato={(v) => `${v} min`} onChange={setDuracion} />
@@ -197,9 +197,9 @@ function Respaldo({
           ...(r.corrupto !== null ? [{ color: 'color-mix(in srgb, var(--mal) 45%, transparent)', texto: 'Intento fallido (respaldo corrupto)' }] : []),
           { color: 'color-mix(in srgb, var(--aviso) 50%, transparent)', texto: r.corrupto !== null ? 'Restauración del anterior' : 'Restauración (sistema caído)' },
         ]} />
-        <p className="sim-nota" data-testid="resumen-respaldo">{resumen}</p>
+        <p className="sim-nota sst-nota" data-testid="resumen-respaldo">{resumen}</p>
         {r.corrupto !== null && (
-          <p className="sim-nota" data-testid="nota-rto">
+          <p className="sim-nota sst-nota" data-testid="nota-rto">
             <b>Por qué el RTO suma dos tramos:</b> con el respaldo sin probar, primero se intenta restaurar el último
             ({num(r.intentoFallidoHoras, 1)} h) y falla porque está corrupto.
             {r.restaurado !== null
@@ -208,7 +208,7 @@ function Respaldo({
           </p>
         )}
       </div>
-      <div className="sim-controles">
+      <div className="sim-controles sst-controles">
         <Slider clave="frecuencia" etiqueta="Un respaldo cada" valor={frecuencia} min={1} max={48} paso={1} formato={(v) => `${v} h`} onChange={setFrecuencia} />
         <Slider clave="incidente" etiqueta="Momento del incidente" valor={incidente} min={0} max={HORAS_VENTANA} paso={0.5} formato={(v) => `hora ${num(v, 1)}`} onChange={setIncidente} />
         <Slider clave="restauracion" etiqueta="Duración de la restauración" valor={duracion} min={0.5} max={12} paso={0.5} formato={(v) => `${num(v, 1)} h`} onChange={setDuracion} />

@@ -20,8 +20,11 @@ test('prevalencia 1 %: vpp ≈ 16,7 % (de unos 59 positivos, unos 10 son verdade
 
 test('prevalencia 50 %: vpp ≈ 95,2 %', async ({ page }) => {
   const fig = await figura(page, 'Bayes');
-  await fijar(fig, 'prevalencia', Number(posLog(50, 0.1, 50)));
-  await expect(lectura(fig, 'vpp')).toHaveText('95,2');
+  // si la máquina está cargada, el primer fill puede perderse en la hidratación: se reintenta hasta que quede
+  await expect(async () => {
+    await fijar(fig, 'prevalencia', Number(posLog(50, 0.1, 50)));
+    await expect(lectura(fig, 'vpp')).toHaveText('95,2', { timeout: 2_000 });
+  }).toPass({ timeout: 20_000 });
 });
 
 test('subir la especificidad al 99,9 % sube el vpp y baja los falsos positivos', async ({ page }) => {

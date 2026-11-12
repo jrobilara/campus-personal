@@ -24,13 +24,13 @@ test.describe('tcl', () => {
     await fijar(fig, 'n', 1);
     for (let i = 0; i < 10; i++) await control(fig, 'cien-muestras').click();
     // con n = 1 el "desvío de las medias" es el desvío de la población: σ/√1 = 1 en la exponencial
-    expect(await numero(fig, 'sigma-sobre-raiz-n')).toBeCloseTo(1, 2);
+    await expect(lectura(fig, 'sigma-sobre-raiz-n')).toHaveText('1,000');
     // sesgo de la distribución de medias, leído de las barras dibujadas (el histograma de abajo es el segundo gráfico)
     const sesgo = async () => fig.locator('[data-testid="si-medias"] rect, [data-testid="si-medias"] path').count();
     expect(await sesgo()).toBeGreaterThan(0);
     await fijar(fig, 'n', 30);
     await expect(lectura(fig, 'muestras')).toHaveText('0'); // cambiar n reinicia
-    expect(await numero(fig, 'sigma-sobre-raiz-n')).toBeLessThan(0.2);
+    await expect(lectura(fig, 'sigma-sobre-raiz-n')).toHaveText('0,183');
   });
 
   test('"Reiniciar" borra las muestras y "1 muestra" suma de a una', async ({ page }) => {

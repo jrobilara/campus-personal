@@ -76,7 +76,7 @@ test.describe('descenso', () => {
 
   test('el gráfico tiene los rótulos en español y estados de x₀, el punto actual, los mínimos y los ejes', async ({ page }) => {
     const fig = await figura(page, 'Descenso');
-    const svg = fig.locator('svg.MafsView');
+    const svg = fig.locator('.MafsView svg');
     await expect(svg.getByText('mínimo global')).toBeVisible();
     await expect(svg.getByText('mínimo local')).toBeVisible();
     await expect(svg.getByText('x₀ · inicio')).toBeVisible();
@@ -89,7 +89,7 @@ test.describe('descenso', () => {
   test('con pasos acumulados, los números de los pasos no se pisan entre sí', async ({ page }) => {
     const fig = await figura(page, 'Tasa en la parábola');
     for (let i = 0; i < 3; i++) await control(fig, 'paso-10').click();
-    const cajas = await fig.locator('svg.MafsView text[style*="font-weight"]').evaluateAll((els) =>
+    const cajas = await fig.locator('.MafsView svg text[style*="font-weight"]').evaluateAll((els) =>
       els.map((e) => { const r = e.getBoundingClientRect(); return { t: e.textContent ?? '', x: r.x, y: r.y, w: r.width, h: r.height }; }));
     expect(cajas.length).toBeGreaterThan(2);
     for (let i = 0; i < cajas.length; i++) {
@@ -110,7 +110,7 @@ test.describe('descenso a 390 px', () => {
     for (const titulo of ['Descenso', 'Tasa en la parábola']) {
       const fig = await figura(page, titulo);
       await control(fig, 'paso-10').click();
-      const dentro = await fig.locator('svg.MafsView').evaluate((svg) => {
+      const dentro = await fig.locator('.MafsView svg').evaluate((svg) => {
         const caja = svg.getBoundingClientRect();
         return [...svg.querySelectorAll('text[style*="font-weight"]')].map((t) => {
           const r = t.getBoundingClientRect();

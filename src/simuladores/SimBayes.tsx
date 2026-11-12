@@ -1,7 +1,7 @@
 // SimBayes (SIMULADORES.md §2.5): grilla de puntos + árbol de frecuencias para ver por qué un test "bueno" da muchos falsos positivos.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { Boton, Botones, Lecturas, Slider } from './ui';
+import { Boton, Lecturas, Slider } from './ui';
 import { num } from './formato';
 import { useMenosMovimiento } from '../lib/tema';
 import type { PropsSimBayes } from './props';

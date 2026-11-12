@@ -12,8 +12,8 @@ import {
   type Matriz, type PresetT, type Vec,
 } from './transformacion/matriz';
 
-const R = 6; // el plano se ve de −6 a 6 (como mínimo, a lo alto)
-const LIMITE_V = 5.5;
+const R = 5; // el plano se ve de −5 a 5 (como mínimo, a lo alto)
+const LIMITE_V = 4.5;
 const GRILLA = 20; // líneas de la grilla transformada a cada lado
 const LARGO = 40; // hasta dónde se estira cada línea
 
@@ -97,7 +97,7 @@ export default function SimTransformacion2D({ preset, matriz, editable = false, 
             <Line.ThroughPoints key={`eig${i}`} point1={[0, 0]} point2={r.direccion} color="var(--sf-cian)" style="dashed" weight={2.5} />
           ))}
           {mostrarAutovectores && eigDib.tipo === 'reales' && eigDib.rectas.map((r, i) => (
-            <Text key={`et${i}`} x={r.direccion[0] * 4.6} y={r.direccion[1] * 4.6} attach={r.direccion[0] >= 0 ? 'ne' : 'sw'} size={12} color="var(--sf-cian)">
+            <Text key={`et${i}`} x={r.direccion[0] * 3.8} y={r.direccion[1] * 3.8} attach={r.direccion[0] >= 0 ? 'ne' : 'sw'} size={12} color="var(--sf-cian)">
               {`λ = ${num(r.valor)}`}
             </Text>
           ))}

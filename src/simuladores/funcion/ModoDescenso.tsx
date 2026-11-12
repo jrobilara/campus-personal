@@ -96,7 +96,7 @@ export default function ModoDescenso({ funcion, x0: x0Prop = 3, tasa: tasaProp =
               <Text x={m.x} y={ventana.y[0]} attach="s" attachDistance={18} size={12} color="var(--ok)" svgTextProps={{ style: { fontWeight: 700 } }}>{m.texto}</Text>
             </g>
           ))}
-          {paso > 0 && <Polyline points={xs.map(pto)} color="var(--sf-naranja)" weight={2} opacity={0.85} />}
+          {paso > 0 && <Polyline points={xs.map(pto)} color="var(--sf-naranja)" weight={2} strokeOpacity={0.85} fillOpacity={0} />}
           {xs.map((x, k) => {
             if (k === paso || k === 0) return null;
             const [px, py] = pto(x);
