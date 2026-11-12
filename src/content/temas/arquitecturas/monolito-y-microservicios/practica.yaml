@@ -20,9 +20,9 @@ tarjetas:
     frente: ¿Qué supuesto sobre las fallas esconde multiplicar las disponibilidades de los servicios de una cadena?
     dorso: Que las fallas son independientes entre sí.
     fuente: aws-disponibilidad
-  - id: t-dependencia-dura-definicion
-    frente: ¿Qué es una dependencia "dura" (hard dependency) entre dos sistemas?
-    dorso: Una en la que la caída del sistema del que dependés se traduce directamente en una caída del tuyo.
+  - id: t-dependencia-blanda-aplicacion
+    frente: Tu checkout llama a un servicio de recomendaciones, pero si no responde muestra el checkout sin ellas. ¿La dependencia es dura o blanda?
+    dorso: Blanda, porque la falla del otro sistema se compensa en tu aplicación en lugar de trasladarse como caída.
     fuente: aws-disponibilidad
   - id: t-base-por-servicio-costo
     frente: Si cada microservicio tiene su propia base, ¿qué perdés respecto de un monolito con una sola base?

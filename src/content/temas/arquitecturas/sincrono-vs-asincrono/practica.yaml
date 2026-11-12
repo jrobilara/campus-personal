@@ -124,14 +124,14 @@ casos:
             consecuencia: Los consumidores nuevos arrancan y varios se caen enseguida, igual que dos de los que ya estaban.
       - id: escalar-a-ciegas
         tipo: decision
-        texto: Con 20 consumidores configurados la cola casi no baja y la mitad está reiniciando. ¿Qué hacés?
+        texto: Con 20 consumidores configurados la cola baja despacio (unos 10 mensajes por segundo, o sea unos 30 minutos para 18.000) porque la mitad está reiniciando. ¿Qué hacés?
         opciones:
           - texto: Reviso los logs de los consumidores que se caen.
             va: diagnostico
             consecuencia: Todos se caen al recibir el mismo mensaje. Gastaste recursos, pero ahora sabés dónde buscar.
           - texto: Sigo subiendo consumidores hasta que la cola baje.
             va: final-mal
-            consecuencia: Cada consumidor nuevo choca contra el mismo mensaje y se cae; el sistema gasta cada vez más y no avanza.
+            consecuencia: Cada consumidor nuevo que recibe el mensaje problemático se cae; el sistema gasta cada vez más y la mejora es mínima.
       - id: diagnostico
         tipo: decision
         texto: Hay un mensaje con un contenido mal formado que hace caer al consumidor cada vez que lo recibe. ¿Qué hacés?

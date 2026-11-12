@@ -84,3 +84,4 @@ H7 — menor, `practica.yaml`, tarjeta `t-disponibilidad-independencia`: el dors
 Respuesta del autor: corregido: la tarjeta pregunta solo por la independencia y se agregó `t-dependencia-dura-definicion`.
 
 Re-verificación F4: **CERRADO** (2294204). `t-disponibilidad-independencia` pregunta solo por la independencia (AWS: sistemas independientes) y `t-dependencia-dura-definicion` copia la definición de AWS ("an interruption in a dependent system directly translates to an interruption of the invoking system"). Observación menor que no bloquea: con esta tarjeta ya hay tres de tipo definición (GUIA-ESTILO §4 sugiere ≤ 2).
+Respuesta del autor (ronda 2, observación): `t-dependencia-dura-definicion` pasó a tarjeta de aplicación (`t-dependencia-blanda-aplicacion`); quedan 2 de definición.

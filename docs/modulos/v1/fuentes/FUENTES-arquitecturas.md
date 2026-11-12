@@ -31,7 +31,7 @@
 | t-premium-microservicios | Qué es el premium. | tarjeta | fowler-premium | idem #15 | idem |
 | t-disponibilidad-serie-tres | 0,999^3 ≈ 0,997. | tarjeta | aws-disponibilidad | idem #10 | Cuenta con Python: 0,997003. |
 | t-disponibilidad-independencia | Supuesto de independencia de las fallas (una sola idea tras F4 H7). | tarjeta | aws-disponibilidad | idem #10 | idem |
-| t-dependencia-dura-definicion | Dependencia dura: la caída del sistema del que dependés se traduce directamente en una caída del tuyo. | tarjeta | aws-disponibilidad | "Calculating availability with hard dependencies" | Texto completo. |
+| t-dependencia-blanda-aplicacion | Dependencia blanda: la falla del otro sistema se compensa en la aplicación (frente a la dura, donde se traduce en caída). Tarjeta de aplicación, ronda 2. | tarjeta | aws-disponibilidad | "Calculating availability with hard dependencies" | Texto completo. |
 | t-base-por-servicio-costo | Con base por servicio se pierde ACID entre servicios (queda consistencia eventual). | tarjeta | azure-microservicios | "Challenges", Data integrity | Texto completo. |
 | t-charla-excesiva-sintoma | Charla excesiva puede ser síntoma de acoplamiento. | tarjeta | azure-microservicios | idem #9 | idem |
 | t-escalar-parte | Escalado selectivo de microservicios vs escalar el monolito entero. | tarjeta | fowler-microservices | introducción | Resumen. |
@@ -90,7 +90,7 @@
 | e-consumidores-necesarios | 30 · 0,4 = 12. | ejercicio | azure-colas | aritmética | Python. |
 | e-evitar-doble-cobro | Clave única en la misma transacción. | ejercicio | azure-idempotente | idem #14 | idem |
 | e-vf-kafka-borra | El evento no se borra al leerse. | ejercicio | kafka-intro | idem #7 | idem |
-| c-cola-mails-crece | Diagnosticar tasas, aislar mensajes venenosos en dead-letter, escalar con límite; purgar pierde mensajes. Cuenta (F4 H6): cada consumidor 4 msg/s; 2 sanos = 8/s; con 12 sanos = 48/s contra 30 que entran, la cola baja 18/s y 18.000 / 18 = 1.000 s ≈ 17 min. | caso | azure-colas | "Problems and considerations" | Texto completo; cuenta con Python. Cifras ilustrativas. |
+| c-cola-mails-crece | Con 20 consumidores configurados y la mitad reiniciando, 10 sanos × 4 = 40/s contra 30/s que entran: la cola baja 10/s, 18.000 / 10 = 1.800 s = 30 min (ronda 2). Diagnosticar tasas, aislar mensajes venenosos en dead-letter, escalar con límite; purgar pierde mensajes. Cuenta (F4 H6): cada consumidor 4 msg/s; 2 sanos = 8/s; con 12 sanos = 48/s contra 30 que entran, la cola baja 18/s y 18.000 / 18 = 1.000 s ≈ 17 min. | caso | azure-colas | "Problems and considerations" | Texto completo; cuenta con Python. Cifras ilustrativas. |
 | p-kafka-quickstart | Pasos del Quickstart (descargar la distribución con los scripts bin/, broker con scripts o Docker, crear tópico, productor y consumidor de consola, --from-beginning). | problema | kafka-quickstart | pasos 1 a 5 | Resumen con los comandos; enunciado aclarado tras F4 H7. No lo ejecuté. |
 | p-cola-python | Simulación con queue.Queue. | problema | azure-colas | "Problems and considerations" | Corrí el script: la cola crece ~1/s con 2 consumidores. |
 
@@ -171,7 +171,7 @@
 | 17 | CAP (Gilbert-Lynch): consistencia atómica, disponibilidad = todo pedido recibe respuesta eventualmente, partición = red que demora o pierde mensajes; imposible garantizar respuesta a todo pedido con atomicidad en una red con fallas. | Formal, CAP | gilbert-lynch-cap | §2 (Consistency, Availability, Partition-tolerance y "The CAP Theorem" con el esquema de prueba) | Leí el texto completo (pdftotext del PDF). |
 | 18 | Brewer: "2 de 3" engaña; solo se renuncia a una de las dos durante la partición; la partición es un timeout; la decisión es por operación/dato/usuario; manejo: detectar, modo de partición, recuperar. | Formal; Intuición, Ojo | brewer-cap | "Why '2 of 3' is misleading", "CAP-latency connection" (partición = timeout), "Managing partitions" | Resumen de la reproducción en InfoQ; sección corregida tras F4 (R-H2). |
 | 19 | Carrito disponible aunque pierda una actualización; info de producto algo vieja; cobro y facturación fuertemente consistentes. | Formal | gilbert-lynch-cap | §4.4 "Segmenting Consistency and Availability" (Data partitioning) | Leí el texto completo. |
-| 20 | La consistencia del teorema CAP es la atómica (no la "C" de ACID). Kleppmann argumenta que por eso muchos sistemas no entran en CP/AP (solo "para ver más", sin `Cita`). | Formal, Profundizar | gilbert-lynch-cap | §2 (definición de consistencia); kleppmann-cap solo como lectura adicional | Texto completo del PDF; reescrito tras F4 (R-H3). |
+| 20 | La consistencia del teorema CAP es la atómica (no la "C" de ACID). Kleppmann argumenta que por eso muchos sistemas no entran en CP/AP (solo "para ver más", sin `Cita`). | Formal, Profundizar | gilbert-lynch-cap, brewer-cap | §2 de Gilbert-Lynch (definición de consistencia) y "ACID, BASE, and CAP" de Brewer (contraste con ACID, sección indicada por el verificador F4); kleppmann-cap solo como lectura adicional | Texto completo del PDF; reescrito tras F4 (R-H3). |
 | 21 | El breaker del simulador mide el umbral sobre los últimos 20 pedidos; abierto: las llamadas al servicio dejan de crecer; pasa por semiabierto. | Intuición; Formal | — | SIMULADORES.md §2.9 | Contrato del simulador; falta verificar contra el real. |
 | t-timeout-sin-limite | ver #1 | tarjeta | azure-circuit-breaker | idem | idem |
 | t-breaker-abierto-rapido, t-breaker-semiabierto, t-breaker-contador-temporal | ver #13 y #14 | tarjetas | azure-circuit-breaker | idem | idem |
@@ -197,7 +197,7 @@
 - `fowler-circuit-breaker`: Martin Fowler, 6 de marzo de 2014. Resumen.
 - `sre-cascadas` (cap. 22) y `sre-sobrecarga` (cap. 21, confirmado en el índice de sre.google): resumen.
 - `rfc9110`: IETF, RFC 9110 "HTTP Semantics" (2022), §9.2.2. Resumen de la sección.
-- `gilbert-lynch-cap`: Seth Gilbert y Nancy A. Lynch, "Perspectives on the CAP Theorem", 2012 (PDF en groups.csail.mit.edu; no verifiqué la revista). PDF leído completo. Nota: es el artículo de revisión de 2012, no el de 2002 (el PDF del paper original no pude extraerlo: la fuente embebida está codificada y no se lee). Por eso no cito el paper original.
+- `gilbert-lynch-cap`: Seth Gilbert y Nancy A. Lynch, "Perspectives on the CAP Theorem", 2012 (*Computer* (IEEE) 45(2), feb. 2012, pp. 30–36, dato aportado por el verificador F4; PDF en groups.csail.mit.edu). PDF leído completo. Nota: es el artículo de revisión de 2012, no el de 2002 (el PDF del paper original no pude extraerlo: la fuente embebida está codificada y no se lee). Por eso no cito el paper original.
 - `brewer-cap`: Eric Brewer, "CAP Twelve Years Later", IEEE Computer, 2012, reproducido por InfoQ. Resumen.
 - `brooker-jitter`, `kleppmann-cap` (blogs, para ver más), `kleppmann-ddia` (libro, para ver más, sin capítulo).
 

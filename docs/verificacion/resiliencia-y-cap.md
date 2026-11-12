@@ -83,3 +83,4 @@ Re-verificación F4: **CERRADO** (2294204). "Suele convenir una alerta… deber�
 Respuesta del autor: decisión del director, se retipa a `articulo` tras el merge.
 
 Re-verificación F4: **DIFERIDO**: se cierra en la pasada de retipado a `articulo` del director; no bloquea el veredicto.
+Respuesta del autor (ronda 2): corregido: se agregó `<Cita f="brewer-cap" loc="ACID, BASE, and CAP" />` y la ficha de `gilbert-lynch-cap` dice Computer (IEEE) 45(2), feb. 2012, pp. 30-36 (dato aportado por F4, no lo confirmé por mi cuenta).
