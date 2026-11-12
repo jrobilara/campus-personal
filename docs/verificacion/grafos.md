@@ -3,7 +3,7 @@
 - **Tema:** `matematica-fisica/grafos` (commit del escritor 3e435d6)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO (con dos observaciones menores abiertas, H1 y H2)
+- **Veredicto:** APROBADO (re-verificación sobre 13662ed: cero hallazgos abiertos)
 
 Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no bloquean pero quedan anotados). Toda la matemática y todas las respuestas numéricas coinciden con mi recálculo.
 
@@ -75,6 +75,8 @@ Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no blo
 
 ## Hallazgos abiertos
 
+> Estado actual: ninguno abierto. Los hallazgos de abajo son los de la verificación inicial (3e435d6) y figuran como CERRADOS en la sección "Re-verificación" al final de este informe.
+
 **H1 (menor) — la consigna del segundo simulador pide algo que el catálogo no promete.**
 - Archivo y campo: `src/content/temas/matematica-fisica/grafos/tema.mdx` → segundo `<SimGrafo … modo="orden-topologico">` → `consigna` ("Cuando haya más de un paquete disponible, repetí eligiendo otro").
 - Qué está mal: `SIMULADORES.md` §2.11 describe el modo `orden-topologico` con solo el botón "Paso", que resalta los nodos sin dependencias pendientes, y las lecturas `orden` y `disponibles`; no dice que se pueda elegir cuál de los disponibles se procesa. Si F2 lo implementa sin esa elección, el lector no puede hacer lo que la consigna le pide.
@@ -86,3 +88,14 @@ Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no blo
 - Qué está mal: la def. 10.2.1 de MCS es la de *walk* (se pueden repetir vértices); *path* es un walk sin vértices repetidos y está definido en el texto cercano. El tema traduce los dos como "camino". No cambia ninguna cuenta, pero el término inglés entre paréntesis no coincide con la definición citada.
 - Qué dice la fuente: MCS def. 10.2.1 "A walk in a digraph is an alternating sequence of vertices and edges…"; def. 10.2.4 define la distancia como el largo de "a shortest path".
 - Corrección propuesta: "Un recorrido (*walk*) es… y un camino (*path*) es un recorrido que no repite vértices; la distancia es el largo del camino más corto". O, para no sumar vocabulario, dejar "camino (*walk*)".
+
+## Re-verificación (commit 13662ed contra 02c87f5)
+
+Se revisó solo `git diff 02c87f5..13662ed`: cada hallazgo, las tarjetas y fuentes nuevas. Build con Node 24 verde, `grep -r katex-error dist/` sin resultados y 388 fragmentos LaTeX de los cuatro temas pasan KaTeX en modo estricto (0 errores). Criterio 8: cero hallazgos abiertos, también los menores.
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 consigna del orden topológico | CERRADO (13662ed) | La consigna ya no pide elegir nodos: pide anotar el orden y los paquetes disponibles en cada paso (lecturas `orden` y `disponibles` de SIMULADORES §2.11) y razonar cuántos órdenes admite el grafo. Es realizable con lo que promete el catálogo. |
+| H2 walk/path | CERRADO (13662ed) | Ahora: recorrido (*walk*) = sucesión alternada de vértices y aristas (def. 10.2.1), camino (*path*) cuando no repite vértices (texto siguiente, p. 425, verificado: "The walk is a path iff all the vᵢ's are different"), y la distancia usa la def. 10.2.4, p. 426. Citas y páginas correctas. |
+
+Hallazgos nuevos por los cambios: ninguno.

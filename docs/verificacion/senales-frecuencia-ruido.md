@@ -3,7 +3,7 @@
 - **Tema:** `matematica-fisica/senales-frecuencia-ruido` (commit del escritor 3e435d6)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificación sobre 13662ed; el veredicto inicial sobre 3e435d6 fue OBSERVADO)
 
 Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no bloquean pero quedan anotados). Acá hay uno medio (H1, la generalización del "≈1 bit/s/Hz") y cuatro menores.
 
@@ -78,6 +78,8 @@ Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no blo
 
 ## Hallazgos abiertos
 
+> Estado actual: ninguno abierto. Los hallazgos de abajo son los de la verificación inicial (3e435d6) y figuran como CERRADOS en la sección "Re-verificación" al final de este informe.
+
 **H1 (media) — "doblar la potencia suma ≈1 bit/s/Hz" y "el logaritmo hace que cada mejora cueste más" valen solo con S/N alto, y el texto no lo dice.**
 - Archivos y campos: `src/content/temas/matematica-fisica/senales-frecuencia-ruido/tema.mdx` → `<Formal>` → `<Profundizar>` ("doblar la potencia de señal (S/N de 100 a 200) agrega solo alrededor de 1 bit… el logaritmo hace que cada mejora cueste más"); `practica.yaml` → `e-om-duplicar-potencia` (opción correcta y su `explicacion`: "El logaritmo comprime el efecto… agrega casi 1 bit").
 - Qué está mal: con S/N=100→200 es cierto (+0,993 bit/s/Hz), pero el lector puede generalizar. Doblar S/N suma log₂((1+2s)/(1+s)), que tiende a 1 solo cuando s≫1: con s=0,1 suma 0,126; con s=1, 0,585; con s=10, 0,933. Con S/N bajo, C≈W·(S/N)/ln 2 es casi lineal en la potencia y duplicarla casi duplica C: ahí el logaritmo no "comprime" nada.
@@ -105,3 +107,17 @@ Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no blo
 **H5 (menor) — tres tarjetas con definiciones o enunciados imprecisos.**
 - Archivo: `practica.yaml`. (a) `t-senoide-parametros` → `frente` dice "dos datos" y `dorso` agrega "además de la fase" (la senoide tiene tres parámetros; el `tema.mdx` también dice "dos datos" en `<Intuicion>`, aunque en `<Formal>` sí aparece φ). Proponer "¿Qué tres parámetros describen una senoide?" o "¿Qué dos de ellos son los que se ven en el espectro?". (b) `t-condicion-nyquist` → `frente` dice "como mínimo" y el dorso exige "más del doble" (desigualdad estricta, no hay mínimo): cambiar a "¿Qué condición tiene que cumplir f_s respecto de f_max?". (c) `t-ancho-de-banda-senal` → `dorso` "el rango de frecuencias que ocupa": el ancho de banda es la anchura de ese rango (Smith: música 20 kHz); decir "la anchura del rango de frecuencias que ocupa (por ejemplo, de 0 a 3,2 kHz son 3,2 kHz)". `tema.mdx` → `<Formal>` → "Frecuencias y ancho de banda" tiene la misma definición; además conviene una frase que avise que en redes "ancho de banda" también se usa para la velocidad en bit/s, justo lo que el caso real mezcla.
 - Qué dice la fuente: Smith cap. 22, p. 358, usa "bandwidth of 20 kHz" para la música.
+
+## Re-verificación (commit 13662ed contra 02c87f5)
+
+Se revisó solo `git diff 02c87f5..13662ed`: cada hallazgo, las tarjetas y fuentes nuevas. Build con Node 24 verde, `grep -r katex-error dist/` sin resultados y 388 fragmentos LaTeX de los cuatro temas pasan KaTeX en modo estricto (0 errores). Criterio 8: cero hallazgos abiertos, también los menores.
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 "≈1 bit/s/Hz" | CERRADO (13662ed) | Profundizar dice ahora que vale solo con SNR alta, da la fórmula log₂((1+2S/N)/(1+S/N)) y los valores 0,93 (S/N=10), 0,99 (100), 0,585 (1) y 0,126 (0,1); todos coinciden con mi recálculo (0,9329; 0,9928; 0,5850; 0,1255). Con S/N=0,1 la capacidad pasa de 0,1375 a 0,2630 bit/s/Hz, razón 1,91: "casi duplicar" es correcto. La explicación de `e-om-duplicar-potencia` agrega la salvedad. |
+| H2 doblar W | CERRADO (13662ed) | Se agregó que con ruido blanco un canal más ancho recoge más ruido y mantener la SNR exige más potencia; el distractor del ejercicio dice "manteniendo la misma SNR". La jerga "cuenta propia" del alias se reemplazó por la cita a Smith cap. 3, fig. 3-4, p. 42 (verificada: el zigzag de frecuencias sobre Nyquist). |
+| H3 decibel | CERRADO (13662ed) | Ahora cita `smith-dsp` cap. 14, ec. 14-1, p. 264. Verifiqué el PDF (CH14): la página 264 define dB=10 log₁₀(P₂/P₁) para potencias (20 log₁₀ para amplitudes) y dice que 10 dB y 20 dB son factores 10 y 100 en potencia, igual que el tema. `t-snr-db` tiene `fuente: smith-dsp`. Se quitó §17.3 de `openstax-up1`, que sigue citada por §15.1. |
+| H4 apagada / metálica | CERRADO (13662ed) | Resumen, caso real y tarjetas separados: `t-audio-apagado` (pérdida de agudos, citada a Smith p. 358) y `t-audio-metalico` (los agudos que superan Nyquist vuelven como alias, tonos que no estaban, citado a Smith cap. 3). El cuerpo presenta el efecto perceptual como expectativa ("es de esperar que le den un timbre metálico") y separa dos efectos: uno quita agudos y el otro agrega tonos falsos. Criterio del coordinador: aceptado, porque la parte técnica (frecuencias falsas) está citada y "metálico" se presenta como descripción. Nota sin hallazgo: la tarjeta `t-audio-metalico` lo dice sin el hedge del cuerpo; si se quiere afinar, "¿Qué le agrega a un audio muestreado sin filtro antialias un timbre metálico?" o "puede sonar metálico". |
+| H5 tarjetas | CERRADO (13662ed) | `t-senoide-parametros` pregunta por tres parámetros (y el cuerpo dice tres datos); `t-condicion-nyquist` pregunta por la condición sin "como mínimo"; el ancho de banda es la anchura del rango, medida en Hz, con la aclaración de que en redes se usa la misma palabra para bit/s. |
+
+Hallazgos nuevos por los cambios: ninguno.

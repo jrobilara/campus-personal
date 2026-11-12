@@ -3,7 +3,7 @@
 - **Tema:** `matematica-fisica/vectores-y-matrices` (commit del escritor 3e435d6)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificación sobre 13662ed; el veredicto inicial sobre 3e435d6 fue OBSERVADO)
 
 Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no bloquean pero quedan anotados). Acá hay dos medios (H1 y H2, afirmaciones de la intuición que enseñan algo impreciso) y dos menores.
 
@@ -80,6 +80,8 @@ Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no blo
 
 ## Hallazgos abiertos
 
+> Estado actual: ninguno abierto. Los hallazgos de abajo son los de la verificación inicial (3e435d6) y figuran como CERRADOS en la sección "Re-verificación" al final de este informe.
+
 **H1 (media) — "cuánto se estiró el plano en promedio" es impreciso.**
 - Archivo y campo: `src/content/temas/matematica-fisica/vectores-y-matrices/tema.mdx` → `<Intuicion>`, párrafo "Ahora el 'área'…".
 - Qué está mal: el determinante no es un promedio: es el factor exacto por el que se multiplica el área de cualquier región, en todos los puntos del plano (el propio `<Formal>` lo dice con "exactamente"). "En promedio" sugiere que hay zonas que se estiran más que otras, que es falso para una transformación lineal.
@@ -101,3 +103,16 @@ Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no blo
 **H4 (menor) — dos tarjetas con matices que conviene precisar.**
 - Archivo: `practica.yaml`. (a) `t-matriz-rotacion` → `frente`: decir "antihoraria" (el signo de −sin θ depende de la convención). (b) `t-autovector-definicion` → `dorso`: "solo lo estira o lo invierte" omite λ=0 (lo manda al origen); mejor "…solo cambia su largo (y el sentido si λ<0)" o aclarar λ≠0. Lo mismo vale para la frase "solo lo estira por λ" en `tema.mdx` → `<Formal>` → "Autovalores y autovectores".
 - Qué dice la fuente: MML def. 4.6 admite cualquier λ real; el caso λ=0 corresponde a matrices singulares.
+
+## Re-verificación (commit 13662ed contra 02c87f5)
+
+Se revisó solo `git diff 02c87f5..13662ed`: cada hallazgo, las tarjetas y fuentes nuevas. Build con Node 24 verde, `grep -r katex-error dist/` sin resultados y 388 fragmentos LaTeX de los cuatro temas pasan KaTeX en modo estricto (0 errores). Criterio 8: cero hallazgos abiertos, también los menores.
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 "en promedio" | CERRADO (13662ed) | La Intuición dice ahora "por cuánto se multiplica cualquier área del plano (el cuadrado de lado 1 es solo el caso fácil de dibujar)". Correcto y coherente con el Formal. |
+| H2 rectas y paralelas | CERRADO (13662ed) | Nuevo texto: una recta termina siendo una recta o, si la matriz aplasta, un punto; las paralelas siguen paralelas solo cuando no aplasta. Es correcto (con la proyección una recta vertical pasa a un punto). La analogía de la goma quitó "aplastarla" de la lista y lo deja como caso extremo que se ve enseguida. |
+| H3 área del polígono | CERRADO (13662ed) | Se agregó la fuente `openstax-calc3` §5.7 (cuerpo y `e-area-del-poligono`). Verifiqué la página: el argumento del jacobiano da ΔA≈J·ΔuΔv para transformaciones C¹; que para x=au+bv, y=cu+dv el jacobiano sea la constante ad−bc no está escrito en la página, y el tema lo presenta como "el caso lineal del jacobiano", que es lo que corresponde. Aceptado. La `explicacion` del ejercicio ahora dice "cualquier figura". 7·10=70 sigue bien. |
+| H4 tarjetas | CERRADO (13662ed) | `t-matriz-rotacion` dice "en sentido antihorario" (coincide con MML ec. 3.76). `t-autovector-definicion` y el Formal dicen "no lo gira, solo lo escala por λ", con λ negativo (invierte), λ=0 (lo manda al origen) y la aclaración de que λ puede ser 0 pero x no. Correcto. |
+
+Hallazgos nuevos por los cambios: ninguno.

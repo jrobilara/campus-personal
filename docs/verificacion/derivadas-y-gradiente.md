@@ -3,7 +3,7 @@
 - **Tema:** `matematica-fisica/derivadas-y-gradiente` (commit del escritor 3e435d6)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificación sobre 13662ed; el veredicto inicial sobre 3e435d6 fue OBSERVADO)
 
 Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no bloquean pero quedan anotados). Acá hay uno medio (H1, un enunciado de problema que contradice la cuenta) y cuatro menores.
 
@@ -74,6 +74,8 @@ Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no blo
 
 ## Hallazgos abiertos
 
+> Estado actual: ninguno abierto. Los hallazgos de abajo son los de la verificación inicial (3e435d6) y figuran como CERRADOS en la sección "Re-verificación" al final de este informe.
+
 **H1 (media) — el problema p-planilla-mse presupone algo que la cuenta desmiente.**
 - Archivo y campo: `src/content/temas/matematica-fisica/derivadas-y-gradiente/practica.yaml` → `problemas` → `p-planilla-mse` → `enunciado`.
 - Qué está mal: pide correr 30 filas con tasas 0,01, 0,05 y 0,15 y anotar "cuál tasa llega más rápido y cuál no converge". Con los datos del propio ejercicio, E''(w)=(2/m)Σnᵢ²=28/3≈9,333, así que el factor por paso es 1−γ·9,333: 0,907 (γ=0,01), 0,533 (γ=0,05) y −0,400 (γ=0,15). Las tres convergen a w*=2,107 (recalculado: tras 30 pasos 1,9957; 2,10714; 2,10714). El límite está en γ<2/9,333≈0,214. El lector va a buscar una que no converge y no la va a encontrar.
@@ -101,3 +103,17 @@ Criterio: APROBADO = sin hallazgos de severidad media o alta (los menores no blo
 - Archivo y campo: `practica.yaml` → tarjeta `t-derivada-fondo-parabola` → `frente` y `dorso`.
 - Qué está mal: el frente pregunta "cuánto vale y qué dice del dibujo"; el dorso responde tres cosas ("vale 0, la tangente es horizontal, y es el fondo de la parábola"). La guía (§4) pide una idea por tarjeta y dorso corto.
 - Corrección propuesta: frente "¿Cuánto vale la derivada de x² en x=0?" dorso "0: la tangente es horizontal, en el fondo de la parábola." (o separar en dos tarjetas).
+
+## Re-verificación (commit 13662ed contra 02c87f5)
+
+Se revisó solo `git diff 02c87f5..13662ed`: cada hallazgo, las tarjetas y fuentes nuevas. Build con Node 24 verde, `grep -r katex-error dist/` sin resultados y 388 fragmentos LaTeX de los cuatro temas pasan KaTeX en modo estricto (0 errores). Criterio 8: cero hallazgos abiertos, también los menores.
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 `p-planilla-mse` | CERRADO (13662ed) | Recalculé en Python: E''=(2/m)Σnᵢ²=28/3=9,333 y el límite es 2/E''=3/14≈0,2143, tal como dice el factor `1−γ·28/3` del enunciado. Factores: 0,01→0,907; 0,05→0,533; 0,15→−0,400 (convergen a w*=2,1071; tras 30 pasos 1,9957; 2,10714; 2,10714); 0,25→−1,333 y diverge (tras 30 pasos w≈−11797). "Cuál de las tres primeras llega más rápido" es 0,15. Dificultad subida a `intermedio`, coherente. |
+| H2 gradiente cero | CERRADO (13662ed) | El cuerpo, la tarjeta `t-gradiente-cero` y el ejercicio `e-vf-gradiente-cero-minimo` citan ahora `openstax-calc3` §4.7 (agregada a la `ubicacion` de la fuente). Verifiqué la página: define punto crítico, define silla (parciales cero sin extremo) con el ejemplo z=x²−y², y da el criterio de la segunda derivada. Los casos "mínimo local, máximo local" y el análogo 1-D con x³ en 0 son correctos. |
+| H3 factor 1−2γ | CERRADO (13662ed) | Ahora se deriva a la vista: ∇f=2x reemplazado en la ec. 7.6 de MML (p. 228, verificada) da x_{k+1}=x_k−γ·2x_k=(1−2γ)x_k, con `<Cita>`; la parábola (a/2)x² también muestra el gradiente a·x y el paso. La tarjeta `t-factor-cuadratica` tiene `fuente: mml`. Desapareció la jerga "cuenta propia". |
+| H4 Stewart def. 8 | CERRADO (13662ed) | El texto dice "para dos variables y lo extiende a tres" con `def. 8, p. 936, y ecuación 13, p. 938` (ambas verificadas en el PDF del dueño) y agrega MML def. 5.5, p. 146 para n variables. |
+| H5 `t-derivada-fondo-parabola` | CERRADO (13662ed) | Ahora es una pregunta con una sola idea: derivada de x² en 0 = 0 porque la tangente es horizontal. |
+
+Hallazgos nuevos por los cambios: ninguno.
