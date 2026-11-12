@@ -1,0 +1,135 @@
+# Cálculos (Python):
+#   e-barra-truncada: eje desde 90 -> alturas visibles 110-90 = 20 y 100-90 = 10 -> razón 2.0 ; razón real 110/100 = 1.1
+#   e-angulo-rebanada: 520/1500*360 = 124.8 ; Sur 480/1500*360 = 115.2 ; Centro 500/1500*360 = 120
+tarjetas:
+  - id: t-pregunta-decide
+    frente: ¿Qué tenés que definir antes de elegir el tipo de gráfico?
+    dorso: La pregunta que el gráfico tiene que responder (comparar cantidades, ver el tiempo, partes de un todo, relación entre variables, distribución).
+    fuente: wilke
+  - id: t-barras-cero
+    frente: ¿Por qué una barra tiene que empezar en cero?
+    dorso: Porque su largo representa el valor; si arranca en otro punto, el ojo exagera las diferencias respecto de un piso arbitrario.
+    fuente: wilke
+  - id: t-puntos-sin-cero
+    frente: ¿Qué gráfico de cantidades tolera un eje que no empieza en cero?
+    dorso: El gráfico de puntos (*dot plot*), porque el valor se lee por la posición del punto y no por el largo de una barra.
+    fuente: wilke
+  - id: t-linea-tiempo
+    frente: ¿Cuándo es apropiado un gráfico de líneas?
+    dorso: Cuando el eje horizontal es el tiempo u otra cantidad con un orden natural, como una dosis.
+    fuente: wilke
+  - id: t-torta-cuando
+    frente: ¿En qué situación funciona bien una torta?
+    dorso: Con pocas porciones y fracciones simples, como una mitad, un tercio o un cuarto.
+    fuente: wilke
+  - id: t-torta-falla
+    frente: ¿Por qué una torta falla para comparar la participación de cinco empresas parejas a lo largo de varios años?
+    dorso: Porque cuesta comparar rebanadas parecidas dentro de una torta y entre tortas; las barras lado a lado lo permiten.
+    fuente: wilke
+  - id: t-distancia-vs-area
+    frente: ¿Qué hace que las barras comparen mejor que una torta con los mismos datos?
+    dorso: Que juzgamos mejor distancias que áreas, y la torta hace parecer más chicas las diferencias.
+    fuente: wilke
+  - id: t-orden-barras
+    frente: Si las categorías de un gráfico de barras no tienen orden natural, ¿cómo las ordenás?
+    dorso: Por valor, de mayor a menor o al revés.
+    fuente: wilke
+  - id: t-etiquetas-largas
+    frente: Tus categorías son nombres largos de sucursales. ¿Qué orientación de barras conviene?
+    dorso: Horizontal, para que las etiquetas se lean sin rotarlas.
+    fuente: wilke
+  - id: t-etiqueta-directa
+    frente: En un gráfico de líneas con tres series, ¿qué conviene en lugar de una leyenda aparte?
+    dorso: Escribir el nombre de cada serie junto a su línea.
+    fuente: wilke
+  - id: t-explorar-vs-presentar
+    frente: ¿En qué cambia un gráfico para presentar a gerencia respecto de uno para explorar?
+    dorso: Es más simple y está centrado en el mensaje, mientras que el exploratorio muestra el detalle técnico que necesita un analista.
+    fuente: emc-ds
+
+ejercicios:
+  - id: e-barra-truncada
+    tipo: numerico
+    enunciado: |
+      Un tablero muestra dos barras de ventas, de 100 y 110 unidades, con el eje vertical empezando en 90. ¿Cuántas veces más larga se ve la barra de 110 que la de 100? Respondé con un decimal.
+    respuesta: 2
+    tolerancia:
+      absoluta: 0.05
+    unidad: veces
+    explicacion: |
+      Con el eje desde 90, lo que se dibuja es la distancia al piso: $110 - 90 = 20$ y $100 - 90 = 10$. La barra se ve el doble de larga, aunque la diferencia real entre los valores es de apenas 10 %.
+    erroresComunes:
+      - valor: 1.1
+        explicacion: Esa es la razón real entre los valores (110 dividido 100). Lo que se pregunta es cuánto se ve más larga con el eje truncado.
+    fuente: wilke
+  - id: e-angulo-rebanada
+    tipo: numerico
+    enunciado: |
+      En una torta de ventas por región, el Norte vendió 520, el Sur 480 y el Centro 500 (miles de pesos). ¿Cuántos grados ocupa la rebanada del Norte? Respondé con un decimal.
+    respuesta: 124.8
+    tolerancia:
+      absoluta: 0.1
+    unidad: grados
+    explicacion: |
+      El total es $520 + 480 + 500 = 1500$. La proporción del Norte es $520/1500 \approx 0{,}3467$, y el ángulo es $0{,}3467 \times 360^\circ = 124{,}8^\circ$. Las otras dos rebanadas miden 115,2° y 120°: casi iguales, por eso en una torta cuesta decir cuál es mayor.
+    erroresComunes:
+      - valor: 34.7
+        explicacion: Ese es el porcentaje (34,7 %). El ángulo se obtiene multiplicando la proporción por 360.
+    fuente: wilke
+  - id: e-grafico-para-24-meses
+    tipo: opcion-multiple
+    enunciado: Tenés las ventas mensuales de tres regiones durante 24 meses y tenés que mostrar cómo evolucionó cada una. ¿Qué gráfico elegís?
+    opciones:
+      - texto: Una torta por mes, una al lado de la otra.
+        explicacion: Obliga a comparar 24 imágenes de memoria, y las rebanadas parecidas son difíciles de comparar entre tortas.
+      - texto: Un gráfico de líneas con una línea por región, etiquetada directamente.
+        correcta: true
+        explicacion: El eje horizontal es el tiempo, que es justo el caso del gráfico de líneas, y las etiquetas directas evitan buscar en una leyenda.
+      - texto: Barras apiladas con 24 columnas y tres colores.
+        explicacion: Apilar sirve para ver el total, pero la evolución de cada región queda separada de la base y es difícil de seguir.
+      - texto: Una dispersión del mes contra el monto, con un color por región.
+        explicacion: Muestra los puntos pero sin unirlos pierde el orden en el tiempo que la línea sí marca.
+    fuente: wilke
+  - id: e-barras-sucursales
+    tipo: opcion-multiple
+    enunciado: Querés comparar la cantidad de tickets por sucursal para 30 sucursales con nombres largos, sin un orden particular. ¿Cuál es la mejor opción?
+    opciones:
+      - texto: Barras verticales en el orden alfabético de los nombres.
+        explicacion: Con nombres largos hay que rotar las etiquetas, que quedan difíciles de leer, y el orden alfabético no cuenta nada de los datos.
+      - texto: Una torta con 30 rebanadas.
+        explicacion: Treinta rebanadas son demasiadas para comparar y las parecidas no se distinguen.
+      - texto: Barras horizontales ordenadas por cantidad.
+        correcta: true
+        explicacion: Las barras horizontales dejan leer los nombres largos, y ordenar por valor deja ver el ranking de un vistazo cuando las categorías no tienen orden natural.
+    fuente: wilke
+  - id: e-vf-torta-nunca
+    tipo: verdadero-falso
+    enunciado: Un gráfico de torta nunca es una opción válida.
+    respuesta: false
+    justificacion: La torta funciona cuando hay pocas porciones y fracciones simples, por ejemplo para mostrar que dos partidos suman algo más de la mitad. Lo que falla es usarla para muchas rebanadas parecidas o para comparar entre períodos.
+    fuente: wilke
+  - id: e-vf-barra-recortada
+    tipo: verdadero-falso
+    enunciado: Para que las diferencias se vean mejor, una barra puede empezar en un valor distinto de cero siempre que el eje esté rotulado.
+    respuesta: false
+    justificacion: El largo de la barra tiene que ser proporcional al valor. Aunque el eje esté rotulado, el ojo compara los largos y exagera las diferencias. Si necesitás un eje recortado, usá puntos.
+    fuente: wilke
+
+problemas:
+  - id: p-wilke-directorio
+    enunciado: Tomá una planilla propia con al menos tres columnas distintas (una fecha, una categoría y un número). Escribí cinco preguntas que se le puedan hacer a esos datos, elegí para cada una el tipo de gráfico según el directorio del libro y armá los cinco en Excel, Sheets o Python. Anotá en una línea por qué elegiste cada uno.
+    fuente: wilke
+    ubicacion: cap. 5, §5.1 a §5.4
+    url: https://clauswilke.com/dataviz/directory-of-visualizations.html
+    dificultad: basico
+  - id: p-wilke-torta-barras
+    enunciado: Con cinco categorías de valores parecidos, dibujá una torta y barras horizontales ordenadas. Pedile a alguien que ordene las categorías de mayor a menor mirando cada gráfico y anotá en cuál se equivoca más y cuánto tarda.
+    fuente: wilke
+    ubicacion: cap. 10, §10.1 y §10.2
+    url: https://clauswilke.com/dataviz/visualizing-proportions.html
+    dificultad: intermedio
+  - id: p-emc-presentacion
+    enunciado: Armá la misma información en dos versiones, una para un compañero analista y otra para el gerente, siguiendo la idea de exploración frente a presentación. Escribí qué le sacaste o le agregaste a cada una.
+    fuente: emc-ds
+    ubicacion: cap. 3, §3.2.5 (Data Exploration Versus Presentation), pp. 99-101
+    dificultad: basico

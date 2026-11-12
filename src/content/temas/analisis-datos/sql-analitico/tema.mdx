@@ -1,0 +1,232 @@
+---
+titulo: "SQL analítico: agregaciones y funciones de ventana"
+area: analisis-datos
+orden: 3
+resumen: Cómo resumir con GROUP BY, y cómo rankear, acumular y comparar filas con funciones de ventana sin perder el detalle ni armar subconsultas encadenadas.
+materias:
+  - carrera: ing-informatica
+    codigo: "3641"
+    nombre: Bases de Datos Aplicada
+  - carrera: ing-informatica
+    codigo: "3636"
+    nombre: Bases de Datos
+  - carrera: lic-gestion-tecnologia
+    codigo: "1320"
+    nombre: Explotación y Administración de BD
+prerrequisitos: []
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: pg-ventana
+    tipo: doc-oficial
+    autor: PostgreSQL Global Development Group
+    titulo: PostgreSQL 18 Documentation — Tutorial, Window Functions
+    url: https://www.postgresql.org/docs/current/tutorial-window.html
+    ubicacion: §3.5
+    edicion: PostgreSQL 18
+  - id: pg-funciones
+    tipo: doc-oficial
+    autor: PostgreSQL Global Development Group
+    titulo: PostgreSQL 18 Documentation — Window Functions (funciones incorporadas)
+    url: https://www.postgresql.org/docs/current/functions-window.html
+    ubicacion: §9.22
+    edicion: PostgreSQL 18
+  - id: pg-sintaxis
+    tipo: doc-oficial
+    autor: PostgreSQL Global Development Group
+    titulo: PostgreSQL 18 Documentation — Window Function Calls
+    url: https://www.postgresql.org/docs/current/sql-expressions.html
+    ubicacion: §4.2.8
+    edicion: PostgreSQL 18
+  - id: pg-agrupar
+    tipo: doc-oficial
+    autor: PostgreSQL Global Development Group
+    titulo: PostgreSQL 18 Documentation — Aggregate Functions, GROUP BY y HAVING, Window Function Processing
+    url: https://www.postgresql.org/docs/current/queries-table-expressions.html
+    ubicacion: tutorial §2.7; §7.2.3 y §7.2.5
+    edicion: PostgreSQL 18
+  - id: emc-ds
+    tipo: libro
+    autor: EMC Education Services
+    titulo: "Data Science and Big Data Analytics: Discovering, Analyzing, Visualizing and Presenting Data"
+    edicion: Wiley, 2015
+    editorial: John Wiley & Sons
+    ubicacion: cap. 11, §11.3.1 "Window Functions", pp. 343-344
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="El ranking de vendedores por región, y cuánto llevamos en el mes">
+
+Viernes, 15:00. La gerenta comercial te pide dos cosas para el cierre de marzo: el ranking de vendedores dentro de cada región y cuánto se lleva vendido acumulado día a día. Tenés la tabla `ventas`, con una fila por venta (fecha, región, vendedor y monto).
+
+Con `GROUP BY` sacás el total por región sin problema. Pero apenas querés ver cada vendedor al lado de su ranking, o cada venta con el acumulado hasta ese día, el resumen deja de servirte: al agrupar perdiste las filas individuales. Un compañero te cuenta que él lo resolvía con tres subconsultas anidadas y un `JOIN` de la tabla consigo misma, y que nadie se animaba a tocar esa consulta después.
+
+¿Hay una forma de resumir sin perder el detalle?
+
+</CasoReal>
+
+<Intuicion>
+
+La diferencia entre las dos herramientas se puede decir en una oración: `GROUP BY` colapsa las filas de cada grupo en una sola, mientras que una función de ventana (*window function*) calcula sobre un grupo de filas pero deja cada fila donde está<Cita f="pg-ventana" loc="§3.5" />.
+
+<Analogia titulo="El acta y la planilla con una columna extra">
+
+Imaginá la planilla de ventas impresa. Con `GROUP BY` es como si hicieras el resumen al pie: una línea por región con su total, y se acabó el detalle de cada venta. Con una función de ventana es como si dejaras la planilla entera y agregaras una columna a la derecha donde cada fila ve el total de su región, su puesto en el ranking o lo acumulado hasta ella. Las filas siguen siendo las mismas; solo ganan una columna calculada mirando a sus vecinas.
+
+</Analogia>
+
+Primero mirá cómo se achica la tabla al agrupar.
+
+<SimTablaSQL
+  consigna="Corré la animación de agrupar por región y comparé las filas de entrada con las de salida. ¿Cuántas filas quedan y qué le pasó al detalle de cada venta?"
+  tabla="ventas"
+  operacion="group-by"
+  funcion="sum"
+  particionarPor="region"
+/>
+
+Ahora la versión con ventana: la suma acumulada, que no colapsa nada.
+
+<SimTablaSQL
+  consigna="Corré la animación de la suma acumulada por región ordenada por fecha. ¿Cuántas filas salen y qué le pasa a la columna nueva cuando empieza una región distinta?"
+  tabla="ventas"
+  operacion="ventana"
+  funcion="suma-acumulada"
+  particionarPor="region"
+  ordenarPor="fecha"
+  editable
+/>
+
+Lo que tenés que notar: en el primer caso la salida tiene tantas filas como regiones; en el segundo, tantas como la entrada, con una columna nueva. Y el acumulado reinicia al cambiar de región porque `PARTITION BY` trata a cada región como un mundo aparte.
+
+<Ojo>
+
+Dos ventas el mismo día pueden mostrar el mismo acumulado. No es un error: es cómo se define el marco por defecto. Lo desarmamos abajo.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### La tabla de ejemplo
+
+Todos los resultados de este tema salen de esta tabla, con datos inventados (montos en miles de pesos). Podés correrla tal cual en PostgreSQL:
+
+```sql
+CREATE TABLE ventas (
+  fecha    date,
+  region   text,
+  vendedor text,
+  monto    numeric(10,2)
+);
+
+INSERT INTO ventas (fecha, region, vendedor, monto) VALUES
+  ('2026-03-02', 'Norte',  'Ana',   1200),
+  ('2026-03-05', 'Norte',  'Bruno',  800),
+  ('2026-03-09', 'Sur',    'Carla', 1500),
+  ('2026-03-12', 'Sur',    'Diego',  900),
+  ('2026-03-15', 'Norte',  'Ana',   1000),
+  ('2026-03-20', 'Centro', 'Eva',    700),
+  ('2026-03-23', 'Centro', 'Eva',   1100),
+  ('2026-03-27', 'Sur',    'Carla',  600),
+  ('2026-03-27', 'Norte',  'Bruno',  800),
+  ('2026-03-29', 'Centro', 'Fabi',   700),
+  ('2026-03-30', 'Sur',    'Diego', 1500),
+  ('2026-03-31', 'Norte',  'Ana',    500);
+```
+
+### Agregar: GROUP BY, WHERE y HAVING
+
+```sql
+SELECT region, count(*) AS ventas, sum(monto) AS total
+FROM ventas
+GROUP BY region
+HAVING sum(monto) > 4000;
+```
+
+Devuelve Norte (5 ventas, 4300) y Sur (4 ventas, 4500); el Centro suma 2500 y queda afuera. Tres reglas del manual: en general, en una consulta agrupada toda columna que no esté en el `GROUP BY` solo puede aparecer dentro de un agregado (salvo las que dependen funcionalmente de la clave primaria por la que agrupás)<Cita f="pg-agrupar" loc="§7.2.3" />; `WHERE` filtra filas antes de agrupar y `HAVING` filtra grupos ya agregados<Cita f="pg-agrupar" loc="tutorial §2.7" />; y por eso no podés poner un agregado en `WHERE`.
+
+### Ventanas: la sintaxis
+
+Una función de ventana se reconoce por el `OVER`. Sin él es un agregado común<Cita f="pg-ventana" loc="§3.5" />. Dentro de los paréntesis van, todos opcionales, `PARTITION BY` (cómo se parten las filas), `ORDER BY` (cómo se ordenan dentro de cada parte) y un marco (*frame*) que dice qué filas ve cada fila<Cita f="pg-sintaxis" loc="§4.2.8" />. Si omitís `PARTITION BY`, toda la tabla es una sola partición.
+
+```sql
+SELECT fecha, region, monto,
+       sum(monto) OVER (PARTITION BY region) AS total_region,
+       round(100 * monto / sum(monto) OVER (PARTITION BY region), 1) AS pct
+FROM ventas;
+```
+
+La venta de Eva del 23/03 (1100) aparece con total_region 2500 y pct 44,0. Ninguna fila desapareció: salen las 12.
+
+### Rankings: row_number, rank y dense_rank
+
+Las tres numeran filas dentro de la partición según el `ORDER BY`, pero tratan distinto los empates. `row_number()` da números únicos y, entre filas empatadas, el orden queda sin especificar<Cita f="pg-ventana" loc="§3.5" />. `rank()` da el mismo número a los empatados y deja un hueco después. `dense_rank()` da el mismo número a los empatados y no deja hueco<Cita f="pg-funciones" loc="§9.22" />. Con los montos del Norte ordenados de mayor a menor:
+
+| monto | row_number | rank | dense_rank |
+|---|---|---|---|
+| 1200 | 1 | 1 | 1 |
+| 1000 | 2 | 2 | 2 |
+| 800 | 3 | 3 | 3 |
+| 800 | 4 | 3 | 3 |
+| 500 | 5 | 5 | 4 |
+
+Para el pedido de la gerenta se combinan agrupar y rankear en una sola consulta. Las ventanas se evalúan después de `GROUP BY` y `HAVING`, así que pueden usar los totales ya agregados<Cita f="pg-agrupar" loc="§7.2.5" />. El libro de EMC arma algo parecido, aunque con la agregación en una subconsulta<Cita f="emc-ds" loc="§11.3.1, pp. 343-344" />.
+
+```sql
+SELECT region, vendedor, sum(monto) AS total,
+       rank() OVER (PARTITION BY region ORDER BY sum(monto) DESC) AS puesto
+FROM ventas
+GROUP BY region, vendedor
+ORDER BY region, puesto;
+```
+
+Resultado (PostgreSQL muestra los montos con dos decimales por el tipo `numeric(10,2)`; acá los abrevio): Centro, Eva 1800 (puesto 1) y Fabi 700 (2); Norte, Ana 2700 (1) y Bruno 1600 (2); Sur, Diego 2400 (1) y Carla 2100 (2).
+
+### Acumulados, promedios móviles y vecinas
+
+Una suma con `ORDER BY` dentro del `OVER` es un acumulado, pero ojo con el marco. Por defecto el marco con `ORDER BY` abarca desde el inicio de la partición hasta la fila actual **y sus empatadas** según ese orden<Cita f="pg-sintaxis" loc="§4.2.8" />. Por eso el 27/03 hay dos ventas con el mismo acumulado:
+
+```sql
+SELECT fecha, monto,
+       sum(monto) OVER (ORDER BY fecha) AS acumulado
+FROM ventas;
+```
+
+Las dos del 27/03 muestran 8600, porque son pares entre sí. Si querés un acumulado fila a fila, pedí el marco en filas y agregá un desempate para que el orden sea determinista:
+
+```sql
+SELECT fecha, region, monto,
+       sum(monto) OVER (PARTITION BY region
+                        ORDER BY fecha
+                        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS acumulado_region,
+       avg(monto) OVER (ORDER BY fecha, vendedor
+                        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS promedio_movil,
+       monto - lag(monto) OVER (PARTITION BY region ORDER BY fecha) AS dif_vs_anterior
+FROM ventas;
+```
+
+`lag(valor)` trae el valor de la fila anterior de la partición, y devuelve `NULL` en la primera porque no tiene anterior<Cita f="pg-funciones" loc="§9.22" />. En el Norte, el acumulado va 1200, 2000, 3000, 3800 y 4300.
+
+### Filtrar por una ventana: subconsulta
+
+Las funciones de ventana solo se permiten en el `SELECT` y en el `ORDER BY`, porque se ejecutan después de `WHERE`, `GROUP BY` y `HAVING`. Para quedarte con las dos mejores ventas de cada región, calculás la posición adentro y filtrás afuera<Cita f="pg-ventana" loc="§3.5" />:
+
+```sql
+SELECT region, vendedor, monto, pos
+FROM (
+  SELECT region, vendedor, monto,
+         row_number() OVER (PARTITION BY region ORDER BY monto DESC, fecha) AS pos
+  FROM ventas
+) AS s
+WHERE pos <= 2;
+```
+
+<Profundizar titulo="¿Y el orden en que se ejecuta todo?">
+
+Un orden mental útil: primero `FROM` y `WHERE` eligen las filas, luego `GROUP BY` y `HAVING` las agrupan y filtran, después se calculan las ventanas sobre lo que quedó, y al final se aplica el `ORDER BY` de la consulta<Cita f="pg-agrupar" loc="§7.2.5" />. El orden de salida de las filas solo está garantizado si ponés un `ORDER BY` al final; no lo asumas por el orden de una ventana.
+
+</Profundizar>
+
+</Formal>
