@@ -30,6 +30,7 @@ export default defineConfig({
         theme_color: '#2563eb',
         icons: [{ src: 'icono.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
       },
+      includeManifestIcons: false, // icono.svg ya entra por globPatterns: evita la entrada duplicada del precache
       maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       generateSW: {
         globPatterns: ['**/*.{html,js,css,svg,woff,woff2,json,wasm,pf_meta,pf_index,pf_fragment}'],

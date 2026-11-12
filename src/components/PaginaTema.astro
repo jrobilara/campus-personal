@@ -38,8 +38,8 @@ const indice = [
   ['fuentes', 'Fuentes'],
 ];
 ---
-<Base titulo={`${data.titulo} · Campus personal`} descripcion={data.resumen} noindex={ejemplo} colorArea={area.color} colorAreaOscuro={area.colorOscuro}>
-  <main {...(ejemplo ? { 'data-pagefind-ignore': '' } : { 'data-pagefind-body': '', 'data-pagefind-meta': `area:${area.nombre}` })} id="contenido">
+<Base titulo={`${data.titulo} · Campus personal`} descripcion={data.resumen} noindex={ejemplo} sinBuscador={ejemplo} colorArea={area.color} colorAreaOscuro={area.colorOscuro}>
+  <main {...(ejemplo ? { 'data-pagefind-ignore': '' } : { 'data-pagefind-body': '', 'data-pagefind-meta': `area:${area.nombre}`, 'data-pagefind-filter': `area:${area.nombre}` })} id="contenido">
     <div class="tema-grid">
       <nav class="indice-tema" aria-label="En esta página">
         <ol>

@@ -19,8 +19,10 @@ interface Props {
   colorArea?: string;
   colorAreaOscuro?: string;
   activo?: ItemNav;
+  /** la página no entra al índice del buscador (Pagefind) */
+  sinBuscador?: boolean;
 }
-const { titulo, descripcion, noindex = false, colorArea, colorAreaOscuro, activo } = Astro.props;
+const { titulo, descripcion, noindex = false, colorArea, colorAreaOscuro, activo, sinBuscador = false } = Astro.props;
 const items: { id: ItemNav; texto: string; ruta: string }[] = [
   { id: 'inicio', texto: 'Inicio', ruta: '' },
   { id: 'repaso', texto: 'Repaso', ruta: 'repaso/' },
@@ -62,7 +64,7 @@ const estiloArea = colorArea
       })();
     </script>
   </head>
-  <body style={estiloArea}>
+  <body style={estiloArea} {...(sinBuscador ? { 'data-pagefind-ignore': 'all' } : {})}>
     <a class="saltar" href="#contenido">Saltar al contenido</a>
     <header class="cab">
       <div class="cab-in">
@@ -84,5 +86,10 @@ const estiloArea = colorArea
       </div>
     </header>
     <slot />
+    <script>
+      // La integración PWA no registra el service worker sola (trampa 3): se hace acá.
+      import { registerSW } from 'virtual:pwa-register';
+      registerSW({ immediate: true });
+    </script>
   </body>
 </html>

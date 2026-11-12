@@ -1,8 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Buscador from '../../islas/Buscador';
 ---
-<Base titulo="Buscar · Campus personal" activo="buscar" noindex>
-  <main id="contenido" class="angosto">
-    <header class="pagina-cab"><h1>Buscar</h1><p>Temas, tarjetas y ejercicios.</p></header>
+<Base titulo="Buscar · Campus personal" activo="buscar" sinBuscador noindex>
+  <main id="contenido" class="angosto" data-pagefind-ignore>
+    <header class="pagina-cab"><h1>Buscar</h1><p>Temas, tarjetas y ejercicios. Funciona sin conexión.</p></header>
+    <Buscador client:only="react"><p class="meta" slot="fallback">Cargando…</p></Buscador>
   </main>
 </Base>

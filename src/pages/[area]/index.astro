@@ -42,7 +42,7 @@ const tituloDe = (id: string) => temas.find((t) => t.id === id)?.data.titulo ?? 
         {temas.map((t, i) => (
           <li class="paso" data-n={i + 1}>
             <div class="paso-cuerpo">
-              <h2><a href={url(`${t.id}/`)}>{t.data.titulo}</a></h2>
+              <h2><a href={url(t.data.ejemplo ? 'ejemplo/' : `${t.id}/`)}>{t.data.titulo}</a></h2>
               <p>{t.data.resumen}</p>
               <div class="chips">
                 <span class="nivel">{NIVELES.map((_n, k) => <i class:list={{ on: k <= NIVELES.indexOf(t.data.nivel) }} />)}<span>{NIVEL_TEXTO[t.data.nivel]}</span></span>

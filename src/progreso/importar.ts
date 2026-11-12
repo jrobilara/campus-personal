@@ -87,8 +87,8 @@ export function resumir(p: ProgresoV1, catalogo?: Catalogo): ResumenImport {
 /** Paso 6: guarda una copia del progreso actual y después escribe el importado (con exportadoEn: null). */
 export async function confirmarImport(progreso: ProgresoV1, almacen: Almacen): Promise<void> {
   const actual = await almacen.leer(CLAVE_PROGRESO);
-  if (actual !== undefined) await almacen.escribir(CLAVE_ANTES, actual);
-  else await almacen.borrar(CLAVE_ANTES);
+  // sin progreso previo también se guarda una copia (vacía): así "Deshacer" siempre vuelve al estado de antes
+  await almacen.escribir(CLAVE_ANTES, actual ?? progresoVacio());
   await almacen.escribir(CLAVE_PROGRESO, { ...progreso, exportadoEn: null });
 }
 

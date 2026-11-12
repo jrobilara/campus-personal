@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PanelAjustes from '../../islas/PanelAjustes';
 ---
-<Base titulo="Ajustes · Campus personal" activo="ajustes" noindex>
+<Base titulo="Ajustes · Campus personal" activo="ajustes" sinBuscador noindex>
   <main id="contenido" class="angosto" data-pagefind-ignore>
     <header class="pagina-cab"><h1>Ajustes</h1><p>Tu progreso vive en este navegador. Desde acá lo pasás a otro dispositivo o lo reiniciás.</p></header>
     <PanelAjustes client:only="react"><p class="meta" slot="fallback">Cargando…</p></PanelAjustes>
