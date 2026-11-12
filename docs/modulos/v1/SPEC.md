@@ -74,7 +74,7 @@ Mínimo 3 por área, el 4.º si pasa la verificación. Entre paréntesis, la mat
 5. CUANDO se exporta el progreso y se importa en un navegador limpio, el panel DEBE mostrar los mismos números. SI el JSON es inválido, ENTONCES el sistema DEBE avisar y no tocar el progreso actual.
 6. CUANDO no hay red, después de una primera visita, la app DEBE abrir la portada y un tema ya visitado (test Playwright offline).
 7. CUANDO se busca "varianza" en el sitio publicado bajo el subpath, el buscador DEBE devolver el tema que la trata.
-8. Cada tema publicado DEBE tener su informe de verificación (`docs/verificacion/<tema>.md`), hecho por un agente distinto del autor, sin hallazgos abiertos.
+8. Cada tema publicado DEBE tener su informe de verificación (`docs/modulos/v1/verificacion/<tema>.md` (movida desde `docs/verificacion/` en F6b: la raíz de `docs/` no admite carpetas extra)), hecho por un agente distinto del autor, sin hallazgos abiertos.
 
 ## Ejecución
 Tamaño: módulo solo

@@ -3,12 +3,12 @@
 > Foto de dónde quedamos. `/cierre` lo SOBREESCRIBE ENTERO: acá no se apila historia (eso es el CHANGELOG). Tope 5.000 bytes, secciones fijas y en este orden. Si no entra: el detalle va al CHANGELOG, las trampas a `referencia/trampas.md` y los pendientes al TODO.
 
 ## Estado
-- Rama · entorno: main · local (sin entornos reales; el sitio va a GitHub Pages)
+- Rama · entorno: main · local; el sitio va a GitHub Pages (`https://jrobilara.github.io/campus-personal/`)
 - Accesos temporales a producción: ninguno
-- Producción: no hay (se publica en F6)
+- Producción: F6b en curso (repo público, Pages y primer deploy); chequeo completo verde antes de publicar (377 unit + 170 e2e)
 
 ## Próximo paso
-`inicio — ejecutá docs/modulos/v1/SPEC.md (está READY)` — arranca F1 (plan de contenido con Opus medio), según la ficha `docs/modulos/v1/README.md`.
+Confirmar el deploy en el sitio vivo (portada con las 6 áreas, un tema por área, buscador "varianza", offline, export/import) y, si todo anda, avanzar a F7 (revisión de código y de UI) según `docs/modulos/v1/README.md`.
 
 ## Bloqueos
 - ninguno
