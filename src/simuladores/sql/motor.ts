@@ -100,11 +100,13 @@ export function consultaSQL(c: Config): string {
   const marco = c.funcion === 'suma-acumulada' ? 'ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW'
     : c.funcion === 'promedio-movil' ? `ROWS BETWEEN ${c.marco} PRECEDING AND CURRENT ROW` : '';
   const f = expresionFuncion(c);
-  if (!marco) return [`SELECT *,`, `       ${f} OVER (${[partir, ordenar].filter(Boolean).join(' ')}) AS ${nombre}`, `FROM ${c.tabla};`].join('\n');
+  // El ORDER BY de afuera fija el orden en que se muestran las filas del resultado (la ventana no ordena la salida por sí sola).
+  const salida = `ORDER BY ${[c.particion, `${c.orden}${c.sentido === 'DESC' ? ' DESC' : ''}`].filter(Boolean).join(', ')};`;
+  if (!marco) return [`SELECT *,`, `       ${f} OVER (${[partir, ordenar].filter(Boolean).join(' ')}) AS ${nombre}`, `FROM ${c.tabla}`, salida].join('\n');
   return [
     `SELECT *,`, `       ${f} OVER (`,
     ...(partir ? [`         ${partir}`] : []), `         ${ordenar}`, `         ${marco}`,
-    `       ) AS ${nombre}`, `FROM ${c.tabla};`,
+    `       ) AS ${nombre}`, `FROM ${c.tabla}`, salida,
   ].join('\n');
 }
 
@@ -139,7 +141,7 @@ export interface FilaVentana {
   valor: Celda | null;
   /** posición dentro de su partición, ya ordenada (0 = la primera) */
   pos: number;
-  /** índice de partición (según la primera aparición) */
+  /** índice de partición (en orden alfabético de su valor, como el ORDER BY de afuera) */
   particion: number;
   /** filas de entrada que entran en el cálculo de esta fila (incluye a la propia) */
   marco: number[];
@@ -152,7 +154,7 @@ export function ejecutarVentana(c: Config): { columna: string; filas: FilaVentan
   const dir = c.sentido === 'DESC' ? -1 : 1;
   const filas: FilaVentana[] = tb.filas.map(() => ({ valor: null, pos: 0, particion: 0, marco: [] }));
   const nombres: string[] = [];
-  [...grupos.entries()].forEach(([clave, idx], p) => {
+  [...grupos.entries()].sort((a, b) => comparar(a[0], b[0])).forEach(([clave, idx], p) => {
     nombres.push(clave);
     const orden = [...idx].sort((a, b) => dir * comparar(tb.filas[a]![c.orden]!, tb.filas[b]![c.orden]!) || a - b);
     const medida = (i: number) => valorMedida(tb.filas[i]!, c.tabla, c.funcion);
@@ -174,6 +176,11 @@ export function ejecutarVentana(c: Config): { columna: string; filas: FilaVentan
     });
   });
   return { columna: alias(c.tabla, c.funcion), filas, particiones: nombres };
+}
+
+/** Índices de las filas de entrada en el orden del resultado: por partición y, dentro de ella, por la posición en la ventana. */
+export function ordenDeSalida(filas: FilaVentana[]): number[] {
+  return filas.map((_, i) => i).sort((a, b) => filas[a]!.particion - filas[b]!.particion || filas[a]!.pos - filas[b]!.pos);
 }
 
 /** Fila de entrada que se muestra seleccionada al empezar: la primera con el marco completo (o la última). */
