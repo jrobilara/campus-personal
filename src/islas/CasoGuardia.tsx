@@ -45,7 +45,7 @@ export default function CasoGuardia({ id, titulo, rolHtml, contextoHtml, inicio,
     setPendiente(null);
     setTimeout(() => foco.current?.focus(), 0);
   };
-  const reiniciar = () => { setActual(inicio); setPasos([]); setPendiente(null); registrado.current = null; };
+  const reiniciar = () => { setActual(inicio); setPasos([]); setPendiente(null); registrado.current = null; setTimeout(() => foco.current?.focus(), 0); };
 
   return (
     <article className="caso" id={id.split('#')[1]} data-testid="caso-guardia">

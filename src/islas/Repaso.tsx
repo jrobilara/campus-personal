@@ -19,14 +19,16 @@ export default function Repaso() {
   const p = useProgreso();
   const ahora = useAhora(15_000);
   const [plan, setPlan] = useState<Planificador | null>(null);
-  const [mostrada, setMostrada] = useState(false);
+  // id de la tarjeta cuya respuesta está a la vista: si la cola cambia de tarjeta (otra vuelve a su hora, otra pestaña califica), no se hereda
+  const [mostradaDe, setMostradaDe] = useState<string | null>(null);
   const [hechas, setHechas] = useState(0);
   const [ocupado, setOcupado] = useState(false);
+  const [errorGuardar, setErrorGuardar] = useState(false);
   const [filtro] = useState(() => {
     const q = new URLSearchParams(location.search);
     return { tema: q.get('tema') ?? undefined, area: q.get('area') ?? undefined };
   });
-  const botonRef = useRef<HTMLButtonElement>(null);
+  const dorsoRef = useRef<HTMLDivElement>(null);
   useEffect(() => { void crearPlanificador().then(setPlan); }, []);
 
   const cola = useMemo(
@@ -35,22 +37,34 @@ export default function Repaso() {
   );
   const actual = cola ? (cola.vencidas[0] ?? cola.nuevas[0]) : undefined;
   const restantes = cola ? cola.vencidas.length + cola.nuevas.length : 0;
+  const mostrada = !!actual && mostradaDe === actual.id;
   const intervalos = useMemo(() => (plan && p && actual ? intervalosPrevistos(plan, p, actual.id, ahora) : null), [plan, p, actual, ahora]);
 
   const calificar = async (nota: Nota) => {
     if (!actual || ocupado) return;
     setOcupado(true);
-    await calificarTarjeta(actual.id, nota);
-    setHechas((h) => h + 1);
-    setMostrada(false);
-    setOcupado(false);
+    try {
+      await calificarTarjeta(actual.id, nota);
+      setHechas((h) => h + 1);
+      setMostradaDe(null);
+      setErrorGuardar(false);
+    } catch (e) {
+      console.warn('[repaso] no pude guardar la calificación', e);
+      setErrorGuardar(true);
+    } finally {
+      setOcupado(false);
+    }
   };
+  const mostrar = () => { if (actual) { setMostradaDe(actual.id); setErrorGuardar(false); } };
+
+  // al mostrar la respuesta, el foco pasa a ella: con teclado o lector de pantalla se oye la respuesta y el Tab siguiente cae en los botones
+  useEffect(() => { if (mostrada) dorsoRef.current?.focus(); }, [mostrada]);
 
   useEffect(() => {
     const f = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement;
       if (el.closest('input, textarea, select') || e.metaKey || e.ctrlKey || e.altKey || !actual) return;
-      if (e.key === ' ' && !mostrada) { e.preventDefault(); setMostrada(true); }
+      if (e.key === ' ' && !mostrada) { e.preventDefault(); mostrar(); }
       else if (mostrada && ['1', '2', '3', '4'].includes(e.key)) { e.preventDefault(); void calificar(Number(e.key) as Nota); }
     };
     window.addEventListener('keydown', f);
@@ -71,8 +85,8 @@ export default function Repaso() {
       {(filtroTema || filtroArea) && (
         <p className="meta">Repasando solo: <strong>{filtroTema?.titulo ?? filtroArea?.nombre}</strong> · <a href={url('repaso/')}>Ver todo lo de hoy</a></p>
       )}
-      <div className="repaso-avance" aria-label={`Llevás ${hechas} de ${total}`}>
-        <span className="medidor"><i style={{ ['--valor' as string]: `${total ? (hechas / total) * 100 : 0}%` }} /></span>
+      <div className="repaso-avance">
+        <span className="medidor" role="progressbar" aria-label="Avance del repaso" aria-valuemin={0} aria-valuemax={total} aria-valuenow={hechas}><i style={{ ['--valor' as string]: `${total ? (hechas / total) * 100 : 0}%` }} /></span>
         <span data-testid="repaso-restantes">{restantes === 0 ? 'Terminaste' : `Faltan ${restantes}`}</span>
       </div>
 
@@ -82,7 +96,8 @@ export default function Repaso() {
           <div className="tarjeta-frente" dangerouslySetInnerHTML={{ __html: actual.frenteHtml }} />
           {mostrada ? (
             <>
-              <div className="tarjeta-dorso" data-testid="dorso" dangerouslySetInnerHTML={{ __html: actual.dorsoHtml }} />
+              <div ref={dorsoRef} tabIndex={-1} className="tarjeta-dorso" data-testid="dorso" dangerouslySetInnerHTML={{ __html: actual.dorsoHtml }} />
+              {errorGuardar && <p className="error-campo" role="alert">No pude guardar tu calificación en este navegador. Probá de nuevo.</p>}
               <p className="meta" style={{ margin: '1.2rem 0 0.5rem' }}>¿Qué tan bien te salió?</p>
               <div className="notas">
                 {BOTONES.map((b) => (
@@ -95,7 +110,7 @@ export default function Repaso() {
               </div>
             </>
           ) : (
-            <button ref={botonRef} type="button" className="btn btn-marca mostrar" onClick={() => setMostrada(true)} autoFocus>
+            <button type="button" className="btn btn-marca mostrar" onClick={mostrar} autoFocus>
               Mostrar respuesta <kbd>espacio</kbd>
             </button>
           )}

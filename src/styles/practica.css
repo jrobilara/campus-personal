@@ -166,3 +166,9 @@ kbd { font: 600 0.75rem var(--f-mono); border: 1px solid currentColor; border-ra
 .resultado-busqueda p { margin: 0.3rem 0 0; font-size: 0.95rem; color: var(--suave); }
 .resultado-busqueda mark { background: var(--marca); color: var(--marca-tinta); padding: 0 0.1em; border-radius: 3px; }
 .area-etiqueta { font: 650 0.8rem var(--f-titulo); color: var(--color-area); }
+
+/* Sin movimiento: va al final porque base.css y este archivo declaran las transiciones con la misma especificidad. */
+@media (prefers-reduced-motion: reduce) {
+  .medidor > i, .btn, .area-fila, .nota-btn, .decision-opciones button, .proximos .col i { transition: none; }
+  .btn:hover, .area-fila:hover, .nota-btn:hover:not([disabled]) { transform: none; }
+}
