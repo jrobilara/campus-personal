@@ -3,7 +3,8 @@
 - **Tema:** `probabilidad-estadistica/pruebas-de-hipotesis-ab` (Pruebas de hipótesis y A/B testing)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (dos hallazgos de severidad media que conviene corregir antes de publicar; el resto es menor)
+- **Veredicto (re-verificación sobre ee0ff26):** OBSERVADO (H1, H3, H4 y H5 cerrados; H2 reabierto y dos hallazgos nuevos, H6 y H7)
+- **Veredicto de la primera pasada (9eb3c4b):** OBSERVADO (dos hallazgos de severidad media que conviene corregir antes de publicar; el resto es menor)
 - **Commit revisado:** 9eb3c4b
 - **Afirmaciones revisadas:** 43 (19 del cuerpo, 13 tarjetas, 7 ejercicios, 1 caso, 3 problemas)
 
@@ -107,3 +108,35 @@ Método. Mendenhall (página impresa = PDF − 24) y MIT 18.05 Readings 17b, 20,
 - **Qué está mal:** la ubicación es incompleta. "Sube con más datos" y "determinar de antemano el número de pruebas" están en §4.4.2 (Conceptual sketches); "más grande cuando la alternativa está más lejos" está en §4.3.
 - **Qué dice la fuente:** MIT 17b §4.3 y §4.4.2.
 - **Corrección propuesta:** `loc="Reading 17b, §4.3 y §4.4.2"`.
+
+## Re-verificación (diff 9eee9c2..ee0ff26, fecha 2026-11-11)
+
+| Hallazgo | Estado | Comprobación |
+|---|---|---|
+| H1 | **CERRADO (ee0ff26)** | Formal: "si no hubiera ningún efecto, un resultado tan extremo sería poco común (el p-valor es menor que α)", con cita a MIT 17b §7 (definición del p-valor: probabilidad, suponiendo la nula, de datos al menos tan extremos; se rechaza si p<α). Es la lectura correcta y ya no dice "probablemente no fue casualidad". Dorso de `t-significativo-importante` corregido en el mismo sentido. La nueva tarjeta `t-pvalor-no-es-prob-nula` es correcta en contenido (MIT 20 §5) pero tiene un problema de forma: ver H6. |
+| H2 | **REABIERTO** | La atribución quedó bien: "fórmula usual", NIST §7.2.4.2 para una proporción, proporción conjunta para dos grupos (Mendenhall §9.6), y "cuenta mía". La adaptación a dos grupos es correcta (varianza de la diferencia bajo H0 = 2p̄q̄/n; bajo Ha = (p_A q_A + p_B q_B)/n). Pero el número impreso no sale de los datos impresos: ver H7. |
+| H3 | **CERRADO (ee0ff26)** | Explicación del ejercicio dice "simulación propia del tema". El texto ahora da el diseño completo (z de dos proporciones con p̂ conjunta, dos colas, α=0,05, miradas equiespaciadas con su espaciado por fila, 3000 por grupo, 40.000 repeticiones, semilla 2026) y cita la introducción de Johari ("fivefold", p. 3 del PDF). **Corrí el script que el autor pegó en FUENTES con `random.seed(2026)`: da 28,1 / 13,8 / 4,9 / 15,4 / 8,4 % (30, 5, 1, 6 y 2 miradas), idéntico a la tabla.** La cita del Ojo a MIT 17b §4.3 y §4.4.2 respalda "decidido de antemano"; aceptable. |
+| H4 | **CERRADO (ee0ff26)** | "A los 8 días llegan 1500 por versión": 600 en el día 3 son 200 por día; 1500/200 = 7,5. |
+| H5 | **CERRADO (ee0ff26)** | `loc` ahora "Reading 17b, §4.3 y §4.4.2" en el Formal y en el Ojo; FUENTES #8 ajustado. |
+
+### Hallazgos nuevos o reabiertos
+
+**H2 (reabierto, ver H7)** — se cierra cuando se cierre H7.
+
+**H6 (menor, nuevo)**
+- **Archivo y campo:** `pruebas-de-hipotesis-ab/practica.yaml` → `tarjetas[id=t-pvalor-no-es-prob-nula]` (frente y dorso).
+- **Qué está mal:** (a) el frente "¿Qué NO es el p-valor?" no tiene respuesta única: hay muchas respuestas ciertas (no es el tamaño del efecto, no es la probabilidad de que B sea mejor, no es la probabilidad de la nula…); la guía de estilo §4 pide "pregunta precisa, respuesta única". (b) La idea es la misma de `t-pvalor-no-es` (que ya dice "No; el p-valor es una probabilidad de los datos dada la nula, no una probabilidad de la hipótesis"): dos tarjetas repetidas.
+- **Qué dice la fuente:** el contenido es correcto: MIT 20 §5 ("Frequentist methods only give probabilities of statistics conditioned on hypotheses. They do not give probabilities of hypotheses").
+- **Corrección propuesta:** borrar la tarjeta nueva (la idea ya está en `t-pvalor-no-es`) o reformularla con respuesta única: frente "Si p = 0,03, ¿qué probabilidad se calculó y bajo qué suposición?", dorso "La de ver datos al menos tan extremos como los observados, suponiendo cierta la nula."
+
+**H7 (menor, nuevo; mantiene abierto H2)**
+- **Archivo y campo:** `pruebas-de-hipotesis-ab/tema.mdx` → Formal, `<Profundizar>`, "Con $p_A = 0{,}08$, … $z_{\alpha/2} = 1{,}96$ y $z_\beta = 0{,}84$ da $n \approx 1498$".
+- **Qué está mal:** con esos valores redondeados la fórmula da 1496,7 (≈1497), no 1498. El 1498 sale con $z_\beta = 0{,}8416$ (1498,4). El lector que reproduzca la cuenta con lo impreso no llega al número. Además la cita a NIST pegada a "hacen falta unas 1500 visitas por grupo" puede leerse como que NIST da ese número; NIST da el método de una proporción, y el 1500 es cálculo propio (el Profundizar lo aclara, el párrafo anterior no).
+- **Qué dice la fuente:** NIST §7.2.4.2 da la forma de una proporción; el recálculo propio con $z_{\alpha/2}=1{,}95996$ y $z_\beta=0{,}84162$ da 1498,39; con 1,96 y 0,84, 1496,70.
+- **Corrección propuesta:** escribir $z_\beta = 0{,}8416$ (queda 1498) o "da $n \approx 1497$ (≈1500)"; y en el párrafo previo mover la cita a "unas 1500 visitas por grupo (cuenta propia con la fórmula usual de NIST, ver abajo)".
+
+`npm run build` en verde sobre ee0ff26.
+
+## Hallazgos abiertos (estado final)
+
+H2 (reabierto, depende de H7), H6, H7.

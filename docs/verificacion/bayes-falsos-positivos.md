@@ -3,7 +3,8 @@
 - **Tema:** `probabilidad-estadistica/bayes-falsos-positivos` (Bayes y los falsos positivos)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO (un hallazgo de severidad media sobre la independencia condicional; el resto es menor)
+- **Veredicto (re-verificación sobre ee0ff26):** OBSERVADO (H1 cerrado; H2 reabierto)
+- **Veredicto de la primera pasada (9eb3c4b):** OBSERVADO (un hallazgo de severidad media sobre la independencia condicional; el resto es menor)
 - **Commit revisado:** 9eb3c4b
 - **Afirmaciones revisadas:** 39 (16 del cuerpo, 12 tarjetas, 7 ejercicios, 1 caso, 3 problemas)
 
@@ -74,3 +75,24 @@ Método. MIT 18.05 Readings 3 y 12b, y los psets de las clases 11 y 5, descargad
 - **Qué está mal:** es una afirmación clave (propiedad) sin cita ni número en el cuerpo; FUENTES la respalda con "cálculo propio" pero el texto no lo dice.
 - **Qué dice la fuente:** sin fuente; mi recálculo coincide con el del autor: sensibilidad 98→99,9 % deja el VPP en 20,1 %; falsa alarma 2→0,1 % lo lleva a 83,1 %. El ejercicio e-mejorar-especificidad ya contiene la segunda cuenta.
 - **Corrección propuesta:** agregar "(con estos números, subir la sensibilidad de 98 a 99,9 % deja el VPP en 20 %; bajar las falsas alarmas de 2 % a 0,1 % lo sube a 83 %: cuenta propia)".
+
+## Re-verificación (diff 9eee9c2..ee0ff26, fecha 2026-11-11)
+
+| Hallazgo | Estado | Comprobación |
+|---|---|---|
+| H1 | **CERRADO (ee0ff26)** | Profundizar ahora exige independencia **condicional** "dado el estado real del archivo", con la cita a MIT 12b §4.1 (P(D₁,D₂\|H)=P(D₁\|H)P(D₂\|H)); aclara que "dos alertas sobre el mismo archivo nunca son independientes a secas" (cierto mientras las alertas sean informativas) y que mismas firmas = errores correlacionados. Tarjeta `t-evidencia-independiente` y caso (`método distinto`, "errores … no correlacionados") coherentes. 92,3 % recalculado: 0,92346. |
+| H2 | **REABIERTO** | Los números son correctos: con prevalencia 0,5 % y sensibilidad 98 %, subir la sensibilidad a 99,9 % da VPP=20,06 % (≈20 %); con sensibilidad 98 %, bajar las falsas alarmas de 2 % a 0,1 % da VPP=83,12 % (≈83 %). Y quedó rotulado "(cuenta propia)". Pero la oración no dice qué prevalencia usa ni que en cada cuenta lo demás queda igual: "con los números del caso" obliga a acordarse del 0,5 % (que figura en la consigna del simulador y como "50 de cada 10.000" en el caso real) y de que el 98 % de sensibilidad sigue fijo en la segunda cuenta. Tampoco aclara que los 20 % y 83 % son VPP y que la comparación es con el 19,8 % original. Ver H3. |
+
+### Hallazgos nuevos o reabiertos
+
+**H3 (menor; reemplaza el cierre de H2)**
+- **Archivo y campo:** `bayes-falsos-positivos/tema.mdx` → Intuición, párrafo tras el simulador: "Con los números del caso, subir la sensibilidad de 98 % a 99,9 % deja el VPP en 20 %; bajar las falsas alarmas de 2 % a 0,1 % lo sube a 83 % (cuenta propia)."
+- **Qué está mal:** falta decir la prevalencia (0,5 %) y que cada cambio se hace dejando lo otro como estaba; sin eso, un lector puede pensar que ambos cambios van juntos o que la prevalencia es la del simulador por defecto (1 %), donde los valores dan otro VPP (con 1 %: 33,5 % y 90,8 %). Tampoco dice que el punto de partida es 19,8 %, así que "20 %" parece no moverse "porque sí".
+- **Qué dice la fuente:** cálculo propio recalculado (0,19758 base; 0,20064 y 0,83121).
+- **Corrección propuesta:** "Con prevalencia de 0,5 % y la sensibilidad en 98 %, el VPP es 19,8 %. Subir la sensibilidad a 99,9 % (dejando las falsas alarmas en 2 %) lo deja en 20 %; en cambio, bajar las falsas alarmas de 2 % a 0,1 % (dejando la sensibilidad en 98 %) lo sube a 83 % (cuenta propia)."
+
+`npm run build` en verde sobre ee0ff26.
+
+## Hallazgos abiertos (estado final)
+
+H2 (reabierto; se cierra con H3).

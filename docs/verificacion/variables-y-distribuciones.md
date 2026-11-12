@@ -3,7 +3,8 @@
 - **Tema:** `probabilidad-estadistica/variables-y-distribuciones` (Variables aleatorias y distribuciones: binomial, Poisson y normal)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO (un hallazgo menor, no bloquea)
+- **Veredicto (re-verificación sobre ee0ff26):** APROBADO (todos los hallazgos cerrados)
+- **Veredicto de la primera pasada (9eb3c4b):** APROBADO (un hallazgo menor, no bloquea)
 - **Commit revisado:** 9eb3c4b
 - **Afirmaciones revisadas:** 48 (23 del cuerpo, 14 tarjetas, 7 ejercicios, 1 caso, 3 problemas)
 
@@ -76,3 +77,15 @@ Método. Libros del dueño leídos con `pdftotext` (Mendenhall: página impresa 
 - **Qué está mal:** apunta a `eda366.htm` (índice de la Galería de distribuciones), pero `ubicacion` y las citas hablan de §1.3.6.6.18 y §1.3.6.6.19.
 - **Qué dice la fuente:** la binomial está en `eda366i.htm` y la Poisson en `eda366j.htm` (ambas respondieron y contienen lo citado).
 - **Corrección propuesta:** poner la URL de la sección (`…/eda366j.htm`, o la binomial) o aclarar en `ubicacion` que se llega desde el índice. No cambia ningún dato.
+
+## Re-verificación (diff 9eee9c2..ee0ff26, fecha 2026-11-11)
+
+| Hallazgo | Estado | Comprobación |
+|---|---|---|
+| H1 | **CERRADO (ee0ff26)** | `fuentes[nist-distribuciones].url` ahora es `…/eda366j.htm` (Poisson, §1.3.6.6.19, que respondió y contiene la fórmula, media λ y desvío √λ) y `ubicacion` aclara que la binomial §1.3.6.6.18 está en `eda366i.htm` (también abierta y verificada). FUENTES actualizado de forma coherente. |
+
+Hallazgos nuevos por los cambios: ninguno. `npm run build` en verde sobre ee0ff26.
+
+## Hallazgos abiertos (estado final)
+
+Ninguno.

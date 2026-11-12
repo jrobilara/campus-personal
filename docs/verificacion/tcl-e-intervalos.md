@@ -3,7 +3,8 @@
 - **Tema:** `probabilidad-estadistica/tcl-e-intervalos` (Teorema central del límite e intervalos de confianza)
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO (tres hallazgos menores, no bloquean)
+- **Veredicto (re-verificación sobre ee0ff26):** APROBADO (todos los hallazgos cerrados)
+- **Veredicto de la primera pasada (9eb3c4b):** APROBADO (tres hallazgos menores, no bloquean)
 - **Commit revisado:** 9eb3c4b
 - **Afirmaciones revisadas:** 46 (23 del cuerpo, 12 tarjetas, 7 ejercicios, 1 caso, 3 problemas)
 
@@ -86,3 +87,17 @@ Método. Mendenhall (página impresa = PDF − 24) y Soong (PDF − 17) leídos 
 - **Qué está mal:** la respuesta (5 puntos) es correcta para la regla pedida, pero la explicación no avisa que es el peor caso (p=0,5). Con p̂=0,18 el margen "común" es 1,96·√(0,18·0,82/400)=3,8 puntos; quien lo compare con su planilla verá una diferencia sin entender por qué.
 - **Qué dice la fuente:** MIT 23b §3.1: el intervalo es "conservador", da "al menos 1−α".
 - **Corrección propuesta:** sumar a la explicación "(es una cota conservadora: con p̂=18 % el margen exacto ronda 3,8 puntos)".
+
+## Re-verificación (diff 9eee9c2..ee0ff26, fecha 2026-11-11)
+
+| Hallazgo | Estado | Comprobación |
+|---|---|---|
+| H1 | **CERRADO (ee0ff26)** | Dorso de `t-tcl-enunciado`: "para n grande … (con media y varianza finitas)". Coincide con MIT 6b §5.2 ("For large n") y 23b §4 ("finite mean and variance"). |
+| H2 | **CERRADO (ee0ff26)** | Formal: "Ese 30 es una guía práctica; con asimetría fuerte conviene más (en el ejemplo exponencial, entre 50 y 100)" con cita a MIT 23b §4 ej. 3, que dice "n somewhere between 50 and 100 is large enough for most purposes". Tarjeta `t-tcl-poblacion-asimetrica` acorde. |
+| H3 | **CERRADO (ee0ff26)** | Explicación de `e-regla-pulgar-reabiertos` agrega que es cota conservadora (p=0,5) y que con p̂=18 % el margen exacto ronda 3,8 puntos. Recalculé 1,96·√(0,18·0,82/400)=0,03765. |
+
+Hallazgos nuevos por los cambios: ninguno. `npm run build` en verde sobre ee0ff26.
+
+## Hallazgos abiertos (estado final)
+
+Ninguno.
