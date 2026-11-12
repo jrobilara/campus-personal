@@ -131,7 +131,7 @@ export const defBreaker: DefMaquina<EstadoBreaker> = {
     { clave: 'rechazados-rapido', etiqueta: 'Rechazados al instante', valor: e.rechazados },
     { clave: 'llamadas-al-servicio', etiqueta: 'Llamadas al servicio', valor: e.llamadas },
   ],
-  notasNodos: (e) =>
+  notasNodos: (e): Record<string, string> =>
     e.estado === 'abierto'
       ? { abierto: `reintenta en ${num(Math.max(0, e.hasta - e.t) / 1000, 1)} s` }
       : e.estado === 'semi-abierto'

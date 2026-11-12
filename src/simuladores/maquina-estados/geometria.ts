@@ -73,6 +73,6 @@ export function armarPlano(def: DiagramaDef, angosto: boolean): Plano {
     h,
   }));
   const porId = new Map(cajas.map((c) => [c.id, c]));
-  const flechas = def.flechas.map((f) => flechaGeom(porId.get(f.de)!, porId.get(f.a)!, (f.curva ?? 0) * (angosto ? Math.max(k, 0.6) : 1)));
+  const flechas = def.flechas.map((f) => flechaGeom(porId.get(f.de)!, porId.get(f.a)!, (f.curva ?? 0) * (angosto ? Math.max(k, 0.9) : 1)));
   return { W, H, cajas, flechas, angosto };
 }
