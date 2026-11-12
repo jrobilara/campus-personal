@@ -3,7 +3,8 @@
 - **Tema:** analisis-datos/sql-analitico
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificado en 75bc28a)
+- **Veredicto de la primera pasada (f3ad672):** OBSERVADO
 
 Archivos revisados: `src/content/temas/analisis-datos/sql-analitico/tema.mdx` y `practica.yaml` (commit b885f09).
 Método: páginas de PostgreSQL 18 (§3.5, §4.2.8, §7.2.3, §7.2.5, §9.22, tutorial §2.7) descargadas en crudo; EMC §11.3.1 leído en el PDF local (pp. 343-344); todas las consultas corridas por mí con `sqlite3` 3.50.6 sobre la tabla de 12 filas; cálculos rehechos aparte; búsqueda de secuencias de 6 palabras iguales a las fuentes.
@@ -67,3 +68,16 @@ Piezas revisadas: 29 filas (11 tarjetas, 8 ejercicios, 3 problemas, 7 consultas 
 **H4 — `minutos` no cuadra con la fórmula (baja, no bloqueante).**
 - Archivo/campo: `tema.mdx`, `minutos: 25`. Fórmula de la guía: 945/200 = 4,7 + 4 (2 simuladores) + 8 ejercicios = 16,7 → 15.
 - Corrección propuesta: `minutos: 15`, o justificar contando el código.
+
+## Re-verificación (cierre de F4) — commit 75bc28a
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 — GROUP BY sin excepción | CERRADO (75bc28a) | Ahora "en general… (salvo las que dependen funcionalmente de la clave primaria por la que agrupás)". PostgreSQL 18 §7.2.3: si `product_id` es clave primaria alcanza con agrupar por él porque nombre y precio dependen funcionalmente. |
+| H2 — ubicación del desempate de row_number | CERRADO (75bc28a) | El texto cita `pg-ventana` §3.5 ("tied rows numbered in an unspecified order") y la tarjeta t-row-number-desempate pasó a `fuente: pg-ventana` con "no está especificado". `rank`/`dense_rank` siguen citados a §9.22. |
+| H3 — tarjetas no atómicas | CERRADO (75bc28a) | Partidas en t-ventana-clausulas-permitidas (SELECT y ORDER BY, §3.5 ✅) y t-ventana-no-en-where (se ejecutan después de WHERE/GROUP BY/HAVING ✅); t-rank-hueco (→ 3 ✅) y t-dense-rank-sin-hueco (→ 2 ✅, con dos filas empatadas en el 1.º). Cada una tiene una sola respuesta. Los ids son únicos (24 en total) y quedan 13 tarjetas. |
+| H4 — `minutos` | CERRADO (75bc28a) | `minutos: 15`, igual que la fórmula. |
+
+Las consultas y los números del tema no cambiaron en el diff (sigue valiendo lo corrido con sqlite3). `npx vitest run`: 78 pruebas pasan.
+
+Hallazgos abiertos: ninguno.

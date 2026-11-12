@@ -3,7 +3,8 @@
 - **Tema:** analisis-datos/elegir-el-grafico
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** APROBADO (con 2 hallazgos menores no bloqueantes)
+- **Veredicto:** APROBADO (re-verificado en 75bc28a)
+- **Veredicto de la primera pasada (f3ad672):** APROBADO
 
 Archivos revisados: `src/content/temas/analisis-datos/elegir-el-grafico/tema.mdx` y `practica.yaml` (commit b885f09).
 Método: capítulos 5, 6, 10, 13 y 17 de Wilke descargados en crudo; EMC §3.2.5 leído en el PDF local (pp. 99-100); cálculos rehechos con Python; búsqueda de secuencias de 6 palabras iguales a las fuentes.
@@ -59,3 +60,13 @@ Ninguno bloqueante. Dos menores:
 - Archivo/campo: `tema.mdx`, `minutos: 15`.
 - Guía §2: ≈ 850/200 = 4,3 + 2 (1 simulador) + 6 ejercicios = 12,3 → 10.
 - Corrección propuesta: `minutos: 10`, o justificarlo.
+
+## Re-verificación (cierre de F4) — commit 75bc28a
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 — ubicación EMC sobrante | CERRADO (75bc28a) | Frontmatter ahora "cap. 3, §3.2.5, pp. 99-100". |
+| H2 — `minutos` | CERRADO (75bc28a) | `minutos: 10`, igual que la fórmula de la guía. |
+| Nota de la fila 13 (tarjeta t-linea-tiempo) | CERRADA (75bc28a) | El dorso ahora dice "el tiempo u otra cantidad con un orden natural, como una dosis". Wilke cap. 13: "appropriate whenever the data points have a natural order", con la curva dosis-respuesta como ejemplo. |
+
+Hallazgos abiertos: ninguno.

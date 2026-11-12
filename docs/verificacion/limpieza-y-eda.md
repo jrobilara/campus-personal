@@ -3,7 +3,8 @@
 - **Tema:** analisis-datos/limpieza-y-eda
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificado en 75bc28a)
+- **Veredicto de la primera pasada (f3ad672):** OBSERVADO
 
 Archivos revisados: `src/content/temas/analisis-datos/limpieza-y-eda/tema.mdx` y `practica.yaml` (commit b885f09).
 Método: fuentes web descargadas en crudo (NIST, pandas 3.1.1, R4DS cap. 10, McKinney cap. 7); libro EMC leído en el PDF local (`pdftotext`; página impresa = página del PDF − 20); cálculos rehechos con Python (`statistics`); búsqueda automática de secuencias de 6 palabras iguales a las fuentes (plagio).
@@ -74,3 +75,18 @@ Afirmaciones y piezas revisadas: 37 filas (cubren 10 tarjetas, 5 ejercicios, 1 c
 **H4 — `loc` cosmético (baja, no bloqueante).**
 - Archivo/campo: `tema.mdx`, `<Cita f="pandas-docs" loc="Calculations with NA" />`.
 - La sección se llama "Calculations with missing data" en pandas 3.1.1. Corregir el `loc`.
+
+## Re-verificación (cierre de F4) — commit 75bc28a
+
+Revisé `git diff f3ad672..75bc28a` sobre este tema, con la fuente abierta de nuevo y los números recalculados.
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 — ubicación R4DS | CERRADO (75bc28a) | `<Cita f="r4ds" loc="§10.3.2 y §10.4" />` en el cuerpo, frontmatter `ubicacion` "§10.3.2 y §10.4" y FUENTES filas 10-11 corregidas. Coincide con R4DS: "con y sin outliers" y ceros de diamonds en §10.3.2; reemplazar por NA y vuelos cancelados en §10.4. |
+| H2 — valla inferior | CERRADO (75bc28a) | El párrafo ahora dice que el IQR no atrapa el "3" porque la valla inferior suele ser negativa, con Q1 = 40 y Q3 = 130 → −95. Recalculé: 40 − 1,5·90 = −95. El resto (reglas de validación, histograma, preguntar a quien carga) es criterio y está declarado así en FUENTES fila 13. |
+| H3 — `minutos` | CERRADO (75bc28a) | Ahora `minutos: 10`, igual que la fórmula de la guía. |
+| H4 — `loc` pandas | CERRADO (75bc28a) | `loc="Calculations with missing data"`, el título real de la sección en pandas 3.1.1. |
+
+Pieza modificada: tarjeta t-unidades-antes-que-outliers (ahora "…antes de calcular las vallas del IQR"). El contenido es correcto y coherente con el cuerpo. Observación no bloqueante: el dorso agrega una segunda idea tras el punto y coma ("además el IQR no marca un valor chico…"); la guía §4.1 prefiere una sola. No frena.
+
+Hallazgos abiertos: ninguno. `npx vitest run`: 78 pruebas pasan.

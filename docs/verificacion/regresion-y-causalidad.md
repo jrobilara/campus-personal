@@ -3,7 +3,8 @@
 - **Tema:** analisis-datos/regresion-y-causalidad
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificado en 75bc28a)
+- **Veredicto de la primera pasada (f3ad672):** OBSERVADO
 
 Archivos revisados: `src/content/temas/analisis-datos/regresion-y-causalidad/tema.mdx` y `practica.yaml` (commit b885f09).
 Método: OpenIntro Statistics 4e (LibreTexts §1.3, §1.4, §8.1, §8.2, §8.3, §8.5) descargado en crudo; EMC leído en el PDF local (cap. 3 pp. 82-84; cap. 6 pp. 163-164, 173-175, 188-189); todos los cálculos rehechos con Python (`statistics.linear_regression`, `correlation`) usando los datos de Anscombe de la p. 84 del libro; búsqueda de secuencias de 6 palabras iguales a las fuentes.
@@ -64,3 +65,16 @@ Piezas revisadas: 30 filas (11 tarjetas, 8 ejercicios, 1 caso, 3 problemas y el 
 **H4 — Tarjeta con dos ideas (baja, no bloqueante).**
 - Archivo/campo: `practica.yaml`, tarjeta t-r-solo-lineal (frente "¿Qué mide… y qué no capta bien?").
 - Regla: GUIA-ESTILO §4.1. Corrección propuesta: dos tarjetas, o dejar solo "¿Por qué r puede ser engañoso con una relación curva?".
+
+## Re-verificación (cierre de F4) — commit 75bc28a
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| H1 — §6.1.1 → §6.1.2 | CERRADO (75bc28a) | `loc="§6.1.2, p. 164"` en el cuerpo y FUENTES fila 2. Coincide con el índice del libro. |
+| H2 — §6.4 p. 188 → §6.3 p. 189 | CERRADO (75bc28a) | `loc="§6.3, p. 189"` en el cuerpo, frontmatter "§6.3 (p. 189)" y FUENTES filas 16-17 y lista de fuentes. Releí el PDF: el pasaje del dentista y la extrapolación están en la p. 189, antes del encabezado §6.4. |
+| H3 — `minutos` | CERRADO (75bc28a) | `minutos: 15`, igual que la fórmula. |
+| H4 — tarjeta con dos ideas | CERRADO (75bc28a) | Partida en t-r-mide-que ("fuerza y dirección de una relación lineal, entre −1 y 1": OpenIntro §8.1, correlación −1 a 1 y signo positivo/negativo) y t-r-engana-con-curvas ("solo mide fuerza lineal": OpenIntro §8.1, relaciones no lineales). Ambas con `fuente: openintro`, atómicas, ids únicos (29 en el archivo) y 12 tarjetas. |
+
+Los ejercicios, el caso y las tablas no cambiaron. `npx vitest run`: 78 pruebas pasan.
+
+Hallazgos abiertos: ninguno.
