@@ -7,6 +7,7 @@ import { AstroPWAIntegration } from '@vite-pwa/astro'; // export NOMBRADO (tramp
 import { unified } from '@astrojs/markdown-remark'; // Astro 7 no trae remark por defecto (trampa 1)
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeSinKatexError from './src/lib/rehype-sin-katex-error.mjs';
 
 export default defineConfig({
   site: 'https://jrobilara.github.io',
@@ -38,7 +39,8 @@ export default defineConfig({
   ],
   // CAMPUS_VITE_CACHE: permite correr varios `astro dev` a la vez sin pisarse el caché de Vite (solo desarrollo).
   vite: { cacheDir: process.env.CAMPUS_VITE_CACHE || undefined },
+  // Un LaTeX inválido rompe el build: rehype-katex solo deja un <span class="katex-error"> (ver rehype-sin-katex-error.mjs).
   markdown: {
-    processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex] }),
+    processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex, rehypeSinKatexError] }),
   },
 });

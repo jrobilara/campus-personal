@@ -24,7 +24,7 @@ const fecha = new Intl.DateTimeFormat('es-AR', { dateStyle: 'long', timeZone: 'U
 
 const describir = (f: (typeof data.fuentes)[number]) =>
   [f.autor, f.titulo, f.edicion, f.ubicacion].filter(Boolean).join(', ');
-const TIPO_FUENTE = { libro: 'Libro', 'doc-oficial': 'Documentación oficial', 'curso-abierto': 'Curso abierto', video: 'Video', blog: 'Blog' } as const;
+const TIPO_FUENTE = { libro: 'Libro', 'doc-oficial': 'Documentación oficial', 'curso-abierto': 'Curso abierto', articulo: 'Artículo', video: 'Video', blog: 'Blog' } as const;
 const NIVELES = ['basico', 'intermedio', 'avanzado'] as const;
 const NIVEL_TEXTO = { basico: 'Básico', intermedio: 'Intermedio', avanzado: 'Avanzado' } as const;
 const nivelIdx = NIVELES.indexOf(data.nivel);

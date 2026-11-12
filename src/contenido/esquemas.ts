@@ -69,6 +69,15 @@ const fuenteCursoAbierto = z.object({
   edicion: texto.optional(), // "Fall 2010"
   verMas: z.boolean().default(false),
 });
+// Artículo o paper (revista, conferencia, RFC académico): fuente válida, con DOI o URL si existe.
+const fuenteArticulo = z.object({
+  ...baseFuente,
+  tipo: z.literal('articulo'),
+  edicion: texto, // revista, volumen y año: "Communications of the ACM 56(2), 2013"
+  ubicacion: texto.optional(), // sección o páginas
+  url: url.optional(),
+  verMas: z.boolean().default(false),
+});
 const verMasObligatorio = z.literal(true, {
   error: 'videos y blogs solo pueden ir como "para ver más": poné verMas: true',
 });
@@ -92,6 +101,7 @@ export const esquemaFuente = z.discriminatedUnion('tipo', [
   fuenteLibro,
   fuenteDocOficial,
   fuenteCursoAbierto,
+  fuenteArticulo,
   fuenteVideo,
   fuenteBlog,
 ]);
