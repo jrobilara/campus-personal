@@ -1,0 +1,192 @@
+tarjetas:
+  - id: t-hipotetico-deductivo
+    frente: ¿Qué método general usa el libro de SRE de Google para diagnosticar una falla?
+    dorso: El hipotético-deductivo, que consiste en proponer causas posibles y ponerlas a prueba con evidencia, una y otra vez.
+    fuente: google-sre-troubleshooting
+  - id: t-reporte-util
+    frente: ¿Qué contraste tiene que describir un buen reporte de problema?
+    dorso: Lo que se esperaba que pasara contra lo que pasó, y si se puede, cómo reproducirlo.
+    fuente: google-sre-troubleshooting
+  - id: t-estabilizar-primero
+    frente: En una caída grande, ¿qué va antes, hallar la causa raíz o lograr que el sistema funcione como pueda?
+    dorso: Lo segundo (detener la hemorragia), guardando evidencia como los logs para investigar después.
+    fuente: google-sre-troubleshooting
+  - id: t-que-toque-ultimo
+    frente: Un sistema que andaba bien empieza a fallar. ¿Qué es lo primero que conviene revisar?
+    dorso: Qué cambió hace poco (configuración, versión o carga), porque un sistema estable suele romperse por un cambio externo.
+    fuente: google-sre-troubleshooting
+  - id: t-caballos-cebras
+    frente: ¿Qué quiere decir "si oís cascos, pensá en caballos y no en cebras" al diagnosticar?
+    dorso: Que no todas las causas son igual de probables, así que probás primero las comunes y simples.
+    fuente: google-sre-troubleshooting
+  - id: t-biseccion-ocho-tramos
+    frente: Hay una sola falla en una cadena de 8 tramos y probás siempre en la mitad. ¿Cuántas pruebas necesitás como máximo?
+    dorso: 3, porque cada prueba parte los tramos sospechosos por la mitad y $\lceil \log_2 8 \rceil = 3$.
+    fuente: google-sre-troubleshooting
+  - id: t-capa-ruteo
+    frente: ¿En qué capa del modelo OSI se ubica el ruteo entre redes?
+    dorso: En la capa 3, la de red, que aísla a las capas de arriba de los detalles del ruteo y el relevo.
+    fuente: itu-x200
+  - id: t-capa-fisica-sintoma
+    frente: Un puerto del switch no enciende su luz de enlace. ¿Con qué capa OSI lo relacionás primero?
+    dorso: Con la capa 1, la física, que se ocupa de la conexión (cable, ficha, puerto) por la que viajan los bits.
+    fuente: itu-x200
+  - id: t-dividir-y-conquistar-red
+    frente: En el método de dividir y conquistar para redes, ¿por qué capa arrancás y con qué herramienta?
+    dorso: Por la capa de red, con ping; si responde subís hacia las capas altas y si no, bajás.
+    fuente: ciscopress-tshoot
+  - id: t-ping-ip-pero-no-nombre
+    frente: El ping a una IP pública responde, pero el ping a un nombre de dominio falla. ¿Qué sospechás primero?
+    dorso: La resolución de nombres (DNS), porque la conectividad IP está funcionando.
+    fuente: ciscopress-tshoot
+  - id: t-ping-mensaje
+    frente: ¿Qué mensaje ICMP manda ping y qué espera recibir?
+    dorso: Manda un ECHO_REQUEST y espera un ECHO_REPLY del equipo destino.
+    fuente: ping-man
+  - id: t-confusion-firewall
+    frente: Tu ping a un servidor falla, pero desde el servidor de aplicaciones anda. ¿Qué puede estar confundiendo la prueba?
+    dorso: Una regla de firewall que solo deja pasar el tráfico de ciertas direcciones de origen.
+    fuente: google-sre-troubleshooting
+
+ejercicios:
+  - id: e-biseccion-cincuenta-tramos
+    tipo: numerico
+    enunciado: |
+      Una cadena de red entre un puesto y un servidor tiene 50 tramos (cables, switches, routers, enlaces) y sospechás que falla exactamente uno. Probando siempre en la mitad del tramo sospechoso, ¿cuántas pruebas necesitás **como máximo** para ubicarlo?
+    respuesta: 6
+    tolerancia:
+      absoluta: 0.1
+    unidad: pruebas
+    explicacion: |
+      Cada prueba parte a la mitad los tramos que quedan: 50, 25, 13, 7, 4, 2, 1. El número máximo de pruebas es $\lceil \log_2 50 \rceil = \lceil 5{,}64 \rceil = 6$. Revisando de a un tramo desde un extremo, en el peor caso harías 50.
+    erroresComunes:
+      - valor: 5
+        explicacion: Redondeaste $\log_2 50 = 5{,}64$ hacia abajo. Como no podés hacer media prueba, se redondea hacia arriba.
+      - valor: 50
+        explicacion: Eso es lo que harías probando tramo por tramo desde un extremo, no partiendo siempre por la mitad.
+      - valor: 25
+        explicacion: Dividiste una sola vez por dos. La bisección repite la división hasta quedarte con un solo tramo.
+    fuente: google-sre-troubleshooting
+  - id: e-primera-prueba-dos-puestos
+    tipo: opcion-multiple
+    enunciado: |
+      En una oficina de 30 puestos solo dos PCs dicen "no anda internet"; el resto navega bien. ¿Qué hacés primero?
+    opciones:
+      - texto: Comparo esas dos PCs con una que anda (IP, gateway, DNS) y reviso su cable y puerto del switch.
+        correcta: true
+        explicacion: Si el resto anda, la falla está en lo que es distinto de esas dos PCs. Comparar equipos que andan con los que no andan achica el campo muchísimo.
+      - texto: Reinicio el router del proveedor.
+        explicacion: Si el router tuviera la falla, no navegaría nadie. Reiniciarlo corta la conexión de las otras 28 personas sin ninguna evidencia a favor.
+      - texto: Llamo al proveedor para reportar una caída del enlace.
+        explicacion: El enlace funciona, porque 28 puestos navegan. Reportar una caída que no existe te hace perder credibilidad y tiempo.
+      - texto: Reinstalo el navegador en las dos PCs.
+        explicacion: Es saltar a la capa más alta sin descartar nada de abajo. Con un solo síntoma "no hay internet", conviene verificar primero IP, gateway y DNS.
+    fuente: ciscopress-tshoot
+  - id: e-vf-ping-ok-prueba-todo
+    tipo: verdadero-falso
+    enunciado: Si el ping a la IP del servidor responde, queda demostrado que las capas física, de enlace y de red funcionan perfectamente.
+    respuesta: false
+    justificacion: |
+      Es una conclusión razonable que sirve para dirigir la búsqueda hacia arriba, pero no es una prueba completa. El libro de Cisco Press da el ejemplo de paquetes chicos que pasan bien mientras los fragmentados se descartan, y un ping común no lo detecta.
+    fuente: ciscopress-tshoot
+  - id: e-ping-ok-dns-falla
+    tipo: opcion-multiple
+    enunciado: |
+      Desde un puesto, `ping -c 3 192.168.1.1` (el gateway) responde, `ping -c 3 1.1.1.1` responde, pero el navegador no abre ninguna página y `dig +short ejemplo.com` no devuelve nada. ¿Dónde sospechás?
+    opciones:
+      - texto: En la resolución de nombres (DNS).
+        correcta: true
+        explicacion: La conectividad IP funciona hasta Internet, así que las capas bajas están razonablemente bien. Lo que falla es traducir nombres a direcciones.
+      - texto: En el cable de red de ese puesto.
+        explicacion: Si el cable estuviera mal, no responderían los pings. El cable lleva bits y los pings llegaron hasta afuera.
+      - texto: En el switch del rack.
+        explicacion: Si el switch estuviera caído, el ping al gateway tampoco respondería.
+      - texto: En el enlace del proveedor.
+        explicacion: El ping a 1.1.1.1 sale por ese enlace y volvió, así que está llevando tráfico.
+    fuente: dig-man
+
+casos:
+  - id: c-no-anda-internet-oficina
+    titulo: No anda internet en toda la oficina
+    rol: Sos el único técnico de una oficina de 30 puestos, un lunes por la mañana.
+    contexto: |
+      Lunes 8:45. En cinco minutos entraron once tickets que dicen "no anda internet". El sistema interno de la oficina responde. El router lo puso el proveedor, y hay un switch en el rack.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Qué hacés primero?
+        opciones:
+          - texto: Reinicio el router y el switch, que muchas veces alcanza.
+            va: final-reinicio
+            consecuencia: Toda la oficina queda sin red tres minutos más. Cuando vuelve, sigue sin cargar páginas.
+          - texto: Voy a un puesto y reviso IP, ruta por defecto y ping al gateway antes de tocar nada.
+            va: ver-alcance
+            consecuencia: El puesto tiene IP y ruta por defecto, y el gateway responde en menos de 2 ms.
+          - texto: Mando un mail a todos avisando que es una caída del proveedor.
+            va: final-culpa-proveedor
+            consecuencia: Nadie lo cuestiona por un rato. Sin una sola prueba hecha, ya diste un diagnóstico.
+      - id: ver-alcance
+        tipo: decision
+        texto: El gateway responde. Seguís probando desde el mismo puesto, y el ping a 1.1.1.1 responde, pero el navegador no abre ninguna página. ¿Qué probás?
+        opciones:
+          - texto: Pruebo resolver un nombre con dig, primero con el DNS de la oficina y después con uno público.
+            va: dns-externo
+            consecuencia: Contra el DNS de la oficina da tiempo agotado; contra uno público responde bien.
+          - texto: Cambio el cable de red de ese puesto, por las dudas.
+            va: final-cable
+            consecuencia: El cable nuevo no cambia nada. Los pings ya habían llegado afuera, así que el cable no era el problema.
+      - id: dns-externo
+        tipo: decision
+        texto: El resolvedor de DNS que reparte tu red no responde, pero uno público sí. Hay 30 puestos esperando. ¿Cómo seguís?
+        opciones:
+          - texto: Cambio temporalmente el DNS que reparte el servidor DHCP por uno público, aviso a la oficina y abro un ticket con el proveedor.
+            va: final-bien
+            consecuencia: A medida que los puestos renuevan su configuración empiezan a navegar, y vos ya dejaste el motivo escrito.
+          - texto: Reinicio uno por uno los 30 puestos.
+            va: final-reiniciar-puestos
+            consecuencia: Perdés la mañana. Los puestos siguen usando el mismo DNS que no responde.
+          - texto: Espero a que el proveedor lo arregle sin hacer nada más.
+            va: final-esperar
+            consecuencia: La oficina pasa la mañana sin poder usar nada que dependa de nombres.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: En 25 minutos la oficina trabaja. Cuando el proveedor repone su DNS, volvés la configuración atrás y cerrás con la causa documentada.
+      - id: final-esperar
+        tipo: desenlace
+        resultado: regular
+        texto: Diagnosticaste bien, pero no ofreciste una solución temporal mientras llegaba la solución real, y la oficina paga el costo.
+      - id: final-reiniciar-puestos
+        tipo: desenlace
+        resultado: regular
+        texto: Con el diagnóstico en la mano elegiste una acción que no lo usa. Ganaste ruido, no solución.
+      - id: final-reinicio
+        tipo: desenlace
+        resultado: mal
+        texto: Cortaste la red a 30 personas sin ninguna evidencia, y la falla seguía siendo del DNS. Perdiste media hora y las pistas.
+      - id: final-culpa-proveedor
+        tipo: desenlace
+        resultado: mal
+        texto: Era el DNS y se podía mitigar desde la oficina. Diste por hecho que era externo y la oficina esperó sin necesidad.
+      - id: final-cable
+        tipo: desenlace
+        resultado: regular
+        texto: Descartaste una capa que ya estaba descartada por los pings. Probaste a ciegas y quedó el problema sin resolver.
+    leccion: |
+      Antes de tocar nada, medí el alcance y partí el problema: un ping por IP y otro por nombre separan la conectividad de la resolución de nombres. Probar de lo simple a lo complejo evita reiniciar equipos a ciegas.
+    fuente: ciscopress-tshoot
+
+problemas:
+  - id: p-ping-por-capas-en-tu-pc
+    enunciado: En tu propia PC (o una máquina virtual) corré `ip route show`, hacé ping al gateway, hacé ping a una IP pública y resolvé un nombre con `dig +short`. Anotá qué capa confirma cada prueba. Después desconectá el wifi o cambiá el DNS por una dirección inválida y repetí todo, registrando en qué prueba se corta la secuencia.
+    fuente: ping-man
+    ubicacion: sección DESCRIPTION y opción -W (uso de ping para aislar fallas de cerca a lejos)
+    url: https://manpages.ubuntu.com/manpages/noble/man8/ping.8.html
+    dificultad: basico
+  - id: p-sre-cap12-incidente-propio
+    enunciado: Leé el capítulo "Effective Troubleshooting" y reescribí el último problema técnico que resolviste (en el trabajo o en un proyecto propio) con los pasos del capítulo, desde el reporte hasta la prueba de hipótesis. Marcá en qué paso hiciste algo ad hoc y qué habría cambiado el método.
+    fuente: google-sre-troubleshooting
+    ubicacion: cap. 12, secciones Theory, In Practice y Test and Treat
+    url: https://sre.google/sre-book/effective-troubleshooting/
+    dificultad: intermedio

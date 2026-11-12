@@ -1,0 +1,209 @@
+---
+titulo: "Prioridad por impacto × urgencia y SLA"
+area: soporte
+orden: 3
+resumen: Cómo decidir qué ticket se atiende primero con una matriz de impacto y urgencia, qué son un SLA, un SLO y un SLI, y cuánta caída tolera de verdad un 99,9 % de disponibilidad.
+materias:
+  - carrera: ing-informatica
+    codigo: "3632"
+    nombre: Introducción a Proyectos Informáticos
+  - carrera: ing-informatica
+    codigo: "3667"
+    nombre: Gestión de la Calidad en Procesos de Sistemas
+  - carrera: lic-gestion-tecnologia
+    codigo: "1329"
+    nombre: Gestión de Procesos de Negocios
+prerrequisitos:
+  - soporte/itil-incidente-problema-cambio
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: atlassian-impacto-urgencia
+    tipo: doc-oficial
+    autor: Atlassian
+    titulo: Jira Service Management Cloud, documentación de soporte (impacto, urgencia y prioridad)
+    url: https://support.atlassian.com/jira-service-management-cloud/docs/how-impact-and-urgency-are-used-to-calculate-priority/
+    ubicacion: página "How impact and urgency are used to calculate priority" (definiciones de impacto, urgencia y prioridad)
+  - id: atlassian-matriz
+    tipo: doc-oficial
+    autor: Atlassian
+    titulo: Jira Service Management Cloud, Create an impact urgency priority matrix
+    url: https://support.atlassian.com/jira-service-management-cloud/docs/how-do-i-create-a-matrix-using-impact-and-urgency-values/
+    ubicacion: página completa (matriz de ejemplo de 4 niveles de impacto por 5 de urgencia; valores solo de ejemplo)
+  - id: axelos-glosario
+    tipo: libro
+    autor: AXELOS
+    titulo: "ITIL Foundation: ITIL 4 Edition — Glossary"
+    edicion: AXELOS / TSO, 2019
+    editorial: TSO (The Stationery Office)
+    ubicacion: "glosario, entrada service level agreement"
+  - id: pagerduty-severidad
+    tipo: doc-oficial
+    autor: PagerDuty
+    titulo: Incident Response Guide, Severity Levels
+    url: https://response.pagerduty.com/before/severity_levels/
+    ubicacion: introducción y "Always Assume The Worst"
+  - id: atlassian-incidentes
+    tipo: doc-oficial
+    autor: Atlassian
+    titulo: "Incident Management: Processes, Best Practices & Tools"
+    url: https://www.atlassian.com/itsm/incident-management
+    ubicacion: "Steps in the IT incident management process, Prioritize"
+  - id: peoplecert-glosario
+    tipo: doc-oficial
+    autor: PeopleCert
+    titulo: PeopleCert DevOps Fundamentals, Syllabus (glosario con definiciones tomadas de ITIL Foundation, ITIL 4 Edition, AXELOS/TSO 2019)
+    url: https://www.peoplecert.org/-/media/peoplecert/images/landing-pages/devops-launch-indian/peoplecert-devops-fundamentals.pdf
+    edicion: v01.0, septiembre 2019
+    ubicacion: "§8 Glossary, p. 16 (Service Level Management)"
+  - id: peoplecert-practicas-2023
+    tipo: doc-oficial
+    autor: Adam Griffith (ITIL Architect, PeopleCert)
+    titulo: ITIL 4 Management Practices 2023 – a new level of service management capability
+    url: https://www.peoplecert.org/news-and-announcements/2023/itil-4-management-practices-2023
+    edicion: "2023"
+    ubicacion: "Chapter 8: Recommendations for succeeding in the practice"
+  - id: google-sre-slo
+    tipo: libro
+    autor: Chris Jones, John Wilkes y Niall Murphy, con Cody Smith (en Beyer et al., eds.)
+    titulo: Site Reliability Engineering. How Google Runs Production Systems
+    edicion: 1.ª ed., 2016
+    editorial: O'Reilly Media
+    ubicacion: cap. 4, "Service Level Objectives" (secciones Indicators, Objectives, Agreements)
+    url: https://sre.google/sre-book/service-level-objectives/
+  - id: google-sre-disponibilidad
+    tipo: libro
+    autor: Beyer, Jones, Petoff y Murphy (eds.)
+    titulo: Site Reliability Engineering. How Google Runs Production Systems
+    edicion: 1.ª ed., 2016
+    editorial: O'Reilly Media
+    ubicacion: "Apéndice A, Availability Table"
+    url: https://sre.google/sre-book/availability-table/
+  - id: atlassian-slo
+    tipo: doc-oficial
+    autor: Atlassian
+    titulo: "What is a service-level objective (SLO)? SLO vs. SLA vs. SLI"
+    url: https://www.atlassian.com/incident-management/kpis/sla-vs-slo-vs-sli
+    ubicacion: secciones "SLO vs. SLA vs. SLI" y "Service level agreement (SLA)"
+  - id: pagerduty-matriz
+    tipo: blog
+    autor: PagerDuty
+    titulo: Using the Incident Priority Matrix
+    url: https://www.pagerduty.com/resources/learn/incident-priority-matrix/
+    verMas: true
+  - id: itprocessmaps-prioridad
+    tipo: blog
+    autor: Stefan Kempter y Andrea Kempter (IT Process Maps)
+    titulo: Checklist Incident Priority (IT Process Wiki)
+    url: https://wiki.en.it-processmaps.com/index.php/Checklist_Incident_Priority
+    edicion: CC BY-NC-SA 3.0 DE
+    verMas: true
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="Lunes 9:00: seis tickets, un solo técnico y un gerente que ya llamó dos veces">
+
+Llegás y ya hay seis tickets en cola. Una impresora de contabilidad que no imprime. El gerente comercial que no puede conectarse por VPN desde su casa. El sistema de facturación de la sucursal sur, caído: 15 cajas paradas. El alta de un usuario nuevo que empieza hoy. Una lentitud general que dos personas mencionaron. Y un mail de un usuario que no puede abrir un adjunto.
+
+Sos el único técnico. El gerente ya llamó dos veces y te dijo que "es urgente, ya". Si atendés por orden de llegada, la impresora va primero y la facturación tercera. Si atendés por quién grita más, el gerente pasa adelante de una sucursal entera.
+
+Ninguna de las dos reglas es buena. ¿Cómo decidís qué va primero, y cómo se lo explicás al que quedó esperando?
+
+</CasoReal>
+
+<Intuicion>
+
+La idea en una oración: **no se atiende en el orden en que llegan los problemas, sino en el orden en que más duelen y menos pueden esperar**.
+
+<Analogia titulo="La guardia de un hospital">
+
+En la guardia no se atiende por orden de llegada. Una enfermera hace el triage: mira cuán grave es lo que tiene cada persona y cuánto tiempo puede esperar sin empeorar. Un paro cardíaco pasa antes que un esguince aunque el esguince haya llegado primero. Y quien espera igual recibe una estimación: "lo vemos en una hora".
+
+En soporte pasa lo mismo. El **impacto** (*impact*) es qué tan grave y qué tan extendido es el daño, como el estado de salud más la cantidad de pacientes. La **urgencia** (*urgency*) es qué tan rápido hay que actuar antes de que el daño crezca, como el tiempo que el paciente puede esperar. El resultado de combinar ambos es la **prioridad**.
+
+</Analogia>
+
+Jugá con los seis tickets del lunes:
+
+<SimMatrizPrioridad
+  consigna="Asigná impacto y urgencia a cada ticket y mirá qué prioridad sale. Después avanzá el reloj atendiendo por orden de llegada y otra vez por prioridad: ¿cuántos SLA se incumplen en cada caso?"
+  tickets="mesa-lunes"
+/>
+
+Lo que tenés que notar: con el orden de llegada, el sistema de facturación espera detrás de tickets que pueden esperar y se pasa del plazo. Con el orden por prioridad se cumplen todos. Fijate también que la matriz y los plazos del simulador son un ejemplo, no una norma.
+
+Ahora mirá la fila completa de tickets de un equipo:
+
+<SimFlujo
+  consigna="Subí la tasa de llegada por encima de lo que atiende tu equipo y mirá 'en cola' y 'fuera de SLA'. Después sumá un técnico y fijate cuánto tarda en vaciarse la cola."
+  modo="cola"
+  etiquetas="tickets"
+  slaMinutos={240}
+/>
+
+<Ojo>
+
+Priorizar no resuelve la falta de gente. Si llegan más tickets de los que el equipo puede cerrar, la cola crece sin parar y los SLA se rompen aunque todos trabajen bien: esa es una señal de capacidad, no de prioridades.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Prioridad = impacto y urgencia
+
+La prioridad (*priority*) de un incidente se calcula a partir de su impacto y su urgencia, y sirve para que se resuelvan primero los de mayor prioridad<Cita f="atlassian-impacto-urgencia" loc="How impact and urgency are used to calculate priority" />. Una matriz de impacto y urgencia (*impact urgency priority matrix*) es la tabla que traduce cada combinación en una prioridad.
+
+- **Impacto**: el efecto del incidente sobre los procesos del negocio, que depende de cuánto se ve afectada la calidad del servicio<Cita f="atlassian-impacto-urgencia" loc="How impact and urgency are used to calculate priority" />. Para medirlo se mira cuánta gente afecta, qué SLA aplican y qué implicaciones financieras, de seguridad y de cumplimiento tiene<Cita f="atlassian-incidentes" loc="Prioritize" />.
+- **Urgencia**: cuánto falta para que el incidente afecte de verdad al negocio. Un incidente de impacto alto puede tener urgencia baja si el daño recién llega a fin de año<Cita f="atlassian-impacto-urgencia" loc="How impact and urgency are used to calculate priority" />.
+
+Una matriz de 3 × 3 de ejemplo:
+
+| Impacto \ Urgencia | Alta | Media | Baja |
+|---|---|---|---|
+| **Alto** | P1 | P2 | P3 |
+| **Medio** | P2 | P3 | P4 |
+| **Bajo** | P3 | P4 | P5 |
+
+<Ojo>
+
+Esta tabla, los niveles P1 a P5 y los plazos del simulador son un ejemplo armado para este tema: no son norma de ITIL ni de PagerDuty. Cada organización define la suya. La propia documentación de Atlassian muestra otra matriz (impacto en cuatro niveles contra urgencia en cinco) y aclara que sus valores son solo ejemplos<Cita f="atlassian-matriz" loc="Create an impact urgency priority matrix" />. Tu empresa puede tener otros niveles, otros nombres o criterios propios (por ejemplo, tratar distinto a un usuario clave).
+
+</Ojo>
+
+Algunos equipos usan niveles de **severidad** (SEV), donde un número menor es más urgente. Si dudás entre dos niveles durante un incidente, la guía de PagerDuty recomienda asumir el más alto y discutir después, en la revisión<Cita f="pagerduty-severidad" loc="Always Assume The Worst" />. Esa regla es de una empresa; no es un estándar.
+
+### SLA, SLO y SLI
+
+Para ITIL 4, un **acuerdo de nivel de servicio** (*service level agreement*, SLA) es un acuerdo documentado entre un proveedor de servicio y un cliente que identifica los servicios requeridos y el nivel de servicio esperado<Cita f="axelos-glosario" loc="glosario, entrada service level agreement" />. La práctica asociada, la gestión de niveles de servicio (*service level management*), fija objetivos de servicio basados en el negocio para poder evaluar y monitorear el servicio contra ellos<Cita f="peoplecert-glosario" loc="§8, p. 16" />. El libro de SRE de Google separa tres conceptos que se mezclan seguido<Cita f="google-sre-slo" loc="Indicators, Objectives, Agreements" />:
+
+- **SLI** (*service level indicator*): una medida cuantitativa de algún aspecto del servicio, como la latencia, la tasa de error o la disponibilidad.
+- **SLO** (*service level objective*): el valor objetivo para ese SLI.
+- **SLA**: un contrato con los usuarios que incluye consecuencias por cumplir o no los SLO. La prueba rápida es preguntar qué pasa si no se cumple: si no hay consecuencia explícita, casi seguro es un SLO.
+
+Un SLA no habla solo de disponibilidad: también puede fijar tiempos de respuesta al usuario<Cita f="atlassian-slo" loc="Service level agreement (SLA)" />. El simulador usa dos relojes por prioridad, la primera respuesta y la resolución (P1 con 15 y 240 minutos), y esos valores son ilustrativos. Y cumplir el SLA no alcanza si el usuario sigue sin poder trabajar: ITIL 4 recomienda mirar el incidente desde quien usa el servicio y no esconderse detrás del plazo<Cita f="peoplecert-practicas-2023" loc="Chapter 8" />.
+
+### Disponibilidad: cuántos minutos son un 99,9 %
+
+La disponibilidad (*availability*) se calcula con el tiempo que el servicio estuvo caído sobre un período dado<Cita f="google-sre-disponibilidad" loc="Availability Table" />:
+
+<Formula nombre="Disponibilidad" tex="A = \frac{T_{total} - T_{caido}}{T_{total}} \times 100\,\%">
+
+donde $T_{total}$ es la duración del período (por ejemplo, un mes de 30 días, o sea 43 200 minutos) y $T_{caido}$ es el tiempo en que el servicio no estuvo disponible.
+
+</Formula>
+
+La tabla de disponibilidad del libro de SRE da, para un mes, esta caída máxima permitida<Cita f="google-sre-disponibilidad" loc="Table 1-1" />:
+
+| Disponibilidad | Caída permitida por mes |
+|---|---|
+| 99 % | 7,2 horas |
+| 99,5 % | 3,6 horas |
+| 99,9 % | 43,2 minutos |
+| 99,95 % | 21,6 minutos |
+| 99,99 % | 4,32 minutos |
+
+Un 99,9 % mensual deja entonces 43,2 minutos de margen, y dos caídas de 25 y 70 minutos en el mismo mes ya lo rompen. Medida así, la disponibilidad habla del servicio completo; no mide cuánto tardó la mesa de ayuda en contestar un ticket.
+
+</Formal>

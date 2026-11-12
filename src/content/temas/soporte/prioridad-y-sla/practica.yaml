@@ -1,0 +1,193 @@
+tarjetas:
+  - id: t-prioridad-dos-factores
+    frente: ¿De qué dos factores sale la prioridad de un incidente en una matriz de impacto y urgencia?
+    dorso: Del impacto y de la urgencia.
+    fuente: atlassian-impacto-urgencia
+  - id: t-impacto-que-mide
+    frente: ¿Qué mide el impacto de un incidente?
+    dorso: El efecto sobre los procesos del negocio, que se mide con la gente afectada, los SLA aplicables y las consecuencias financieras, de seguridad o de cumplimiento.
+    fuente: atlassian-incidentes
+  - id: t-urgencia-que-mide
+    frente: ¿Qué mide la urgencia de un incidente?
+    dorso: Cuánto falta para que el incidente afecte de verdad al negocio; un impacto alto puede tener urgencia baja.
+    fuente: atlassian-impacto-urgencia
+  - id: t-matriz-no-universal
+    frente: ¿Hay una matriz de prioridad oficial que toda organización tenga que usar?
+    dorso: No, son ejemplos; cada equipo define sus niveles de impacto, de urgencia y sus prioridades.
+    fuente: atlassian-matriz
+  - id: t-p1-matriz-ejemplo
+    frente: En la matriz de ejemplo de 3 por 3, ¿qué prioridad tiene un incidente con impacto alto y urgencia alta?
+    dorso: P1, la más alta de las cinco.
+  - id: t-orden-de-llegada
+    frente: ¿Por qué atender los tickets por orden de llegada es mala idea?
+    dorso: Porque la prioridad, calculada con impacto y urgencia, es lo que define qué se resuelve primero, y no la hora de llegada.
+    fuente: atlassian-impacto-urgencia
+  - id: t-sev-duda
+    frente: Dudás entre SEV-1 y SEV-2 en pleno incidente. ¿Qué recomienda la guía de PagerDuty?
+    dorso: Tratarlo como el nivel más alto y discutir la severidad después, en la revisión.
+    fuente: pagerduty-severidad
+  - id: t-sla-itil
+    frente: ¿Qué es un SLA según el glosario de ITIL 4?
+    dorso: Un acuerdo documentado entre un proveedor de servicio y un cliente que identifica los servicios requeridos y el nivel de servicio esperado.
+    fuente: axelos-glosario
+  - id: t-sli-definicion
+    frente: ¿Qué es un SLI en el libro de SRE de Google?
+    dorso: Una medida cuantitativa de algún aspecto del servicio, como la latencia, la tasa de error o la disponibilidad.
+    fuente: google-sre-slo
+  - id: t-slo-vs-sla
+    frente: ¿Qué pregunta te sirve para distinguir un SLO de un SLA?
+    dorso: Preguntar qué pasa si no se cumple; si no hay consecuencia explícita, casi seguro es un SLO.
+    fuente: google-sre-slo
+  - id: t-downtime-99-9
+    frente: Un SLA mensual de 99,9 %, ¿cuántos minutos de caída tolera en un mes de 30 días?
+    dorso: 43,2 minutos.
+    fuente: google-sre-disponibilidad
+  - id: t-sla-no-es-satisfaccion
+    frente: Cumpliste el SLA y el usuario sigue sin poder trabajar. ¿Qué recomienda ITIL 4 mirar?
+    dorso: La perspectiva del usuario, buscando restaurar un nivel de servicio que lo satisfaga y no esconderse detrás del plazo.
+    fuente: peoplecert-practicas-2023
+
+ejercicios:
+  - id: e-espera-facturacion-fifo
+    tipo: numerico
+    enunciado: |
+      A las 9:00 llegan tres tickets juntos, en este orden: una impresora de contabilidad (20 minutos de atención), un alta de usuario (30 minutos) y la caída del sistema de facturación (45 minutos, prioridad P1 con objetivo de **15 minutos** hasta que alguien empieza a atenderlo). Hay un solo técnico y atiende en orden de llegada. ¿Cuántos minutos **se pasa** el ticket de facturación del objetivo de arranque? (Datos ilustrativos.)
+    respuesta: 35
+    tolerancia:
+      absoluta: 0.5
+    unidad: minutos
+    explicacion: |
+      Por orden de llegada, la impresora ocupa de 9:00 a 9:20 y el alta de 9:20 a 9:50, así que facturación recién arranca a las 9:50, o sea a los 50 minutos de haber llegado. El objetivo era arrancar a los 15, entonces se pasa $50 - 15 = 35$ minutos. Atendiendo primero facturación habría arrancado en el minuto 0.
+    erroresComunes:
+      - valor: 50
+        explicacion: Ese es el tiempo hasta que arranca, no cuánto se pasa. Falta restar el objetivo de 15 minutos.
+      - valor: 95
+        explicacion: Sumaste también los 45 minutos de la propia atención de facturación. La pregunta es hasta que arranca.
+      - valor: 20
+        explicacion: Tomaste solo la espera detrás de la impresora y olvidaste los 30 minutos del alta.
+  - id: e-disponibilidad-del-mes
+    tipo: numerico
+    enunciado: |
+      En un mes de 30 días tu servicio tuvo dos caídas, una de 25 minutos y otra de 70 minutos. ¿Qué **disponibilidad** tuvo en el mes? Respondé en %, con dos decimales.
+    respuesta: 99.78
+    tolerancia:
+      absoluta: 0.01
+    unidad: "%"
+    explicacion: |
+      El mes tiene $30 \times 24 \times 60 = 43200$ minutos y estuvo caído $25 + 70 = 95$. La disponibilidad es $(43200 - 95) / 43200 \times 100 \approx 99{,}78\,\%$. Si tu SLA prometía 99,9 %, no se cumplió: el margen era de 43,2 minutos.
+    erroresComunes:
+      - valor: 0.22
+        explicacion: Eso es el porcentaje de indisponibilidad (95 / 43200). La disponibilidad es lo que queda, o sea 100 menos eso.
+      - valor: 99.9
+        explicacion: Ese era el objetivo del SLA, no lo que realmente se midió en el mes.
+    fuente: google-sre-disponibilidad
+  - id: e-minutos-permitidos-99-95
+    tipo: numerico
+    enunciado: |
+      Un cliente exige 99,95 % de disponibilidad mensual. ¿Cuántos minutos de caída por mes tolera, en un mes de 30 días?
+    respuesta: 21.6
+    tolerancia:
+      absoluta: 0.1
+    unidad: minutos
+    explicacion: |
+      La indisponibilidad permitida es $100\% - 99{,}95\% = 0{,}05\%$ del mes. Con $43200$ minutos son $43200 \times 0{,}0005 = 21{,}6$ minutos.
+    erroresComunes:
+      - valor: 43.2
+        explicacion: Ese valor corresponde a 99,9 %, que permite el doble de caída.
+      - valor: 4.32
+        explicacion: Ese valor corresponde a 99,99 %. Un nueve más es diez veces menos margen.
+    fuente: google-sre-disponibilidad
+  - id: e-quien-va-primero
+    tipo: opcion-multiple
+    enunciado: |
+      A las 9:10 tenés dos tickets. El gerente comercial no puede conectarse a la VPN desde su casa y te llamó tres veces; puede usar el celular para lo urgente. Y en la sucursal sur está caído el sistema de facturación, con 15 cajas paradas. ¿Cómo los ordenás?
+    opciones:
+      - texto: Facturación primero y al gerente le explico cuánto va a esperar y qué puede hacer mientras.
+        correcta: true
+        explicacion: El impacto de facturación es mucho mayor (muchas personas y ventas frenadas) y su urgencia es alta. El gerente afectado tiene alternativas, y comunicarle la espera baja el enojo sin cambiar el orden.
+      - texto: El gerente primero, porque es el que más insiste.
+        explicacion: La insistencia no es un criterio de impacto ni de urgencia, y según Atlassian la prioridad se calcula en base a impacto y urgencia (aunque también se puede ajustar a mano), no en base a quién reclama más fuerte.
+      - texto: Por orden de llegada, que es lo más justo.
+        explicacion: Lo justo es lo que daña menos al negocio. Atender por llegada puede dejar parada una sucursal entera detrás de tickets que pueden esperar.
+      - texto: Ninguno, hasta que el gerente y la sucursal se pongan de acuerdo.
+        explicacion: Priorizar es tu trabajo. Esperar un acuerdo entre usuarios solo agrega demora.
+    fuente: atlassian-matriz
+  - id: e-vf-sla-cumplido-satisfecho
+    tipo: verdadero-falso
+    enunciado: Si cerraste todos los tickets dentro del SLA, el servicio al usuario fue bueno.
+    respuesta: false
+    justificacion: |
+      Un SLA es un piso acordado, no una medida de satisfacción. ITIL 4 recomienda mirar desde la perspectiva de quien usa el servicio y buscar restaurar un nivel que lo satisfaga, sin esconderse detrás del plazo.
+    fuente: peoplecert-practicas-2023
+
+casos:
+  - id: c-lunes-gerente-enojado
+    titulo: Lunes 9:00 con el gerente al teléfono
+    rol: Sos el único técnico de soporte de la oficina, un lunes por la mañana.
+    contexto: |
+      Hay seis tickets en cola. El de la sucursal sur (facturación caída, 15 cajas paradas) llegó tercero. El gerente comercial, que no puede entrar a la VPN desde su casa pero tiene celular, ya llamó dos veces diciendo que es urgentísimo.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Cómo empezás?
+        opciones:
+          - texto: Atiendo por orden de llegada, sin priorizar.
+            va: final-orden-llegada
+            consecuencia: Arrancás por la impresora y seguís con el alta. Facturación espera casi una hora.
+          - texto: Dedico dos minutos a clasificar cada ticket por impacto y urgencia y arranco por facturación.
+            va: gerente-llama
+            consecuencia: Facturación sale P1; la VPN del gerente queda en prioridad baja porque afecta a una persona que tiene alternativa.
+          - texto: Le pido a la sucursal sur que espere, porque siempre reclama por todo.
+            va: final-descartar
+            consecuencia: Una sucursal con 15 cajas sigue sin facturar y nadie te está mirando el tablero.
+      - id: gerente-llama
+        tipo: decision
+        texto: Estás en medio de la facturación (45 minutos estimados) y el gerente vuelve a llamar enojado, exigiendo que lo atiendas ya. ¿Qué hacés?
+        opciones:
+          - texto: Atiendo el teléfono, le explico que hay una sucursal parada, le doy una hora estimada para su VPN y le sugiero mientras tanto usar el celular.
+            va: final-bien
+            consecuencia: El gerente no está contento, pero sabe cuánto va a esperar y puede seguir trabajando con el celular.
+          - texto: Corto con la sucursal y lo atiendo a él, que es gerente.
+            va: final-jerarquia
+            consecuencia: La VPN anda en diez minutos y facturación pierde 25 minutos que no estaban en el plan.
+          - texto: No atiendo el teléfono hasta terminar.
+            va: final-silencio
+            consecuencia: El gerente escala a tu jefe y le dice que "soporte no contesta".
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: Facturación vuelve a los 40 minutos, el gerente recibe su VPN en la hora prometida y los demás tickets entran en plazo. Dejás anotados los criterios por si te los piden.
+      - id: final-orden-llegada
+        tipo: desenlace
+        resultado: regular
+        texto: El ticket P1 incumple su plazo de respuesta, la sucursal sur pierde casi una hora de ventas y el gerente, que también esperó su turno, llama una tercera vez.
+      - id: final-jerarquia
+        tipo: desenlace
+        resultado: regular
+        texto: Resolviste rápido un caso de impacto bajo y retrasaste uno de impacto alto. Sentaste el precedente de que el cargo cambia la fila.
+      - id: final-descartar
+        tipo: desenlace
+        resultado: mal
+        texto: Descartaste un reclamo sin medir su impacto. Cuando la sucursal llama al gerente general, la caída ya es de más de una hora.
+      - id: final-silencio
+        tipo: desenlace
+        resultado: mal
+        texto: Priorizaste bien pero no comunicaste. Para el gerente, no priorizar y no contestar son lo mismo, y ahora además tenés a tu jefa en el medio.
+    leccion: |
+      Priorizar es comparar impacto y urgencia, no obedecer a quien más insiste. Y al que queda esperando le debés una fecha estimada y una alternativa.
+    fuente: atlassian-impacto-urgencia
+
+problemas:
+  - id: p-tabla-downtime-propio
+    enunciado: Con la tabla del Apéndice A del libro de SRE, calculá cuántos minutos por mes tolera un SLA de 99,5 %, 99,9 % y 99,99 %. Después sumá las caídas del último trimestre de algún servicio tuyo (o inventalas) y decidí cuáles de esos tres SLA habrías cumplido cada mes.
+    fuente: google-sre-disponibilidad
+    ubicacion: Apéndice A, Table 1-1 (Availability table)
+    url: https://sre.google/sre-book/availability-table/
+    dificultad: basico
+  - id: p-armar-matriz
+    enunciado: Definí para tu organización (o una ficticia de 200 empleados) tres o cuatro criterios concretos de impacto y de urgencia (alto, medio y bajo), armá una matriz con sus prioridades y proponé un plazo de respuesta y de resolución para cada una. Probala con diez tickets reales o inventados y anotá en cuáles te costó decidir.
+    fuente: atlassian-matriz
+    ubicacion: página "Create an impact urgency priority matrix" (matriz de ejemplo con 4 niveles de impacto y 5 de urgencia)
+    url: https://support.atlassian.com/jira-service-management-cloud/docs/how-do-i-create-a-matrix-using-impact-and-urgency-values/
+    dificultad: intermedio

@@ -1,0 +1,232 @@
+tarjetas:
+  - id: t-postmortem-definicion
+    frente: ¿Qué es un post-mortem según el libro de SRE de Google?
+    dorso: Un registro escrito de un incidente con su impacto, lo que se hizo, las causas raíz y las acciones para que no se repita.
+    fuente: google-sre-postmortem
+  - id: t-blameless-supuesto
+    frente: ¿Qué se asume sobre las personas en un post-mortem sin culpables?
+    dorso: Que tenían buenas intenciones y decidieron lo mejor con la información que tenían en ese momento.
+    fuente: google-sre-postmortem
+  - id: t-arreglar-sistemas-no-personas
+    frente: ¿Por qué un post-mortem sin culpables apunta a procesos y sistemas y no a personas?
+    dorso: Porque no se puede arreglar a la gente, pero sí los sistemas y procesos que la ayudan a decidir bien.
+    fuente: google-sre-postmortem
+  - id: t-castigo-oculta-problemas
+    frente: ¿Qué pasa con los problemas en una cultura que castiga los errores?
+    dorso: La gente deja de avisarlos por miedo, y los incidentes se esconden en lugar de investigarse.
+    fuente: google-sre-postmortem
+  - id: t-criterios-antes
+    frente: ¿Por qué conviene definir los criterios para escribir un post-mortem antes de que ocurra un incidente?
+    dorso: Para que todos sepan cuándo hay que escribirlo y no se discuta en caliente.
+    fuente: google-sre-postmortem
+  - id: t-accion-verificable
+    frente: ¿Qué necesita una acción de post-mortem para poder darla por cumplida?
+    dorso: Un responsable y un estado final verificable; palabras como "mejorar" no alcanzan.
+    fuente: google-sre-workbook-pm
+  - id: t-postmortem-sin-accion
+    frente: ¿Por qué un post-mortem sin acciones posteriores casi no sirve?
+    dorso: Para los usuarios es indistinguible de no haber escrito nada, porque nada cambia.
+    fuente: google-sre-workbook-pm
+  - id: t-actualizacion-cada-hora
+    frente: Con clientes externos que siguen afectados por un incidente, ¿cada cuánto como máximo recomienda Atlassian actualizar?
+    dorso: Nunca más de una hora sin novedades, indicando siempre cuándo será la próxima.
+    fuente: atlassian-comunicacion
+  - id: t-palabra-outage
+    frente: ¿Cuándo evita PagerDuty la palabra "outage" en un mensaje externo?
+    dorso: Cuando no fue una caída total; usa "incidente" o "degradación del servicio".
+    fuente: pagerduty-postmortem
+  - id: t-rol-comunicacion
+    frente: En un incidente grande, ¿por qué conviene que comunique alguien distinto de quien opera el sistema?
+    dorso: Porque quien opera está absorbido por lo técnico y la comunicación se descuida.
+    fuente: google-sre-incidentes
+  - id: t-kcs-capturar
+    frente: ¿Cuándo se documenta la solución en KCS?
+    dorso: Mientras se resuelve el pedido, capturando también las palabras que usó quien lo pidió.
+    fuente: kcs-v6
+  - id: t-kcs-flag-it-or-fix-it
+    frente: Encontrás un artículo de la base de conocimiento desactualizado. ¿Qué te pide KCS?
+    dorso: Corregirlo si confiás en la corrección y tenés permiso, o marcarlo para que otro lo corrija.
+    fuente: kcs-v6
+
+ejercicios:
+  - id: e-horas-liberadas-con-kb
+    tipo: numerico
+    enunciado: |
+      En una semana entran 40 tickets de reseteo de contraseña y cada uno lleva 6 minutos de un técnico. Con un portal de autoservicio y un artículo claro, 70 % de esos usuarios lo resuelve solo. ¿Cuántas **horas por semana** se liberan del equipo? (Datos ilustrativos.)
+    respuesta: 2.8
+    tolerancia:
+      absoluta: 0.05
+    unidad: horas
+    explicacion: |
+      Hoy se gastan $40 \times 6 = 240$ minutos, o sea 4 horas por semana. Se desvía el 70 %, que son $0{,}70 \times 4 = 2{,}8$ horas. Quedan 1,2 horas para los casos que el autoservicio no resuelve.
+    erroresComunes:
+      - valor: 4
+        explicacion: Ese es el tiempo total que hoy se gasta, antes de aplicar el 70 % de desvío.
+      - valor: 1.2
+        explicacion: Eso es lo que sigue consumiendo el equipo (el 30 % restante), no lo que se libera.
+      - valor: 168
+        explicacion: Te quedaste en minutos. La pregunta pide horas, así que dividí por 60.
+    fuente: atlassian-conocimiento
+  - id: e-mensaje-durante-caida
+    tipo: opcion-multiple
+    enunciado: |
+      El correo está degradado desde las 9:40 y a las 10:30 todavía no hay solución ni hora estimada. Una usuaria te escribe por tercera vez. ¿Qué le respondés?
+    opciones:
+      - texto: Qué sabés (el correo está lento, el resto anda), qué hace el equipo, qué puede hacer mientras y a qué hora le volvés a escribir.
+        correcta: true
+        explicacion: Le da lo que sabe, lo que se está haciendo y una próxima fecha de contacto. Según Atlassian, mantener informados a los usuarios reduce mucho la reacción negativa, aunque todavía no haya solución.
+      - texto: "Estamos al tanto del tema y trabajando en ello. Gracias por su paciencia."
+        explicacion: No dice qué pasa ni cuándo volverás a escribir. Para quien espera, equivale al silencio.
+      - texto: No le contestás hasta tener la solución para no darle falsas esperanzas.
+        explicacion: Es el peor camino, porque la falta de información es lo que más enoja. Se puede comunicar que no hay solución todavía.
+      - texto: Que seguro es un problema del proveedor y que lo tiene que reclamar el área de sistemas.
+        explicacion: Es una causa que todavía no verificaste y además suena a sacarse el problema de encima. No agrega información útil.
+    fuente: atlassian-comunicacion
+  - id: e-vf-blameless-sin-nombres
+    tipo: verdadero-falso
+    enunciado: Un post-mortem sin culpables evita nombrar quiénes respondieron al incidente, para no exponer a nadie.
+    respuesta: false
+    justificacion: |
+      Lo que evita es juzgar o acusar a una persona o a un equipo por lo que pasó. Se pueden y se suelen anotar los roles de quienes respondieron (por ejemplo, quién coordinó y quién llevó el registro) y qué hizo cada uno. Lo que no va es "fulano se equivocó", sino qué parte del sistema le permitió a una persona razonable llegar ahí.
+    fuente: pagerduty-postmortem
+  - id: e-cuando-documentar
+    tipo: opcion-multiple
+    enunciado: |
+      Según KCS, ¿cuándo conviene escribir el artículo de la base de conocimiento sobre un ticket que acabás de resolver?
+    opciones:
+      - texto: Mientras resolvés el ticket, como parte del mismo trabajo.
+        correcta: true
+        explicacion: Capturar en el flujo de trabajo es la primera práctica de KCS, porque en ese momento sabés qué dijo el usuario y qué funcionó.
+      - texto: A fin de mes, cuando hay tiempo para ordenar todo.
+        explicacion: A fin de mes ya olvidaste los detalles y las palabras exactas del usuario, y el artículo no ayuda a nadie mientras tanto.
+      - texto: Solo cuando el ticket lo resolvió el técnico más senior.
+        explicacion: KCS apunta a que todos contribuyan, y el conocimiento de cada persona entra a la base compartida.
+    fuente: kcs-v6
+
+casos:
+  - id: c-usuaria-enojada-sin-novedades
+    titulo: "NADIE ME CONTESTA"
+    rol: Sos de soporte de primer nivel y te toca contestarle a una usuaria que ya escribió tres veces.
+    contexto: |
+      Jueves 11:30. La jefa de ventas lleva tres horas sin poder enviar adjuntos por mail. Su último mensaje es "NADIE ME CONTESTA". Sabés que el servidor de correo está degradado y que infraestructura trabaja en eso, pero no hay hora estimada de solución.
+    inicio: primer-mensaje
+    nodos:
+      - id: primer-mensaje
+        tipo: decision
+        texto: ¿Qué le respondés?
+        opciones:
+          - texto: Le digo que lo que pasa se está resolviendo a la brevedad y le agradezco la paciencia.
+            va: final-generico
+            consecuencia: Responde en tres minutos con una pregunta aún más enojada, "¿cuándo es la brevedad?".
+          - texto: Le digo qué sé, qué no sé, qué puede hacer mientras (mandar los archivos por chat) y a qué hora le vuelvo a escribir.
+            va: pasa-la-hora
+            consecuencia: Te contesta con un "ok, gracias", y se baja el tono. Quedaste comprometido a escribirle a las 12:30.
+          - texto: Le pido que abra un ticket nuevo con más detalle.
+            va: final-ticket-nuevo
+            consecuencia: Ya tenía un ticket abierto hace tres horas. Pedirle que repita el reclamo la irrita más.
+      - id: pasa-la-hora
+        tipo: decision
+        texto: Son las 12:30, la hora que prometiste. Infraestructura no tiene novedades todavía. ¿Qué hacés?
+        opciones:
+          - texto: Le escribo igual a la hora prometida, "sin novedades, seguimos trabajando", con la próxima actualización a las 13:30.
+            va: final-bien
+            consecuencia: Se queja de que no está resuelto, pero reconoce que le avisaste.
+          - texto: Espero a tener una buena noticia para escribirle.
+            va: final-silencio
+            consecuencia: A las 13:00 ella te vuelve a escribir en mayúsculas.
+          - texto: Le prometo que a las 14:00 estará solucionado, para tranquilizarla.
+            va: final-promesa
+            consecuencia: Se tranquiliza, pero vos no sabés si se cumple.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: A las 14:10 se resuelve el problema. La usuaria no está feliz con la caída, pero sí con cómo se le habló. El próximo reclamo llega con otro tono.
+      - id: final-silencio
+        tipo: desenlace
+        resultado: regular
+        texto: La comunicación se rompió porque faltaste a tu propia hora. Ahora además de la caída tenés una usuaria que dejó de creerte.
+      - id: final-generico
+        tipo: desenlace
+        resultado: regular
+        texto: Diste una respuesta de plantilla vacía y ahora tenés que escribir de nuevo el mensaje bueno, con una usuaria más molesta que antes.
+      - id: final-promesa
+        tipo: desenlace
+        resultado: mal
+        texto: La solución llegó a las 15:20. Incumpliste una promesa que no podías cumplir y la jefa de ventas escala el reclamo con tu gerente.
+      - id: final-ticket-nuevo
+        tipo: desenlace
+        resultado: mal
+        texto: Le pediste repetir un reclamo que ya estaba hecho. Escala el reclamo con tu gerente por mala atención.
+    leccion: |
+      Según Atlassian, mantener informados a los usuarios baja mucho la reacción negativa. Decí qué sabés, qué no sabés, qué estás haciendo y cuándo vas a volver a escribir, y cumplí esa hora aunque no haya novedades.
+    fuente: atlassian-comunicacion
+  - id: c-postmortem-quien-fue
+    titulo: El gerente quiere saber quién fue
+    rol: Fuiste quien coordinó la respuesta a la caída del correo del martes y tenés que escribir el informe.
+    contexto: |
+      El martes el correo estuvo caído dos horas. Se debió a un cambio de configuración en el antispam que un compañero aplicó fuera de ventana, sin prueba previa. La alerta de falla de entrega saltó recién a los 25 minutos. El gerente pidió por mail "el informe, con quién fue".
+    inicio: armar-informe
+    nodos:
+      - id: armar-informe
+        tipo: decision
+        texto: ¿Cómo armás el informe?
+        opciones:
+          - texto: Escribo un post-mortem con línea de tiempo, impacto y causas contribuyentes, y propongo cambios en el proceso.
+            va: acciones
+            consecuencia: El borrador deja claro qué ocurrió y por qué un cambio así llegó a producción. No juzga a nadie.
+          - texto: Escribo que el compañero aplicó un cambio sin autorización.
+            va: final-culpable
+            consecuencia: Es verdad y no es útil. El compañero queda expuesto y el resto del equipo aprende a no reportar nada.
+          - texto: No escribo nada, porque ya está solucionado y escribir es perder tiempo.
+            va: final-sin-informe
+            consecuencia: Se cierra el tema en una semana. Nadie anotó cómo se detectó ni cuánto tardó.
+      - id: acciones
+        tipo: decision
+        texto: El equipo propone como acciones "tener más cuidado con los cambios" y "capacitar al compañero". ¿Qué hacés?
+        opciones:
+          - texto: Las reemplazo por acciones concretas con dueño y fecha, como revisión de pares para cambios de antispam y una alerta a los 5 minutos.
+            va: final-bien
+            consecuencia: Cada acción tiene dueño, prioridad y una forma de comprobar que está hecha.
+          - texto: Las dejo, son sensatas.
+            va: final-vago
+            consecuencia: Nadie sabe cómo comprobar que se tiene más cuidado, y las acciones quedan abiertas indefinidamente.
+          - texto: Agrego quince acciones más, todas con la misma prioridad.
+            va: final-lista-eterna
+            consecuencia: Una lista tan larga y sin orden nunca se termina, y nadie sabe qué hacer primero.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: En dos semanas hay revisión de pares y la alerta nueva. El mes siguiente, un cambio dudoso se frena antes de producción y el post-mortem circula como ejemplo de cómo se hace.
+      - id: final-vago
+        tipo: desenlace
+        resultado: regular
+        texto: Escribiste un buen documento con acciones que no se pueden verificar. La próxima caída vendrá por otro lado igual de evitable.
+      - id: final-lista-eterna
+        tipo: desenlace
+        resultado: regular
+        texto: Hay mucha voluntad y poco foco. Se hacen las fáciles, no las que reducen el riesgo.
+      - id: final-culpable
+        tipo: desenlace
+        resultado: mal
+        texto: El próximo cambio riesgoso se hará sin avisar, para no quedar expuesto. Perdiste visibilidad sobre tu propio sistema.
+      - id: final-sin-informe
+        tipo: desenlace
+        resultado: mal
+        texto: Sin registro del incidente, dentro de unos meses pasa lo mismo y nadie recuerda qué se aprendió.
+    leccion: |
+      Preguntá qué del sistema permitió el error, no quién lo cometió. Las acciones valen cuando tienen responsable, prioridad y una forma de comprobar que se cumplieron.
+    fuente: google-sre-workbook-pm
+
+problemas:
+  - id: p-articulo-kb-reseteo
+    enunciado: Elegí el ticket que más se repite en tu mesa de ayuda (o el reseteo de contraseña) y escribí el artículo de base de conocimiento con los campos de KCS, que son asunto (*issue*) con las palabras del usuario, entorno (*environment*), resolución (*resolution*) y causa (*cause*) si se conoce. Pedile a alguien que no sea técnico que lo siga sin ayuda y corregilo según lo que no entendió.
+    fuente: kcs-v6
+    ubicacion: Technique 2.1, Use A Simple Template
+    url: https://library.serviceinnovation.org/KCS/KCS_v6/KCS_v6_Practices_Guide/030/030/020/010
+    dificultad: basico
+  - id: p-postmortem-propio
+    enunciado: Tomá el último incidente de tu trabajo o de un proyecto propio y escribí un post-mortem sin culpables con resumen, impacto, línea de tiempo, causas contribuyentes y tres acciones, cada una con responsable, prioridad y un estado final verificable. Releé el texto y marcá cualquier frase que juzgue a una persona.
+    fuente: google-sre-workbook-pm
+    ubicacion: cap. 10, secciones "Bad Postmortem" y "Good Postmortem"
+    url: https://sre.google/workbook/postmortem-culture/
+    dificultad: intermedio

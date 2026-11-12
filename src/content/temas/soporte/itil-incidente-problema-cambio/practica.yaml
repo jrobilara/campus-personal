@@ -1,0 +1,214 @@
+tarjetas:
+  - id: t-incidente-definicion
+    frente: En ITIL 4, ¿qué es un incidente (*incident*)?
+    dorso: Una interrupción no planificada de un servicio o una reducción de su calidad.
+    fuente: axelos-glosario
+  - id: t-incidente-objetivo
+    frente: ¿Qué busca la gestión de incidentes, restaurar el servicio o encontrar la causa raíz?
+    dorso: Restaurar el servicio normal lo antes posible; la causa raíz es trabajo de la gestión de problemas.
+    fuente: peoplecert-glosario
+  - id: t-problema-definicion
+    frente: En ITIL 4, ¿qué es un problema (*problem*)?
+    dorso: La causa, o la causa potencial, de uno o más incidentes.
+    fuente: peoplecert-glosario
+  - id: t-rollback-no-cierra-problema
+    frente: Hiciste rollback de un deploy y el servicio volvió. ¿Qué queda abierto?
+    dorso: El problema, porque el rollback restauró el servicio pero no eliminó la causa.
+    fuente: atlassian-problemas
+  - id: t-error-conocido
+    frente: En ITIL 4, ¿qué es un error conocido (*known error*)?
+    dorso: Un problema que ya fue analizado pero todavía no se resolvió.
+    fuente: axelos-glosario
+  - id: t-cambio-definicion
+    frente: ¿Qué cuenta como un cambio (*change*) en ITIL 4?
+    dorso: Agregar, modificar o quitar cualquier cosa que pueda afectar a un servicio, directa o indirectamente.
+    fuente: axelos-glosario
+  - id: t-cambio-estandar
+    frente: ¿Qué hace que un cambio sea estándar (*standard change*)?
+    dorso: Que es de bajo riesgo, está preautorizado, se entiende bien y está totalmente documentado.
+    fuente: axelos-glosario
+  - id: t-cambio-emergencia
+    frente: Sale un parche de seguridad que no puede esperar. ¿Qué tipo de cambio es y qué lo distingue?
+    dorso: De emergencia, que el glosario de ITIL 4 define como un cambio que hay que introducir lo antes posible.
+    fuente: axelos-glosario
+  - id: t-solicitud-vs-incidente
+    frente: Un usuario pide el alta de una cuenta de correo nueva. ¿Es un incidente?
+    dorso: No, es una solicitud de servicio (*service request*), un pedido que inicia una acción acordada como parte normal del servicio.
+    fuente: axelos-glosario
+  - id: t-change-enablement
+    frente: La práctica que el glosario de 2019 llamaba *change control*, ¿cómo se llama en el material de ITIL 4 de 2021?
+    dorso: Habilitación del cambio (*change enablement*); según Atlassian, el nombre cambió porque "control" se interpretaba como controlar a los equipos.
+    fuente: atlassian-cambios
+
+ejercicios:
+  - id: e-que-registro-falta
+    tipo: opcion-multiple
+    enunciado: |
+      Desde hace tres semanas el CRM tarda unos 40 segundos en abrir cada ficha, a veces sí y a veces no. Ya hay 8 tickets resueltos con "se reinició el servicio de la aplicación" y cada vez la lentitud vuelve. ¿Qué registro falta?
+    opciones:
+      - texto: Un problema, vinculado a los 8 incidentes, para investigar por qué se enlentece.
+        correcta: true
+        explicacion: Hay un patrón de incidentes con una causa sin identificar. La gestión de problemas existe para eso, y reiniciar es apenas una solución temporal.
+      - texto: Un noveno incidente, con más detalle que los anteriores.
+        explicacion: Un incidente más sigue atacando el síntoma. Con 8 repeticiones, la pregunta ya no es cómo restaurar sino por qué pasa.
+      - texto: Una solicitud de servicio para pedir más memoria al servidor.
+        explicacion: Una solicitud es un pedido de rutina de algo ya definido. Y todavía no sabés si el problema es la memoria, así que sería actuar sin diagnóstico.
+      - texto: Un cambio de emergencia para reiniciar el servidor cada noche.
+        explicacion: Reiniciar de noche puede ser una solución temporal razonable, pero decidirlo sin investigar la causa deja el problema sin abrir. Además, no es una emergencia.
+    fuente: atlassian-problemas
+  - id: e-vf-incidente-requiere-causa
+    tipo: verdadero-falso
+    enunciado: Un incidente solo puede cerrarse cuando ya se encontró y eliminó la causa raíz.
+    respuesta: false
+    justificacion: |
+      Un incidente se resuelve cuando el servicio afectado vuelve a funcionar, y eso incluye solo las tareas necesarias para mitigar el impacto y restaurar. Buscar y eliminar la causa raíz es trabajo de un problema, que puede seguir abierto después de cerrar el incidente.
+    fuente: atlassian-incidentes
+  - id: e-horas-persona-perdidas
+    tipo: numerico
+    enunciado: |
+      La impresora fiscal se cayó 3 veces en el mes. En cada caída quedaron paradas 12 personas durante 40 minutos. ¿Cuántas **horas-persona** se perdieron en total en el mes? (Datos ilustrativos.)
+    respuesta: 24
+    tolerancia:
+      absoluta: 0.5
+    unidad: horas-persona
+    explicacion: |
+      Son $3 \times 12 \times 40 = 1440$ minutos-persona. Dividido por 60, son 24 horas-persona. Este número es el que le mostrás a tu jefa para justificar abrir un problema en vez de cerrar otro ticket.
+    erroresComunes:
+      - valor: 1440
+        explicacion: Te quedaste en minutos-persona. La pregunta pide horas, así que dividí por 60.
+      - valor: 2
+        explicacion: Olvidaste multiplicar por las 12 personas paradas; calculaste solo 3 caídas de 40 minutos.
+  - id: e-tipo-de-cambio
+    tipo: opcion-multiple
+    enunciado: |
+      Tu equipo agrega 100 GB de disco a una máquina virtual unas dos veces por mes, siempre con el mismo procedimiento ya aprobado y documentado, y sin impacto en el servicio. ¿Qué tipo de cambio es?
+    opciones:
+      - texto: Cambio estándar (*standard change*).
+        correcta: true
+        explicacion: Es de bajo riesgo, está preautorizado y totalmente documentado, que es justo la definición de estándar en el glosario de ITIL 4. No hace falta pasarlo por aprobación cada vez.
+      - texto: Cambio normal que siempre requiere reunión del CAB.
+        explicacion: Según Atlassian, los cambios normales no tienen procedimiento preaprobado, y aun entre los normales el CAB suele reservarse para los de alto riesgo.
+      - texto: Cambio de emergencia.
+        explicacion: Una emergencia es un cambio que hay que introducir lo antes posible por una falla o amenaza. Acá es una tarea planificada y rutinaria.
+    fuente: axelos-glosario
+
+casos:
+  - id: c-impresora-fiscal-tercera-vez
+    titulo: La impresora fiscal vuelve a caerse
+    rol: Sos de soporte de primer nivel en una cadena de locales con cajas de facturación.
+    contexto: |
+      Martes 10:20. La impresora fiscal de la caja 3 dejó de responder por tercera vez en el mes. Reiniciándola volvió a imprimir. Las dos veces anteriores se cerró el ticket y nadie preguntó más. Tu jefa ya te pidió que "hagas algo de fondo".
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: El servicio ya volvió. ¿Qué hacés con el ticket?
+        opciones:
+          - texto: Lo cierro igual que las otras dos veces, porque el servicio se restauró.
+            va: final-repite
+            consecuencia: El ticket queda cerrado y correcto, pero no queda nada que enlace las tres caídas.
+          - texto: Dejo el incidente abierto hasta descubrir por qué se cae.
+            va: final-incidente-eterno
+            consecuencia: Pasan dos semanas con el ticket abierto, la métrica de tiempo de resolución se dispara y el equipo ya no sabe qué tickets están realmente pendientes.
+          - texto: Cierro el incidente y abro un problema vinculando las tres caídas, con las horas perdidas.
+            va: plan-firmware
+            consecuencia: El incidente refleja que el servicio volvió y el problema queda como un pendiente aparte. Con los tres incidentes juntos, el proveedor ya no puede decir que fue una casualidad.
+      - id: plan-firmware
+        tipo: decision
+        texto: |
+          Investigando, el proveedor confirma que un error del firmware cuelga la impresora cada tanto y que se arregla actualizándolo. La actualización requiere apagar la caja unos 20 minutos. Son las 11:00. ¿Qué hacés?
+        opciones:
+          - texto: Registro un cambio, evalúo el riesgo, lo agendo fuera de horario y dejo claro cómo volver atrás.
+            va: final-bien
+            consecuencia: Se aprueba para el sábado a la noche, con el firmware anterior guardado por si hace falta revertir.
+          - texto: Lo hago ya, en horario comercial, porque el proveedor dice que es rápido.
+            va: final-cambio-mal
+            consecuencia: A los 10 minutos la caja no arranca. Nadie guardó la versión anterior ni avisó a ventas.
+          - texto: Dejo documentado el reinicio como solución temporal y no toco nada más.
+            va: final-parche
+            consecuencia: El error conocido queda registrado y cualquiera del equipo sabe cómo reaccionar. La causa sigue ahí.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El sábado se actualiza el firmware sin interrumpir las ventas. El problema se cierra y el reinicio queda anotado por si otra caja tiene el mismo modelo.
+      - id: final-parche
+        tipo: desenlace
+        resultado: regular
+        texto: Manejás el síntoma con prolijidad, pero la impresora sigue cayéndose una vez por mes y cada vez se pierden las mismas horas-persona.
+      - id: final-repite
+        tipo: desenlace
+        resultado: regular
+        texto: Al mes siguiente se cae por cuarta vez. Resolviste cuatro tickets en perfecto estado y el problema de fondo nunca existió en el sistema.
+      - id: final-incidente-eterno
+        tipo: desenlace
+        resultado: regular
+        texto: Mezclaste los dos trabajos en un solo ticket. Querías llegar a la causa, pero el registro de incidentes ya no sirve para medir cuánto tardás en restaurar.
+      - id: final-cambio-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Tocaste producción en horario pico sin plan de vuelta atrás. La caja queda parada una hora y media y el arreglo generó un incidente más grande que los que querías evitar.
+    leccion: |
+      Cerrar el incidente y abrir el problema son dos decisiones distintas, y las dos van. Y arreglar la causa suele ser un cambio: se registra, se evalúa el riesgo y se agenda con un plan para volver atrás.
+    fuente: atlassian-problemas
+  - id: c-actualizacion-viernes-sin-registro
+    titulo: Una actualización sin registro un viernes a la noche
+    rol: Sos de guardia de infraestructura un viernes de noche.
+    contexto: |
+      18:25. Entran cinco llamados seguidos: nueve sucursales no pueden abrir el sistema de facturación. A las 18:10 un compañero aplicó una actualización del servidor de aplicaciones, pero no hay pedido de cambio y vos todavía no lo sabés.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: Nueve sucursales sin facturar. ¿Qué hacés primero?
+        opciones:
+          - texto: Pregunto en el canal del equipo qué se tocó en la última hora y miro el registro de cambios.
+            va: descubrir-cambio
+            consecuencia: En dos minutos un compañero admite que actualizó el servidor a las 18:10, sin pedido de cambio.
+          - texto: Reinicio todos los servidores de la aplicación para ver si se arregla.
+            va: final-reinicio
+            consecuencia: Los servidores arrancan, fallan igual a los 3 minutos y los logs de la falla original se pierden en el reinicio.
+      - id: descubrir-cambio
+        tipo: decision
+        texto: La falla empezó 15 minutos después de una actualización que nadie registró. Es viernes, pasadas las 18:30. ¿Y ahora?
+        opciones:
+          - texto: Revierto la actualización como cambio de emergencia, aviso en el canal y anoto qué revierto y por qué.
+            va: final-bien
+            consecuencia: El servicio vuelve en 10 minutos y el equipo sabe exactamente qué pasó y qué quedó pendiente.
+          - texto: Hago el rollback sin avisar a nadie para no armar lío con mi compañero.
+            va: final-sin-rastro
+            consecuencia: Facturación vuelve, pero no queda registro de ninguno de los dos cambios.
+          - texto: Espero al lunes para pedir el cambio como corresponde, con comité.
+            va: final-espera
+            consecuencia: Las sucursales no facturan en todo el fin de semana de mayor venta.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: Servicio restaurado en minutos, el cambio quedó registrado a posteriori y el lunes se abre un problema para entender por qué la actualización rompió facturación.
+      - id: final-sin-rastro
+        tipo: desenlace
+        resultado: regular
+        texto: Se restauró el servicio, pero el turno que entra no sabe que hubo una actualización ni un rollback. El próximo que toque el servidor puede repetir el error.
+      - id: final-reinicio
+        tipo: desenlace
+        resultado: mal
+        texto: Perdiste 20 minutos y la evidencia en memoria, y nueve sucursales siguen sin facturar. Reiniciar a ciegas no era un cambio ni una investigación, era apostar.
+      - id: final-espera
+        tipo: desenlace
+        resultado: mal
+        texto: Un cambio de emergencia existe justamente para casos así, con un trámite corto. Esperar al comité costó un fin de semana de ventas.
+    leccion: |
+      Si algo falla justo después de un cambio, empezá por ahí: revertirlo, con registro y avisando, suele ser la mitigación más rápida. Y todo cambio, también el urgente, deja rastro.
+    fuente: pagerduty-durante
+
+problemas:
+  - id: p-tabla-itil-propia
+    enunciado: Armá una tabla con cuatro filas (incidente, problema, cambio, solicitud de servicio) y, para cada una, escribí con tus palabras una definición de una oración y un ejemplo real de tu trabajo. Después compará tus definiciones con el glosario de ITIL 4 Foundation y marcá cuáles estaban flojas.
+    fuente: axelos-glosario
+    ubicacion: glosario, entradas incident, problem, change y service request
+    dificultad: basico
+  - id: p-buscar-repetidos
+    enunciado: Tomá los tickets del último trimestre de tu mesa de ayuda (o inventá 30 con títulos parecidos). Agrupalos por título o categoría, elegí los grupos de tres o más y, para cada uno, decí si abrirías un problema, qué solución temporal documentarías y si la solución definitiva sería un cambio estándar, normal o de emergencia.
+    fuente: atlassian-problemas
+    ubicacion: sección "The problem management process" (detección, error conocido, solución temporal)
+    url: https://www.atlassian.com/itsm/problem-management
+    dificultad: intermedio
