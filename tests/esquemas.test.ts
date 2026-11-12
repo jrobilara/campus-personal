@@ -95,6 +95,20 @@ describe('esquemas: mutaciones que tienen que fallar, con su ruta', () => {
     expect(rutasDeError(r)).toContain('fuentes.3.verMas');
     expect(r.error?.issues.some((i) => i.message.includes('para ver más'))).toBe(true);
   });
+  it('fuente `articulo`: vale como fuente principal y pide la revista o conferencia (edicion)', () => {
+    const t = crudoTema();
+    t.fuentes.push({ id: 'dean-tail', tipo: 'articulo', autor: 'Jeffrey Dean y Luiz André Barroso', titulo: 'The Tail at Scale', edicion: 'Communications of the ACM 56(2), 2013', url: 'https://doi.org/10.1145/2408776.2408794' });
+    const ok = esquemaTema.parse(t);
+    const art = ok.fuentes.find((f) => f.id === 'dean-tail')!;
+    expect(art.tipo).toBe('articulo');
+    expect(art.verMas).toBe(false); // un artículo no es "para ver más" por defecto
+    const sin = crudoTema();
+    sin.fuentes.push({ id: 'dean-tail', tipo: 'articulo', autor: 'X', titulo: 'Y' });
+    expect(rutasDeError(esquemaTema.safeParse(sin))).toContain('fuentes.3.edicion');
+    const http = crudoTema();
+    http.fuentes.push({ id: 'dean-tail', tipo: 'articulo', autor: 'X', titulo: 'Y', edicion: '2013', url: 'http://inseguro.com' });
+    expect(rutasDeError(esquemaTema.safeParse(http))).toContain('fuentes.3.url');
+  });
   it('una sola fuente principal → fuentes', () => {
     const t = crudoTema();
     t.fuentes[1].verMas = true;
