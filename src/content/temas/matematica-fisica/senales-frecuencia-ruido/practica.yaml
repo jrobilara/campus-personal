@@ -4,20 +4,20 @@ tarjetas:
     dorso: 20 ms, porque el período es la inversa de la frecuencia ($T = 1/f$).
     fuente: openstax-up1
   - id: t-senoide-parametros
-    frente: ¿Qué dos datos describen una senoide?
-    dorso: Su frecuencia (cuántas veces por segundo se repite) y su amplitud (qué tan fuerte es), además de la fase.
+    frente: ¿Qué tres parámetros describen una senoide?
+    dorso: Su amplitud (qué tan fuerte es), su frecuencia (cuántas veces por segundo se repite) y su fase (en qué punto del ciclo arranca).
     fuente: openstax-up1
   - id: t-ancho-de-banda-senal
     frente: ¿Qué es el ancho de banda de una señal?
-    dorso: El rango de frecuencias que ocupa.
+    dorso: La anchura del rango de frecuencias que ocupa, medida en Hz.
     fuente: smith-dsp
   - id: t-oido-humano
     frente: ¿Qué rango de frecuencias oye una persona?
     dorso: Aproximadamente de 20 Hz a 20 kHz.
     fuente: smith-dsp
   - id: t-condicion-nyquist
-    frente: ¿Cuántas muestras por segundo hacen falta, como mínimo, para una señal cuya frecuencia más alta es $f_{\max}$?
-    dorso: Más del doble de $f_{\max}$, o sea $f_s > 2 f_{\max}$.
+    frente: ¿Qué condición tiene que cumplir la frecuencia de muestreo $f_s$ respecto de la frecuencia más alta $f_{\max}$ de la señal?
+    dorso: Tiene que ser mayor que el doble, o sea $f_s > 2 f_{\max}$.
     fuente: smith-dsp
   - id: t-frecuencia-nyquist
     frente: ¿Cuál es la frecuencia de Nyquist de un muestreo a 8 kHz?
@@ -31,9 +31,13 @@ tarjetas:
     frente: ¿Para qué sirve el filtro antialias que va antes del conversor analógico-digital?
     dorso: Para eliminar las frecuencias por encima de la de Nyquist antes de que se conviertan en alias.
     fuente: smith-dsp
-  - id: t-audio-metalico
-    frente: ¿Por qué la música grabada a 8 kHz suena apagada o metálica?
+  - id: t-audio-apagado
+    frente: ¿Por qué la música grabada a 8 kHz suena apagada?
     dorso: Porque a esa frecuencia solo se guardan frecuencias por debajo de 4 kHz y los agudos de la música quedan afuera.
+    fuente: smith-dsp
+  - id: t-audio-metalico
+    frente: ¿De dónde sale un timbre metálico en un audio muestreado sin filtro antialias?
+    dorso: De los agudos que superan la frecuencia de Nyquist, que vuelven como alias, tonos que no estaban en el original.
     fuente: smith-dsp
   - id: t-capacidad-formula
     frente: ¿De qué dos cosas depende la capacidad máxima de un canal con ruido según Shannon?
@@ -46,7 +50,7 @@ tarjetas:
   - id: t-snr-db
     frente: ¿Cómo se pasa una SNR de 20 dB a una relación de potencias $S/N$?
     dorso: $S/N = 10^{20/10} = 100$.
-    fuente: openstax-up1
+    fuente: smith-dsp
 
 ejercicios:
   - id: e-muestras-por-ciclo
@@ -103,9 +107,9 @@ ejercicios:
     opciones:
       - texto: Sube alrededor de un 15 %, unos 20 Mbit/s en este canal.
         correcta: true
-        explicacion: El logaritmo comprime el efecto. De 133,2 a 153,0 Mbit/s, es decir, agrega casi 1 bit por segundo y por hertz.
+        explicacion: Con una SNR ya alta como esta (100), el logaritmo comprime el efecto. De 133,2 a 153,0 Mbit/s, es decir, agrega casi 1 bit por segundo y por hertz. Con SNR baja, en cambio, duplicar la potencia casi duplica la capacidad.
       - texto: Se duplica.
-        explicacion: Se duplicaría si doblaras el ancho de banda con la misma SNR. La potencia entra dentro del logaritmo.
+        explicacion: Se duplicaría si doblaras el ancho de banda manteniendo la misma SNR. La potencia entra dentro del logaritmo, y con una SNR ya alta duplicarla suma poco.
       - texto: Baja, porque con más potencia también hay más interferencia.
         explicacion: Si el ruido es el mismo, más potencia de señal mejora la relación señal/ruido, no la empeora.
       - texto: No cambia, porque el límite depende solo del ancho de banda.

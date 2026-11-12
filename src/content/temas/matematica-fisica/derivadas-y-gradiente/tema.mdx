@@ -31,7 +31,7 @@ fuentes:
     titulo: Calculus Volume 3
     edicion: OpenStax, 2016 (versión libre)
     editorial: OpenStax
-    ubicacion: cap. 4, §4.6 "Directional Derivatives and the Gradient"
+    ubicacion: cap. 4, §4.6 "Directional Derivatives and the Gradient" y §4.7 "Maxima/Minima Problems"
     url: https://openstax.org/books/calculus-volume-3/pages/4-6-directional-derivatives-and-the-gradient
   - id: stewart-multi
     tipo: libro
@@ -147,7 +147,7 @@ Con esta definición se obtiene, por ejemplo, que la derivada de $x^n$ es $n x^{
 
 ### Varias variables: el gradiente
 
-Si la función depende de varias variables, se deriva respecto de cada una dejando fijas las demás. Juntar todas esas derivadas parciales en un vector da el **gradiente** (*gradient*)<Cita f="stewart-multi" loc="§14.6, definición 8, p. 936" />.
+Si la función depende de varias variables, se deriva respecto de cada una dejando fijas las demás. Juntar todas esas derivadas parciales en un vector da el **gradiente** (*gradient*). Stewart lo define así para dos variables y lo extiende a tres<Cita f="stewart-multi" loc="§14.6, definición 8, p. 936, y ecuación 13, p. 938" />; para $n$ variables es la misma idea<Cita f="mml" loc="§5.2, definición 5.5, p. 146" />.
 
 <Formula nombre="Gradiente" tex="\nabla f(x_1,\dots,x_n) = \left( \frac{\partial f}{\partial x_1}, \dots, \frac{\partial f}{\partial x_n} \right)">
 
@@ -183,7 +183,7 @@ La derivada sale de la regla de la cadena: la derivada de $(\cdot)^2$ es $2(\cdo
 
 ### Cuándo anda: tasa y forma de la función
 
-Para $f(x)=x^2$ el gradiente es $2x$ y el paso queda $x_{k+1} = (1-2\gamma)\,x_k$. Es una cuenta propia que se verifica a mano. De ahí sale todo:
+Para $f(x)=x^2$ el gradiente es $2x$. Reemplazado en la ecuación del paso queda $x_{k+1} = x_k - \gamma \cdot 2x_k = (1-2\gamma)\,x_k$<Cita f="mml" loc="§7.1, ec. 7.6, p. 228" />. En cada paso, $x$ se multiplica por el mismo factor, y de ahí sale todo:
 
 | Tasa $\gamma$ | Factor $1-2\gamma$ | Qué pasa |
 |---|---|---|
@@ -194,10 +194,10 @@ Para $f(x)=x^2$ el gradiente es $2x$ y el paso queda $x_{k+1} = (1-2\gamma)\,x_k
 
 <Profundizar titulo="¿Y para otras funciones, hay un límite parecido?">
 
-Para una parábola $f(x) = \tfrac{a}{2}x^2$ con $a>0$ el paso es $x_{k+1} = (1 - \gamma a)\,x_k$, así que converge si $0 < \gamma < 2/a$. Cuanto más curvo es el valle (mayor $a$), más chica tiene que ser la tasa. Para funciones generales, cerca de un mínimo la función se parece a una parábola, y por eso la regla práctica es la misma: la curvatura marca la tasa máxima razonable. El libro advierte además que en valles largos y angostos el descenso hace zigzag y avanza despacio<Cita f="mml" loc="§7.1, p. 229" />.
+Para una parábola $f(x) = \tfrac{a}{2}x^2$ con $a>0$ el gradiente es $a x$ y el paso queda $x_{k+1} = x_k - \gamma a x_k = (1 - \gamma a)\,x_k$, así que converge si $0 < \gamma < 2/a$. Cuanto más curvo es el valle (mayor $a$), más chica tiene que ser la tasa. Para funciones generales, cerca de un mínimo la función se parece a una parábola, y por eso la regla práctica es la misma: la curvatura marca la tasa máxima razonable. El libro advierte además que en valles largos y angostos el descenso hace zigzag y avanza despacio<Cita f="mml" loc="§7.1, p. 229" />.
 
 </Profundizar>
 
-Y una última advertencia: que el gradiente sea cero solo dice que estás en un punto estacionario. Puede ser un mínimo, un máximo o un punto silla (*saddle point*)<Cita f="mml" loc="ejercicio 7.1, p. 247" />.
+Y una última advertencia: que el gradiente sea cero solo dice que estás en un punto crítico. Puede ser un mínimo local, un máximo local o un punto silla (*saddle point*), donde las derivadas parciales son cero pero no hay extremo, como el origen en $z = x^2 - y^2$<Cita f="openstax-calc3" loc="§4.7" />. En una sola variable, el análogo de la silla es un punto de tangente horizontal sin extremo, como $x^3$ en $x=0$.
 
 </Formal>

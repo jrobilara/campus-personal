@@ -14,6 +14,14 @@ prerrequisitos: []
 nivel: intermedio
 minutos: 15
 fuentes:
+  - id: openstax-calc3
+    tipo: libro
+    autor: Gilbert Strang y Edwin Herman
+    titulo: Calculus Volume 3
+    edicion: OpenStax, 2016 (versión libre)
+    editorial: OpenStax
+    ubicacion: cap. 5, §5.7 "Change of Variables in Multiple Integrals"
+    url: https://openstax.org/books/calculus-volume-3/pages/5-7-change-of-variables-in-multiple-integrals
   - id: mml
     tipo: libro
     autor: Marc P. Deisenroth, A. Aldo Faisal y Cheng Soon Ong
@@ -57,11 +65,11 @@ Son tres preguntas sobre la misma idea: qué le hace una matriz al plano.
 
 <Intuicion>
 
-Una matriz de 2×2 no es una tabla para mirar: es una función que toma un punto del plano y lo manda a otro punto. Lo que la hace especial es que nunca dobla el plano: las rectas siguen siendo rectas, las paralelas siguen siendo paralelas y el origen se queda quieto.
+Una matriz de 2×2 no es una tabla para mirar: es una función que toma un punto del plano y lo manda a otro punto. Lo que la hace especial es que no dobla el plano: una recta siempre termina siendo una recta (o, en el caso extremo de una matriz que aplasta, un punto) y el origen se queda quieto. Cuando la matriz no aplasta, además, las paralelas siguen siendo paralelas.
 
 <Analogia titulo="La hoja cuadriculada de goma">
 
-Imaginá una hoja cuadriculada hecha de goma y clavada en el origen con una chinche. Podés girarla, estirarla, aplastarla, inclinarla o darla vuelta como un espejo. Mientras no la rompas ni la dobles, las líneas de la cuadrícula siguen rectas y parejas entre sí. Una matriz es una de esas deformaciones. Para describirla entera alcanza con anotar adónde fueron a parar los dos "palitos" de la cuadrícula: el horizontal $\hat\imath = (1,0)$ y el vertical $\hat\jmath = (0,1)$. Todo lo demás se acomoda solo.
+Imaginá una hoja cuadriculada hecha de goma y clavada en el origen con una chinche. Podés girarla, estirarla, inclinarla o darla vuelta como un espejo. Mientras no la rompas ni la dobles, las líneas de la cuadrícula siguen rectas y parejas entre sí. El caso extremo es aplastarla del todo contra una recta, y lo vemos enseguida. Una matriz es una de esas deformaciones. Para describirla entera alcanza con anotar adónde fueron a parar los dos "palitos" de la cuadrícula: el horizontal $\hat\imath = (1,0)$ y el vertical $\hat\jmath = (0,1)$. Todo lo demás se acomoda solo.
 
 </Analogia>
 
@@ -74,7 +82,7 @@ Esa es la clave de lectura: las dos **columnas** de la matriz son, justamente, l
   editable={true}
 />
 
-Ahora el "área". Si el cuadrado de lado 1 que forman $\hat\imath$ y $\hat\jmath$ se convierte en un paralelogramo, el área de ese paralelogramo dice cuánto se estiró o se achicó el plano en promedio. Ese número es el **determinante** (*determinant*). Si el paralelogramo se aplasta en un segmento, el área es 0 y el plano entero quedó "planchado" sobre una recta.
+Ahora el "área". Si el cuadrado de lado 1 que forman $\hat\imath$ y $\hat\jmath$ se convierte en un paralelogramo, el área de ese paralelogramo dice por cuánto se multiplica cualquier área del plano (el cuadrado de lado 1 es solo el caso fácil de dibujar). Ese número es el **determinante** (*determinant*). Si el paralelogramo se aplasta en un segmento, el área es 0 y el plano entero quedó "planchado" sobre una recta.
 
 <SimTransformacion2D
   consigna="Elegí el preset de proyección: ¿cuánto vale det y qué le pasa al cuadrado? Arrastrá v a varios lugares con la misma coordenada x: ¿en qué punto termina Av cada vez? ¿Se podría volver atrás?"
@@ -140,7 +148,7 @@ donde $a, b, c, d$ son los cuatro elementos de la matriz.
 
 </Formula>
 
-Es la misma cuenta en los dos libros<Cita f="zill" loc="§14.3, definición 14.3.1, p. 612" /><Cita f="mml" loc="§4.1, ec. 4.6, p. 100" />. Geométricamente, el valor absoluto de $\det A$ es el área del paralelogramo que forman las columnas, y su signo indica la orientación: si es negativo, la figura quedó "dada vuelta" como en un espejo<Cita f="mml" loc="§4.1, ejemplo 4.2, p. 101" />. Un detalle útil: un polígono cualquiera cambia su área exactamente por el factor $\lvert\det A\rvert$ (resultado que se deduce de lo anterior descomponiendo la figura en cuadraditos). Además, una matriz cuadrada tiene inversa si y solo si su determinante no es cero<Cita f="mml" loc="§4.1, teorema 4.1, p. 100" />.
+Es la misma cuenta en los dos libros<Cita f="zill" loc="§14.3, definición 14.3.1, p. 612" /><Cita f="mml" loc="§4.1, ec. 4.6, p. 100" />. Geométricamente, el valor absoluto de $\det A$ es el área del paralelogramo que forman las columnas, y su signo indica la orientación: si es negativo, la figura quedó "dada vuelta" como en un espejo<Cita f="mml" loc="§4.1, ejemplo 4.2, p. 101" />. El mismo factor sirve para cualquier figura, no solo para el cuadrado: el valor absoluto del determinante multiplica el área de lo que transformes, y es el caso lineal del jacobiano, que da el factor de área en un cambio de variables<Cita f="openstax-calc3" loc="§5.7" />. Además, una matriz cuadrada tiene inversa si y solo si su determinante no es cero<Cita f="mml" loc="§4.1, teorema 4.1, p. 100" />.
 
 | Matriz | $\det$ | Qué hace |
 |---|---|---|
@@ -151,7 +159,7 @@ Es la misma cuenta en los dos libros<Cita f="zill" loc="§14.3, definición 14.3
 
 ### Autovalores y autovectores
 
-Un **autovector** de $A$ es un vector $\mathbf{x}$ distinto de cero tal que $A\mathbf{x} = \lambda\mathbf{x}$ para algún número $\lambda$, el **autovalor**<Cita f="mml" loc="§4.2, definición 4.6, p. 105" />. Dicho en simple: $A$ no lo gira, solo lo estira por $\lambda$ (si $\lambda$ es negativo, también lo invierte)<Cita f="ocw-1806" loc="Lecture 21" />. Existe tal $\mathbf{x}$ cuando $\det(A - \lambda I) = 0$<Cita f="mml" loc="§4.2, p. 105" />, y cuando se pide eso queda una ecuación de segundo grado en $\lambda$.
+Un **autovector** de $A$ es un vector $\mathbf{x}$ distinto de cero tal que $A\mathbf{x} = \lambda\mathbf{x}$ para algún número $\lambda$, el **autovalor**<Cita f="mml" loc="§4.2, definición 4.6, p. 105" />. Dicho en simple: $A$ no lo gira, solo lo escala por $\lambda$: lo estira si $\lvert\lambda\rvert > 1$, lo achica si es menor, lo invierte si $\lambda$ es negativo y lo manda al origen si $\lambda = 0$ (el número $\lambda$ puede ser 0; el vector $\mathbf{x}$, no)<Cita f="ocw-1806" loc="Lecture 21" />. Existe tal $\mathbf{x}$ cuando $\det(A - \lambda I) = 0$<Cita f="mml" loc="§4.2, p. 105" />, y cuando se pide eso queda una ecuación de segundo grado en $\lambda$.
 
 Para $A = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix}$ queda $(3-\lambda)^2 - 1 = \lambda^2 - 6\lambda + 8 = 0$, con raíces $\lambda = 4$ y $\lambda = 2$. El vector $(1,1)$ va a $(4,4)$ (autovalor 4) y $(1,-1)$ va a $(2,-2)$ (autovalor 2): son las dos rectas del tercer simulador. En cambio, la rotación de 90° da $\lambda^2 + 1 = 0$, que no tiene raíces reales: ninguna recta queda en su lugar, y por eso el simulador marca "complejos".
 

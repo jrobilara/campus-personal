@@ -80,7 +80,7 @@ No te podés poner los zapatos antes que las medias, ni el saco antes que la cam
 </Analogia>
 
 <SimGrafo
-  consigna="Apretá 'Paso' hasta terminar y anotá el orden. Cuando haya más de un paquete disponible, repetí eligiendo otro: ¿cambia el orden final? ¿Alguna vez un paquete queda antes de sus dependencias?"
+  consigna="Apretá 'Paso' hasta terminar y anotá el orden y los paquetes disponibles en cada paso. Cuando hay más de uno, pensá: ¿cuántos órdenes distintos admite este grafo? ¿Puede alguno salir antes que una dependencia suya?"
   titulo="Qué se instala primero"
   grafo="dependencias-paquetes"
   modo="orden-topologico"
@@ -98,7 +98,7 @@ No te podés poner los zapatos antes que las medias, ni el saco antes que la cam
 
 ### Qué es un grafo
 
-Un **grafo dirigido** (*digraph*) tiene un conjunto de vértices y un conjunto de aristas dirigidas, cada una con un vértice de origen (la cola) y uno de destino (la cabeza)<Cita f="mcs" loc="def. 10.0.1, p. 423" />. En un **grafo simple** las aristas no tienen sentido: unen dos vértices distintos y $\{u, v\}$ es lo mismo que $\{v, u\}$<Cita f="mcs" loc="def. 12.1.1, p. 502" />. Un **camino** (*path*) es una sucesión de aristas que lleva de un vértice a otro, y la **distancia** entre dos vértices es el largo del camino más corto entre ellos<Cita f="mcs" loc="def. 10.2.1 y 10.2.4, pp. 424-426" />. En un grafo con pesos, "largo" pasa a ser la suma de los pesos y el objetivo es el camino de menor peso<Cita f="mcs" loc="§10.3.1, pp. 429-430" />.
+Un **grafo dirigido** (*digraph*) tiene un conjunto de vértices y un conjunto de aristas dirigidas, cada una con un vértice de origen (la cola) y uno de destino (la cabeza)<Cita f="mcs" loc="def. 10.0.1, p. 423" />. En un **grafo simple** las aristas no tienen sentido: unen dos vértices distintos y $\{u, v\}$ es lo mismo que $\{v, u\}$<Cita f="mcs" loc="def. 12.1.1, p. 502" />. Un **recorrido** (*walk*) es una sucesión alternada de vértices y aristas que va de un vértice a otro, y es un **camino** (*path*) cuando no repite ningún vértice<Cita f="mcs" loc="def. 10.2.1 y texto siguiente, pp. 424-425" />. La **distancia** entre dos vértices es el largo del camino más corto entre ellos<Cita f="mcs" loc="def. 10.2.4, p. 426" />. En un grafo con pesos, "largo" pasa a ser la suma de los pesos y el objetivo es el camino de menor peso<Cita f="mcs" loc="§10.3.1, pp. 429-430" />.
 
 ### Camino mínimo: BFS y Dijkstra
 

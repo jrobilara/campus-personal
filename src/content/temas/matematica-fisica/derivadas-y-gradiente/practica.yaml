@@ -8,8 +8,8 @@ tarjetas:
     dorso: Achicando el intervalo $h$ hacia 0, el límite de esas pendientes es la derivada.
     fuente: openstax-calc1
   - id: t-derivada-fondo-parabola
-    frente: ¿Cuánto vale la derivada de $x^2$ en $x = 0$ y qué dice del dibujo?
-    dorso: Vale 0, la tangente es horizontal, y es el fondo de la parábola.
+    frente: ¿Cuánto vale la derivada de $x^2$ en $x = 0$?
+    dorso: Vale 0, porque la tangente ahí es horizontal.
     fuente: mml
   - id: t-gradiente-definicion
     frente: ¿Qué contiene el gradiente de una función de varias variables?
@@ -38,14 +38,15 @@ tarjetas:
   - id: t-factor-cuadratica
     frente: Para $f(x)=x^2$, ¿por cuánto se multiplica $x$ en cada paso del descenso con tasa $\gamma$?
     dorso: Por $1 - 2\gamma$, y por eso con $\gamma$ mayor que 1 el punto diverge.
+    fuente: mml
   - id: t-minimo-local
     frente: ¿Por qué el descenso por gradiente puede quedarse en un mínimo local y no llegar al mejor valle?
     dorso: Porque el gradiente ahí es cero y el algoritmo solo conoce la pendiente de donde está parado.
     fuente: mml
   - id: t-gradiente-cero
     frente: Si el gradiente es cero en un punto, ¿ya sabés que es un mínimo?
-    dorso: No, puede ser un mínimo, un máximo o un punto silla.
-    fuente: mml
+    dorso: No, puede ser un mínimo local, un máximo local o un punto silla.
+    fuente: openstax-calc3
 
 ejercicios:
   - id: e-razon-de-cambio-costo
@@ -116,8 +117,8 @@ ejercicios:
     tipo: verdadero-falso
     enunciado: Si en algún paso del descenso el gradiente da exactamente cero, el punto en que estás es el mínimo global de la función.
     respuesta: false
-    justificacion: Gradiente cero significa punto estacionario. Puede ser un mínimo local (con otro valle más profundo en otro lado), un máximo o un punto silla.
-    fuente: mml
+    justificacion: Gradiente cero significa punto crítico. Puede ser un mínimo local (con otro valle más profundo en otro lado), un máximo local o un punto silla.
+    fuente: openstax-calc3
   - id: e-om-que-hacer-si-diverge
     tipo: opcion-multiple
     enunciado: Corrés un descenso por gradiente y ves que el punto salta de un lado al otro de la curva y cada salto es más grande que el anterior. ¿Qué probás primero?
@@ -150,7 +151,7 @@ problemas:
     dificultad: intermedio
   - id: p-planilla-mse
     enunciado: |
-      En una planilla, cargá los tres puntos del ejercicio del error cuadrático medio y armá el descenso por gradiente de $E(w)$ columna por columna (w, gradiente, nuevo w, error). Corré 30 filas con tasas 0,01, 0,05 y 0,15. Compará con el valor exacto $w^* = \frac{\sum n_i t_i}{\sum n_i^2}$ y anotá cuál tasa llega más rápido y cuál no converge.
+      En una planilla, cargá los tres puntos del ejercicio del error cuadrático medio y armá el descenso por gradiente de $E(w)$ columna por columna (w, gradiente, nuevo w, error). Corré 30 filas con tasas 0,01, 0,05, 0,15 y 0,25. Compará con el valor exacto $w^* = \frac{\sum n_i t_i}{\sum n_i^2}$ y anotá cuál de las tres primeras llega más rápido y cuál tasa no converge. Para este error, el factor por paso es $1 - \gamma \cdot 28/3$: calculá a partir de qué tasa deja de converger y comprobalo.
     fuente: mml
     ubicacion: §7.1 y ejemplo 7.2 (pp. 228-230)
-    dificultad: basico
+    dificultad: intermedio

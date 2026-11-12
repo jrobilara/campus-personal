@@ -2,7 +2,7 @@
 titulo: "Señales: frecuencia, ancho de banda y ruido"
 area: matematica-fisica
 orden: 4
-resumen: Por qué un audio muestreado de menos suena metálico y por qué una red no puede ir más rápido que cierto techo, aunque le sobren cables. Son dos límites distintos, el de Nyquist y el de Shannon.
+resumen: Por qué un audio muestreado de menos pierde agudos o suena raro, y por qué una red no puede ir más rápido que cierto techo, aunque le sobren cables. Son dos límites distintos, el de Nyquist y el de Shannon.
 materias:
   - carrera: ing-informatica
     codigo: "3634"
@@ -23,7 +23,7 @@ fuentes:
     titulo: The Scientist and Engineer's Guide to Digital Signal Processing
     edicion: California Technical Publishing, © 1997-2011 (versión web libre)
     editorial: California Technical Publishing
-    ubicacion: cap. 3, "The Sampling Theorem" y filtros (pp. 39-42 y 48-49); cap. 22, pp. 353 y 358-359
+    ubicacion: cap. 3, "The Sampling Theorem" y filtros (pp. 39-42 y 48-49); cap. 14, p. 264 (decibeles); cap. 22, pp. 353 y 358-359
     url: https://www.dspguide.com/pdfbook.htm
   - id: shannon
     tipo: libro
@@ -39,7 +39,7 @@ fuentes:
     titulo: University Physics Volume 1
     edicion: OpenStax (versión libre)
     editorial: OpenStax
-    ubicacion: cap. 15, §15.1 "Simple Harmonic Motion" y cap. 17, §17.3 "Sound Intensity"
+    ubicacion: cap. 15, §15.1 "Simple Harmonic Motion"
     url: https://openstax.org/books/university-physics-volume-1/pages/15-1-simple-harmonic-motion
   - id: openstax-up2
     tipo: libro
@@ -52,9 +52,9 @@ fuentes:
 fechaVerificacion: 2026-11-11
 ---
 
-<CasoReal titulo="Las voces se entienden, la música de espera suena a lata">
+<CasoReal titulo="Las voces se entienden, la música de espera suena sin brillo">
 
-Viernes, 11:20. El call center graba todas las llamadas con una frecuencia de muestreo de 8 000 muestras por segundo. Las voces de los clientes se entienden perfecto. Pero marketing subió una música de espera con platillos y cuerdas, y cuando alguien la escucha en la grabación suena apagada, "metálica", como si la tocaran dentro de una lata.
+Viernes, 11:20. El call center graba todas las llamadas con una frecuencia de muestreo de 8 000 muestras por segundo. Las voces de los clientes se entienden perfecto. Pero marketing subió una música de espera con platillos y cuerdas, y cuando alguien la escucha en la grabación suena apagada, sin brillo, como si la tocaran en otra habitación.
 
 El proveedor de internet jura que el enlace de 100 Mbit/s está limpio. Marketing pide "más ancho de banda". Y en el piso 3 pasa algo parecido con el wifi: el router promete 300 Mbit/s y nadie consigue más de 40 (números ilustrativos).
 
@@ -64,7 +64,7 @@ Hay dos reclamos y los dos hablan de "ancho de banda" y de "calidad", pero no es
 
 <Intuicion>
 
-Una señal (un audio, la tensión de un cable, la onda de un wifi) se puede ver como una suma de ondas simples que suben y bajan de forma regular, las **senoides** (*sinusoids*). Cada una tiene dos datos: la **frecuencia** (cuántas veces por segundo se repite) y la **amplitud** (qué tan fuerte es).
+Una señal (un audio, la tensión de un cable, la onda de un wifi) se puede ver como una suma de ondas simples que suben y bajan de forma regular, las **senoides** (*sinusoids*). Cada una se describe con tres datos: la **frecuencia** (cuántas veces por segundo se repite), la **amplitud** (qué tan fuerte es) y la fase (en qué punto del ciclo arranca). En el espectro que sigue se ven las dos primeras.
 
 <Analogia titulo="El acorde de guitarra">
 
@@ -118,7 +118,7 @@ Una oscilación regular se describe con $x(t) = A\cos(\omega t + \varphi)$, dond
 
 ### Frecuencias y ancho de banda
 
-El **ancho de banda** (*bandwidth*) de una señal es el rango de frecuencias que ocupa. El oído humano abarca de unos 20 Hz a 20 kHz<Cita f="smith-dsp" loc="cap. 22, p. 353" />. La música necesita unos 20 kHz de ancho de banda y la voz, para sonar natural, alrededor de 3,2 kHz<Cita f="smith-dsp" loc="cap. 22, p. 358" />. En el simulador, cada componente es una de esas frecuencias y el espectro de barras muestra cuánta amplitud hay en cada una.
+El **ancho de banda** (*bandwidth*) de una señal es la anchura del rango de frecuencias que ocupa, medida en hertz: una señal que va de 0 a 3,2 kHz tiene 3,2 kHz de ancho de banda. (En el lenguaje cotidiano de redes se usa la misma palabra para hablar de velocidad en bit/s; acá hablamos de hertz.) El oído humano abarca de unos 20 Hz a 20 kHz<Cita f="smith-dsp" loc="cap. 22, p. 353" />. La música necesita unos 20 kHz de ancho de banda y la voz, para sonar natural, alrededor de 3,2 kHz<Cita f="smith-dsp" loc="cap. 22, p. 358" />. En el simulador, cada componente es una de esas frecuencias y el espectro de barras muestra cuánta amplitud hay en cada una.
 
 ### Teorema de muestreo (Nyquist-Shannon)
 
@@ -130,9 +130,9 @@ donde $f_s$ es la frecuencia de muestreo (muestras por segundo), $f_{\max}$ la f
 
 </Formula>
 
-Si hay una componente más alta que $f_s/2$, no desaparece: se disfraza de una frecuencia entre 0 y $f_s/2$ y se mezcla con lo que ya estaba ahí<Cita f="smith-dsp" loc="cap. 3, pp. 40 y 42" />. El libro lo muestra con una senoide de 0,95 de la frecuencia de muestreo, que en los datos aparece como una de 0,05<Cita f="smith-dsp" loc="cap. 3, p. 40" />. Para una frecuencia $f$ entre $f_s/2$ y $f_s$ el alias es $f_s - f$; en general, es la distancia de $f$ al múltiplo de $f_s$ más cercano (cuenta propia que coincide con el ejemplo del libro y con el simulador: una componente de 10 Hz muestreada a 12 Hz aparece como 2 Hz).
+Si hay una componente más alta que $f_s/2$, no desaparece: se disfraza de una frecuencia entre 0 y $f_s/2$ y se mezcla con lo que ya estaba ahí<Cita f="smith-dsp" loc="cap. 3, pp. 40 y 42" />. El libro lo muestra con una senoide de 0,95 de la frecuencia de muestreo, que en los datos aparece como una de 0,05<Cita f="smith-dsp" loc="cap. 3, p. 40" />. El gráfico en zigzag del libro muestra que cada frecuencia por encima de $f_s/2$ se corresponde con una entre 0 y $f_s/2$<Cita f="smith-dsp" loc="cap. 3, figura 3-4, p. 42" />. Para una frecuencia $f$ entre $f_s/2$ y $f_s$ ese alias es $f_s - f$, como en el ejemplo del 0,95 que aparece como 0,05; en general, es la distancia de $f$ al múltiplo de $f_s$ más cercano. Por ejemplo, una componente de 10 Hz muestreada a 12 Hz aparece como 2 Hz, que es lo que muestra el simulador.
 
-La defensa práctica es un filtro pasa-bajos analógico antes del conversor, que elimina lo que pase de la frecuencia de Nyquist (*antialias filter*)<Cita f="smith-dsp" loc="cap. 3, pp. 48-49" />. Por eso la telefonía muestrea alrededor de 8 kHz, suficiente para voz natural pero pobre para música, y el audio de alta fidelidad usa 44,1 kHz<Cita f="smith-dsp" loc="cap. 22, p. 358" />. Eso explica el caso: la grabación a 8 kHz solo puede guardar frecuencias menores que 4 kHz, y los agudos de la música quedan afuera.
+La defensa práctica es un filtro pasa-bajos analógico antes del conversor, que elimina lo que pase de la frecuencia de Nyquist (*antialias filter*)<Cita f="smith-dsp" loc="cap. 3, pp. 48-49" />. Por eso la telefonía muestrea alrededor de 8 kHz, suficiente para voz natural pero pobre para música, y el audio de alta fidelidad usa 44,1 kHz<Cita f="smith-dsp" loc="cap. 22, p. 358" />. Eso explica el caso: la grabación a 8 kHz solo puede guardar frecuencias menores que 4 kHz, y los agudos de la música quedan afuera, por eso suena apagada. Si además el equipo no filtra antes de muestrear, esos agudos que sobran no desaparecen: vuelven como alias, tonos que no estaban en la música, y es de esperar que le den un timbre metálico. Son dos efectos distintos: uno quita agudos y el otro agrega tonos falsos.
 
 ### Capacidad de un canal con ruido (Shannon)
 
@@ -146,11 +146,11 @@ donde $C$ es la capacidad (bits por segundo), $W$ el ancho de banda del canal (H
 
 El artículo lo escribe como $W\log_2\frac{P+N}{N}$, que es lo mismo. Por encima de ese valor no hay codificación que evite errores, y por debajo se puede llegar tan cerca como se quiera con una codificación suficientemente elaborada<Cita f="shannon" loc="§25, p. 43" />. Es un techo teórico: ningún sistema real lo alcanza del todo.
 
-La SNR suele darse en decibeles. La definición de decibel como diez veces el logaritmo en base 10 de un cociente de potencias es la misma que se usa para el nivel de intensidad de un sonido<Cita f="openstax-up1" loc="§17.3, ec. 17.12" />, así que $S/N = 10^{\mathrm{dB}/10}$.
+La SNR suele darse en decibeles. Para un cociente de potencias, el decibel es diez veces el logaritmo en base 10 del cociente<Cita f="smith-dsp" loc="cap. 14, ec. 14-1, p. 264" />: 10 dB son un factor 10 en potencia y 20 dB un factor 100. Por eso $S/N = 10^{\mathrm{dB}/10}$.
 
 <Profundizar titulo="Un ejemplo con números: el wifi del piso 3">
 
-Un canal de 20 MHz con SNR de 20 dB tiene $S/N = 100$, y entonces $C = 20 \cdot 10^6 \cdot \log_2(101) \approx 133$ Mbit/s. Si el piso 3 tiene más interferencia y la SNR baja a 10 dB ($S/N = 10$), la capacidad cae a $20\cdot10^6\log_2(11) \approx 69$ Mbit/s, sin tocar el router. Con la misma SNR, doblar $W$ duplica $C$. En cambio, doblar la potencia de señal ($S/N$ de 100 a 200) agrega solo alrededor de 1 bit por segundo y por hertz, es decir, unos 20 Mbit/s más en este canal: el logaritmo hace que cada mejora cueste más. Los números son una cuenta de la fórmula; no son mediciones.
+Un canal de 20 MHz con SNR de 20 dB tiene $S/N = 100$, y entonces $C = 20 \cdot 10^6 \cdot \log_2(101) \approx 133$ Mbit/s. Si el piso 3 tiene más interferencia y la SNR baja a 10 dB ($S/N = 10$), la capacidad cae a $20\cdot10^6\log_2(11) \approx 69$ Mbit/s, sin tocar el router. Con la misma SNR, doblar $W$ duplica $C$; pero con ruido blanco un canal más ancho recoge más ruido, así que mantener la misma SNR exige también más potencia. En cambio, doblar la potencia de señal ($S/N$ de 100 a 200) agrega alrededor de 1 bit por segundo y por hertz, unos 20 Mbit/s más en este canal. Ese "alrededor de 1" vale solo cuando la SNR ya es alta: doblar $S/N$ suma $\log_2\frac{1+2S/N}{1+S/N}$, que se acerca a 1 a medida que $S/N$ crece (con $S/N = 10$ suma 0,93; con 100, 0,99). Con SNR baja es otra historia: con $S/N = 1$ suma 0,585 bit/s/Hz y con $S/N = 0{,}1$ suma 0,126, que es casi duplicar la capacidad, porque para valores chicos $\ln(1+x) \approx x$ y la capacidad crece casi en proporción a la potencia. Los números son una cuenta de la fórmula; no son mediciones.
 
 </Profundizar>
 

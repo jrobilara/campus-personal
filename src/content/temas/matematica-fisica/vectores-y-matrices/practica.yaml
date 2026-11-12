@@ -7,7 +7,7 @@ tarjetas:
     frente: ¿Qué punto del plano deja siempre quieto una matriz de 2×2?
     dorso: El origen, $(0,0)$.
   - id: t-matriz-rotacion
-    frente: ¿Cómo es la matriz que gira el plano un ángulo $\theta$?
+    frente: ¿Cómo es la matriz que gira el plano un ángulo $\theta$ en sentido antihorario?
     dorso: Tiene $\cos\theta$ y $\cos\theta$ en la diagonal, $-\sin\theta$ arriba a la derecha y $\sin\theta$ abajo a la izquierda.
     fuente: mml
   - id: t-rotacion-conserva
@@ -40,7 +40,7 @@ tarjetas:
     fuente: mml
   - id: t-autovector-definicion
     frente: ¿Qué cumple un autovector $\mathbf{x}$ de $A$ con autovalor $\lambda$?
-    dorso: $A\mathbf{x} = \lambda\mathbf{x}$ con $\mathbf{x}$ distinto de cero, o sea que la matriz solo lo estira o lo invierte.
+    dorso: $A\mathbf{x} = \lambda\mathbf{x}$ con $\mathbf{x} \neq \mathbf{0}$, o sea que la matriz no lo gira, solo lo escala por $\lambda$ (que puede ser 0 o negativo).
     fuente: mml
   - id: t-rotacion-sin-autovectores
     frente: ¿Por qué una rotación de 90° no tiene autovectores reales?
@@ -73,13 +73,13 @@ ejercicios:
       absoluta: 0.1
     unidad: cm²
     explicacion: |
-      $\det A = 3\cdot 4 - 1\cdot 2 = 10$. Las áreas se multiplican por el valor absoluto del determinante: $7 \cdot 10 = 70\ \text{cm}^2$.
+      $\det A = 3\cdot 4 - 1\cdot 2 = 10$. El área de cualquier figura se multiplica por el valor absoluto del determinante (en el cuadrado de lado 1 se ve como el paralelogramo de las columnas): $7 \cdot 10 = 70\ \text{cm}^2$.
     erroresComunes:
       - valor: 10
         explicacion: Ese es el determinante, es decir, el área que sale de transformar un cuadrado de lado 1. Falta multiplicar por los 7 cm² originales.
       - valor: 98
         explicacion: Calculaste $ad + bc = 14$ en vez de $ad - bc = 10$.
-    fuente: mml
+    fuente: openstax-calc3
   - id: e-autovalor-mayor
     tipo: numerico
     enunciado: |
