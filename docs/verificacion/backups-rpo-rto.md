@@ -3,7 +3,7 @@
 - **Tema:** servidores/backups-rpo-rto
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** OBSERVADO (re-verificación sobre a78c34f; quedan abiertos: H4, H6, H7 y H8)
 
 Alcance: `tema.mdx`, `practica.yaml` y las filas de `FUENTES-servidores.md`. NIST SP 800-34 Rev. 1 se descargó de nvlpubs.nist.gov y se leyó con `pdftotext` (149 páginas PDF; la numeración impresa va 14 páginas por detrás de la del PDF). *Data Backup Options* (US-CERT, 2012) se leyó del PDF. La guía #StopRansomware se leyó con WebFetch.
 
@@ -74,3 +74,33 @@ Puntos que marcó el autor como no verificados:
 - `t-321-origen` es trivia de atribución con dorso de dos ideas; la propia nota dice que es práctica difundida, no norma. Conviene reemplazarla por una de aplicación.
 - Definiciones: hay 4 tarjetas de definición/"qué mide" (`t-rpo`, `t-rto`, `t-rto-contra-mtd`, `t-321-numeros`) frente a un máximo de 2 por tema.
 - `e-cumple-321`: el disco externo y el NAS son ambos discos; la pregunta no aclara si cuentan como dos medios. Agregar "(un HDD externo y un NAS con discos)" o cambiar uno por cinta/nube para que la única razón del "no" sea la falta de copia fuera del sitio. La opción 3 ("exactamente cuatro copias") no es un distractor plausible.
+
+## Re-verificación (cierre de F4) — diff 6b629de..a78c34f
+
+Revisé solo lo que cambió. `npm run build` en Node 24: verde. Releí la guía #StopRansomware de CISA con el orden de su Ransomware Response Checklist y la página de CERT.ar.
+
+| Hallazgo | Estado | Verificación |
+|---|---|---|
+| H1 (páginas de NIST) | CERRADO (a78c34f) | Citas en p. 17 (§3.2.1) y p. 28 (§3.5.1); coinciden con el PDF (`pdftotext`, numeración impresa). No quedan "p. 16"/"p. 27" en el tema ni en FUENTES (grep). |
+| H2 (`erroresComunes` 2650) | CERRADO (a78c34f) | `2700` = 4·(500 + 7·25) (Python). |
+| H3 (consigna "Apagá respaldo probado") | CERRADO (a78c34f) | Se quitó `respaldoProbado={false}`; el default del contrato es `true`, así que apagar el toggle ahora es una acción real. |
+| H4 (caso de ransomware) | REABIERTO | El nuevo camino (aislar sin apagar → imagen y memoria + avisar internamente → reconstruir desde imagen limpia → restaurar en carpeta de prueba → informar y reportar → `final-bien`) sigue casi todo el checklist de CISA, pero el reporte externo queda al final. Ver H6. Lo demás está respaldado: "immediately isolate them"; apagar solo si no se puede desconectar (se pierden rastros volátiles); "Take a system image and memory capture of a sample of affected devices"; "Rebuild systems ... pre-configured standard images"; "Reconnect systems and restore data from offline, encrypted backups"; "Consult federal law enforcement ... regarding possible decryptors". La página de CERT.ar (argentina.gob.ar, ruta Jefatura de Gabinete > Centro Nacional de Ciberseguridad > CERT.ar) existe, es oficial y trae "Reportar un incidente" ("Formulario destinado al reporte público de un incidente o posible ciberataque") y `reportes@cert.ar`. |
+| H5 (tarjetas y `e-cumple-321`) | CERRADO (a78c34f) con un hallazgo nuevo (H7) | `t-321-numeros` y `t-321-origen` reemplazadas; solo quedan 2 tarjetas de definición; `e-cumple-321` ahora es correcta (disco + cinta = 2 medios, 3 copias, ninguna fuera del sitio; distractor "tres tipos" plausible y explicado). La tarjeta nueva `t-321-falta-uno` es ambigua (H7). |
+
+**Hallazgos nuevos y abiertos**
+
+**H6** — `practica.yaml` → `casos[c-ransomware-viernes]`, nodos `tomar-evidencia` y `validar-restore` y `leccion`; relacionado con el reabierto H4.
+- Qué está mal: en la guía de CISA el orden es Detection and Analysis (aislar) → Reporting and Notification → Containment and Eradication (imagen y memoria, reconstruir) → Recovery (restaurar). El caso y la lección ("aislar, guardar evidencia, reconstruir limpio, restaurar y reportar") ponen el reporte externo (CERT.ar) al final, después de restaurar, y contradicen al propio Formal ("Cuando ya pasó", que sí lo ubica segundo). Además, el nodo `tomar-evidencia` hace el aviso interno y la imagen/memoria en una sola opción; CISA condiciona la imagen/memoria ("If no initial mitigation actions appear possible") y el Formal no lo dice. Y la consecuencia de `final-pagar` dice que la guía recomienda consultar "antes" a las fuerzas de seguridad: la guía lo ubica en Containment and Eradication y aclara que no es una alternativa a pagar ni una pauta sobre pagar.
+- Qué dice la fuente: CISA #StopRansomware Guide, Ransomware Response Checklist (orden indicado arriba).
+- Corrección propuesta: mover el reporte (a la dirección y a CERT.ar) al nodo `tomar-evidencia` (después de aislar y antes de reconstruir), dejar en `validar-restore` solo informar el RPO real, y reescribir la lección como "aislar, reportar, guardar evidencia, reconstruir limpio y restaurar". Cambiar "consultar antes" por "consultar a las fuerzas de seguridad por posibles descifradores". Aclarar en el Formal que la imagen/memoria es condicional.
+
+**H7** — `practica.yaml` → `tarjetas[t-321-falta-uno]`.
+- Qué está mal: la pregunta ("¿qué número de la regla 3-2-1 te falta cumplir?") tiene dos respuestas correctas: el original y dos copias están en discos (falta el 2, dos tipos de medios) y todo está en la misma sala (falta el 1, fuera del sitio). El dorso admite ambas ("El 1 ...; los discos tampoco son dos tipos de medios"), incumple "respuesta única" de la guía.
+- Qué dice la fuente: *Data Backup Options*, intro: "2 different media types" y "1 copy offsite".
+- Corrección propuesta: dejar una sola carencia, por ejemplo "original en el servidor (disco), una copia en cintas en la misma sala y otra en el NAS de la misma sala; ¿qué número te falta?" (respuesta: el 1), o preguntar "¿por qué no cumple la regla?" con la respuesta de ambas condiciones.
+
+**H8** (menor) — `tema.mdx` frontmatter `fuentes[cert-ar].autor` ("Dirección Nacional de Ciberseguridad, Argentina").
+- Qué está mal: la página consultada no nombra a la Dirección Nacional de Ciberseguridad; la ruta y el encabezado son Jefatura de Gabinete de Ministros / Centro Nacional de Ciberseguridad / CERT.ar. Además, la página dice que CERT.ar gestiona los incidentes del Sector Público Nacional; el formulario es de "reporte público", así que sirve, pero conviene aclararlo para una pyme.
+- Corrección propuesta: `autor: Jefatura de Gabinete de Ministros, Centro Nacional de Ciberseguridad (CERT.ar)` y una frase aclarando que el formulario admite reportes públicos.
+
+Hallazgos abiertos: H4 (reabierto, se resuelve con H6), H6, H7, H8.

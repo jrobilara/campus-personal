@@ -3,7 +3,7 @@
 - **Tema:** servidores/contenedores-docker
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificación sobre a78c34f; primera pasada sobre 6b629de: OBSERVADO)
 
 Alcance: `tema.mdx`, `practica.yaml` y las filas de `FUENTES-servidores.md`. Los simuladores son stubs; la consigna se contrastó con `SIMULADORES.md` §2.9 (preset `contenedor-docker`). Docker 29.1.3 local solo con `--help`.
 
@@ -78,3 +78,20 @@ Puntos que marcó el autor:
 - `t-volumen-sobrevive` mezcla dos ideas (capa de escritura y volumen) y `t-stop-senal` pregunta dos cosas (qué señal y cuánto espera). La guía pide una idea por tarjeta: dividirlas.
 - Definiciones/"qué es": `t-contenedor-definicion`, `t-pod-definicion` y `t-crashloop` suman 3 (máximo 2 por tema).
 - `t-imagen-inmutable` dorso: "se agregan cambios encima en una capa nueva" sugiere que la imagen se modifica; mejor "se construye otra imagen".
+
+## Re-verificación (cierre de F4) — diff 6b629de..a78c34f
+
+Revisé solo lo que cambió. `npm run build` en Node 24: verde.
+
+| Hallazgo | Estado | Verificación |
+|---|---|---|
+| H1 (secciones inexistentes) | CERRADO (a78c34f) | `loc="Explanation"` (What is a container?) y `loc="A volume's lifecycle"` (Volumes) existen en las páginas y contienen lo citado (ya contrastado en la primera pasada). `ubicacion` y FUENTES alineadas. |
+| H2 (rollback del caso) | CERRADO (a78c34f) | Nueva opción: `docker stop turnos`, renombrar el contenedor roto y levantar la 1.3. Es correcto: `docker stop` detiene un contenedor en `Restarting` y, al ser un stop manual, la política `unless-stopped` no lo reinicia (docs: "when the container is stopped (manually or otherwise), it isn't restarted"); `docker rename CONTAINER NEW_NAME` existe (`--help` local); el contenedor no usa `--rm`, así que conserva el log; el nombre y el puerto quedan libres. La consecuencia describe eso. Observación menor, sin hallazgo: la opción nombra "lo renombro" sin dar el comando; FUENTES fila 15b lo documenta. |
+| H3 (política ignorada tras stop manual) | CERRADO (a78c34f) | Oración separada por política: `always` se ignora hasta reiniciar el daemon; `unless-stopped` ni así. Coincide con la tabla del tema y con la doc. |
+| H4 (ReplicaSet citado a Use Case) | CERRADO (a78c34f) | Nueva fuente `k8s-replicaset`, usada con `<Cita f="k8s-replicaset" loc="introducción" />`. Releí la página: "A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time." El Deployment se cita a su introducción (estado deseado, controlador). |
+| H5 (backoff por defecto) | CERRADO (a78c34f) | Agrega `restartPolicy` (Always/OnFailure/Never, default Always) y aclara que 300 s es el tope por defecto y configurable; coincide con Pod Lifecycle (Container restarts; Configurable container restart delay). Ejercicio con "Con los valores por defecto"; 610 s recalculado. |
+| H6 (tarjetas) | CERRADO (a78c34f) | `t-stop-senal`/`t-stop-plazo` y `t-capa-escritura-se-pierde`/`t-volumen-sobrevive` quedaron atómicas y correctas (10 s a SIGKILL y `-t`; capa destruida con el contenedor, volumen persiste). `t-imagen-inmutable` ya no sugiere modificar la imagen. `t-pod-efimero` (aplicación) y `t-crashloop` reformulada: solo queda una tarjeta de definición. `t-pod-efimero` es correcta: Pods and controllers dice que un controlador crea un Pod de reemplazo si falla el nodo. |
+
+Hallazgos nuevos por los cambios: ninguno.
+
+Hallazgos abiertos: ninguno.

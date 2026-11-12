@@ -3,7 +3,7 @@
 - **Tema:** servidores/monitoreo-y-alertas
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificación sobre a78c34f; primera pasada sobre 6b629de: OBSERVADO)
 
 Alcance: `tema.mdx`, `practica.yaml` y las filas de `FUENTES-servidores.md`. Los simuladores son stubs en el worktree; las consignas se contrastaron con el contrato de `SIMULADORES.md` §2.10.
 
@@ -61,3 +61,18 @@ Punto pendiente que señaló el autor: `mode="idle"` del node exporter. La guía
 - Corrección propuesta: unificar el ritmo (por ejemplo 5 GB/h → llena a las 4:05 y quedan ~12,8 h tras liberar 60 GB) o cambiar el horario del desenlace. Severidad baja.
 
 **H4** (menor, no bloquea) — `tema.mdx` frontmatter `fuentes[sre-monitoring/sre-alerting].edicion`: dice "© 2017 Google, publicado por O'Reilly"; el BRIEF habla de O'Reilly 2016. Aclarar "1.ª ed., O'Reilly, 2016 (edición online © 2017 Google)". Sin impacto en el contenido.
+
+## Re-verificación (cierre de F4) — diff 6b629de..a78c34f
+
+Revisé solo lo que cambió. `npm run build` en Node 24: verde.
+
+| Hallazgo | Estado | Verificación |
+|---|---|---|
+| H1 (`erroresComunes` 43.3) | CERRADO (a78c34f) | Ahora `44.4`; Python: 200/4,5 = 44,44. La explicación ("200 / 4,5") coincide. |
+| H2 (`mode="idle"` sin respaldo) | CERRADO (a78c34f) | Nueva fuente `node-exporter-cpu` (collector/cpu_linux.go de prometheus/node_exporter). Releí el archivo: define la métrica con etiquetas `cpu` y `mode` y emite el valor `"idle"` (también `iowait`). La frase del tema ("una serie por núcleo y por modo, entre ellos `idle`") es exacta. |
+| H3 (tiempos del caso) | CERRADO (a78c34f) | CasoReal y caso coinciden: 4 GB libres a 5 GB/h = 48 min → 3:12 + 0:48 = 4:00 (el texto dice 4:00). Tras liberar 60 GB: 64/5 = 12,8 h ≈ "unas 13 horas"; desde ~3:30 cae a media tarde (texto: "media tarde"). Recalculado con Python. |
+| H4 (año del libro SRE) | CERRADO (a78c34f) | "1.ª ed., O'Reilly, 2016 (edición online ... © 2017 Google)". |
+
+Hallazgos nuevos por los cambios: ninguno.
+
+Hallazgos abiertos: ninguno.

@@ -3,7 +3,7 @@
 - **Tema:** servidores/linux-procesos-systemd-logs
 - **Fecha:** 2026-11-11
 - **Verificador:** F4 (agente distinto del autor)
-- **Veredicto:** OBSERVADO
+- **Veredicto:** APROBADO (re-verificación sobre a78c34f; primera pasada sobre 6b629de: OBSERVADO)
 
 Alcance: `tema.mdx`, `practica.yaml` y las filas de `FUENTES-servidores.md`. Los simuladores del worktree son stubs (7 líneas), así que las consignas se contrastaron contra el contrato de `SIMULADORES.md` §2.9, no contra el simulador funcionando.
 
@@ -66,3 +66,19 @@ Páginas que el autor dijo que le llegaron truncadas (parte de systemd.unit y de
 - Corrección propuesta: "muere por una señal anormal (no SIGTERM, SIGHUP, SIGINT ni SIGPIPE)". Severidad baja.
 
 **H5** (menor, no bloquea) — `practica.yaml`, tarjeta `t-estado-d`: la respuesta es una sola letra ("La D"). Es una tarjeta de memorización pura; la guía pide aplicación o "por qué". Sugerencia: "Un proceso aparece en `D` y no responde a `kill`: ¿qué estado es y qué suele indicar?". Opcional.
+
+## Re-verificación (cierre de F4) — diff 6b629de..a78c34f
+
+Revisé solo lo que cambió (`tema.mdx`, `practica.yaml`, filas de FUENTES). `npm run build` en Node 24: verde.
+
+| Hallazgo | Estado | Verificación |
+|---|---|---|
+| H1 (`start-limit-hit` citado a systemd.service) | CERRADO (a78c34f) | Se agregó la fuente `systemd-exec` y la cita usa `loc="tabla de $SERVICE_RESULT"`. En `man systemd.exec` local (255.4) la "Table 5. Defined $SERVICE_RESULT values" incluye `start-limit-hit` con el texto citado. `systemd-service` ya no promete la tabla de Result. Fila 10 de FUENTES corregida. |
+| H2 (unidad de ejemplo con `RestartSec=5`) | CERRADO (a78c34f) | La unidad ya no define `RestartSec` (queda en 100 ms, systemd.service(5) "Defaults to 100ms") y conserva `StartLimitIntervalSec=10`/`StartLimitBurst=5` (iguales a los defaults de systemd-system.conf). Recalculé: arranques en t = 0, 0,1, …, 0,5 s; el 6.º (a 0,5 s) supera el burst de 5 en 10 s según systemd.unit ("started more than burst times within an interval"), así que llega a `start-limit-hit` en menos de 1 s, que es el síntoma del CasoReal y del caso. El `RestartSec=5` pasa a variante explícita ("cambiá una sola línea"), con la cuenta de ≤2 arranques por ventana (Python: 2). Ejercicio con `RestartSec=4` intacto (3). |
+| H3 (Ojo: `kill -9` en D) | CERRADO (a78c34f) | Ahora dice "puede no responder" y menciona `TASK_KILLABLE` desde 2.6.25 con `<Cita f="tlpi" loc="§22.3" />`; coincide con el PDF de Kerrisk (§22.3). |
+| H4 (`on-failure` y señales) | CERRADO (a78c34f) | "señal anormal (no cuentan SIGHUP, SIGINT, SIGTERM ni SIGPIPE ...)" coincide con systemd.service(5) y el man local. |
+| H5 (tarjeta `t-estado-d`) | CERRADO (a78c34f) | Reformulada como situación ("proceso en D y un `kill` no le hace nada"); respuesta coherente con ps(1) "uninterruptible sleep (usually I/O)" y con el Ojo. |
+
+Hallazgos nuevos por los cambios: ninguno.
+
+Hallazgos abiertos: ninguno.
