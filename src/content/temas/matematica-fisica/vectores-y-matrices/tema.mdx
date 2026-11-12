@@ -1,0 +1,172 @@
+---
+titulo: "Vectores y matrices como transformaciones"
+area: matematica-fisica
+orden: 2
+resumen: Una matriz de 2×2 es una máquina que gira, estira, espeja o aplasta el plano. Con cuatro números entendés qué hace, cuánto cambia el área y cuándo no hay vuelta atrás.
+materias:
+  - carrera: ing-informatica
+    codigo: "3627"
+    nombre: Álgebra y Geometría Analítica I
+  - carrera: ing-informatica
+    codigo: "3645"
+    nombre: Álgebra y Geometría Analítica II
+prerrequisitos: []
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: openstax-calc3
+    tipo: libro
+    autor: Gilbert Strang y Edwin Herman
+    titulo: Calculus Volume 3
+    edicion: OpenStax, 2016 (versión libre)
+    editorial: OpenStax
+    ubicacion: cap. 5, §5.7 "Change of Variables in Multiple Integrals"
+    url: https://openstax.org/books/calculus-volume-3/pages/5-7-change-of-variables-in-multiple-integrals
+  - id: mml
+    tipo: libro
+    autor: Marc P. Deisenroth, A. Aldo Faisal y Cheng Soon Ong
+    titulo: Mathematics for Machine Learning
+    edicion: Cambridge University Press, 2020 (PDF libre, borrador del 15/01/2024)
+    editorial: Cambridge University Press
+    ubicacion: §2.7 (p. 51), §3.9 (pp. 92-94), §4.1 (pp. 100-101) y §4.2 (pp. 105-106)
+    url: https://mml-book.github.io/
+  - id: zill
+    tipo: libro
+    autor: Dennis G. Zill y Jacqueline M. Dewar
+    titulo: Álgebra, trigonometría y geometría analítica
+    edicion: 3.ª ed. en español, 2012
+    editorial: McGraw-Hill Interamericana
+    ubicacion: cap. 14, §14.2 (pp. 606-607) y §14.3 (p. 612)
+  - id: ocw-1806
+    tipo: curso-abierto
+    autor: Gilbert Strang (MIT OpenCourseWare)
+    titulo: 18.06 Linear Algebra
+    edicion: Spring 2010
+    url: https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/resources/lecture-30-linear-transformations-and-their-matrices/
+    ubicacion: Lecture 30 (transformaciones lineales) y Lecture 21 (autovalores y autovectores)
+  - id: 3b1b-matrices
+    tipo: video
+    autor: 3Blue1Brown
+    titulo: Linear transformations and matrices (Essence of linear algebra, capítulo 3)
+    url: https://www.3blue1brown.com/lessons/linear-transformations
+    verMas: true
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="Cuatro números rotan la imagen. ¿Y alcanzan para desaplastarla?">
+
+Tu equipo mantiene un servicio que prepara imágenes para la web. Cada operación (girar 90 grados, achicar a la mitad en vertical, aplanar en una sola línea para una miniatura rara) se describe con una tabla de 2×2, es decir, cuatro números.
+
+Un compañero propone un atajo: "Guardemos solo la imagen procesada y, si hace falta, aplicamos la operación contraria". Otro duda: "¿Siempre existe la operación contraria?". Y un tercero pregunta por qué, si primero achicás y después girás, la imagen sale distinta que si primero girás y después achicás.
+
+Son tres preguntas sobre la misma idea: qué le hace una matriz al plano.
+
+</CasoReal>
+
+<Intuicion>
+
+Una matriz de 2×2 no es una tabla para mirar: es una función que toma un punto del plano y lo manda a otro punto. Lo que la hace especial es que no dobla el plano: una recta siempre termina siendo una recta (o, en el caso extremo de una matriz que aplasta, un punto) y el origen se queda quieto. Cuando la matriz no aplasta, además, las paralelas siguen siendo paralelas.
+
+<Analogia titulo="La hoja cuadriculada de goma">
+
+Imaginá una hoja cuadriculada hecha de goma y clavada en el origen con una chinche. Podés girarla, estirarla, inclinarla o darla vuelta como un espejo. Mientras no la rompas ni la dobles, las líneas de la cuadrícula siguen rectas y parejas entre sí. El caso extremo es aplastarla del todo contra una recta, y lo vemos enseguida. Una matriz es una de esas deformaciones. Para describirla entera alcanza con anotar adónde fueron a parar los dos "palitos" de la cuadrícula: el horizontal $\hat\imath = (1,0)$ y el vertical $\hat\jmath = (0,1)$. Todo lo demás se acomoda solo.
+
+</Analogia>
+
+Esa es la clave de lectura: las dos **columnas** de la matriz son, justamente, las imágenes de $\hat\imath$ y de $\hat\jmath$.
+
+<SimTransformacion2D
+  consigna="Con el preset de rotación de 90 grados, mirá adónde van las flechas de color î y ĵ y comparalas con las columnas de la matriz. Después probá el preset de escala y arrastrá el vector v: ¿cómo cambia su largo?"
+  titulo="La matriz son los destinos de î y ĵ"
+  preset="rotacion-90"
+  editable={true}
+/>
+
+Ahora el "área". Si el cuadrado de lado 1 que forman $\hat\imath$ y $\hat\jmath$ se convierte en un paralelogramo, el área de ese paralelogramo dice por cuánto se multiplica cualquier área del plano (el cuadrado de lado 1 es solo el caso fácil de dibujar). Ese número es el **determinante** (*determinant*). Si el paralelogramo se aplasta en un segmento, el área es 0 y el plano entero quedó "planchado" sobre una recta.
+
+<SimTransformacion2D
+  consigna="Elegí el preset de proyección: ¿cuánto vale det y qué le pasa al cuadrado? Arrastrá v a varios lugares con la misma coordenada x: ¿en qué punto termina Av cada vez? ¿Se podría volver atrás?"
+  titulo="Cuando el plano se aplasta"
+  preset="proyeccion"
+  vector={[2, 1]}
+/>
+
+<Ojo>
+
+Si dos puntos distintos terminan en el mismo lugar, ninguna matriz puede "desaplastarlos": desde el resultado no hay forma de saber de cuál venías. Por eso una matriz con determinante 0 no tiene operación contraria.
+
+</Ojo>
+
+Queda una pregunta linda: dentro de todo el plano que se deforma, ¿hay direcciones que la matriz no gira, sino que solo estira o achica? Esas son los **autovectores** (*eigenvectors*), y el factor de estirado es el **autovalor** (*eigenvalue*).
+
+<SimTransformacion2D
+  consigna="Con esta matriz mirá las dos rectas de autovectores. Poné v sobre una de ellas y comprobá que Av queda sobre la misma recta. ¿Por cuánto se multiplica el largo en cada recta?"
+  titulo="Direcciones que solo se estiran"
+  matriz={[[3, 1], [1, 3]]}
+  editable={true}
+  mostrarAutovectores={true}
+  vector={[1, 1]}
+/>
+
+</Intuicion>
+
+<Formal>
+
+### La matriz por un vector
+
+Una matriz de 2×2 es una tabla $A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$ y su acción sobre $\mathbf{v} = (x, y)$ es
+
+<Formula nombre="Matriz por vector" tex="A\mathbf{v} = \begin{pmatrix} a & b \\ c & d \end{pmatrix}\begin{pmatrix} x \\ y \end{pmatrix} = x \begin{pmatrix} a \\ c \end{pmatrix} + y \begin{pmatrix} b \\ d \end{pmatrix}">
+
+donde $(a, c)$ es la primera columna y $(b, d)$ la segunda: el resultado es $x$ veces la primera columna más $y$ veces la segunda.
+
+</Formula>
+
+Esto coincide con la regla general para cualquier transformación lineal: la columna $j$ de la matriz contiene las coordenadas de la imagen del $j$-ésimo vector de la base<Cita f="mml" loc="§2.7, definición 2.19, p. 51" />. Y la idea de fondo, que multiplicar una matriz por un vector es una transformación que lleva vectores a vectores, es la que abre el curso de Strang sobre transformaciones lineales<Cita f="ocw-1806" loc="Lecture 30" />.
+
+### Rotaciones y escalas
+
+Una rotación en el plano de ángulo $\theta$ (en sentido contrario a las agujas del reloj) lleva $\hat\imath$ a $(\cos\theta, \sin\theta)$ y $\hat\jmath$ a $(-\sin\theta, \cos\theta)$, y por lo tanto su matriz es<Cita f="mml" loc="§3.9.1, ec. 3.76, p. 92" />:
+
+$$
+R(\theta) = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix}
+$$
+
+Para $\theta = 90^\circ$ queda $\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$, la del primer simulador. Las rotaciones no cambian las distancias entre puntos ni los ángulos<Cita f="mml" loc="§3.9.4, p. 94" />. Una escala que multiplica por $s_x$ en horizontal y por $s_y$ en vertical es $\begin{pmatrix} s_x & 0 \\ 0 & s_y \end{pmatrix}$ (se lee mirando adónde van $\hat\imath$ y $\hat\jmath$).
+
+### Componer: el orden importa
+
+El producto $AB$ de dos matrices se define fila por columna: el elemento $(i,j)$ es la suma de multiplicar la fila $i$ de $A$ por la columna $j$ de $B$<Cita f="zill" loc="§14.2, definición 14.2.3, p. 606" />. De esa definición sale que $(AB)\mathbf{v} = A(B\mathbf{v})$: **primero se aplica $B$ y después $A$**. Y, en general, $AB \neq BA$: el producto de matrices no es conmutativo<Cita f="zill" loc="§14.2, ejemplo 8, p. 607" />. Eso explica lo del caso: achicar y después girar no es lo mismo que girar y después achicar (con una escala distinta en cada eje; con una escala igual en los dos ejes sí da lo mismo).
+
+### Determinante: área, orientación e inversa
+
+Para $A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$, el determinante es
+
+<Formula nombre="Determinante 2×2" tex="\det A = ad - bc">
+
+donde $a, b, c, d$ son los cuatro elementos de la matriz.
+
+</Formula>
+
+Es la misma cuenta en los dos libros<Cita f="zill" loc="§14.3, definición 14.3.1, p. 612" /><Cita f="mml" loc="§4.1, ec. 4.6, p. 100" />. Geométricamente, el valor absoluto de $\det A$ es el área del paralelogramo que forman las columnas, y su signo indica la orientación: si es negativo, la figura quedó "dada vuelta" como en un espejo<Cita f="mml" loc="§4.1, ejemplo 4.2, p. 101" />. El mismo factor sirve para cualquier figura, no solo para el cuadrado: el valor absoluto del determinante multiplica el área de lo que transformes, y es el caso lineal del jacobiano, que da el factor de área en un cambio de variables<Cita f="openstax-calc3" loc="§5.7" />. Además, una matriz cuadrada tiene inversa si y solo si su determinante no es cero<Cita f="mml" loc="§4.1, teorema 4.1, p. 100" />.
+
+| Matriz | $\det$ | Qué hace |
+|---|---|---|
+| rotación de 90° | 1 | gira, no cambia el área |
+| escala $\mathrm{diag}(2;\ 0{,}5)$ | 1 | estira x2 en horizontal y achica a la mitad en vertical; el área se conserva |
+| reflexión $\mathrm{diag}(1;\ -1)$ | -1 | espeja, el área se conserva |
+| proyección $\mathrm{diag}(1;\ 0)$ | 0 | aplasta todo sobre el eje x, sin vuelta atrás |
+
+### Autovalores y autovectores
+
+Un **autovector** de $A$ es un vector $\mathbf{x}$ distinto de cero tal que $A\mathbf{x} = \lambda\mathbf{x}$ para algún número $\lambda$, el **autovalor**<Cita f="mml" loc="§4.2, definición 4.6, p. 105" />. Dicho en simple: $A$ no lo gira, solo lo escala por $\lambda$: lo estira si $\lvert\lambda\rvert > 1$, lo achica si es menor, lo invierte si $\lambda$ es negativo y lo manda al origen si $\lambda = 0$ (el número $\lambda$ puede ser 0; el vector $\mathbf{x}$, no)<Cita f="ocw-1806" loc="Lecture 21" />. Existe tal $\mathbf{x}$ cuando $\det(A - \lambda I) = 0$<Cita f="mml" loc="§4.2, p. 105" />, y cuando se pide eso queda una ecuación de segundo grado en $\lambda$.
+
+Para $A = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix}$ queda $(3-\lambda)^2 - 1 = \lambda^2 - 6\lambda + 8 = 0$, con raíces $\lambda = 4$ y $\lambda = 2$. El vector $(1,1)$ va a $(4,4)$ (autovalor 4) y $(1,-1)$ va a $(2,-2)$ (autovalor 2): son las dos rectas del tercer simulador. En cambio, la rotación de 90° da $\lambda^2 + 1 = 0$, que no tiene raíces reales: ninguna recta queda en su lugar, y por eso el simulador marca "complejos".
+
+<Profundizar titulo="¿Para qué sirve esto con datos de verdad?">
+
+Reducir dimensiones es el ejemplo clásico. En el análisis de componentes principales (*PCA*), se busca proyectar los datos sobre un subespacio de menos dimensiones perdiendo lo menos posible, y para derivarlo el libro se apoya justo en proyecciones y en autovalores<Cita f="mml" loc="cap. 10, p. 318" />. Una proyección como la del simulador (determinante 0) aplasta dimensiones y no se puede deshacer; la gracia de PCA es elegir bien sobre qué recta o plano aplastar.
+
+</Profundizar>
+
+</Formal>

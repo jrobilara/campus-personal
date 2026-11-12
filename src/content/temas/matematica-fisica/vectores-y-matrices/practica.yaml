@@ -1,0 +1,146 @@
+tarjetas:
+  - id: t-columnas-son-imagenes
+    frente: ¿Qué representan las dos columnas de una matriz de 2×2 como transformación?
+    dorso: Adónde van a parar los vectores $\hat\imath = (1,0)$ y $\hat\jmath = (0,1)$.
+    fuente: mml
+  - id: t-origen-quieto
+    frente: ¿Qué punto del plano deja siempre quieto una matriz de 2×2?
+    dorso: El origen, $(0,0)$.
+  - id: t-matriz-rotacion
+    frente: ¿Cómo es la matriz que gira el plano un ángulo $\theta$ en sentido antihorario?
+    dorso: Tiene $\cos\theta$ y $\cos\theta$ en la diagonal, $-\sin\theta$ arriba a la derecha y $\sin\theta$ abajo a la izquierda.
+    fuente: mml
+  - id: t-rotacion-conserva
+    frente: ¿Qué conserva una rotación del plano?
+    dorso: Las distancias entre puntos y los ángulos entre vectores.
+    fuente: mml
+  - id: t-orden-composicion
+    frente: En el producto $AB$ aplicado a un vector, ¿cuál de las dos matrices actúa primero?
+    dorso: La $B$, la que está más cerca del vector.
+    fuente: zill
+  - id: t-no-conmutativo
+    frente: ¿Se puede cambiar el orden de dos matrices en un producto sin cambiar el resultado?
+    dorso: En general no, porque $AB$ y $BA$ suelen dar matrices distintas.
+    fuente: zill
+  - id: t-determinante-formula
+    frente: ¿Cuánto vale el determinante de $\begin{pmatrix} a & b \\ c & d \end{pmatrix}$?
+    dorso: $ad - bc$.
+    fuente: zill
+  - id: t-determinante-area
+    frente: ¿Qué mide el valor absoluto del determinante de una matriz de 2×2?
+    dorso: El área del paralelogramo que forman sus columnas, o sea por cuánto se multiplican las áreas.
+    fuente: mml
+  - id: t-determinante-negativo
+    frente: Si el determinante da negativo, ¿qué le pasó a la figura?
+    dorso: Quedó espejada, con la orientación invertida.
+    fuente: mml
+  - id: t-determinante-cero
+    frente: ¿Qué pasa con la inversa de una matriz con determinante 0?
+    dorso: No existe, porque la transformación aplasta puntos distintos en el mismo lugar.
+    fuente: mml
+  - id: t-autovector-definicion
+    frente: ¿Qué cumple un autovector $\mathbf{x}$ de $A$ con autovalor $\lambda$?
+    dorso: $A\mathbf{x} = \lambda\mathbf{x}$ con $\mathbf{x} \neq \mathbf{0}$, o sea que la matriz no lo gira, solo lo escala por $\lambda$ (que puede ser 0 o negativo).
+    fuente: mml
+  - id: t-rotacion-sin-autovectores
+    frente: ¿Por qué una rotación de 90° no tiene autovectores reales?
+    dorso: Porque gira todas las direcciones y no deja ninguna recta en su lugar.
+    fuente: mml
+
+ejercicios:
+  - id: e-componer-escala-y-giro
+    tipo: numerico
+    enunciado: |
+      Un servicio de imágenes primero escala con $S = \begin{pmatrix} 2 & 0 \\ 0 & 0{,}5 \end{pmatrix}$ (el doble en horizontal, la mitad en vertical) y después gira 90° con $R = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$. Un píxel está en $(4, 6)$. ¿Cuál es la coordenada $x$ del píxel al final?
+    respuesta: -3
+    tolerancia:
+      absoluta: 0.01
+    unidad: ""
+    explicacion: |
+      Primero actúa $S$: $S(4,6) = (8, 3)$. Después $R$: $R(8,3) = (0\cdot 8 - 1\cdot 3,\; 1\cdot 8 + 0\cdot 3) = (-3, 8)$. La coordenada $x$ es $-3$. Equivale a aplicar la matriz producto $RS$.
+    erroresComunes:
+      - valor: -12
+        explicacion: Aplicaste primero el giro y después la escala, es decir $S(R(4,6)) = S(-6,4) = (-12, 2)$. El enunciado pide escalar primero.
+      - valor: 8
+        explicacion: Ese es el valor de $y$ al final, no el de $x$.
+    fuente: zill
+  - id: e-area-del-poligono
+    tipo: numerico
+    enunciado: |
+      Una figura de $7\ \text{cm}^2$ de área se transforma con la matriz $A = \begin{pmatrix} 3 & 1 \\ 2 & 4 \end{pmatrix}$. ¿Cuál es el área de la figura transformada?
+    respuesta: 70
+    tolerancia:
+      absoluta: 0.1
+    unidad: cm²
+    explicacion: |
+      $\det A = 3\cdot 4 - 1\cdot 2 = 10$. El área de cualquier figura se multiplica por el valor absoluto del determinante (en el cuadrado de lado 1 se ve como el paralelogramo de las columnas): $7 \cdot 10 = 70\ \text{cm}^2$.
+    erroresComunes:
+      - valor: 10
+        explicacion: Ese es el determinante, es decir, el área que sale de transformar un cuadrado de lado 1. Falta multiplicar por los 7 cm² originales.
+      - valor: 98
+        explicacion: Calculaste $ad + bc = 14$ en vez de $ad - bc = 10$.
+    fuente: openstax-calc3
+  - id: e-autovalor-mayor
+    tipo: numerico
+    enunciado: |
+      Dada $A = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix}$, ¿cuál es el mayor de sus autovalores?
+    respuesta: 4
+    tolerancia:
+      absoluta: 0.01
+    unidad: ""
+    explicacion: |
+      Se resuelve $\det(A - \lambda I) = (3-\lambda)^2 - 1 = \lambda^2 - 6\lambda + 8 = 0$, que da $\lambda = 4$ y $\lambda = 2$. Se comprueba: $A(1,1) = (4,4) = 4\cdot(1,1)$.
+    erroresComunes:
+      - valor: 6
+        explicacion: Ese es el $6$ de la ecuación $\lambda^2 - 6\lambda + 8 = 0$ (la suma de los autovalores), no un autovalor.
+      - valor: 8
+        explicacion: Ese es el término independiente (el producto de los autovalores, que coincide con el determinante).
+    fuente: mml
+  - id: e-om-reflexion
+    tipo: opcion-multiple
+    enunciado: ¿Qué le hace a una imagen la matriz $\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$?
+    opciones:
+      - texto: La espeja de arriba para abajo (respecto del eje x), conservando el área.
+        correcta: true
+        explicacion: $\hat\imath$ se queda y $\hat\jmath$ pasa a $(0,-1)$. El determinante es $-1$, así que el área se conserva y la orientación se invierte.
+      - texto: La gira 90 grados.
+        explicacion: Una rotación de 90° lleva $\hat\imath$ a $(0,1)$. Acá $\hat\imath$ no se mueve.
+      - texto: La aplasta sobre el eje x.
+        explicacion: Aplastar sería llevar $\hat\jmath$ a $(0,0)$, con determinante 0. Acá $\hat\jmath$ va a $(0,-1)$ y el determinante es $-1$.
+      - texto: La duplica en vertical.
+        explicacion: Una escala por 2 en vertical llevaría $\hat\jmath$ a $(0,2)$.
+    fuente: mml
+  - id: e-vf-toda-matriz-se-deshace
+    tipo: verdadero-falso
+    enunciado: Siempre se puede deshacer lo que hace una matriz de 2×2 aplicando otra matriz de 2×2.
+    respuesta: false
+    justificacion: Solo si su determinante no es cero. Una matriz como la proyección sobre el eje x manda puntos distintos al mismo lugar y desde el resultado no se puede saber de cuál venías.
+    fuente: mml
+  - id: e-vf-orden-no-importa
+    tipo: verdadero-falso
+    enunciado: Escalar la imagen y después girarla da siempre el mismo resultado que girarla y después escalarla.
+    respuesta: false
+    justificacion: En general el producto de matrices no es conmutativo. Con una escala distinta en cada eje (por ejemplo, el doble en horizontal y la mitad en vertical) el resultado cambia, como se ve en el primer ejercicio.
+    fuente: zill
+
+casos: []
+
+problemas:
+  - id: p-mml-autoespacios
+    enunciado: |
+      Calculá los autoespacios de $A = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$ y de $B = \begin{pmatrix} -2 & 2 \\ 2 & 1 \end{pmatrix}$ a mano. Después cargá cada matriz en el simulador (sliders a, b, c, d con autovectores prendidos) y compará lo que ves con tu cuenta. Anotá cuál de las dos tiene dos rectas de autovectores y cuál una sola.
+    fuente: mml
+    ubicacion: cap. 4, ejercicio 4.3 (p. 137)
+    dificultad: intermedio
+  - id: p-area-con-python
+    enunciado: |
+      En Python (o en una planilla) armá el cuadrado de vértices $(0,0), (1,0), (1,1), (0,1)$ y transformalo con cinco matrices que elijas (una rotación de 30°, una escala, una cizalla, una reflexión y una con determinante 0). Para cada una calculá el área con la fórmula del cordón de zapatero y compará con $\lvert\det\rvert$. Anotá en cuál el área da 0 y qué pasa con los cuatro vértices.
+    fuente: mml
+    ubicacion: cap. 4, §4.1, ejemplo 4.2 (p. 101) y §3.9.1 (p. 92)
+    dificultad: basico
+  - id: p-zill-producto-matrices
+    enunciado: |
+      Con dos matrices de 2×2 distintas de la identidad que elijas, calculá $AB$ y $BA$ a mano siguiendo la definición del producto fila por columna. Comprobá que difieren, y luego buscá un par de matrices que sí conmuten (por ejemplo, dos rotaciones del plano). Escribí una frase con lo que notaste.
+    fuente: zill
+    ubicacion: cap. 14, §14.2, definición 14.2.3 y ejemplo 8 (pp. 606-607)
+    dificultad: basico

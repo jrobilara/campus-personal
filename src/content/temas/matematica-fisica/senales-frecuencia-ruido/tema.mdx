@@ -1,0 +1,164 @@
+---
+titulo: "Señales: frecuencia, ancho de banda y ruido"
+area: matematica-fisica
+orden: 4
+resumen: Por qué un audio muestreado de menos pierde agudos o suena raro, y por qué una red no puede ir más rápido que cierto techo, aunque le sobren cables. Son dos límites distintos, el de Nyquist y el de Shannon.
+materias:
+  - carrera: ing-informatica
+    codigo: "3634"
+    nombre: Física II
+  - carrera: ing-informatica
+    codigo: "3643"
+    nombre: Redes de Computadoras
+  - carrera: ing-informatica
+    codigo: "3662"
+    nombre: Matemática Aplicada
+prerrequisitos: []
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: smith-dsp
+    tipo: libro
+    autor: Steven W. Smith
+    titulo: The Scientist and Engineer's Guide to Digital Signal Processing
+    edicion: California Technical Publishing, © 1997-2011 (versión web libre)
+    editorial: California Technical Publishing
+    ubicacion: cap. 3, "The Sampling Theorem" y filtros (pp. 39-42 y 48-49); cap. 14, p. 264 (decibeles); cap. 22, pp. 353 y 358-359
+    url: https://www.dspguide.com/pdfbook.htm
+  - id: shannon
+    tipo: libro
+    autor: Claude E. Shannon
+    titulo: A Mathematical Theory of Communication
+    edicion: Bell System Technical Journal, vol. 27, 1948 (reimpresión con correcciones)
+    editorial: Bell Labs
+    ubicacion: §25, teorema 17 (p. 43 de la reimpresión)
+    url: https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf
+  - id: openstax-up1
+    tipo: libro
+    autor: OpenStax (varios autores)
+    titulo: University Physics Volume 1
+    edicion: OpenStax (versión libre)
+    editorial: OpenStax
+    ubicacion: cap. 15, §15.1 "Simple Harmonic Motion"
+    url: https://openstax.org/books/university-physics-volume-1/pages/15-1-simple-harmonic-motion
+  - id: openstax-up2
+    tipo: libro
+    autor: OpenStax (varios autores)
+    titulo: University Physics Volume 2
+    edicion: OpenStax (versión libre)
+    editorial: OpenStax
+    ubicacion: cap. 15, §15.1 "AC Sources"
+    url: https://openstax.org/books/university-physics-volume-2/pages/15-1-ac-sources
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="Las voces se entienden, la música de espera suena sin brillo">
+
+Viernes, 11:20. El call center graba todas las llamadas con una frecuencia de muestreo de 8 000 muestras por segundo. Las voces de los clientes se entienden perfecto. Pero marketing subió una música de espera con platillos y cuerdas, y cuando alguien la escucha en la grabación suena apagada, sin brillo, como si la tocaran en otra habitación.
+
+El proveedor de internet jura que el enlace de 100 Mbit/s está limpio. Marketing pide "más ancho de banda". Y en el piso 3 pasa algo parecido con el wifi: el router promete 300 Mbit/s y nadie consigue más de 40 (números ilustrativos).
+
+Hay dos reclamos y los dos hablan de "ancho de banda" y de "calidad", pero no es el mismo límite. ¿Cuál es cada uno, y por qué subir el enlace no arregla ninguno de los dos?
+
+</CasoReal>
+
+<Intuicion>
+
+Una señal (un audio, la tensión de un cable, la onda de un wifi) se puede ver como una suma de ondas simples que suben y bajan de forma regular, las **senoides** (*sinusoids*). Cada una se describe con tres datos: la **frecuencia** (cuántas veces por segundo se repite), la **amplitud** (qué tan fuerte es) y la fase (en qué punto del ciclo arranca). En el espectro que sigue se ven las dos primeras.
+
+<Analogia titulo="El acorde de guitarra">
+
+Cuando tocás un acorde, suenan varias notas a la vez y tu oído las separa. Cada nota es una senoide con su frecuencia y su volumen. La lista de "qué notas suenan y con qué fuerza" es el **espectro** de la señal. Un sonido grave tiene sus notas en frecuencias bajas, y el brillo de un platillo vive en las frecuencias altas.
+
+</Analogia>
+
+Una computadora no guarda la onda continua: toma **muestras** (*samples*) a intervalos iguales, como una serie de fotos. La pregunta es cuántas fotos por segundo hacen falta.
+
+<Analogia titulo="La rueda del carro en la película">
+
+En las películas viejas, las ruedas de un carro en marcha parecen girar despacio o hasta al revés. La cámara saca pocas fotos por segundo y la rueda da casi una vuelta entera entre foto y foto: el cerebro interpreta el movimiento como si fuera lento. Con las ondas pasa lo mismo: si hay pocas muestras, una frecuencia alta se disfraza de otra más baja. Ese disfraz se llama **alias** (*aliasing*).
+
+</Analogia>
+
+<SimFuncion
+  consigna="Activá el muestreo y bajá la frecuencia de muestreo desde 40 Hz hacia 12 Hz: ¿a qué valor aparece la curva punteada de alias y qué dice la lectura 'alias'? ¿Con qué frecuencia de muestreo desaparece?"
+  titulo="Muestrear de menos"
+  modo="senal"
+  componentes={[{ frecuencia: 3, amplitud: 1 }, { frecuencia: 10, amplitud: 0.5 }]}
+  muestreo={true}
+  frecuenciaMuestreo={40}
+/>
+
+La regla de oro: para no confundir una frecuencia con otra hay que muestrear a más del doble de la frecuencia más alta que tenga la señal. Si no, esa frecuencia se "dobla" hacia abajo.
+
+Ahora el segundo límite. Al mandar una señal por un cable o por el aire se le suma **ruido** (*noise*), algo que nadie transmitió. Podés filtrar parte de ese ruido, pero también te llevás parte de la señal.
+
+<SimFuncion
+  consigna="Subí el ruido hasta 0,5 y después activá el filtro y bajá el corte hacia 5 Hz: ¿qué componente de la señal desaparece y qué pasa con el ruido de alta frecuencia?"
+  titulo="Ruido y filtro pasa-bajos"
+  modo="senal"
+  componentes={[{ frecuencia: 3, amplitud: 1 }, { frecuencia: 10, amplitud: 0.5 }]}
+  ruido={0.3}
+  filtro={true}
+/>
+
+<Ojo>
+
+El teorema de muestreo y la capacidad de un canal con ruido se confunden mucho porque los dos hablan de "frecuencias" y de "ancho de banda". El primero responde cuántas muestras por segundo necesitás para guardar una señal sin perder nada. El segundo, cuántos bits por segundo puede llevar un canal con ruido sin errores. Son preguntas distintas con fórmulas distintas.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### La senoide
+
+Una oscilación regular se describe con $x(t) = A\cos(\omega t + \varphi)$, donde $A$ es la amplitud, $\varphi$ la fase y $\omega$ la frecuencia angular. La frecuencia $f$ se mide en hertz (ciclos por segundo), el período $T$ es el tiempo de un ciclo, y se cumple $f = 1/T$ y $\omega = 2\pi f$<Cita f="openstax-up1" loc="§15.1" />. La tensión de la red eléctrica es una senoide de este tipo, $v = V_0 \sin\omega t$, con 60 Hz en los hogares de Estados Unidos y 50 Hz en los de Europa<Cita f="openstax-up2" loc="§15.1" />.
+
+### Frecuencias y ancho de banda
+
+El **ancho de banda** (*bandwidth*) de una señal es la anchura del rango de frecuencias que ocupa, medida en hertz: una señal que va de 0 a 3,2 kHz tiene 3,2 kHz de ancho de banda. (En el lenguaje cotidiano de redes se usa la misma palabra para hablar de velocidad en bit/s; acá hablamos de hertz.) El oído humano abarca de unos 20 Hz a 20 kHz<Cita f="smith-dsp" loc="cap. 22, p. 353" />. La música necesita unos 20 kHz de ancho de banda y la voz, para sonar natural, alrededor de 3,2 kHz<Cita f="smith-dsp" loc="cap. 22, p. 358" />. En el simulador, cada componente es una de esas frecuencias y el espectro de barras muestra cuánta amplitud hay en cada una.
+
+### Teorema de muestreo (Nyquist-Shannon)
+
+Una señal continua se puede muestrear correctamente solo si no contiene frecuencias por encima de la mitad de la frecuencia de muestreo<Cita f="smith-dsp" loc="cap. 3, p. 40" />.
+
+<Formula nombre="Condición de muestreo" tex="f_s > 2\, f_{\max} \quad\Longleftrightarrow\quad f_{\max} < \frac{f_s}{2}">
+
+donde $f_s$ es la frecuencia de muestreo (muestras por segundo), $f_{\max}$ la frecuencia más alta de la señal y $f_s/2$ la **frecuencia de Nyquist**.
+
+</Formula>
+
+Si hay una componente más alta que $f_s/2$, no desaparece: se disfraza de una frecuencia entre 0 y $f_s/2$ y se mezcla con lo que ya estaba ahí<Cita f="smith-dsp" loc="cap. 3, pp. 40 y 42" />. El libro lo muestra con una senoide de 0,95 de la frecuencia de muestreo, que en los datos aparece como una de 0,05<Cita f="smith-dsp" loc="cap. 3, p. 40" />. El gráfico en zigzag del libro muestra que cada frecuencia por encima de $f_s/2$ se corresponde con una entre 0 y $f_s/2$<Cita f="smith-dsp" loc="cap. 3, figura 3-4, p. 42" />. Para una frecuencia $f$ entre $f_s/2$ y $f_s$ ese alias es $f_s - f$, como en el ejemplo del 0,95 que aparece como 0,05; en general, es la distancia de $f$ al múltiplo de $f_s$ más cercano. Por ejemplo, una componente de 10 Hz muestreada a 12 Hz aparece como 2 Hz, que es lo que muestra el simulador.
+
+La defensa práctica es un filtro pasa-bajos analógico antes del conversor, que elimina lo que pase de la frecuencia de Nyquist (*antialias filter*)<Cita f="smith-dsp" loc="cap. 3, pp. 48-49" />. Por eso la telefonía muestrea alrededor de 8 kHz, suficiente para voz natural pero pobre para música, y el audio de alta fidelidad usa 44,1 kHz<Cita f="smith-dsp" loc="cap. 22, p. 358" />. Eso explica el caso: la grabación a 8 kHz solo puede guardar frecuencias menores que 4 kHz, y los agudos de la música quedan afuera, por eso suena apagada. Si además el equipo no filtra antes de muestrear, esos agudos que sobran no desaparecen: vuelven como alias, tonos que no estaban en la música, y es de esperar que le den un timbre metálico. Son dos efectos distintos: uno quita agudos y el otro agrega tonos falsos.
+
+### Capacidad de un canal con ruido (Shannon)
+
+Es la otra fórmula. Para un canal de ancho de banda $W$ con ruido blanco térmico y potencia de señal promedio limitada, la máxima velocidad a la que se pueden mandar bits con una frecuencia de errores tan chica como se quiera es<Cita f="shannon" loc="§25, teorema 17, p. 43" />:
+
+<Formula nombre="Capacidad de Shannon" tex="C = W \log_2\!\left(1 + \frac{S}{N}\right)">
+
+donde $C$ es la capacidad (bits por segundo), $W$ el ancho de banda del canal (Hz), $S$ la potencia de la señal y $N$ la potencia del ruido. El cociente $S/N$ es la relación señal/ruido (*SNR*).
+
+</Formula>
+
+El artículo lo escribe como $W\log_2\frac{P+N}{N}$, que es lo mismo. Por encima de ese valor no hay codificación que evite errores, y por debajo se puede llegar tan cerca como se quiera con una codificación suficientemente elaborada<Cita f="shannon" loc="§25, p. 43" />. Es un techo teórico: ningún sistema real lo alcanza del todo.
+
+La SNR suele darse en decibeles. Para un cociente de potencias, el decibel es diez veces el logaritmo en base 10 del cociente<Cita f="smith-dsp" loc="cap. 14, ec. 14-1, p. 264" />: 10 dB son un factor 10 en potencia y 20 dB un factor 100. Por eso $S/N = 10^{\mathrm{dB}/10}$.
+
+<Profundizar titulo="Un ejemplo con números: el wifi del piso 3">
+
+Un canal de 20 MHz con SNR de 20 dB tiene $S/N = 100$, y entonces $C = 20 \cdot 10^6 \cdot \log_2(101) \approx 133$ Mbit/s. Si el piso 3 tiene más interferencia y la SNR baja a 10 dB ($S/N = 10$), la capacidad cae a $20\cdot10^6\log_2(11) \approx 69$ Mbit/s, sin tocar el router. Con la misma SNR, doblar $W$ duplica $C$; pero con ruido blanco un canal más ancho recoge más ruido, así que mantener la misma SNR exige también más potencia. En cambio, doblar la potencia de señal ($S/N$ de 100 a 200) agrega alrededor de 1 bit por segundo y por hertz, unos 20 Mbit/s más en este canal. Ese "alrededor de 1" vale solo cuando la SNR ya es alta: doblar $S/N$ suma $\log_2\frac{1+2S/N}{1+S/N}$, que se acerca a 1 a medida que $S/N$ crece (con $S/N = 10$ suma 0,93; con 100, 0,99). Con SNR baja es otra historia: con $S/N = 1$ suma 0,585 bit/s/Hz y con $S/N = 0{,}1$ suma 0,126, que es casi duplicar la capacidad, porque para valores chicos $\ln(1+x) \approx x$ y la capacidad crece casi en proporción a la potencia. Los números son una cuenta de la fórmula; no son mediciones.
+
+</Profundizar>
+
+| | Muestreo (Nyquist-Shannon) | Capacidad (Shannon) |
+|---|---|---|
+| Pregunta | ¿Cuántas muestras por segundo? | ¿Cuántos bits por segundo? |
+| Fórmula | $f_s > 2 f_{\max}$ | $C = W\log_2(1 + S/N)$ |
+| Qué pasa si te pasás | alias: una frecuencia se disfraza de otra | errores inevitables |
+| Qué limita | la frecuencia más alta de la señal | el ancho de banda y la SNR del canal |
+
+</Formal>

@@ -1,0 +1,157 @@
+tarjetas:
+  - id: t-derivada-pendiente
+    frente: ¿Qué mide la derivada de una función en un punto?
+    dorso: La pendiente de la recta tangente ahí, o sea cuánto cambia la salida por cada unidad que se mueve la entrada en ese instante.
+    fuente: openstax-calc1
+  - id: t-derivada-limite
+    frente: ¿Cómo se llega a la derivada a partir de las pendientes de secantes?
+    dorso: Achicando el intervalo $h$ hacia 0, el límite de esas pendientes es la derivada.
+    fuente: openstax-calc1
+  - id: t-derivada-fondo-parabola
+    frente: ¿Cuánto vale la derivada de $x^2$ en $x = 0$?
+    dorso: Vale 0, porque la tangente ahí es horizontal.
+    fuente: mml
+  - id: t-gradiente-definicion
+    frente: ¿Qué contiene el gradiente de una función de varias variables?
+    dorso: Todas sus derivadas parciales, una por cada variable, juntas en un vector.
+    fuente: stewart-multi
+  - id: t-gradiente-direccion
+    frente: ¿Hacia dónde apunta el gradiente en un punto?
+    dorso: Hacia la dirección en la que la función crece más rápido.
+    fuente: stewart-multi
+  - id: t-gradiente-norma
+    frente: ¿Cuánto vale la máxima razón de cambio de $f$ en un punto?
+    dorso: La longitud del gradiente en ese punto.
+    fuente: stewart-multi
+  - id: t-descenso-signo
+    frente: En el descenso por gradiente, ¿por qué se resta el gradiente y no se suma?
+    dorso: Porque el gradiente apunta cuesta arriba y lo que querés es bajar.
+    fuente: mml
+  - id: t-tasa-chica
+    frente: ¿Qué pasa en el descenso si la tasa de aprendizaje es demasiado chica?
+    dorso: Converge, pero muy despacio, y hacen falta muchísimos pasos.
+    fuente: mml
+  - id: t-tasa-grande
+    frente: ¿Qué puede pasar si la tasa de aprendizaje es demasiado grande?
+    dorso: El punto se pasa del mínimo, rebota de un lado al otro y puede no converger o hasta alejarse cada vez más.
+    fuente: mml
+  - id: t-factor-cuadratica
+    frente: Para $f(x)=x^2$, ¿por cuánto se multiplica $x$ en cada paso del descenso con tasa $\gamma$?
+    dorso: Por $1 - 2\gamma$, y por eso con $\gamma$ mayor que 1 el punto diverge.
+    fuente: mml
+  - id: t-minimo-local
+    frente: ¿Por qué el descenso por gradiente puede quedarse en un mínimo local y no llegar al mejor valle?
+    dorso: Porque el gradiente ahí es cero y el algoritmo solo conoce la pendiente de donde está parado.
+    fuente: mml
+  - id: t-gradiente-cero
+    frente: Si el gradiente es cero en un punto, ¿ya sabés que es un mínimo?
+    dorso: No, puede ser un mínimo local, un máximo local o un punto silla.
+    fuente: openstax-calc3
+
+ejercicios:
+  - id: e-razon-de-cambio-costo
+    tipo: numerico
+    enunciado: |
+      El tiempo de un proceso que compara todos los elementos contra todos crece como $T(n) = 0{,}002\,n^2$ ms, con $n$ la cantidad de elementos. ¿Con qué rapidez crece el tiempo justo cuando $n = 500$? Respondé en ms por elemento adicional.
+    respuesta: 2
+    tolerancia:
+      absoluta: 0.01
+    unidad: ms por elemento
+    explicacion: |
+      La derivada de $T$ es $T'(n) = 0{,}004\,n$. Para $n = 500$ da $0{,}004 \cdot 500 = 2$ ms por elemento. Se puede controlar con un cociente incremental: $(T(501) - T(500))/1 = 2{,}002$.
+    erroresComunes:
+      - valor: 1
+        explicacion: Calculaste $T(500)/500 = 1$, que es el tiempo promedio por elemento. La derivada es la rapidez de cambio en ese punto, y vale el doble.
+      - valor: 500
+        explicacion: Ese es $T(500)$, el tiempo total, no cuánto crece.
+    fuente: openstax-calc1
+  - id: e-tres-pasos-de-descenso
+    tipo: numerico
+    enunciado: |
+      Minimizás $f(x) = x^2$ con descenso por gradiente, partiendo de $x_0 = 3$ y con tasa de aprendizaje $\gamma = 0{,}1$. ¿Cuánto vale $x_3$ (después de tres pasos)? Respondé con tres decimales.
+    respuesta: 1.536
+    tolerancia:
+      absoluta: 0.001
+    unidad: ""
+    explicacion: |
+      El gradiente es $2x$, así que cada paso es $x \leftarrow x - 0{,}1 \cdot 2x = 0{,}8\,x$. Entonces $x_1 = 2{,}4$, $x_2 = 1{,}92$ y $x_3 = 1{,}536$.
+    erroresComunes:
+      - valor: 5.184
+        explicacion: Sumaste el gradiente en vez de restarlo ($3 \cdot 1{,}2^3$). Así subís la cuesta en lugar de bajarla.
+      - valor: 2.4
+        explicacion: Ese es $x_1$, el resultado del primer paso. Te piden el tercero.
+    fuente: mml
+  - id: e-tasa-que-rebota
+    tipo: numerico
+    enunciado: |
+      Mismo problema, $f(x)=x^2$ desde $x_0 = 2$, pero con tasa $\gamma = 0{,}8$. ¿Cuánto vale $x_5$? Respondé con tres decimales y con su signo.
+    respuesta: -0.156
+    tolerancia:
+      absoluta: 0.002
+    unidad: ""
+    explicacion: |
+      El factor por paso es $1 - 2 \cdot 0{,}8 = -0{,}6$, así que $x_k = 2 \cdot (-0{,}6)^k$. Para $k=5$ da $2 \cdot (-0{,}07776) = -0{,}15552$. El punto cruza de lado en cada paso (por eso el signo cambia) pero se achica, porque $0{,}6 < 1$.
+    erroresComunes:
+      - valor: 0.156
+        explicacion: Te falta el signo. Con factor negativo, los pasos impares quedan del lado negativo.
+      - valor: 1.2
+        explicacion: Ese es $x_1$ sin el signo. Para llegar a $x_5$ hay que aplicar el factor $-0{,}6$ cinco veces, no una.
+    fuente: mml
+  - id: e-paso-de-error-cuadratico
+    tipo: numerico
+    enunciado: |
+      Tenés tres reportes medidos: (1 mil filas, 2 s), (2 mil filas, 4 s) y (3 mil filas, 6,5 s), con $n$ en miles de filas. Ajustás $t = w\,n$ minimizando el error cuadrático medio $E(w)$ con descenso por gradiente, desde $w = 0$ y tasa $\gamma = 0{,}05$. ¿Cuánto vale $w$ después del primer paso? Respondé con tres decimales.
+    respuesta: 0.983
+    tolerancia:
+      absoluta: 0.002
+    unidad: s por mil filas
+    explicacion: |
+      $E'(w) = -\frac{2}{3}\sum n_i (t_i - w\,n_i)$. En $w=0$ queda $-\frac{2}{3}(1\cdot2 + 2\cdot4 + 3\cdot6{,}5) = -\frac{2}{3}\cdot 29{,}5 = -19{,}667$. El paso es $w_1 = 0 - 0{,}05 \cdot (-19{,}667) = 0{,}983$.
+    erroresComunes:
+      - valor: 19.667
+        explicacion: Ese es el valor de $-E'(0)$. Falta multiplicar por la tasa $0{,}05$ y restar el gradiente, no quedarte con él.
+      - valor: -0.983
+        explicacion: Se te dio vuelta el signo del gradiente. $E'(0)$ es negativo, y restarlo hace que $w$ suba.
+    fuente: mml
+  - id: e-vf-gradiente-cero-minimo
+    tipo: verdadero-falso
+    enunciado: Si en algún paso del descenso el gradiente da exactamente cero, el punto en que estás es el mínimo global de la función.
+    respuesta: false
+    justificacion: Gradiente cero significa punto crítico. Puede ser un mínimo local (con otro valle más profundo en otro lado), un máximo local o un punto silla.
+    fuente: openstax-calc3
+  - id: e-om-que-hacer-si-diverge
+    tipo: opcion-multiple
+    enunciado: Corrés un descenso por gradiente y ves que el punto salta de un lado al otro de la curva y cada salto es más grande que el anterior. ¿Qué probás primero?
+    opciones:
+      - texto: Bajar la tasa de aprendizaje.
+        correcta: true
+        explicacion: Es el síntoma de una tasa demasiado grande. Con pasos más cortos el punto deja de pasarse del valle y vuelve a achicar el error.
+      - texto: Subir la tasa de aprendizaje para llegar más rápido.
+        explicacion: Es lo contrario de lo que hace falta. Con una tasa más grande los saltos crecen todavía más.
+      - texto: Correr más pasos con la misma tasa.
+        explicacion: Más pasos con el mismo factor solo alejan más el punto. El problema no es la cantidad de pasos.
+      - texto: Sumar el gradiente en vez de restarlo.
+        explicacion: Eso te hace subir la cuesta, no bajarla. No corrige el rebote.
+    fuente: mml
+
+casos: []
+
+problemas:
+  - id: p-stewart-gradiente-evaluado
+    enunciado: |
+      Del conjunto de ejercicios 7 a 10 de la sección 14.6, elegí dos funciones. Para cada una calculá el gradiente, evalualo en el punto $P$ que pide el ejercicio y verificá a mano con un cociente incremental ($h = 0{,}0001$ en una planilla o en Python) que la derivada parcial que calculaste es correcta. Anotá en una línea hacia dónde apunta el gradiente en $P$.
+    fuente: stewart-multi
+    ubicacion: cap. 14, §14.6, ejercicios 7-10 (p. 943)
+    dificultad: intermedio
+  - id: p-mml-puntos-estacionarios
+    enunciado: |
+      Para $f(x) = x^3 + 6x^2 - 3x - 5$, hallá los puntos estacionarios y clasificalos (mínimo, máximo o silla). Después escribí un descenso por gradiente de unas diez líneas en Python o en una planilla y corrélo con tasa 0,01 desde $x_0 = 0$ y desde $x_0 = -5$. Contá qué pasa en cada caso y por qué.
+    fuente: mml
+    ubicacion: cap. 7, ejercicio 7.1 (p. 247); algoritmo en §7.1
+    dificultad: intermedio
+  - id: p-planilla-mse
+    enunciado: |
+      En una planilla, cargá los tres puntos del ejercicio del error cuadrático medio y armá el descenso por gradiente de $E(w)$ columna por columna (w, gradiente, nuevo w, error). Corré 30 filas con tasas 0,01, 0,05, 0,15 y 0,25. Compará con el valor exacto $w^* = \frac{\sum n_i t_i}{\sum n_i^2}$ y anotá cuál de las tres primeras llega más rápido y cuál tasa no converge. Para este error, el factor por paso es $1 - \gamma \cdot 28/3$: calculá a partir de qué tasa deja de converger y comprobalo.
+    fuente: mml
+    ubicacion: §7.1 y ejemplo 7.2 (pp. 228-230)
+    dificultad: intermedio

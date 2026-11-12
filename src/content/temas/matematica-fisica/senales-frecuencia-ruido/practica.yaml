@@ -1,0 +1,151 @@
+tarjetas:
+  - id: t-frecuencia-periodo
+    frente: Si una señal se repite 50 veces por segundo, ¿cuánto dura cada ciclo?
+    dorso: 20 ms, porque el período es la inversa de la frecuencia ($T = 1/f$).
+    fuente: openstax-up1
+  - id: t-senoide-parametros
+    frente: ¿Qué tres parámetros describen una senoide?
+    dorso: Su amplitud (qué tan fuerte es), su frecuencia (cuántas veces por segundo se repite) y su fase (en qué punto del ciclo arranca).
+    fuente: openstax-up1
+  - id: t-ancho-de-banda-senal
+    frente: ¿Qué es el ancho de banda de una señal?
+    dorso: La anchura del rango de frecuencias que ocupa, medida en Hz.
+    fuente: smith-dsp
+  - id: t-oido-humano
+    frente: ¿Qué rango de frecuencias oye una persona?
+    dorso: Aproximadamente de 20 Hz a 20 kHz.
+    fuente: smith-dsp
+  - id: t-condicion-nyquist
+    frente: ¿Qué condición tiene que cumplir la frecuencia de muestreo $f_s$ respecto de la frecuencia más alta $f_{\max}$ de la señal?
+    dorso: Tiene que ser mayor que el doble, o sea $f_s > 2 f_{\max}$.
+    fuente: smith-dsp
+  - id: t-frecuencia-nyquist
+    frente: ¿Cuál es la frecuencia de Nyquist de un muestreo a 8 kHz?
+    dorso: 4 kHz, la mitad de la frecuencia de muestreo.
+    fuente: smith-dsp
+  - id: t-que-es-alias
+    frente: ¿Qué pasa con una frecuencia que supera la de Nyquist al muestrear?
+    dorso: No desaparece, se disfraza de una frecuencia más baja (alias) y se mezcla con la señal original.
+    fuente: smith-dsp
+  - id: t-antialias
+    frente: ¿Para qué sirve el filtro antialias que va antes del conversor analógico-digital?
+    dorso: Para eliminar las frecuencias por encima de la de Nyquist antes de que se conviertan en alias.
+    fuente: smith-dsp
+  - id: t-audio-apagado
+    frente: ¿Por qué la música grabada a 8 kHz suena apagada?
+    dorso: Porque a esa frecuencia solo se guardan frecuencias por debajo de 4 kHz y los agudos de la música quedan afuera.
+    fuente: smith-dsp
+  - id: t-audio-metalico
+    frente: ¿De dónde sale un timbre metálico en un audio muestreado sin filtro antialias?
+    dorso: De los agudos que superan la frecuencia de Nyquist, que vuelven como alias, tonos que no estaban en el original.
+    fuente: smith-dsp
+  - id: t-capacidad-formula
+    frente: ¿De qué dos cosas depende la capacidad máxima de un canal con ruido según Shannon?
+    dorso: Del ancho de banda $W$ y de la relación señal/ruido $S/N$, con $C = W\log_2(1 + S/N)$.
+    fuente: shannon
+  - id: t-capacidad-ancho-doble
+    frente: Con la misma relación señal/ruido, ¿qué pasa con la capacidad de Shannon si se duplica el ancho de banda?
+    dorso: Se duplica, porque $C$ es proporcional a $W$.
+    fuente: shannon
+  - id: t-snr-db
+    frente: ¿Cómo se pasa una SNR de 20 dB a una relación de potencias $S/N$?
+    dorso: $S/N = 10^{20/10} = 100$.
+    fuente: smith-dsp
+
+ejercicios:
+  - id: e-muestras-por-ciclo
+    tipo: numerico
+    enunciado: |
+      Un sensor de una línea eléctrica mide una señal de 50 Hz y la muestrea a 400 muestras por segundo. ¿Cuántas muestras toma por cada ciclo de la señal?
+    respuesta: 8
+    tolerancia:
+      absoluta: 0.01
+    unidad: muestras
+    explicacion: |
+      Cada ciclo dura $T = 1/50 = 20$ ms y en un segundo hay 50 ciclos. Entonces $400/50 = 8$ muestras por ciclo. Como $400 > 2\cdot 50$, el muestreo cumple la condición de Nyquist con holgura.
+    erroresComunes:
+      - valor: 0.125
+        explicacion: Dividiste al revés (50/400). Hay que dividir la cantidad de muestras por segundo por la cantidad de ciclos por segundo.
+      - valor: 20
+        explicacion: Ese es el período en milisegundos, no la cantidad de muestras.
+    fuente: openstax-up1
+  - id: e-frecuencia-de-alias
+    tipo: numerico
+    enunciado: |
+      Una central telefónica muestrea a 8 kHz y, por error, deja pasar un tono de 5 kHz (sin filtro antialias). ¿A qué frecuencia aparece ese tono en los datos digitales? Respondé en kHz.
+    respuesta: 3
+    tolerancia:
+      absoluta: 0.01
+    unidad: kHz
+    explicacion: |
+      La frecuencia de Nyquist es $8/2 = 4$ kHz, y 5 kHz la supera. El alias es la distancia al múltiplo de 8 kHz más cercano: $8 - 5 = 3$ kHz. El tono se escucha como uno de 3 kHz.
+    erroresComunes:
+      - valor: 5
+        explicacion: Pensaste que el tono se conserva. Por encima de 4 kHz no se puede representar con este muestreo.
+      - valor: 4
+        explicacion: Ese es el valor de la frecuencia de Nyquist, no el del alias.
+    fuente: smith-dsp
+  - id: e-capacidad-wifi
+    tipo: numerico
+    enunciado: |
+      Un canal wifi de 20 MHz tiene una relación señal/ruido de 20 dB. Según la fórmula de Shannon, ¿cuál es su capacidad máxima? Respondé en Mbit/s, con un decimal de aproximación.
+    respuesta: 133.2
+    tolerancia:
+      relativa: 0.01
+    unidad: Mbit/s
+    explicacion: |
+      Primero pasás los decibeles a una relación de potencias: $S/N = 10^{20/10} = 100$. Después $C = W\log_2(1 + S/N) = 20\cdot10^6 \cdot \log_2(101) \approx 20\cdot10^6 \cdot 6{,}658 \approx 133{,}2$ Mbit/s.
+    erroresComunes:
+      - valor: 87.8
+        explicacion: Usaste los 20 dB directamente como si fueran $S/N$ ($\log_2(21)$). Los decibeles hay que convertirlos a cociente de potencias antes.
+      - valor: 40.1
+        explicacion: Usaste logaritmo en base 10 en lugar de base 2, que es la que da bits por segundo.
+    fuente: shannon
+  - id: e-om-duplicar-potencia
+    tipo: opcion-multiple
+    enunciado: En un canal de 20 MHz con $S/N = 100$ duplicás la potencia de transmisión, y llegás a $S/N = 200$ con el mismo ruido. ¿Qué pasa con el techo de Shannon?
+    opciones:
+      - texto: Sube alrededor de un 15 %, unos 20 Mbit/s en este canal.
+        correcta: true
+        explicacion: Con una SNR ya alta como esta (100), el logaritmo comprime el efecto. De 133,2 a 153,0 Mbit/s, es decir, agrega casi 1 bit por segundo y por hertz. Con SNR baja, en cambio, duplicar la potencia casi duplica la capacidad.
+      - texto: Se duplica.
+        explicacion: Se duplicaría si doblaras el ancho de banda manteniendo la misma SNR. La potencia entra dentro del logaritmo, y con una SNR ya alta duplicarla suma poco.
+      - texto: Baja, porque con más potencia también hay más interferencia.
+        explicacion: Si el ruido es el mismo, más potencia de señal mejora la relación señal/ruido, no la empeora.
+      - texto: No cambia, porque el límite depende solo del ancho de banda.
+        explicacion: También depende de la SNR. Más señal respecto del ruido permite distinguir más niveles.
+    fuente: shannon
+  - id: e-vf-nyquist-capacidad
+    tipo: verdadero-falso
+    enunciado: El teorema de muestreo de Nyquist-Shannon dice cuántos bits por segundo puede transportar un canal con ruido.
+    respuesta: false
+    justificacion: Eso lo dice la capacidad de Shannon. El teorema de muestreo dice a qué velocidad hay que tomar muestras para no perder información (más del doble de la frecuencia máxima). Son dos resultados distintos.
+    fuente: smith-dsp
+  - id: e-vf-muestrear-mas-no-pierde
+    tipo: verdadero-falso
+    enunciado: Si una señal tiene su componente más alta en 4 kHz, muestrear a 10 kHz permite representarla sin alias.
+    respuesta: true
+    justificacion: La frecuencia de Nyquist de un muestreo a 10 kHz es 5 kHz, y 4 kHz está por debajo. Se cumple $f_s > 2 f_{\max}$, porque $10 > 8$.
+    fuente: smith-dsp
+
+casos: []
+
+problemas:
+  - id: p-smith-muestreo
+    enunciado: |
+      Generá con Python (o una planilla) una senoide de 10 Hz y tomá muestras a 40, 25, 20 y 12 muestras por segundo. Para cada caso calculá a mano la frecuencia aparente y graficá los puntos. Anotá a partir de qué frecuencia de muestreo deja de haber alias y comprobalo con el primer simulador.
+    fuente: smith-dsp
+    ubicacion: cap. 3, "The Sampling Theorem" (pp. 39-42)
+    dificultad: basico
+  - id: p-shannon-calculos
+    enunciado: |
+      Con el enlace de internet de tu casa o de tu oficina (ancho de banda del canal y relación señal/ruido de tu router, o supuestos razonables), calculá la capacidad de Shannon en Mbit/s y comparala con la velocidad real que medís en una prueba de velocidad. Probá cuánto cambia el resultado si la SNR baja 10 dB. Anotá por qué la velocidad medida es menor que el techo.
+    fuente: shannon
+    ubicacion: §25, teorema 17 (p. 43)
+    dificultad: intermedio
+  - id: p-smith-audio-calidad
+    enunciado: |
+      Con una grabación de música corta, remuestrala a 8 kHz y a 44,1 kHz (con la herramienta que prefieras, por ejemplo Audacity) y escuchá las dos. Anotá qué pasa con los agudos y relacionalo con la frecuencia de Nyquist de cada versión y con los 3,2 kHz de la voz.
+    fuente: smith-dsp
+    ubicacion: cap. 22, pp. 358-359 (tabla de calidad de audio)
+    dificultad: basico

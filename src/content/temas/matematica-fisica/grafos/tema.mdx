@@ -1,0 +1,145 @@
+---
+titulo: "Grafos: rutas y dependencias"
+area: matematica-fisica
+orden: 3
+resumen: Puntos unidos por líneas alcanzan para modelar un mapa de la ciudad o las dependencias de un proyecto. Con ellos sacás el camino más barato (Dijkstra) y un orden válido de ejecución (orden topológico).
+materias:
+  - carrera: ing-informatica
+    codigo: "3621"
+    nombre: Matemática Discreta
+  - carrera: ing-informatica
+    codigo: "3640"
+    nombre: Algoritmos y Estructuras de Datos
+prerrequisitos: []
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: mcs
+    tipo: libro
+    autor: Eric Lehman, F. Thomson Leighton y Albert R. Meyer
+    titulo: Mathematics for Computer Science
+    edicion: revisión del 6 de junio de 2018 (texto de MIT 6.042J, libre)
+    editorial: MIT
+    ubicacion: cap. 10 (pp. 423-435) y cap. 12, §12.1 (p. 502)
+    url: https://courses.csail.mit.edu/6.042/spring18/mcs.pdf
+  - id: ocw-6006
+    tipo: curso-abierto
+    autor: Erik Demaine, Jason Ku y Justin Solomon (MIT OpenCourseWare)
+    titulo: 6.006 Introduction to Algorithms, Lecture 13 "Dijkstra's Algorithm" (apuntes)
+    edicion: Spring 2020
+    url: https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/mit6_006s20_lec13/
+    ubicacion: Lecture 13, pp. 1-4
+  - id: ocw-6006-video
+    tipo: video
+    autor: MIT OpenCourseWare
+    titulo: 6.006 Spring 2020, Lecture 13 "Dijkstra" (video de la clase)
+    url: https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-spring-2020/lecture-videos/lecture-13-dijkstra/
+    verMas: true
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="Se agregó un import y el build del monorepo dice que no hay orden posible">
+
+Martes, 10:15. Tu monorepo tiene ocho paquetes: `core`, `ui`, `db`, `api`, `app` y tres más chicos. La herramienta de build los compila en un orden tal que cada paquete se arma después de aquellos de los que depende. Hasta ayer andaba perfecto.
+
+Un compañero agregó en `core` un import de una función que vive en `ui`. Pero `ui` ya importaba cosas de `core`. El build ahora se queja de una "dependencia circular" y no compila nada.
+
+Esa misma mañana, además, la app de reparto de la empresa mandó a un motociclista por la avenida central, cortada por un choque, porque seguía siendo "el camino más corto" en kilómetros.
+
+Dos problemas distintos, el mismo dibujo: puntos unidos por flechas o líneas. ¿Cómo se calcula el camino más barato cuando los costos cambian, y qué le pasa a un orden cuando aparece un ciclo?
+
+</CasoReal>
+
+<Intuicion>
+
+Un **grafo** (*graph*) es una colección de puntos (**nodos** o **vértices**) y de líneas que los unen (**aristas**). Lo que importa no es el dibujo sino quién está conectado con quién. A las aristas se les puede poner un número (minutos, kilómetros, costo) y una dirección (una flecha, si solo se puede ir en un sentido).
+
+Con ese modelo tan pobre se contestan dos preguntas muy distintas.
+
+**Primera: ¿cuál es el camino más barato?** El método de Dijkstra tiene una imagen física simple.
+
+<Analogia titulo="La mancha que se expande">
+
+Tirás una gota de tinta en el barrio de origen y la dejás crecer. La mancha avanza por las calles y llega primero a los lugares más cercanos y después a los más lejanos. Cuando la mancha toca el barrio de destino, ya sabés cuál es la distancia mínima, porque ningún lugar se alcanza antes de que la mancha llegue. Dijkstra hace lo mismo: siempre visita el nodo no visitado que está más cerca del origen y, desde ahí, revisa si sus vecinos se alcanzan más barato pasando por él.
+
+</Analogia>
+
+<SimGrafo
+  consigna="Elegí origen y destino y apretá 'Paso': ¿qué barrio entra en cada paso? Después subí el tráfico de la avenida central de x1 a x5: ¿a partir de cuándo cambia el camino y cuánto sube el costo?"
+  titulo="Camino más barato con tráfico"
+  grafo="red-ciudad"
+  modo="camino-minimo"
+/>
+
+**Segunda: ¿en qué orden hago las cosas si unas dependen de otras?**
+
+<Analogia titulo="Vestirse por la mañana">
+
+No te podés poner los zapatos antes que las medias, ni el saco antes que la camisa. Pero sí podés ponerte la camisa antes o después de las medias. Hay muchos órdenes válidos y todos respetan las mismas reglas de "esto antes que aquello". Si las reglas fueran "las medias antes que los zapatos y los zapatos antes que las medias", ya no podrías vestirte nunca: ese es el ciclo.
+
+</Analogia>
+
+<SimGrafo
+  consigna="Apretá 'Paso' hasta terminar y anotá el orden y los paquetes disponibles en cada paso. Cuando hay más de uno, pensá: ¿cuántos órdenes distintos admite este grafo? ¿Puede alguno salir antes que una dependencia suya?"
+  titulo="Qué se instala primero"
+  grafo="dependencias-paquetes"
+  modo="orden-topologico"
+/>
+
+<Ojo>
+
+"Camino con menos aristas" y "camino más barato" no son lo mismo. El de menos paradas puede ser el más caro si una de las calles es larga o tiene tráfico. Para contar aristas alcanza con recorrer por capas; para sumar costos hace falta Dijkstra.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Qué es un grafo
+
+Un **grafo dirigido** (*digraph*) tiene un conjunto de vértices y un conjunto de aristas dirigidas, cada una con un vértice de origen (la cola) y uno de destino (la cabeza)<Cita f="mcs" loc="def. 10.0.1, p. 423" />. En un **grafo simple** las aristas no tienen sentido: unen dos vértices distintos y $\{u, v\}$ es lo mismo que $\{v, u\}$<Cita f="mcs" loc="def. 12.1.1, p. 502" />. Un **recorrido** (*walk*) es una sucesión alternada de vértices y aristas que va de un vértice a otro, y es un **camino** (*path*) cuando no repite ningún vértice<Cita f="mcs" loc="def. 10.2.1 y texto siguiente, pp. 424-425" />. La **distancia** entre dos vértices es el largo del camino más corto entre ellos<Cita f="mcs" loc="def. 10.2.4, p. 426" />. En un grafo con pesos, "largo" pasa a ser la suma de los pesos y el objetivo es el camino de menor peso<Cita f="mcs" loc="§10.3.1, pp. 429-430" />.
+
+### Camino mínimo: BFS y Dijkstra
+
+Si no hay pesos (o todos valen lo mismo), recorrer el grafo por capas con una cola, lo que se llama búsqueda en anchura (*BFS*), halla los caminos mínimos en tiempo proporcional a $|V| + |E|$<Cita f="ocw-6006" loc="p. 1, tabla" />. Con pesos no negativos se usa Dijkstra, que expande el conjunto de nodos alcanzados "como una esfera" desde el origen<Cita f="ocw-6006" loc="p. 1" />. Mantiene una estimación $d(v)$ de la distancia al origen para cada nodo (al principio infinito, y 0 para el origen) y repite: saca el nodo con menor estimación y relaja las aristas que salen de él<Cita f="ocw-6006" loc="p. 2" />.
+
+<Formula nombre="Relajación de una arista" tex="\text{si } d(v) > d(u) + w(u,v), \text{ entonces } d(v) \leftarrow d(u) + w(u,v)">
+
+donde $u$ es el nodo que se acaba de sacar, $v$ un vecino suyo, $w(u,v)$ el peso (costo) de la arista y $d(\cdot)$ la mejor distancia conocida hasta ahora.
+
+</Formula>
+
+Un ejemplo corto, con aristas $Q\text{–}R = 2$, $Q\text{–}S = 5$, $R\text{–}S = 1$, $R\text{–}T = 6$ y $S\text{–}T = 2$ y origen $Q$:
+
+| Se saca | $d(Q)$ | $d(R)$ | $d(S)$ | $d(T)$ |
+|---|---|---|---|---|
+| (inicio) | 0 | ∞ | ∞ | ∞ |
+| $Q$ | 0 | 2 | 5 | ∞ |
+| $R$ | 0 | 2 | 3 | 8 |
+| $S$ | 0 | 2 | 3 | 5 |
+| $T$ | 0 | 2 | 3 | 5 |
+
+Pasar por $R$ mejoró la estimación de $S$ de 5 a 3, y pasar por $S$ mejoró la de $T$ de 8 a 5. El camino mínimo a $T$ es $Q \to R \to S \to T$ con costo 5.
+
+Dijkstra funciona porque los pesos no son negativos: así, ningún camino puede mejorar una distancia ya fijada pasando por un nodo más lejano<Cita f="ocw-6006" loc="pp. 1 y 3" />. Con pesos negativos hay que usar otro algoritmo (Bellman-Ford), más lento: $|V|\cdot|E|$<Cita f="ocw-6006" loc="p. 1, tabla" />. El costo de Dijkstra depende de la estructura que elijas para "sacar el menor": con un arreglo es del orden de $|V|^2$ y con un montículo binario (*binary heap*) del orden de $|E|\log|V|$, que conviene en grafos con pocas aristas<Cita f="ocw-6006" loc="p. 4" />.
+
+### Orden topológico
+
+Un **grafo dirigido acíclico** (*DAG*) es un grafo dirigido sin ciclos<Cita f="mcs" loc="def. 10.5.1, p. 431" />. Un **orden topológico** (*topological sort*) es una lista de todos los vértices en la que cada vértice aparece antes que todos los que se alcanzan desde él<Cita f="mcs" loc="def. 10.5.2, p. 433" />. En otras palabras, para cada flecha $u \to v$ tiene que cumplirse:
+
+$$
+\text{posición}(u) < \text{posición}(v)
+$$
+
+Todo DAG finito tiene al menos uno<Cita f="mcs" loc="teorema 10.5.4, p. 435" />, y se arma así: elegís un vértice al que no llega ninguna flecha (nada pendiente antes de él), lo ponés en la lista y lo sacás del grafo; repetís hasta vaciarlo<Cita f="mcs" loc="§10.5.1, p. 434" />. Casi siempre hay varios órdenes válidos, y cualquiera sirve<Cita f="mcs" loc="figura 10.8, p. 434" />.
+
+¿Y si hay un ciclo? Cada vértice del ciclo tiene una flecha entrante de otro vértice del ciclo, así que nunca es el elegido: el procedimiento se frena con vértices sin ubicar. Es una consecuencia directa de la definición (cada vértice tendría que aparecer antes que los demás del ciclo, lo cual es imposible), y por eso un ciclo de dependencias se detecta cuando el método no logra vaciar el grafo. Es exactamente lo que le pasó al monorepo del caso.
+
+<Profundizar titulo="¿Por qué Dijkstra no puede equivocarse con pesos no negativos?">
+
+La idea de la demostración de los apuntes es por inducción sobre los nodos que van saliendo de la cola. Sea $v'$ el siguiente en salir y tomá un camino mínimo del origen a $v'$. Mirá la primera arista $(x, y)$ de ese camino cuyo destino $y$ todavía no salió. Como $x$ ya salió con su distancia correcta, al relajar $(x,y)$ la estimación de $y$ quedó menor o igual que su distancia real, y esa distancia real es a su vez menor o igual que la de $v'$ (los pesos no son negativos). Pero $v'$ salió primero que $y$ porque tenía la estimación más chica, así que todas las desigualdades son igualdades y la estimación de $v'$ es la correcta<Cita f="ocw-6006" loc="p. 3" />.
+
+</Profundizar>
+
+</Formal>
