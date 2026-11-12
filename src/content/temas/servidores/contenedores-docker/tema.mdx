@@ -1,0 +1,236 @@
+---
+titulo: "Contenedores (Docker) y orquestación básica"
+area: servidores
+orden: 4
+resumen: Qué son una imagen y un contenedor, cómo se comportan las políticas de reinicio de Docker y qué agrega Kubernetes con Pods, Deployments y probes para que el servicio se mantenga solo.
+materias:
+  - carrera: ing-informatica
+    codigo: "3654"
+    nombre: Virtualización de Hardware
+  - carrera: ing-informatica
+    codigo: "3660"
+    nombre: Sistemas Operativos Avanzados
+prerrequisitos:
+  - servidores/linux-procesos-systemd-logs
+nivel: intermedio
+minutos: 30
+fuentes:
+  - id: docker-container
+    tipo: doc-oficial
+    autor: Docker Inc.
+    titulo: What is a container?
+    url: https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/
+    ubicacion: sección Explanation (contenedores como procesos aislados)
+    edicion: documentación consultada el 2026-11-11
+  - id: docker-image
+    tipo: doc-oficial
+    autor: Docker Inc.
+    titulo: What is an image?
+    url: https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/
+    ubicacion: imagen inmutable y capas
+    edicion: documentación consultada el 2026-11-11
+  - id: dockerfile-ref
+    tipo: doc-oficial
+    autor: Docker Inc.
+    titulo: Dockerfile reference
+    url: https://docs.docker.com/reference/dockerfile/
+    ubicacion: instrucciones FROM, WORKDIR, COPY, RUN, CMD y EXPOSE
+    edicion: documentación consultada el 2026-11-11
+  - id: docker-run
+    tipo: doc-oficial
+    autor: Docker Inc.
+    titulo: docker container run
+    url: https://docs.docker.com/reference/cli/docker/container/run/
+    ubicacion: opciones -d, -p, -v, --name, --rm y --restart
+    edicion: documentación consultada el 2026-11-11; contrastada con docker 29.1.3 local
+  - id: docker-stop
+    tipo: doc-oficial
+    autor: Docker Inc.
+    titulo: docker container stop
+    url: https://docs.docker.com/reference/cli/docker/container/stop/
+    ubicacion: señal por defecto y tiempo de espera
+    edicion: documentación consultada el 2026-11-11
+  - id: docker-volumes
+    tipo: doc-oficial
+    autor: Docker Inc.
+    titulo: Volumes
+    url: https://docs.docker.com/engine/storage/volumes/
+    ubicacion: sección A volume's lifecycle (capa de escritura y persistencia)
+    edicion: documentación consultada el 2026-11-11
+  - id: docker-restart
+    tipo: doc-oficial
+    autor: Docker Inc.
+    titulo: Start containers automatically
+    url: https://docs.docker.com/engine/containers/start-containers-automatically/
+    ubicacion: secciones Use a restart policy y Restart policy details
+    edicion: documentación consultada el 2026-11-11
+  - id: k8s-pods
+    tipo: doc-oficial
+    autor: The Kubernetes Authors
+    titulo: Pods
+    url: https://kubernetes.io/docs/concepts/workloads/pods/
+    ubicacion: secciones What is a Pod?, Pods and controllers
+    edicion: documentación consultada el 2026-11-11
+  - id: k8s-deployment
+    tipo: doc-oficial
+    autor: The Kubernetes Authors
+    titulo: Deployments
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+    ubicacion: introducción de la página (estado deseado y controlador)
+    edicion: documentación consultada el 2026-11-11
+  - id: k8s-replicaset
+    tipo: doc-oficial
+    autor: The Kubernetes Authors
+    titulo: ReplicaSet
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+    ubicacion: introducción (propósito de un ReplicaSet)
+    edicion: documentación consultada el 2026-11-11
+  - id: k8s-lifecycle
+    tipo: doc-oficial
+    autor: The Kubernetes Authors
+    titulo: Pod Lifecycle
+    url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+    ubicacion: secciones Container restarts (restartPolicy y retardo), CrashLoopBackOff y Container probes
+    edicion: documentación consultada el 2026-11-11
+  - id: k8s-probes
+    tipo: doc-oficial
+    autor: The Kubernetes Authors
+    titulo: Liveness, Readiness, and Startup Probes
+    url: https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/
+    ubicacion: secciones Liveness probe, Readiness probe y Startup probe
+    edicion: documentación consultada el 2026-11-11
+  - id: k8s-kubectl
+    tipo: doc-oficial
+    autor: The Kubernetes Authors
+    titulo: kubectl Quick Reference
+    url: https://kubernetes.io/docs/reference/kubectl/quick-reference/
+    ubicacion: ejemplos de get pods, describe pods, logs --previous y rollout undo
+    edicion: documentación consultada el 2026-11-11
+fechaVerificacion: 2026-11-11
+ejemplo: false
+---
+
+<CasoReal titulo="En mi máquina anda: la misma app, dos resultados">
+
+Martes, 16:20. El equipo de desarrollo entrega una nueva versión de la API de turnos. En la notebook de la desarrolladora anda perfecto. Al subirla al servidor de producción, falla al arrancar: una librería del sistema tiene otra versión y la app no la encuentra.
+
+Se tarda dos horas en igualar versiones a mano, y la semana siguiente pasa lo mismo con el servidor de pruebas. Cada entorno es un pequeño mundo distinto, armado en días diferentes por personas diferentes.
+
+La pregunta de fondo: ¿cómo entregás la aplicación junto con todo lo que necesita, para que sea la misma en tu máquina, en pruebas y en producción? Y cuando ya corre, ¿quién la vuelve a levantar si se cae a las 3 de la mañana?
+
+</CasoReal>
+
+<Intuicion>
+
+Un contenedor (*container*) es un proceso aislado que lleva consigo los archivos que necesita para correr. No necesita que el servidor tenga instalado lo mismo que tu notebook, porque lo trae adentro. La receta para armarlo es una imagen (*image*): un paquete cerrado con el programa, sus librerías y su configuración.
+
+<Analogia titulo="El molde y la torta">
+
+La imagen es el molde y el contenedor es la torta que sale de él. Con un mismo molde hacés cuantas tortas quieras, y todas salen iguales. El molde no cambia cuando hornéas: si querés otra forma, hacés otro molde. Y si tirás una torta, el molde sigue intacto para hacer otra. Por eso "la misma imagen en desarrollo y en producción" te asegura que corre lo mismo en los dos lados.
+
+</Analogia>
+
+Una vez que el contenedor corre, el sistema que lo administra decide qué hacer cuando se cae. Docker lo resuelve con una política de reinicio (*restart policy*), que se elige al crear el contenedor.
+
+<Analogia titulo="El despertador y el corte de luz">
+
+Pensá en una política de reinicio como un despertador. `always` es un despertador que vuelve a sonar después de un corte de luz aunque lo hayas apagado vos a mano: si lo apagás y se corta la luz, suena igual al volver. `unless-stopped` es uno que, si lo apagaste vos, respeta tu decisión incluso después del corte de luz. El "corte de luz" es el reinicio del servicio de Docker (el *daemon*).
+
+</Analogia>
+
+Probalo con el simulador.
+
+<SimMaquinaEstados
+  consigna="Elegí la política 'always', ejecutá 'docker stop' y después 'reiniciar el daemon': mirá si el contenedor vuelve a running. Repetí con 'unless-stopped' y comparalo con 'on-failure'."
+  preset="contenedor-docker"
+  titulo="Estados de un contenedor y políticas de reinicio"
+/>
+
+Lo que tenés que notar: con `always`, un contenedor detenido a mano queda en `exited` pero vuelve cuando se reinicia el daemon. Con `unless-stopped`, ese mismo contenedor no vuelve nunca solo. Con `on-failure`, solo se reinicia si el proceso sale con error, y un reinicio del daemon no lo levanta.
+
+<Ojo>
+
+Un contenedor en `Restarting` en loop no es un contenedor sano: es un proceso que muere al arrancar y un mecanismo que insiste. Como pasa con systemd, la política de reinicio tapa el síntoma pero no explica la causa. La respuesta está en los logs.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Imagen y contenedor
+
+Un contenedor es un proceso aislado que incluye todos los archivos que necesita; es autocontenido (no depende de lo que haya instalado el servidor), independiente (se administra solo) y portable (se comporta igual en una notebook, un data center o la nube)<Cita f="docker-container" loc="Explanation" />. Una imagen es el paquete de archivos, ejecutables, librerías y configuración a partir del cual se arranca; una vez construida no se modifica, y está formada por capas que registran cambios sobre el sistema de archivos<Cita f="docker-image" loc="Immutability y Layers" />.
+
+La imagen se describe en un `Dockerfile`. `FROM` fija la imagen base, `WORKDIR` el directorio de trabajo, `COPY` trae archivos al paquete, `RUN` ejecuta un comando al construir y `CMD` fija el comando que corre el contenedor (solo vale el último `CMD`). `EXPOSE` documenta el puerto pero no lo publica<Cita f="dockerfile-ref" loc="FROM, RUN, CMD, EXPOSE" />.
+
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+EXPOSE 8080
+CMD ["python", "app.py"]
+```
+
+`CMD` en forma de lista (*exec form*) ejecuta el programa directamente, sin shell<Cita f="dockerfile-ref" loc="Shell and exec form" />.
+
+### Comandos de todos los días
+
+```bash
+docker build -t turnos:1.4 .
+docker run -d --name turnos -p 8080:8080 -v datos:/var/lib/turnos \
+  --restart unless-stopped turnos:1.4
+docker ps -a                         # todos los contenedores, también los detenidos
+docker logs -f --tail 100 turnos     # seguir el log, últimas 100 líneas
+docker stop turnos                   # pide que termine
+```
+
+`-d` corre en segundo plano, `-p host:contenedor` publica un puerto, `--name` le pone nombre y `--rm` borra el contenedor al salir; `--rm` no se puede combinar con `--restart`<Cita f="docker-run" loc="-d, -p, --name, --rm, --restart" />. `docker stop` manda `SIGTERM` al proceso principal y, si a los 10 segundos sigue vivo, `SIGKILL`; con `-t` cambiás ese tiempo<Cita f="docker-stop" loc="timeout" />.
+
+Lo que el proceso escribe en la capa de escritura del contenedor se pierde cuando borrás el contenedor. Para que los datos sobrevivan se usa un volumen (*volume*): vive en el host, se monta en el contenedor y sigue ahí aunque el contenedor se elimine<Cita f="docker-volumes" loc="A volume's lifecycle" />.
+
+### Políticas de reinicio
+
+`--restart` acepta cuatro valores<Cita f="docker-restart" loc="Use a restart policy" />:
+
+| Política | El proceso sale con error | Lo detenés con `docker stop` y se reinicia el daemon |
+|---|---|---|
+| `no` (por defecto) | No se reinicia | Queda detenido |
+| `on-failure[:max]` | Se reinicia (hasta `max` intentos si lo indicás) | No se reinicia |
+| `always` | Se reinicia | Vuelve a arrancar |
+| `unless-stopped` | Se reinicia | Queda detenido |
+
+La política solo rige después de que el contenedor arrancó con éxito, que Docker define como haber estado arriba al menos 10 segundos; así evita loops en contenedores que nunca llegan a arrancar<Cita f="docker-restart" loc="Restart policy details" />. El simulador no modela esos 10 segundos: es una simplificación. Con `always`, si lo detenés a mano la política se ignora hasta que se reinicie el daemon o lo reinicies vos; con `unless-stopped`, ni siquiera el reinicio del daemon lo levanta. Docker también desaconseja combinar sus políticas con un administrador de procesos del host (como systemd), porque entran en conflicto<Cita f="docker-restart" loc="Use a process manager" />.
+
+### Orquestación básica con Kubernetes
+
+Cuando tenés muchos contenedores en varias máquinas, un orquestador (*orchestrator*) decide dónde corren y los mantiene vivos. En Kubernetes, un Pod es la unidad más chica que se despliega: uno o más contenedores que comparten almacenamiento y red. Los Pods son descartables y casi nunca se crean a mano<Cita f="k8s-pods" loc="What is a Pod? y Pods and controllers" />. Un Deployment declara el estado deseado (cuántas réplicas, con qué imagen) y su controlador ajusta lo real hasta igualarlo<Cita f="k8s-deployment" loc="introducción" />. Para eso se apoya en un ReplicaSet, cuyo propósito es mantener estable la cantidad de Pods réplica que corren<Cita f="k8s-replicaset" loc="introducción" />.
+
+El campo `restartPolicy` del Pod admite `Always`, `OnFailure` y `Never`, y vale `Always` por defecto. Con esos valores por defecto, cuando un contenedor sale el kubelet lo reinicia con una espera que se duplica (10 s, 20 s, 40 s, y así) y se frena en 300 segundos, y la espera vuelve a cero tras 10 minutos sin problemas. Ese tope es el predeterminado; la versión actual de la documentación indica que puede configurarse. El estado `CrashLoopBackOff` indica que esa espera está activa porque el contenedor se cae una y otra vez<Cita f="k8s-lifecycle" loc="Container restarts y CrashLoopBackOff" />.
+
+Para saber si una aplicación está bien, Kubernetes usa tres probes<Cita f="k8s-probes" loc="Liveness, Readiness y Startup probe" />:
+
+- **Liveness**: decide cuándo reiniciar un contenedor (por ejemplo, ante un bloqueo donde sigue corriendo pero no avanza).
+- **Readiness**: decide si puede recibir tráfico; si falla, se quita su IP de los Services, sin reiniciarlo.
+- **Startup**: mientras corre, no se ejecutan las otras dos; sirve para aplicaciones lentas en arrancar.
+
+Un liveness mal diseñado puede provocar fallas en cascada bajo carga<Cita f="k8s-probes" loc="Liveness probe" />. Si tu app depende de un servicio externo, la práctica documentada es que el liveness diga si la app está sana y el readiness además compruebe esa dependencia<Cita f="k8s-probes" loc="When should you use a readiness probe?" />.
+
+```bash
+kubectl get pods                       # estado de los Pods
+kubectl describe pods mi-pod           # eventos y causas
+kubectl logs mi-pod --previous         # log de la instancia anterior del contenedor
+kubectl rollout undo deployment/turnos # volver a la versión anterior
+```
+
+Cada comando está en la referencia rápida de kubectl<Cita f="k8s-kubectl" loc="get pods, describe pods, logs --previous y rollout undo" />.
+
+<Profundizar titulo="¿Y si el Pod ya se reinició, dónde miro el error?">
+
+El log del contenedor actual puede estar vacío porque acaba de arrancar. `kubectl logs mi-pod --previous` muestra el log de la instancia anterior del contenedor, que es donde suele estar el error que lo mató. En Docker puro, si borrás el contenedor con `docker rm`, perdés también esos logs: mirá antes de limpiar.
+
+</Profundizar>
+
+</Formal>

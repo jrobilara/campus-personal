@@ -1,0 +1,168 @@
+tarjetas:
+  - id: t-saturacion-definicion
+    frente: En las cuatro señales doradas, ¿qué mide la saturación?
+    dorso: Qué tan lleno está el recurso más limitado del sistema.
+    fuente: sre-monitoring
+  - id: t-error-lento
+    frente: ¿Por qué conviene medir por separado la latencia de los pedidos que fallan y la de los exitosos?
+    dorso: Porque un error lento es especialmente dañino y se pierde si lo mezclás con el promedio de los pedidos que andan bien.
+    fuente: sre-monitoring
+  - id: t-promedio-esconde-cola
+    frente: Tu latencia promedio está en verde y hay quejas. ¿Qué puede estar escondiendo el promedio?
+    dorso: Una cola de pedidos muy lentos; mirá la distribución (por ejemplo, percentiles).
+    fuente: sre-monitoring
+  - id: t-load-que-cuenta
+    frente: ¿Qué procesos cuenta el load average en Linux?
+    dorso: Los que están ejecutándose o esperando CPU, y los que esperan E/S sin poder interrumpirse.
+    fuente: uptime-man
+  - id: t-load-contra-nucleos
+    frente: Un load average de 1 en una máquina de 4 CPU, ¿qué te dice sobre el uso del procesador?
+    dorso: Que estuvo ocioso el 75 % del tiempo, porque el load no se divide por la cantidad de núcleos.
+    fuente: uptime-man
+  - id: t-free-available
+    frente: ¿Qué columna de `free` mirás para saber cuánta memoria queda para aplicaciones nuevas?
+    dorso: "`available`, porque cuenta también el caché que se puede liberar."
+    fuente: free-man
+  - id: t-vmstat-bloqueados
+    frente: En `vmstat`, ¿qué cuenta la columna `b`?
+    dorso: Los procesos bloqueados esperando que termine una operación de entrada/salida.
+    fuente: vmstat-man
+  - id: t-prom-for
+    frente: En una regla de Prometheus, ¿qué hace la cláusula `for`?
+    dorso: Mantiene la alerta en estado pending hasta que la condición se sostiene toda esa duración; recién ahí pasa a firing.
+    fuente: prom-rules
+  - id: t-pico-for-largo
+    frente: Tu alerta de CPU salta 40 veces por noche por picos de 2 o 3 minutos. ¿Qué parámetro tocás primero?
+    dorso: La duración (`for`), para que la condición tenga que sostenerse más que el pico.
+    fuente: sre-alerting
+  - id: t-pagina-o-ticket
+    frente: Un problema real pero que puede esperar a la mañana, ¿se manda a la guardia o a una cola de tickets?
+    dorso: A una cola de tickets; la guardia queda para lo que exige acción inmediata.
+    fuente: sre-alerting
+
+ejercicios:
+  - id: e-load-contra-nucleos
+    tipo: numerico
+    enunciado: |
+      Un servidor de archivos tiene 4 núcleos y un load average sostenido de 6,0. Calculá la relación load/núcleos (adimensional, con un decimal).
+    respuesta: 1.5
+    tolerancia:
+      absoluta: 0.05
+    unidad: ""
+    explicacion: |
+      El load average no está normalizado por núcleos, así que se divide: $6{,}0 / 4 = 1{,}5$. Una relación sostenida por encima de 1 indica que hay más procesos listos o esperando E/S que núcleos para atenderlos.
+    erroresComunes:
+      - valor: 0.7
+        explicacion: Dividiste al revés (4 / 6). La relación es load sobre núcleos.
+      - valor: 6
+        explicacion: Ese es el load average sin normalizar; falta dividir por los 4 núcleos.
+    fuente: uptime-man
+  - id: e-dias-hasta-llenar
+    tipo: numerico
+    enunciado: |
+      El disco de `/var` tiene 200 GB, está al 78 % y crece 4,5 GB por día de forma pareja. ¿En cuántos días se llena? Respondé en días con un decimal.
+    respuesta: 9.8
+    tolerancia:
+      absoluta: 0.1
+    unidad: días
+    explicacion: |
+      Libre: $200 \times (1 - 0{,}78) = 44$ GB. Días hasta llenarse: $44 / 4{,}5 \approx 9{,}8$. Es un caso de ticket, no de guardia, pero conviene agendarlo antes de que se acerque.
+    erroresComunes:
+      - valor: 44
+        explicacion: Ese es el espacio libre en GB. Falta dividirlo por el crecimiento diario.
+      - valor: 44.4
+        explicacion: Calculaste 200 / 4,5 (el disco entero) en vez del espacio libre.
+    fuente: prom-practices
+  - id: e-elegir-for-pico-backup
+    tipo: opcion-multiple
+    enunciado: El backup nocturno hace picos de CPU de 3 minutos a 95 %. Tu alerta es "CPU mayor a 90 %" sin duración y despierta a la guardia 40 veces por noche. ¿Cuál es el cambio que más reduce el ruido sin perder una saturación real?
+    opciones:
+      - texto: Subir el umbral a 99 %.
+        explicacion: Casi nunca llegaría a 99 %, así que también perderías saturaciones reales que sí importan.
+      - texto: Exigir que la condición se sostenga, por ejemplo 10 minutos (`for`).
+        correcta: true
+        explicacion: El pico de 3 minutos no alcanza a cumplir la duración, pero una saturación sostenida sí dispara.
+      - texto: Mandar la alerta por mail en vez de por la guardia, sin cambiar la regla.
+        explicacion: Cambia el canal, no el problema; el mail sigue siendo spam y los que importan se pierden igual.
+    fuente: prom-rules
+  - id: e-vf-load-alto-cpu-baja
+    tipo: verdadero-falso
+    enunciado: Si el load average es alto pero el uso de CPU es bajo, el procesador está bien y el problema no puede ser del servidor.
+    respuesta: false
+    justificacion: En Linux el load average también cuenta procesos esperando E/S sin poder interrumpirse. Un disco o un montaje lento pueden subir el load con la CPU casi ociosa; mirá la columna `b` y `wa` de `vmstat`.
+    fuente: uptime-man
+
+casos:
+  - id: c-disco-96-de-madrugada
+    titulo: Son las 3:12 y el disco de /var está al 96 %
+    rol: Sos el de guardia del servidor de archivos de la oficina.
+    contexto: |
+      Son las 3:12. Te suena el teléfono con la alerta "disco /var al 96 %". En tu casilla hay otras 40 alertas de CPU de esta noche, todas picos del backup que ya nadie lee. El disco de /var es de 100 GB.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: Estás frente a la notebook, medio dormido. ¿Cuál es tu primer movimiento?
+        opciones:
+          - texto: Silencio todo el canal de alertas y me vuelvo a dormir; seguro es otra del backup.
+            va: final-silenciar
+            consecuencia: Dejás de recibir avisos de todo, incluido el disco, que sigue creciendo.
+          - texto: Entro por SSH y miro el disco con `df -h /var` y qué carpeta pesa más.
+            va: ver-carpeta
+            consecuencia: Confirmás que /var está al 96 % y que no es un falso positivo.
+          - texto: Reviso las 40 alertas de CPU una por una antes de tocar nada.
+            va: ver-carpeta
+            consecuencia: Perdés diez minutos para descubrir que son picos de 3 minutos del backup. Ahora sí vas al disco.
+      - id: ver-carpeta
+        tipo: decision
+        texto: "`du -xh --max-depth=1 /var | sort -h` muestra que /var/log pesa 90 GB de los 96 usados. ¿Qué hacés?"
+        opciones:
+          - texto: Comprimo y muevo los logs más viejos a otro disco con espacio, y verifico con `df -h /var`.
+            va: miras-crecimiento
+            consecuencia: Liberás 60 GB y /var baja al 36 %. Es una solución de emergencia, no la definitiva.
+          - texto: Borro todo /var/log para ganar espacio rápido.
+            va: final-borrar-todo
+            consecuencia: El disco queda libre, pero perdiste los registros que explican qué pasó.
+      - id: miras-crecimiento
+        tipo: decision
+        texto: El disco quedó holgado, pero ves que un log de aplicación crece unos 5 GB por hora. ¿Y ahora?
+        opciones:
+          - texto: Miro qué escribe ese log y abro un incidente con la causa; mañana se agrega rotación y una alerta predictiva de disco.
+            va: final-bien
+            consecuencia: Entendés que un servicio en error escribe sin parar y que hace falta rotación de logs.
+          - texto: Me voy a dormir, ya liberé espacio.
+            va: final-regular
+            consecuencia: A ese ritmo, los 64 GB libres alcanzan para unas 13 horas.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: Quedó el disco con margen, la causa en un incidente y un cambio concreto para mañana. Además proponés exigir una duración mínima en las alertas de CPU para que no tapen las de disco.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: Apagaste el incendio, pero a media tarde el disco vuelve a llenarse y se cae el servicio con gente trabajando.
+      - id: final-borrar-todo
+        tipo: desenlace
+        resultado: mal
+        texto: Hay espacio, pero sin logs no hay forma de saber qué escribía tanto. La causa sigue ahí y el problema se repite.
+      - id: final-silenciar
+        tipo: desenlace
+        resultado: mal
+        texto: A las 4:00 el disco se llena, la aplicación deja de escribir y a las 8 los usuarios no pueden guardar. Silenciar sin mirar nada fue lo peor.
+    leccion: |
+      El ruido de las alertas esconde las que importan: ajustá la duración de las que saltan por picos cortos. Y ante un disco que se llena, mirá primero qué crece y a qué ritmo antes de liberar espacio.
+    fuente: sre-alerting
+
+problemas:
+  - id: p-sre-monitoring-senales
+    enunciado: Elegí un servicio que conozcas (una API, un servidor de archivos, una base de datos) y escribí para cada una de las cuatro señales doradas qué métrica concreta usarías y desde qué comando o herramienta la sacarías. Marcá cuál sería un síntoma y cuál una causa.
+    fuente: sre-monitoring
+    ubicacion: cap. 6, secciones Symptoms Versus Causes y The Four Golden Signals
+    url: https://sre.google/sre-book/monitoring-distributed-systems/
+    dificultad: basico
+  - id: p-alerta-for-local
+    enunciado: En una VM de pruebas, corré `stress` o un bucle que consuma CPU en picos de 3 minutos y observá con `uptime` y `vmstat 1 5` cómo se mueven el load average de 1 y de 15 minutos. Escribí una regla de Prometheus con `for` que no dispare con esos picos y sí con una carga de 30 minutos, y explicá por qué elegiste esa duración.
+    fuente: prom-rules
+    ubicacion: cláusula for y ejemplo de regla
+    url: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+    dificultad: intermedio

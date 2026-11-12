@@ -1,0 +1,236 @@
+tarjetas:
+  - id: t-rpo-definicion
+    frente: ¿Qué mide el RPO de un sistema?
+    dorso: Cuántos datos podés perder, expresado como el punto en el tiempo al que se recupera con la copia más reciente.
+    fuente: nist-800-34
+  - id: t-rto-definicion
+    frente: ¿Qué mide el RTO de un sistema?
+    dorso: El máximo tiempo que el sistema puede estar fuera de servicio antes de causar un impacto inaceptable.
+    fuente: nist-800-34
+  - id: t-rto-incumplido
+    frente: Tu RTO objetivo es 2 horas y la restauración de prueba tardó 3. ¿Cumplís?
+    dorso: No; el tiempo real supera el objetivo, así que hay que acelerar la restauración o revisar el objetivo con el negocio.
+    fuente: nist-800-34
+  - id: t-321-fuera-del-sitio
+    frente: ¿Cuántas copias fuera del sitio pide la regla 3-2-1?
+    dorso: Una.
+    fuente: cisa-backup
+  - id: t-321-falta-uno
+    frente: Tenés el original en el disco del servidor, una copia en cintas en la misma sala y otra en el NAS de esa sala. ¿Qué número de la regla 3-2-1 te falta?
+    dorso: El 1, una copia fuera del sitio; ya tenés tres copias y dos tipos de medios.
+    fuente: cisa-backup
+  - id: t-nas-conectado
+    frente: Tu NAS de backup está siempre montado en el servidor. ¿Qué riesgo corre ante un ransomware?
+    dorso: Que el ransomware lo busque y lo cifre o lo borre junto con el servidor.
+    fuente: cisa-ransomware
+  - id: t-backup-probado
+    frente: ¿Por qué no alcanza con que el script de backup termine sin errores?
+    dorso: Porque eso no prueba que los datos se puedan restaurar; hay que probar la recuperación.
+    fuente: nist-800-34
+  - id: t-rsync-espejo
+    frente: ¿Qué problema tiene usar `rsync --delete` como único backup?
+    dorso: Es un espejo, no un historial; si el origen se corrompe o cifra, el destino lo copia en la próxima corrida.
+    fuente: rsync-man
+  - id: t-rsync-dry-run
+    frente: ¿Qué flag de rsync muestra qué haría sin copiar ni borrar nada?
+    dorso: "`-n` (`--dry-run`)."
+    fuente: rsync-man
+  - id: t-pg-dump-consistente
+    frente: ¿Por qué `pg_dump` puede correr con la base en uso y aun así dar una copia coherente?
+    dorso: Porque saca una foto de la base al momento de arrancar y no bloquea lecturas ni escrituras.
+    fuente: postgres-dump
+  - id: t-timer-persistent
+    frente: En un timer de systemd, ¿qué hace `Persistent=true`?
+    dorso: Si el equipo estaba apagado a la hora programada, ejecuta el servicio apenas se activa el timer.
+    fuente: systemd-timer
+
+ejercicios:
+  - id: e-rpo-real-viernes
+    tipo: numerico
+    enunciado: |
+      El respaldo corre todos los días a las 2:00 y el ransomware se descubre el viernes a las 17:30. Suponé que el respaldo de las 2:00 de ese viernes está bien. ¿Cuántas horas de datos perdés (RPO real)?
+    respuesta: 15.5
+    tolerancia:
+      absoluta: 0.1
+    unidad: h
+    explicacion: |
+      Del respaldo de las 2:00 al incidente de las 17:30 pasaron $17{,}5 - 2 = 15{,}5$ horas. Todo lo creado o modificado en ese lapso no está en la copia.
+    erroresComunes:
+      - valor: 24
+        explicacion: Ese es el intervalo entre respaldos, la pérdida máxima. Acá pasaron solo 15,5 horas desde el último.
+      - valor: 39.5
+        explicacion: Ese sería el caso en que el respaldo de las 2:00 del viernes no sirve y hay que usar el del jueves.
+    fuente: nist-800-34
+  - id: e-rpo-sin-probar
+    tipo: numerico
+    enunciado: |
+      Mismo escenario, pero al restaurar descubrís que el respaldo de las 2:00 del viernes estaba corrupto y nadie lo había probado. Usás el de las 2:00 del jueves. ¿Cuántas horas de datos perdés ahora?
+    respuesta: 39.5
+    tolerancia:
+      absoluta: 0.1
+    unidad: h
+    explicacion: |
+      Del jueves a las 2:00 al viernes a las 17:30 hay $24 + 15{,}5 = 39{,}5$ horas. No probar el respaldo sumó un intervalo completo de pérdida.
+    erroresComunes:
+      - valor: 15.5
+        explicacion: Ese era el caso con el respaldo del viernes sano.
+      - valor: 48
+        explicacion: Sumaste dos intervalos completos; el incidente fue a las 17:30, no a las 2:00 del sábado.
+    fuente: nist-800-34
+  - id: e-tiempo-restauracion
+    tipo: numerico
+    enunciado: |
+      Tenés que restaurar 900 GB y, en una prueba, el disco de respaldo entregó una velocidad sostenida de 100 MB/s. Considerá 1 GB = 1000 MB. ¿Cuántas horas tarda como mínimo la restauración?
+    respuesta: 2.5
+    tolerancia:
+      absoluta: 0.05
+    unidad: h
+    explicacion: |
+      Datos: $900 \times 1000 = 900000$ MB. Tiempo: $900000 / 100 = 9000$ s, y $9000 / 3600 = 2{,}5$ horas. Si tu RTO objetivo es 2 horas, no lo cumplís aunque todo salga perfecto.
+    erroresComunes:
+      - valor: 9000
+        explicacion: Ese es el tiempo en segundos. Falta pasarlo a horas dividiendo por 3600.
+      - valor: 9
+        explicacion: Dividiste 900 por 100 sin convertir GB a MB.
+    fuente: nist-800-34
+  - id: e-espacio-respaldo
+    tipo: numerico
+    enunciado: |
+      Tu política guarda 4 semanas de respaldos. Cada semana hay un respaldo completo de 500 GB (domingo) y 6 incrementales diarios de 25 GB cada uno. ¿Cuántos GB ocupa una sola copia del historial completo?
+    respuesta: 2600
+    tolerancia:
+      absoluta: 0
+    unidad: GB
+    explicacion: |
+      Completos: $4 \times 500 = 2000$ GB. Incrementales: $4 \times 6 \times 25 = 600$ GB. Total: $2600$ GB. Con la regla 3-2-1 tendrías además otra copia de ese historial en otro medio, así que el almacenamiento total se duplica.
+    erroresComunes:
+      - valor: 2000
+        explicacion: Olvidaste los incrementales diarios.
+      - valor: 2700
+        explicacion: Sumaste 7 incrementales por semana (da 2700); son 6, porque el domingo hay un completo.
+    fuente: cisa-backup
+  - id: e-cumple-321
+    tipo: opcion-multiple
+    enunciado: Una pyme guarda el original en el disco del servidor, una copia en cintas en el mismo rack y otra copia en el NAS (con discos) de la misma sala. ¿Cumple la regla 3-2-1?
+    opciones:
+      - texto: Sí, tiene tres copias y dos tipos de medios (disco y cinta).
+        explicacion: Tres copias y dos medios sí hay, pero falta la tercera condición, una copia fuera del sitio.
+      - texto: No, porque ninguna copia está fuera del sitio.
+        correcta: true
+        explicacion: Un incendio o una inundación en la sala se llevaría las tres. Falta la copia externa.
+      - texto: No, porque la regla pide tres tipos de medios distintos.
+        explicacion: La regla pide dos tipos de medios, no tres.
+    fuente: cisa-backup
+  - id: e-vf-backup-exito
+    tipo: verdadero-falso
+    enunciado: Si el log del backup dice "terminado sin errores" todas las noches, podés asumir que la restauración va a funcionar el día que la necesites.
+    respuesta: false
+    justificacion: Un backup sin errores solo prueba que se escribió una copia. La guía del NIST pide probar los respaldos con regularidad para verificar que los archivos se pueden recuperar sin errores.
+    fuente: nist-800-34
+
+casos:
+  - id: c-ransomware-viernes
+    titulo: Son las 3:20 y los archivos tienen una extensión rara
+    rol: Sos el de guardia del servidor de archivos de la administración.
+    contexto: |
+      Sábado, 3:20. Te llaman: las carpetas del servidor tienen extensiones desconocidas y hay una nota pidiendo un rescate. Todas las noches a las 2:00 un script espeja la carpeta de datos al NAS, que siempre está montado, con `rsync --delete`. Hace 22 días alguien llevó un disco USB a la caja fuerte con una copia completa. Nadie probó nunca una restauración.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: El cifrado empezó antes de la copia de las 2:00. ¿Qué hacés primero?
+        opciones:
+          - texto: Desconecto de la red el servidor y el NAS, sin apagarlos y sin restaurar nada todavía.
+            va: reportar
+            consecuencia: El cifrado deja de propagarse a otros equipos y los rastros de la infección quedan en memoria y en disco.
+          - texto: Restauro ya mismo desde el NAS encima de las carpetas del servidor.
+            va: final-restore-cifrado
+            consecuencia: El NAS espejó los archivos ya cifrados en la corrida de las 2:00. Restaurás los mismos archivos cifrados.
+          - texto: Busco cómo pagar el rescate, a ver si arreglo esto rápido.
+            va: final-pagar
+            consecuencia: Pagás sin haber mirado qué copias tenías ni haber avisado a nadie, y sin ninguna garantía de recuperar los archivos.
+      - id: reportar
+        tipo: decision
+        texto: El servidor y el NAS están aislados. Antes de tocar nada más, ¿qué hacés?
+        opciones:
+          - texto: Aviso a gerencia y al responsable de seguridad, y reporto el incidente a la autoridad o CSIRT que corresponda a mi organización.
+            va: tomar-evidencia
+            consecuencia: Quienes tienen que decidir saben qué pasó y el incidente queda reportado mientras todavía hay rastros.
+          - texto: Me pongo directo a reconstruir y aviso cuando termine.
+            va: final-sin-reporte
+            consecuencia: Reconstruís sin que nadie con responsabilidad lo sepa y sin pedir ayuda externa.
+      - id: tomar-evidencia
+        tipo: decision
+        texto: Se va a investigar cómo entraron los atacantes. Antes de reconstruir, ¿qué hacés?
+        opciones:
+          - texto: Tomo una imagen del disco y una captura de memoria de una muestra de equipos afectados.
+            va: mirar-copias
+            consecuencia: Conservás evidencia para entender cómo entró el ataque.
+          - texto: Formateo el servidor enseguida para ganar tiempo.
+            va: final-sin-evidencia
+            consecuencia: El servidor queda limpio, pero perdiste todo rastro de cómo entraron.
+      - id: mirar-copias
+        tipo: decision
+        texto: El NAS tiene los archivos cifrados (por el espejo de las 2:00) y el USB de la caja fuerte tiene una copia de hace 22 días. ¿Cómo seguís?
+        opciones:
+          - texto: Reconstruyo el servidor desde una imagen limpia, restauro el USB en una carpeta de prueba y verifico que los archivos abran.
+            va: validar-restore
+            consecuencia: Tardás más, pero partís de un sistema limpio y sabés que la copia sirve y cuánto lleva restaurarla.
+          - texto: Restauro la copia del USB directo sobre el servidor infectado, sin revisar nada.
+            va: final-sin-validar
+            consecuencia: Si el servidor sigue comprometido, reinfectás lo que acabás de restaurar.
+      - id: validar-restore
+        tipo: decision
+        texto: El servidor está reconstruido y la copia del USB se abre bien. Perdés 22 días de datos. ¿Qué hacés ahora?
+        opciones:
+          - texto: Informo el RPO real (22 días) a gerencia y pido archivos recientes a cada área para revisarlos antes de copiarlos.
+            va: final-bien
+            consecuencia: La dirección entiende por qué hay que cambiar la política de backup y recuperás trabajo reciente sin reinfectar.
+          - texto: Copio la carpeta del NAS encima, por si hay algo más nuevo.
+            va: final-mezcla
+            consecuencia: Mezclás archivos cifrados con archivos sanos y es imposible separarlos después.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El servidor vuelve con 22 días de atraso, pero reconstruido, con datos verificados, evidencia guardada e incidente reportado desde el principio. Proponés una copia offline cada semana y una restauración de prueba por trimestre.
+      - id: final-sin-validar
+        tipo: desenlace
+        resultado: mal
+        texto: Los datos vuelven sobre un servidor que nadie limpió. A la semana vuelve a cifrarse y el trabajo de restauración se pierde.
+      - id: final-sin-reporte
+        tipo: desenlace
+        resultado: regular
+        texto: El servicio vuelve, pero el incidente no se reportó a tiempo y nadie con responsabilidad pudo decidir qué más hacer.
+      - id: final-sin-evidencia
+        tipo: desenlace
+        resultado: regular
+        texto: El servicio vuelve, pero nadie sabe cómo entraron los atacantes y la misma puerta sigue abierta para el próximo ataque.
+      - id: final-restore-cifrado
+        tipo: desenlace
+        resultado: mal
+        texto: Perdiste una hora restaurando los mismos archivos cifrados y, mientras tanto, el cifrado siguió propagándose por la red.
+      - id: final-pagar
+        tipo: desenlace
+        resultado: mal
+        texto: Entregaste plata sin garantías y sin haber mirado qué copias tenías. El lunes descubrís que el disco USB tenía todo lo necesario.
+      - id: final-mezcla
+        tipo: desenlace
+        resultado: mal
+        texto: Copiaste archivos cifrados sobre los sanos. Terminás restaurando de nuevo desde cero el domingo a la noche.
+    leccion: |
+      Una copia que siempre está conectada también se cifra. Necesitás al menos una copia que el atacante no alcance (offline o fuera del sitio), una restauración probada y un orden de respuesta: aislar, reportar, guardar evidencia, reconstruir limpio y restaurar.
+    fuente: cisa-ransomware
+
+problemas:
+  - id: p-restore-de-prueba
+    enunciado: Armá una carpeta de prueba con 200 archivos y hacé un respaldo con `rsync -a`. Después restaurá en otro directorio, verificá con `rsync -anc -v` que no haya diferencias, cronometrá cuánto tardó y calculá tu velocidad efectiva en MB/s. Con esa velocidad, estimá cuánto tardaría restaurar un volumen real de tu trabajo.
+    fuente: rsync-man
+    ubicacion: opciones -a, -n, -c y --link-dest
+    url: https://download.samba.org/pub/rsync/rsync.1
+    dificultad: basico
+  - id: p-politica-rpo-rto
+    enunciado: Elegí un sistema real o inventado de una pyme (facturación, correo, base de clientes). Definí un MTD, un RTO y un RPO razonables, justificalos y escribí en media página la política de backup que los cumple, indicando frecuencia, ubicación de las copias y cómo y cada cuánto se prueba la restauración.
+    fuente: nist-800-34
+    ubicacion: §3.2.1 (MTD, RTO, RPO), §3.4.2 (backups) y §3.5.1 (pruebas)
+    url: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-34r1.pdf
+    dificultad: intermedio

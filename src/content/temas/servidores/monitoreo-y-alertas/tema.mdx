@@ -1,0 +1,247 @@
+---
+titulo: "Monitoreo (CPU, memoria, disco, load average) y alertas"
+area: servidores
+orden: 2
+resumen: Qué métricas mirar en un servidor Linux, cómo leer el load average contra la cantidad de núcleos, y cómo armar alertas que despierten solo cuando hay algo que hacer.
+materias:
+  - carrera: ing-informatica
+    codigo: "3654"
+    nombre: Virtualización de Hardware
+  - carrera: ing-informatica
+    codigo: "3649"
+    nombre: Sistemas Operativos
+  - carrera: lic-gestion-tecnologia
+    codigo: "1317"
+    nombre: Tópicos Avanzados de Redes
+prerrequisitos:
+  - servidores/linux-procesos-systemd-logs
+nivel: intermedio
+minutos: 25
+fuentes:
+  - id: sre-monitoring
+    tipo: libro
+    autor: Betsy Beyer, Chris Jones, Jennifer Petoff y Niall Richard Murphy (eds.)
+    titulo: Site Reliability Engineering
+    edicion: 1.ª ed., O'Reilly, 2016 (edición online libre en sre.google, © 2017 Google)
+    editorial: O'Reilly Media
+    ubicacion: cap. 6, "Monitoring Distributed Systems" (secciones Definitions, Symptoms Versus Causes, The Four Golden Signals, Worrying About Your Tail)
+    url: https://sre.google/sre-book/monitoring-distributed-systems/
+  - id: sre-alerting
+    tipo: libro
+    autor: Betsy Beyer, Chris Jones, Jennifer Petoff y Niall Richard Murphy (eds.)
+    titulo: Site Reliability Engineering
+    edicion: 1.ª ed., O'Reilly, 2016 (edición online libre en sre.google, © 2017 Google)
+    editorial: O'Reilly Media
+    ubicacion: cap. 10, "Practical Alerting from Time-Series Data" (sección Alerting)
+    url: https://sre.google/sre-book/practical-alerting/
+  - id: prom-rules
+    tipo: doc-oficial
+    autor: Prometheus Authors
+    titulo: Alerting rules
+    url: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+    ubicacion: cláusulas for y keep_firing_for
+    edicion: versión "latest" consultada el 2026-11-11
+  - id: prom-practices
+    tipo: doc-oficial
+    autor: Prometheus Authors
+    titulo: Alerting (best practices)
+    url: https://prometheus.io/docs/practices/alerting/
+    ubicacion: secciones What to alert on y Capacity
+    edicion: versión consultada el 2026-11-11
+  - id: prom-node-exporter
+    tipo: doc-oficial
+    autor: Prometheus Authors
+    titulo: Monitoring Linux host metrics with the Node Exporter
+    url: https://prometheus.io/docs/guides/node-exporter/
+    ubicacion: guía completa (métricas node_*)
+    edicion: versión consultada el 2026-11-11
+  - id: node-exporter-cpu
+    tipo: doc-oficial
+    autor: Prometheus Authors
+    titulo: node_exporter, collector/cpu_linux.go
+    url: https://github.com/prometheus/node_exporter/blob/master/collector/cpu_linux.go
+    ubicacion: función que emite las series con las etiquetas cpu y mode (valores idle, iowait, system, user)
+    edicion: rama master consultada el 2026-11-11
+  - id: uptime-man
+    tipo: doc-oficial
+    autor: procps-ng (man7.org)
+    titulo: uptime(1)
+    url: https://man7.org/linux/man-pages/man1/uptime.1.html
+    ubicacion: sección DESCRIPTION
+    edicion: procps-ng 4.0.4 (contrastada con la man page local)
+  - id: proc-loadavg
+    tipo: doc-oficial
+    autor: Linux man-pages project (man7.org)
+    titulo: proc_loadavg(5)
+    url: https://man7.org/linux/man-pages/man5/proc_loadavg.5.html
+    ubicacion: archivo /proc/loadavg
+  - id: kernel-loadavg
+    tipo: doc-oficial
+    autor: Linux kernel (código fuente)
+    titulo: kernel/sched/loadavg.c
+    url: https://github.com/torvalds/linux/blob/master/kernel/sched/loadavg.c
+    ubicacion: comentario de cabecera (definición del load average global)
+    edicion: rama master consultada el 2026-11-11
+  - id: vmstat-man
+    tipo: doc-oficial
+    autor: procps-ng (man7.org)
+    titulo: vmstat(8)
+    url: https://man7.org/linux/man-pages/man8/vmstat.8.html
+    ubicacion: campos de Procs, Swap y CPU
+    edicion: procps-ng 4.0.4 (contrastada con la man page local)
+  - id: free-man
+    tipo: doc-oficial
+    autor: procps-ng (man7.org)
+    titulo: free(1)
+    url: https://man7.org/linux/man-pages/man1/free.1.html
+    ubicacion: columna available
+    edicion: procps-ng 4.0.4 (contrastada con la man page local)
+  - id: df-man
+    tipo: doc-oficial
+    autor: Debian Manpages (coreutils)
+    titulo: df(1)
+    url: https://manpages.debian.org/bookworm/coreutils/df.1.en.html
+    ubicacion: opciones -h, -i
+    edicion: coreutils en Debian bookworm
+  - id: du-man
+    tipo: doc-oficial
+    autor: Debian Manpages (coreutils)
+    titulo: du(1)
+    url: https://manpages.debian.org/bookworm/coreutils/du.1.en.html
+    ubicacion: opciones -h, -x, -d
+    edicion: coreutils en Debian bookworm
+  - id: gregg-load
+    tipo: blog
+    autor: Brendan Gregg
+    titulo: "Linux Load Averages: Solving the Mystery"
+    url: https://www.brendangregg.com/blog/2017-08-08/linux-load-averages.html
+    edicion: "2017"
+    verMas: true
+fechaVerificacion: 2026-11-11
+ejemplo: false
+---
+
+<CasoReal titulo="Cuarenta y una alertas por noche, y la que importaba se perdió">
+
+Lunes, 9:00. Abrís el correo de alertas del servidor de archivos de la oficina y tenés 41 mensajes de la madrugada. Cuarenta son "CPU mayor a 90 %" que dura dos o tres minutos y se resuelve sola. Es el backup nocturno. Hace meses que nadie los abre.
+
+La número 41 decía "disco `/var` al 96 %". Llegó a las 3:12, cuando al disco de 100 GB le quedaban 4 GB libres y un log crecía unos 5 GB por hora. El disco se llenó a las 4:00, la base dejó de escribir y a las 8 los usuarios no podían guardar nada.
+
+Nadie falló por vago: el sistema de alertas les enseñó a ignorarlas. ¿Qué había que medir distinto, y cuándo vale la pena que un mensaje despierte a una persona?
+
+</CasoReal>
+
+<Intuicion>
+
+Monitorear (*monitoring*) es medir cada tanto cómo está el sistema y guardarlo para poder mirar el pasado. Alertar (*alerting*) es una decisión aparte: elegir cuándo esa medición justifica interrumpir a un humano. Se puede monitorear mucho y alertar poco, y casi siempre conviene.
+
+<Analogia titulo="La alarma del auto que suena por cualquier cosa">
+
+Si la alarma de un auto salta con cada camión que pasa, a la semana ya nadie mira por la ventana. Cuando entra un ladrón de verdad, suena igual que las otras cien veces y la ignorás. Una alerta que dispara por un pico de tres minutos del backup funciona igual: gasta la atención del que guarda, y la va a necesitar cuando el problema sea real. La buena alarma suena cuando hay algo que hacer y no antes.
+
+</Analogia>
+
+Probá primero con un pico corto de CPU, el clásico del backup.
+
+<SimSerieTemporal
+  consigna="Poné el umbral en 90 y la duración en 0: contá las alertas. Después subí la duración a 5 minutos y mirá qué pasa con las alertas y con los minutos en alerta."
+  modo="alertas"
+  escenario="pico-breve"
+  titulo="CPU con un pico de 3 minutos"
+/>
+
+Lo que tenés que notar: el pico dura menos que la duración exigida, así que la alerta ya no dispara. Pagás un precio: si el problema es real, el aviso llega 5 minutos más tarde.
+
+Ahora el disco, que es el caso que se perdió en la historia.
+
+<SimSerieTemporal
+  consigna="Con umbral en 95 % mirá a qué hora avisa y cuántas horas de anticipación te da. Después prendé la alerta predictiva y compará."
+  modo="alertas"
+  escenario="disco-llenandose"
+  titulo="Un disco que se llena de a poco"
+/>
+
+Un umbral fijo avisa tarde porque el disco se llena a ritmo constante: cuando llegás a 95 %, quedan pocas horas. La predicción mira la pendiente y avisa cuando el disco se va a llenar pronto, aunque hoy esté en 80 %.
+
+El tercer caso es el load average, que se lee contra la cantidad de núcleos.
+
+<SimSerieTemporal
+  consigna="Mirá la línea de los núcleos (4) y las tres curvas de carga. ¿Qué curva reacciona primero a la hora de carga sostenida en 6, y cuál tarda más en bajar?"
+  modo="alertas"
+  escenario="carga-sostenida"
+  nucleos={4}
+  titulo="Load average de 1, 5 y 15 minutos sobre 4 núcleos"
+/>
+
+<Ojo>
+
+Un load average alto con CPU baja no es contradicción. Puede haber procesos esperando disco, que también cuentan. Mirá el uso de CPU y el estado de los procesos antes de culpar al procesador.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Qué mirar: las cuatro señales
+
+Para un servicio, el libro de SRE de Google propone cuatro señales: latencia (cuánto tardan los pedidos, con las respuestas exitosas y las fallidas medidas por separado), tráfico (cuánta demanda recibe), errores (cuántos pedidos fallan) y saturación (qué tan lleno está el recurso más limitado)<Cita f="sre-monitoring" loc="The Four Golden Signals" />. En un servidor, la saturación son justamente los recursos de esta lección: CPU, memoria y disco.
+
+El mismo capítulo advierte que un promedio de latencia puede esconder una cola de pedidos muy lentos, y que conviene mirar la distribución<Cita f="sre-monitoring" loc="Worrying About Your Tail" />.
+
+### Load average sin mitos
+
+El load average es el promedio de procesos que están ejecutándose, esperando CPU o esperando entrada/salida sin poder interrumpirse, medido en ventanas de 1, 5 y 15 minutos<Cita f="uptime-man" loc="DESCRIPTION" />. El kernel lo calcula como un promedio exponencial que va olvidando el pasado<Cita f="kernel-loadavg" loc="comentario de cabecera" />. El archivo `/proc/loadavg` trae los tres valores<Cita f="proc-loadavg" />.
+
+No está normalizado por núcleos: un load de 1 en una máquina de 4 CPU significa que estuvo ociosa el 75 % del tiempo<Cita f="uptime-man" loc="DESCRIPTION" />. Por eso se compara con la cantidad de núcleos que da `nproc`:
+
+$$
+\text{relación} = \frac{\text{load average}}{\text{núcleos}}
+$$
+
+Como regla práctica derivada de la definición (no es un umbral oficial): una relación cerca de 1 es una máquina ocupada pero al día, y una relación sostenida por encima de 1 indica fila de procesos esperando. Con 6 de load en 4 núcleos la relación es 1,5.
+
+```bash
+uptime                 # los tres load averages
+cat /proc/loadavg      # los mismos, más procesos ejecutables y último PID
+nproc                  # cantidad de núcleos disponibles
+vmstat 1 5             # 5 muestras, una por segundo
+free -h                # memoria en unidades legibles
+df -h                  # espacio por sistema de archivos
+df -i                  # inodos usados por sistema de archivos
+du -xh --max-depth=1 /var | sort -h   # qué carpeta de /var pesa más
+```
+
+En `vmstat`, `r` cuenta procesos ejecutables, `b` los bloqueados esperando E/S, `si` y `so` la memoria que entra y sale de swap por segundo, y `wa` el porcentaje de CPU esperando E/S<Cita f="vmstat-man" loc="Procs, Swap y CPU" />. La primera línea que imprime es un promedio desde el arranque; las siguientes cubren cada intervalo<Cita f="vmstat-man" loc="DESCRIPTION" />.
+
+En `free`, la columna importante es `available`: una estimación de cuánta memoria hay para arrancar aplicaciones nuevas sin pasar a swap, que cuenta también el caché que se puede liberar<Cita f="free-man" loc="available" />. La columna `free` sola asusta de más.
+
+Para el disco, `df -h` muestra el espacio libre por sistema de archivos y `df -i` los inodos<Cita f="df-man" loc="-h, -i" />. Para ubicar qué ocupa lugar, `du -xh --max-depth=1` suma por carpeta sin cruzar a otros sistemas de archivos<Cita f="du-man" loc="-x, -d" />.
+
+### Cuándo alertar
+
+El SRE de Google distingue tres destinos: lo que exige acción inmediata va a una persona de guardia, lo importante pero que puede esperar va a una cola de tickets, y el resto queda como dato para tableros<Cita f="sre-alerting" loc="Alerting" />. La guía de Prometheus coincide: pocas alertas, enfocadas en síntomas que sufre el usuario, y evitar avisos donde no hay nada para hacer<Cita f="prom-practices" loc="What to alert on" />. Acercarse a la capacidad no es una caída inmediata, pero puede pedir una acción humana antes de que ocurra<Cita f="prom-practices" loc="Capacity" />. Como criterio práctico, no como regla de las fuentes: un disco que se llena en nueve días es un ticket, y uno que se llena en cuatro horas es una guardia.
+
+Para no alertar por un pico, la regla debe sostenerse un tiempo mínimo antes de saltar<Cita f="sre-alerting" loc="Alerting" />. En Prometheus es la cláusula `for`: la alerta queda en estado *pending* hasta que la condición se cumple durante toda esa duración, y recién entonces pasa a *firing*<Cita f="prom-rules" loc="for" />.
+
+```yaml
+groups:
+  - name: servidor
+    rules:
+      - alert: CPUAltaSostenida
+        # expresión ilustrativa: fracción de CPU no ociosa, promediada entre núcleos
+        expr: 1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) > 0.9
+        for: 10m
+        annotations:
+          resumen: "CPU por encima de 90 % durante 10 minutos"
+```
+
+Las métricas `node_*` (como `node_cpu_seconds_total`) las expone el *node exporter* de Prometheus<Cita f="prom-node-exporter" />, y esa métrica trae una serie por núcleo y por modo, entre ellos `idle`<Cita f="node-exporter-cpu" loc="emisión de c.cpu con cpu y mode" />. Con `for: 10m` los picos de tres minutos del backup no despiertan a nadie. La opción `keep_firing_for` mantiene disparada una alerta un rato después de que la condición se apaga, útil si la métrica parpadea<Cita f="prom-rules" loc="keep_firing_for" />.
+
+<Profundizar titulo="El costo de esperar: for contra tiempo de detección">
+
+Cada minuto de `for` es un minuto más hasta enterarte de un problema real. Una duración de 10 minutos aplicada a una caída total retrasa el aviso 10 minutos. Por eso se usa `for` largo en métricas de recursos (CPU, load) y corto, o ninguno, en síntomas de usuario como la tasa de errores.
+
+</Profundizar>
+
+</Formal>

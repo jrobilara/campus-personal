@@ -1,0 +1,210 @@
+---
+titulo: "Linux: procesos, servicios con systemd y logs"
+area: servidores
+orden: 1
+resumen: Cómo leer el estado de un proceso, por qué systemd deja un servicio en failed después de reiniciarlo en loop, y cómo encontrar la causa en el log con journalctl.
+materias:
+  - carrera: ing-informatica
+    codigo: "3649"
+    nombre: Sistemas Operativos
+  - carrera: ing-informatica
+    codigo: "3654"
+    nombre: Virtualización de Hardware
+prerrequisitos: []
+nivel: intermedio
+minutos: 30
+fuentes:
+  - id: systemd-service
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: systemd.service(5)
+    url: https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+    ubicacion: opciones Restart= y RestartSec=
+    edicion: versión "latest" consultada el 2026-11-11; contrastada con la man page de systemd 255
+  - id: systemd-exec
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: systemd.exec(5)
+    url: https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html
+    ubicacion: tabla de valores definidos de $SERVICE_RESULT (start-limit-hit)
+    edicion: versión "latest" consultada el 2026-11-11; contrastada con la man page de systemd 255
+  - id: systemd-unit
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: systemd.unit(5)
+    url: https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html
+    ubicacion: "[Unit] Section Options, StartLimitIntervalSec= y StartLimitBurst=; Description (drop-ins)"
+    edicion: versión "latest" consultada el 2026-11-11; contrastada con systemd 255
+  - id: systemd-system-conf
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: systemd-system.conf(5)
+    url: https://www.freedesktop.org/software/systemd/man/latest/systemd-system.conf.html
+    ubicacion: opciones DefaultStartLimitIntervalSec= y DefaultStartLimitBurst=
+    edicion: versión "latest" consultada el 2026-11-11; contrastada con systemd 255
+  - id: systemctl-man
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: systemctl(1)
+    url: https://www.freedesktop.org/software/systemd/man/latest/systemctl.html
+    ubicacion: comandos list-units, status, reset-failed, is-failed, edit
+    edicion: versión "latest" consultada el 2026-11-11; contrastada con systemd 255
+  - id: journalctl-man
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: journalctl(1)
+    url: https://www.freedesktop.org/software/systemd/man/latest/journalctl.html
+    ubicacion: opciones -u, -b, -p, -f, -n, --since
+    edicion: versión "latest" consultada el 2026-11-11; contrastada con systemd 255
+  - id: journald-conf
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: journald.conf(5)
+    url: https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html
+    ubicacion: opción Storage=
+    edicion: versión "latest" consultada el 2026-11-11
+  - id: ps-man
+    tipo: doc-oficial
+    autor: procps-ng (man7.org)
+    titulo: ps(1)
+    url: https://man7.org/linux/man-pages/man1/ps.1.html
+    ubicacion: sección PROCESS STATE CODES
+    edicion: procps-ng 4.0.4 (contrastada con la man page local)
+  - id: tlpi
+    tipo: libro
+    autor: Michael Kerrisk
+    titulo: The Linux Programming Interface
+    edicion: 1.ª ed. (la copia consultada indica © 2011)
+    editorial: No Starch Press
+    ubicacion: cap. 22, §22.3 (Interruptible and Uninterruptible Process Sleep States); cap. 26, §26.2 (Orphans and Zombies)
+fechaVerificacion: 2026-11-11
+ejemplo: false
+---
+
+<CasoReal titulo="El servicio de facturación quedó en failed y nadie lo apagó">
+
+Viernes, 19:40. Hace nueve minutos alguien editó a las apuradas el archivo de configuración del servicio de facturación de la sucursal. Ahora te llaman: no se puede emitir ni una factura.
+
+Entrás por SSH, corrés `systemctl status facturacion` y ves que la unidad está en `failed`, con `start-limit-hit` como resultado. Nadie la detuvo. Según el log, systemd la levantó varias veces en menos de un segundo y se cansó de intentar.
+
+Tenés tres cosas a mano: el estado del servicio, el log y la tabla de procesos. ¿Por cuál empezás? Y si probás con un `restart` a ciegas, ¿por qué sigue sin andar?
+
+</CasoReal>
+
+<Intuicion>
+
+Un proceso (*process*) es un programa en ejecución. El kernel lo anota en una tabla y le va poniendo un estado: corriendo, durmiendo, esperando el disco, muerto. Arriba de todo, el proceso con PID 1 arranca y vigila a los demás; en Debian y Ubuntu ese proceso es systemd. Un servicio (*service*) es simplemente un proceso que systemd sabe levantar, vigilar y, si se lo pedís, volver a levantar.
+
+<Analogia titulo="El encargado del turno noche">
+
+Pensá en un local con un encargado y varios empleados. Si un empleado se desmaya, el encargado lo reanima y lo manda de vuelta a su puesto (eso es `Restart=`). Pero si el mismo empleado se desmaya cinco veces en diez segundos, el encargado deja de reanimarlo: cuelga el cartel de "fuera de servicio" (`failed`) y no lo vuelve a intentar hasta que vos le avises que el problema se arregló (`reset-failed`). El encargado no es mala gente: está protegiendo al local de un bucle infinito.
+
+</Analogia>
+
+Probalo en el primer simulador. Fijate que el estado `failed` no sale por morir una vez, sino por morir demasiadas veces en poco tiempo.
+
+<SimMaquinaEstados
+  consigna="Prendé Restart=on-failure y apretá 'el proceso muere (exit 1)' cinco veces seguidas, rápido. Mirá el estado y el log. Después reiniciá la unidad, apagá Restart y repetí con una sola muerte."
+  preset="unidad-systemd"
+  titulo="Ciclo de vida de una unidad systemd"
+/>
+
+Lo que tenés que notar: con `Restart=on-failure` cada muerte pasa por `activating` y vuelve a `active`, y el contador de reinicios sube. Recién la quinta muerte en la ventana de 10 segundos deja la unidad en `failed`, con una línea `start-limit-hit` en el log. Sin `Restart`, una sola muerte alcanza para llegar a `failed`.
+
+Ahora el otro lado: lo que ves con `ps`. Un proceso que termina no desaparece al instante.
+
+<Analogia titulo="El acta de defunción">
+
+Cuando un proceso termina, el kernel libera casi todo, pero guarda una fila con su código de salida hasta que el padre pase a leerla (`wait()`). Es como el acta de una persona fallecida: sigue figurando en el registro hasta que alguien va a firmarla. Mientras nadie la firme, el proceso aparece como zombi (`Z`). No podés "matar" a quien ya está muerto: lo que hay que arreglar es al padre que no firma.
+
+</Analogia>
+
+<SimMaquinaEstados
+  consigna="Mandá 'pide disco' para que el proceso pase a D y probá SIGSTOP. Después dejalo terminar con 'termina (exit)' y mirá cuánto tiempo sigue en la tabla antes de 'el padre hace wait()'."
+  preset="proceso-linux"
+  titulo="Estados de un proceso, con la letra de ps"
+/>
+
+<Ojo>
+
+Un proceso en estado `D` (espera de disco, no interrumpible) puede no responder ni a `kill -9` hasta que sale de ese estado. Desde el kernel 2.6.25 existe además un estado parecido, `TASK_KILLABLE`, que sí despierta ante una señal fatal, así que no todo lo que ves en `D` es inmortal<Cita f="tlpi" loc="§22.3" />. Si hay muchos en `D`, el problema suele estar abajo: un disco lento, un montaje de red colgado. Reiniciar el servicio no lo arregla.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Estados de un proceso
+
+`ps` muestra el estado en la columna `STAT`. Estas son las letras que más vas a ver<Cita f="ps-man" loc="PROCESS STATE CODES" />:
+
+| Letra | Qué significa |
+|---|---|
+| `R` | Corriendo o listo para correr (está en la cola del planificador) |
+| `S` | Durmiendo, esperando un evento; se puede interrumpir |
+| `D` | Esperando entrada/salida; no se puede interrumpir |
+| `T` | Detenido por una señal de control de trabajos |
+| `Z` | Zombi: terminó, pero el padre todavía no recogió su estado de salida |
+
+El estado `D` pesa porque una señal enviada a un proceso en `D` no se entrega hasta que sale de ahí; si queda colgado (por ejemplo, por un problema de NFS o de hardware), ni `SIGKILL` lo termina<Cita f="tlpi" loc="§22.3" />. Un zombi tampoco se elimina con señales: ocupa una fila de la tabla hasta que el padre hace `wait()`, o hasta que el padre muere y `init` lo adopta y lo recoge<Cita f="tlpi" loc="§26.2" />.
+
+```bash
+# PID, PPID, estado y comando de todos los procesos
+ps -eo pid,ppid,stat,comm
+# solo los que están en D o en Z
+ps -eo stat,pid,ppid,comm | awk '$1 ~ /^[DZ]/'
+```
+
+### Estados de una unidad y política de reinicio
+
+Para una unidad, `systemctl` distingue los estados `active`, `reloading`, `inactive`, `failed`, `activating` y `deactivating`; `failed` significa que el servicio falló de alguna forma (se cayó, salió con error o venció un tiempo) y la causa queda registrada<Cita f="systemctl-man" loc="list-units y status" />.
+
+La opción `Restart=` define cuándo systemd lo vuelve a levantar. Vale `no` por defecto; con `on-failure` se reinicia si el proceso sale con código distinto de cero, muere por una señal anormal (no cuentan SIGHUP, SIGINT, SIGTERM ni SIGPIPE, que se toman como salida limpia) o vence un tiempo; con `always` se reinicia aunque haya salido bien. Si la muerte la causó una operación de systemd (un `stop` o un `restart`), no se reinicia<Cita f="systemd-service" loc="Restart=" />. La espera entre un intento y el siguiente es `RestartSec=`, que por defecto vale 100 ms<Cita f="systemd-service" loc="RestartSec=" />.
+
+### Por qué se rinde: el límite de arranques
+
+Una unidad que arranca más de `StartLimitBurst=` veces dentro de `StartLimitIntervalSec=` deja de poder arrancar. Los valores por defecto del manager son 5 arranques en 10 s<Cita f="systemd-system-conf" loc="DefaultStartLimitBurst=" />. Si la unidad tenía `Restart=`, systemd no la reinicia más; igual la podés arrancar a mano o por un timer cuando pase el intervalo. `systemctl reset-failed` limpia el contador<Cita f="systemd-unit" loc="StartLimitIntervalSec=, StartLimitBurst=" />. El motivo se registra como resultado `start-limit-hit`: se definió un límite de arranques y se alcanzó<Cita f="systemd-exec" loc="tabla de $SERVICE_RESULT" />.
+
+Hacé la cuenta con la unidad de ejemplo de abajo, que deja `RestartSec` en su valor por defecto (100 ms). Si el proceso muere al instante, los seis arranques caben en menos de un segundo y se activa el límite: es exactamente el síntoma del caso. Ahora cambiá una sola línea y poné `RestartSec=5`: en una ventana de 10 s caben a lo sumo dos arranques, nunca se llega a 5 y el servicio queda reiniciándose en loop para siempre, sin pasar a `failed`. Son dos síntomas distintos y se diagnostican igual: con el log.
+
+```ini
+# /etc/systemd/system/facturacion.service
+[Unit]
+Description=Servicio de facturación
+StartLimitIntervalSec=10
+StartLimitBurst=5
+
+[Service]
+Type=exec
+ExecStart=/opt/facturacion/bin/facturacion --config /etc/facturacion/app.conf
+Restart=on-failure
+# RestartSec sin definir: vale 100 ms. Con RestartSec=5 nunca se llegaría al límite.
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Para cambiar una unidad sin tocar el archivo original, `systemctl edit` crea un fragmento de ajuste (*drop-in*) que se mezcla con el archivo principal<Cita f="systemctl-man" loc="edit" />.
+
+### Leer el log con journalctl
+
+```bash
+systemctl status facturacion.service                          # estado + últimas líneas
+journalctl -u facturacion.service -b -n 50 --no-pager         # este arranque, últimas 50
+journalctl -u facturacion.service --since "19:30" -p err      # desde las 19:30, solo errores o peor
+journalctl -u facturacion.service -f                          # seguir en vivo
+systemctl reset-failed facturacion.service                    # limpiar el contador
+sudo systemctl restart facturacion.service
+systemctl --failed                                            # qué más está en failed
+```
+
+`-u` filtra por unidad, `-b` por arranque (el actual si no indicás otro), `-p` por prioridad (`err` incluye también las más graves), `-f` sigue el log y `-n` limita la cantidad de líneas<Cita f="journalctl-man" loc="Options" />. `--since` acepta fechas y también horas sueltas como `19:30`<Cita f="journalctl-man" loc="--since" />. Un detalle de guardia: con `Storage=auto`, si el directorio `/var/log/journal` no existe, el journal vive solo en memoria y se pierde al reiniciar<Cita f="journald-conf" loc="Storage=" />.
+
+<Profundizar titulo="¿Y si no sé en qué estado estaba el servicio cuando cayó?">
+
+`systemctl status` muestra apenas las últimas líneas. Para la historia completa usá `journalctl -u` con `-b` o con `--since`. Si el servidor se reinició y el journal no era persistente, esa historia ya no existe: otro motivo para revisar `Storage=` antes de que haga falta.
+
+</Profundizar>
+
+</Formal>
