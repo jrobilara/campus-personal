@@ -1,0 +1,204 @@
+tarjetas:
+  - id: t-timeout-sin-limite
+    frente: ¿Qué riesgo corrés si llamás a un servicio remoto sin timeout?
+    dorso: Que los pedidos bloqueados retengan hilos, memoria y conexiones hasta agotar recursos que necesitan otras partes del sistema.
+    fuente: azure-circuit-breaker
+  - id: t-breaker-abierto-rapido
+    frente: ¿Por qué un circuit breaker abierto responde rápido aunque el servicio de atrás esté caído?
+    dorso: Porque rechaza el pedido sin llamar al servicio, así que no espera ningún timeout.
+    fuente: azure-circuit-breaker
+  - id: t-breaker-semiabierto
+    frente: ¿Para qué existe el estado semiabierto (half-open) del circuit breaker?
+    dorso: Para probar con pocos pedidos si el servicio se recuperó, sin inundarlo de golpe mientras se levanta.
+    fuente: azure-circuit-breaker
+  - id: t-breaker-contador-temporal
+    frente: ¿Por qué el contador de fallas del estado cerrado se reinicia cada cierto tiempo?
+    dorso: Para que fallas ocasionales y esparcidas no abran el breaker; solo abre si hay muchas en un período.
+    fuente: azure-circuit-breaker
+  - id: t-jitter-para-que
+    frente: ¿Para qué se agrega azar (jitter) al backoff exponencial?
+    dorso: Para que los reintentos de muchos clientes no se sincronicen y vuelvan a golpear al servicio todos juntos.
+    fuente: sre-cascadas
+  - id: t-reintentos-capas
+    frente: Tres capas reintentan 3 veces cada una. ¿Por qué eso es peligroso para el servicio del fondo?
+    dorso: |
+      Porque los intentos se multiplican entre capas: con 4 intentos por capa, el fondo puede recibir $4^3 = 64$ por cada pedido original.
+    fuente: sre-cascadas
+  - id: t-reintento-idempotente
+    frente: ¿Cuándo es seguro reintentar una operación automáticamente?
+    dorso: Cuando es idempotente, porque si el servicio ya la había procesado pero no pudo responder, repetirla no cambia el resultado.
+    fuente: azure-retry
+  - id: t-http-idempotentes
+    frente: Entre GET, PUT, DELETE y POST, ¿cuál NO es idempotente según HTTP?
+    dorso: POST; GET, PUT y DELETE sí lo son.
+    fuente: rfc9110
+  - id: t-presupuesto-reintentos
+    frente: ¿Qué es un presupuesto de reintentos (retry budget) por cliente?
+    dorso: Un tope que deja reintentar solo mientras los reintentos sean una fracción chica (10 %) de los pedidos, para que no se disparen cuando falla mucho.
+    fuente: sre-sobrecarga
+  - id: t-cap-eleccion-real
+    frente: ¿Cuándo hay que elegir realmente entre consistencia y disponibilidad según CAP?
+    dorso: Solo mientras hay una partición de red; sin partición no hay motivo para renunciar a ninguna.
+    fuente: brewer-cap
+  - id: t-cap-particion-timeout
+    frente: ¿Por qué un timeout es en la práctica una decisión de CAP?
+    dorso: Porque al vencer no sabés si el otro lado está lento o incomunicado, y tenés que cancelar (menos disponibilidad) o seguir (riesgo de inconsistencia).
+    fuente: brewer-cap
+  - id: t-cap-cobro-consistente
+    frente: En una tienda online, ¿qué nivel de consistencia necesitan el cobro y la facturación?
+    dorso: Consistencia fuerte, porque un pedido confirmado tiene que reflejar lo que el cliente quiso comprar.
+    fuente: gilbert-lynch-cap
+  - id: t-cap-carrito-disponible
+    frente: En una tienda online, ¿por qué se puede aceptar que el carrito sea muy disponible aunque a veces pierda una actualización?
+    dorso: Porque lo que importa ahí es responder rápido, y perder un cambio ocasional se tolera mejor que no responder.
+    fuente: gilbert-lynch-cap
+
+ejercicios:
+  - id: e-intentos-multiplicados
+    tipo: numerico
+    enunciado: |
+      Tu servicio llama a otro, que llama a otro, que llama a la base. Cada una de esas tres capas hace 1 intento más 3 reintentos cuando algo falla. Si la base falla siempre, ¿cuántos intentos totales recibe por cada pedido original?
+    respuesta: 64
+    tolerancia:
+      absoluta: 0
+    unidad: intentos
+    explicacion: |
+      Cada capa multiplica por 4 los intentos de la anterior: $4 \times 4 \times 4 = 4^3 = 64$.
+    erroresComunes:
+      - valor: 12
+        explicacion: Sumaste (3 capas por 4 intentos). Los intentos de capas anidadas se multiplican, no se suman.
+      - valor: 27
+        explicacion: Usaste 3 en lugar de 4. Cada capa hace un intento original más tres reintentos, o sea 4.
+    fuente: sre-cascadas
+  - id: e-carga-por-reintentos
+    tipo: numerico
+    enunciado: |
+      Entran 400 compras por segundo y cada una llama al proveedor de pagos. El proveedor está caído y tu cliente hace 1 intento más 3 reintentos inmediatos por compra. ¿Cuántas llamadas por segundo le llegan al proveedor?
+    respuesta: 1600
+    tolerancia:
+      absoluta: 0
+    unidad: llamadas/s
+    explicacion: |
+      Cada compra genera $1 + 3 = 4$ llamadas: $400 \times 4 = 1600$ llamadas por segundo, cuatro veces su tráfico normal.
+    erroresComunes:
+      - valor: 1200
+        explicacion: Contaste solo los 3 reintentos y te olvidaste del intento original.
+    fuente: azure-retry
+  - id: e-espera-backoff
+    tipo: numerico
+    enunciado: |
+      Un cliente usa backoff exponencial sin jitter, con una espera inicial de 200 ms que se duplica en cada reintento (200, 400, 800…) y sin tope. ¿Cuántos milisegundos espera antes del cuarto reintento?
+    respuesta: 1600
+    tolerancia:
+      absoluta: 0
+    unidad: ms
+    explicacion: |
+      La espera antes del reintento número $k$ es $200 \cdot 2^{k-1}$ ms: 200, 400, 800 y 1600 para el cuarto.
+    erroresComunes:
+      - valor: 800
+        explicacion: Esa es la espera antes del tercer reintento. El cuarto duplica otra vez.
+      - valor: 3200
+        explicacion: Es la espera del quinto reintento; el primero ya espera 200 ms, no 400.
+    fuente: azure-retry
+  - id: e-cap-decision-real
+    tipo: opcion-multiple
+    enunciado: Dos réplicas de una base pierden comunicación entre sí (hay una partición) y un cliente le pregunta a la réplica aislada. ¿Qué decisión plantea CAP en ese momento?
+    opciones:
+      - texto: Elegir para siempre dos propiedades de las tres y renunciar a la tercera.
+        explicacion: Esa es la lectura simplificada que Brewer cuestiona. La renuncia es acotada en el tiempo y se decide por operación.
+      - texto: Decidir si la réplica aislada responde con lo que tiene (puede estar desactualizada) o se niega a responder hasta que vuelva la comunicación.
+        correcta: true
+        explicacion: Es el dilema real durante la partición, y se puede resolver distinto para cada operación (por ejemplo, leer el catálogo contra cobrar).
+      - texto: Decidir si conviene más rapidez o menor costo.
+        explicacion: Es un compromiso real, pero no es el de CAP, que habla de consistencia y disponibilidad.
+      - texto: Apagar una de las dos réplicas para que no haya partición.
+        explicacion: Apagar una réplica no arregla la red y además reduce la disponibilidad que querías conservar.
+    fuente: gilbert-lynch-cap
+  - id: e-vf-reintentar-post
+    tipo: verdadero-falso
+    enunciado: Es seguro reintentar automáticamente un POST que cobra una orden cuando falla por timeout, porque si falló, el cobro no se aplicó.
+    respuesta: false
+    justificacion: |
+      Un timeout no dice si el servidor procesó el pedido. Puede haber cobrado y no alcanzado a responder, y reintentar cobraría dos veces. Hace falta una clave de idempotencia (como el id de la orden) para que el receptor descarte el duplicado.
+    fuente: rfc9110
+
+casos:
+  - id: c-proveedor-pagos-cuelga
+    titulo: El proveedor de pagos se cuelga un viernes a la noche
+    rol: Sos quien atiende la guardia del checkout de una tienda online.
+    contexto: |
+      Viernes 21:10. Tu checkout llama a la API de un proveedor de pagos que suele responder en 400 ms. De golpe tarda más de 20 s y devuelve errores 503.
+      Tu servicio tiene un timeout de 30 s y 3 reintentos inmediatos, y entran 100 compras por segundo. Los hilos del checkout se están agotando.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Qué hacés primero?
+        opciones:
+          - texto: Subo el timeout a 60 s para que los pagos lentos alcancen a terminar.
+            va: final-mal
+            consecuencia: Cada pedido retiene su hilo el doble de tiempo; el checkout se queda sin hilos casi al instante y el proveedor sigue recibiendo reintentos.
+          - texto: Bajo el timeout a pocos segundos, corto los reintentos inmediatos y activo un circuit breaker hacia el proveedor.
+            va: pendientes
+            consecuencia: El breaker abre a los pocos segundos. El checkout deja de gastar hilos y el proveedor recibe mucha menos carga.
+          - texto: Reinicio el servicio de checkout para liberar los hilos.
+            va: reinicio-no-alcanza
+            consecuencia: Los hilos se liberan un momento, pero con la misma configuración se vuelven a llenar de pedidos colgados.
+      - id: reinicio-no-alcanza
+        tipo: decision
+        texto: El checkout se volvió a trabar a los pocos minutos. ¿Qué hacés ahora?
+        opciones:
+          - texto: Bajo el timeout, corto los reintentos inmediatos y activo el circuit breaker.
+            va: pendientes
+            consecuencia: Ahora sí el checkout deja de acumular pedidos colgados y el proveedor recibe menos carga.
+          - texto: Lo reinicio de nuevo, por las dudas.
+            va: final-regular
+            consecuencia: Cada reinicio compra unos minutos, pero la causa sigue ahí y el proveedor sigue saturado.
+      - id: pendientes
+        tipo: decision
+        texto: El breaker está abierto y los pagos quedan como "pendientes". Cuando el proveedor se recupera, ¿cómo los cobrás?
+        opciones:
+          - texto: Los reproduzco todos juntos y de inmediato para recuperar ventas rápido.
+            va: final-mal
+            consecuencia: La avalancha vuelve a saturar al proveedor, y como el reintento no usa clave única, algunos clientes quedan cobrados dos veces.
+          - texto: Los reintento de a poco, con backoff y jitter, usando el id de la orden como clave de idempotencia, y dejo que el breaker pase por semiabierto.
+            va: final-bien
+            consecuencia: El proveedor recibe una carga creciente y controlada, y cada orden se cobra una sola vez aunque un intento se repita.
+          - texto: Descarto los pendientes y les pido a los clientes que vuelvan a comprar.
+            va: final-regular
+            consecuencia: No hay doble cobro ni saturación, pero perdés ventas que podías recuperar.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: El proveedor se recupera sin ayuda de tus reintentos, tu checkout nunca se quedó sin hilos y los pagos pendientes se cobran una sola vez.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: El sistema sobrevivió, pero perdiste ventas o dependiste de reinicios que no atacan la causa.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Tu cliente empeoró la caída del proveedor y de paso quedaron cobros duplicados. El incidente es más largo y más caro por culpa de los reintentos.
+    leccion: |
+      Insistir contra un servicio que se está cayendo lo termina de tirar. Fallá rápido con timeout corto y circuit breaker, reintentá con backoff y jitter, y solo operaciones que sean idempotentes.
+    fuente: azure-circuit-breaker
+
+problemas:
+  - id: p-circuit-breaker-propio
+    enunciado: Implementá en el lenguaje que uses un circuit breaker con los tres estados (cerrado, abierto, semiabierto), un contador de fallas con ventana, un umbral y un temporizador de espera. Probalo contra una función que falle el 80 % de las veces y después el 0 %, y registrá cada cambio de estado con la hora.
+    fuente: azure-circuit-breaker
+    ubicacion: sección "Solution" (estados y contadores)
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker
+    dificultad: intermedio
+  - id: p-cuenta-reintentos
+    enunciado: Releé la sección sobre reintentos del capítulo 22 del libro de SRE y rehacé la cuenta de intentos con 4 capas y 2 reintentos por capa. Después dibujá la cadena de llamadas de un sistema tuyo y decidí en qué capa dejarías reintentos y en cuáles no.
+    fuente: sre-cascadas
+    ubicacion: cap. 22, sección "Retries"
+    url: https://sre.google/sre-book/addressing-cascading-failures/
+    dificultad: basico
+  - id: p-cap-por-operacion
+    enunciado: Leé las secciones 2 y 4 del artículo "Perspectives on the CAP Theorem". Para un sistema que conozcas (carrito, catálogo, pagos) armá una tabla operación por operación que diga qué priorizarías durante una partición (responder con datos posiblemente viejos o negarte a responder) y por qué.
+    fuente: gilbert-lynch-cap
+    ubicacion: §2 (el teorema) y §4.4 (segmentar consistencia y disponibilidad)
+    url: https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf
+    dificultad: avanzado

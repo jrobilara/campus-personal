@@ -1,0 +1,183 @@
+---
+titulo: "Escalabilidad, balanceo de carga y caché"
+area: arquitecturas
+orden: 3
+resumen: Cómo aguantar un pico de tráfico de diez veces con más servidores, un balanceador que reparta bien y una caché que alivie la base, y por qué ninguna de las tres cosas anda sola ni al instante.
+materias:
+  - carrera: ing-informatica
+    codigo: "3653"
+    nombre: Arquitecturas de Sistemas Software
+  - carrera: ing-informatica
+    codigo: "3654"
+    nombre: Virtualización de Hardware
+prerrequisitos:
+  - arquitecturas/sincrono-vs-asincrono
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: azure-escalado
+    tipo: doc-oficial
+    autor: Microsoft
+    titulo: Architecture strategies for optimizing scaling and partitioning (Azure Well-Architected Framework, PE:05)
+    url: https://learn.microsoft.com/en-us/azure/well-architected/performance-efficiency/scale-partition
+    edicion: página con fecha 2023-11-15
+  - id: nginx-balanceo
+    tipo: doc-oficial
+    autor: NGINX
+    titulo: Using nginx as HTTP load balancer
+    url: https://nginx.org/en/docs/http/load_balancing.html
+  - id: azure-cache-aside
+    tipo: doc-oficial
+    autor: Microsoft
+    titulo: Cache-Aside pattern (Azure Architecture Center)
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside
+    edicion: página con fecha 2025-09-11
+  - id: sre-cascadas
+    tipo: libro
+    autor: Betsy Beyer, Chris Jones, Jennifer Petoff y Niall Richard Murphy (eds.)
+    titulo: Site Reliability Engineering
+    edicion: O'Reilly, 2016 (libre en sre.google)
+    editorial: O'Reilly
+    ubicacion: cap. 22, "Addressing Cascading Failures"
+    url: https://sre.google/sre-book/addressing-cascading-failures/
+  - id: aws-disponibilidad
+    tipo: doc-oficial
+    autor: Amazon Web Services
+    titulo: Reliability Pillar, AWS Well-Architected Framework — Availability
+    url: https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/availability.html
+    ubicacion: "Calculating availability with redundant components"
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="A las 0:00 empieza el Hot Sale y el tráfico se multiplica por diez">
+
+Son las 23:30 de la noche anterior al Hot Sale. Tu tienda online atiende normalmente unos 60 pedidos por segundo con tres servidores de aplicación, cada uno capaz de resolver unos 50 pedidos por segundo. Marketing espera diez veces el tráfico a partir de las 0:00: 600 pedidos por segundo.
+
+El autoscaler está configurado para sumar instancias cuando la CPU pasa el 70 %, pero cada instancia nueva tarda unos 4 minutos en quedar lista. El año pasado, a las 0:02 el tiempo de respuesta (p95) pasó de 300 ms a 12 segundos y la home devolvió errores. (Los números son ilustrativos.)
+
+Te quedan treinta minutos. ¿Alcanza con "poner más servidores"? ¿Qué más tiene que estar listo para que el pico no te tire todo?
+
+</CasoReal>
+
+<Intuicion>
+
+Escalar es repartir más trabajo entre más recursos. Pero para que eso sirva hay tres cosas que tienen que funcionar juntas: que haya capacidad suficiente, que alguien reparta bien el trabajo y que no hagas dos veces lo que ya hiciste.
+
+<Analogia titulo="El súper en víspera de fiesta">
+
+Hay dos formas de que el supermercado atienda más gente: abrir más cajas (escalar para afuera, *scale out*) o conseguir una cajera más rápida (escalar para arriba, *scale up*), que tiene un tope. Alguien en la entrada manda a cada cliente a una caja: si reparte "una para cada uno, en orden", un cliente con el changuito lleno puede trabar una caja mientras otra está vacía; si manda a la que tiene menos gente, el reparto sigue mejor el ritmo real. Y los productos que todos piden se dejan en una góndola junto a la entrada (la caché) en lugar de ir al depósito cada vez.
+
+Ahora, lo que se olvida: una caja nueva tarda en abrirse, y la cajera que entra no sabe dónde está nada. Si todos los clientes se le tiran de golpe, va lenta.
+
+</Analogia>
+
+Primero la capacidad, y qué hace la caché con esa capacidad.
+
+<SimFlujo
+  modo="balanceador"
+  titulo="Servidores, pedidos y caché"
+  consigna="Con la caché en 0 % de aciertos, subí la tasa de llegada por encima de lo que aguantan los 3 servidores (30 pedidos/s) y mirá el p95 y los rechazados. Después subí el acierto de caché a 80 % y mirá la utilización."
+  servidores={3}
+  algoritmo="round-robin"
+  tasaLlegada={20}
+  capacidadPorServidor={10}
+  cache={true}
+  aciertoCache={0}
+/>
+
+Mientras lleguen menos pedidos de los que los servidores pueden resolver, el p95 se mantiene. Apenas los superás, las colas crecen sin parar y el p95 sube todo el tiempo. Con 80 % de aciertos, a los servidores solo les llega una quinta parte del tráfico.
+
+Ahora el reparto: qué pasa cuando un servidor anda lento.
+
+<SimFlujo
+  modo="balanceador"
+  titulo="Repartir en orden o al que está más libre"
+  consigna="Activá 'servidor lento' y compará el p95 con round-robin contra el p95 con menos-conexiones."
+  servidores={3}
+  algoritmo="round-robin"
+  tasaLlegada={20}
+  capacidadPorServidor={10}
+/>
+
+Con un servidor lento, repartir "uno a cada uno" le sigue mandando su parte de pedidos; mandar al que tiene menos conexiones activas evita acumular espera en el lento.
+
+<Ojo>
+
+Una caché fría no ayuda. Después de un reinicio o de sumar servidores con caché propia, los primeros pedidos van todos a la base, que es justo lo que querías proteger<Cita f="sre-cascadas" loc="Slow Startup and Cold Caching" />.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Escalar para arriba y para afuera
+
+El escalado **vertical** (*scale up*) agrega capacidad a un recurso existente, por ejemplo una instancia más grande; sirve cuando la carga no se puede dividir o la arquitectura no soporta repartirla. El escalado **horizontal** (*scale out*) agrega instancias, mejora resiliencia y capacidad, y es lo natural para cargas que se pueden dividir en partes independientes<Cita f="azure-escalado" loc="Choose a scaling strategy" />.
+
+Que puedas agregar réplicas en la infraestructura no significa que la aplicación las aproveche. Hay que evitar el estado de sesión guardado en el servidor (externalizarlo a una caché distribuida o a una base) y la afinidad de cliente (*sticky sessions*), que atan a cada usuario a una sola instancia<Cita f="azure-escalado" loc="Design application to scale" />. También conviene evitar los singletons que se vuelven cuello de botella<Cita f="azure-escalado" loc="Design infrastructure to scale" />.
+
+### Cuántos servidores hacen falta
+
+Con $\lambda$ pedidos por segundo, $N$ servidores y una capacidad de $\mu$ pedidos por segundo por servidor, la utilización es $\rho = \lambda / (N\mu)$. Si querés mantenerla por debajo de un objetivo $\rho_{obj}$:
+
+<Formula nombre="Servidores necesarios" tex="N \geq \left\lceil \frac{\lambda}{\mu \cdot \rho_{\text{obj}}} \right\rceil">
+
+donde $\lambda$ es la tasa de llegada (pedidos/s), $\mu$ lo que resuelve un servidor (pedidos/s) y $\rho_{\text{obj}}$ la utilización máxima que aceptás (por ejemplo 0,7). Es una cuenta de capacidad, no una predicción de latencia.
+
+</Formula>
+
+Con 600 pedidos/s, servidores de 50 y un objetivo del 70 %: $\lceil 600 / (50 \cdot 0{,}7) \rceil = 18$ servidores. El margen no es capricho. La guía de Azure recomienda un colchón de capacidad libre para absorber picos inesperados<Cita f="azure-escalado" loc="Configure scaling" /> y advierte que completar un escalado lleva tiempo, por lo que hay que probar el efecto de esas demoras<Cita f="azure-escalado" loc="Test scaling" />. En criollo: como el autoscaler no responde al instante, el colchón es lo que te cubre mientras tanto. Y si un grupo de servidores cae, su carga pasa al resto: en el ejemplo de Google, una falla que sube el tráfico de un clúster en un 20 % puede ser más de lo que ese clúster absorbe<Cita f="sre-cascadas" loc="Server Overload" />.
+
+### Balanceo de carga
+
+NGINX reparte por defecto en orden circular (*round-robin*). Con `least_conn`, cada pedido nuevo va al servidor con menos conexiones activas, lo que ayuda cuando algunos pedidos tardan mucho más que otros. Con `ip_hash`, el cliente va siempre al mismo servidor mientras esté disponible (persistencia de sesión). El parámetro `weight` inclina el reparto, y los chequeos de salud pasivos marcan un servidor como caído cuando acumula `max_fails` intentos fallidos dentro de la ventana de `fail_timeout`, y ese mismo plazo es lo que dura marcado como caído<Cita f="nginx-balanceo" loc="Load balancing methods y Health checks" />.
+
+```nginx
+upstream tienda {
+    least_conn;
+    server app1.interna:8080 weight=2;
+    server app2.interna:8080 max_fails=3 fail_timeout=30s;
+    server app3.interna:8080 max_fails=3 fail_timeout=30s;
+}
+
+server {
+    listen 80;
+    location / {
+        proxy_pass http://tienda;
+    }
+}
+```
+
+Ojo: un algoritmo mal elegido puede fijar de forma artificial a un cliente en una sola instancia y recargarla<Cita f="azure-escalado" loc="Review your load balancing algorithm" />. Y con instancias redundantes e independientes, la disponibilidad teórica sube: dos réplicas de 99,9 % dan 99,9999 %<Cita f="aws-disponibilidad" loc="Calculating availability with redundant components" />, siempre que las que quedan puedan con la carga.
+
+### Caché con cache-aside
+
+En el patrón **cache-aside** (*cache-aside*), la aplicación mira primero la caché; si el dato no está (*cache miss*), lo lee de la base, lo guarda en la caché y lo devuelve. Al modificar un dato, se escribe en la base y después se invalida la entrada de la caché<Cita f="azure-cache-aside" loc="Solution" />.
+
+```python
+import time
+
+cache = {}   # clave -> (valor, vence_en)
+TTL = 300    # segundos
+
+def leer_producto(id):
+    hit = cache.get(id)
+    if hit and hit[1] > time.time():
+        return hit[0]                  # acierto de caché
+    valor = base_de_datos.buscar(id)   # fallo: voy a la base
+    cache[id] = (valor, time.time() + TTL)
+    return valor
+
+def actualizar_producto(id, datos):
+    base_de_datos.guardar(id, datos)   # primero la base...
+    cache.pop(id, None)                # ...después invalido la caché
+```
+
+El orden importa: si invalidás antes de escribir, otro pedido puede recargar el valor viejo en la caché<Cita f="azure-cache-aside" loc="Example" />. El patrón no garantiza consistencia entre la caché y la base. El vencimiento (TTL) no debe ser tan corto que se pase la vida recargando, ni tan largo que el dato quede viejo, y una caché local a cada instancia es privada: las copias pueden desincronizarse<Cita f="azure-cache-aside" loc="Problems and considerations" />. La carga que llega a la base es $\lambda_{\text{base}} = \lambda\,(1 - h)$, con $h$ la proporción de aciertos: con $h = 0{,}8$, una quinta parte del tráfico.
+
+### Picos y arranque en frío
+
+Con cachés vacías las solicitudes cuestan más; Google recomienda sobredimensionar, subir la carga de a poco para ir calentando la caché y usarla para ahorrar latencia, no para sostener la capacidad<Cita f="sre-cascadas" loc="Slow Startup and Cold Caching" />. Si igual te pasás de capacidad, conviene tener preparado qué cortar primero: Google describe descartar carga de forma temprana (*load shedding*) y degradar la calidad de las respuestas antes que caerse<Cita f="sre-cascadas" loc="Load Shedding and Graceful Degradation" />.
+
+</Formal>

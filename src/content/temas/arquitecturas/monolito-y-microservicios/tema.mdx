@@ -1,0 +1,184 @@
+---
+titulo: "Monolito, monolito modular y microservicios"
+area: arquitecturas
+orden: 1
+resumen: Qué ganás y qué pagás al partir un sistema en servicios, por qué la disponibilidad cae al encadenar llamadas, y cómo decidir si tu equipo de cuatro necesita microservicios o un monolito bien ordenado.
+materias:
+  - carrera: ing-informatica
+    codigo: "3653"
+    nombre: Arquitecturas de Sistemas Software
+  - carrera: ing-informatica
+    codigo: "3648"
+    nombre: Diseño de Software
+  - carrera: lic-gestion-tecnologia
+    codigo: "1319"
+    nombre: Arquitectura de Software
+prerrequisitos: []
+nivel: intermedio
+minutos: 15
+fuentes:
+  - id: fowler-monolith-first
+    tipo: doc-oficial
+    autor: Martin Fowler
+    titulo: Monolith First
+    url: https://martinfowler.com/bliki/MonolithFirst.html
+    edicion: 3 de junio de 2015
+  - id: fowler-premium
+    tipo: doc-oficial
+    autor: Martin Fowler
+    titulo: Microservice Premium
+    url: https://martinfowler.com/bliki/MicroservicePremium.html
+    edicion: 13 de mayo de 2015
+  - id: fowler-microservices
+    tipo: doc-oficial
+    autor: Martin Fowler y James Lewis
+    titulo: Microservices
+    url: https://martinfowler.com/articles/microservices.html
+    edicion: 25 de marzo de 2014
+  - id: richardson-monolito
+    tipo: doc-oficial
+    autor: Chris Richardson
+    titulo: Monolithic Architecture (microservices.io)
+    url: https://microservices.io/patterns/monolithic.html
+  - id: azure-microservicios
+    tipo: doc-oficial
+    autor: Microsoft
+    titulo: Microservices Architecture Style (Azure Architecture Center)
+    url: https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/microservices
+    edicion: página con fecha 2025-06-30
+  - id: aws-disponibilidad
+    tipo: doc-oficial
+    autor: Amazon Web Services
+    titulo: Reliability Pillar, AWS Well-Architected Framework — Availability
+    url: https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/availability.html
+    ubicacion: "Calculating availability with hard dependencies"
+  - id: newman-microservicios
+    tipo: libro
+    autor: Sam Newman
+    titulo: Building Microservices
+    edicion: 2.ª ed., 2021
+    editorial: O'Reilly
+    ubicacion: libro completo (capítulo no verificado)
+    verMas: true
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="Somos cuatro y el CTO quiere nueve microservicios">
+
+Jueves, 16:30. Tu equipo son cuatro personas y mantiene la app de turnos y pagos de una cadena de gimnasios: un solo proyecto, una sola base de datos, un deploy por semana que tarda unos 12 minutos. El CTO vuelve de una charla y dice: "Hay que pasar todo a microservicios, uno por módulo. Nueve servicios".
+
+Razones para quejarse hay. Un bug en el módulo de reportes frenó el último release entero, y el día del cierre mensual todo el sistema se pone lento porque reportes y turnos pelean por la misma base. Pero también te quedan dudas: ¿quién mantiene nueve pipelines, nueve tableros y nueve despliegues entre cuatro? ¿Qué pasa con una reserva que hoy es una sola transacción?
+
+(Los números de este caso son ilustrativos.)
+
+La pregunta no es si los microservicios son buenos. Es qué problema concreto resolverían acá y qué te cobrarían a cambio.
+
+</CasoReal>
+
+<Intuicion>
+
+La idea en una oración: partir un sistema en piezas te da independencia, pero cada frontera que trazás se convierte en una llamada por red, y la red tarda, falla y se corta de maneras que una llamada dentro del mismo proceso nunca conoce.
+
+<Analogia titulo="Una cocina grande contra un patio de comidas">
+
+Un monolito es un restaurante con una sola cocina: los platos pasan de estación en estación en la mano. Es rápido y fácil de coordinar, pero si se rompe el horno se frena el menú entero, y para cambiar la carta hay que parar toda la cocina.
+
+Los microservicios son un patio de comidas con nueve locales: cada uno abre, cierra y se renueva por su cuenta. Pero para armar un pedido completo, el cliente camina de mostrador en mostrador (la red, más lenta que pasar el plato), y si la caja única se cae, nadie cobra aunque todos los locales anden.
+
+El monolito modular es el punto medio: una sola cocina con estaciones bien separadas y un pase claro entre ellas, para poder mudar una estación a un local propio el día que haga falta.
+
+</Analogia>
+
+Empecemos por lo que cuesta la cadena de llamadas. Cada servicio extra en el camino de un pedido suma tiempo y suma una chance de que algo falle.
+
+<SimFlujo
+  modo="cadena"
+  titulo="Una cadena de servicios contra un monolito"
+  consigna="Subí los saltos de 1 a 8 con 99,9 % de disponibilidad por servicio y mirá cómo cae la disponibilidad compuesta y sube la latencia total. Después activá 'monolito' y comparalo."
+  saltos={5}
+  latenciaPorSalto={20}
+  disponibilidadPorServicio={0.999}
+/>
+
+Fijate que con 5 saltos de 99,9 % el sistema ya no llega a 99,9 %: queda en 99,50 %. Y la latencia total es la suma de los saltos, mientras que el monolito resuelve todo en memoria.
+
+Ahora lo bueno de partir: aislar fallas. Pero solo si las piezas están preparadas para que otra se caiga.
+
+<SimGrafo
+  grafo="microservicios-tienda"
+  modo="propagar-falla"
+  titulo="Una tienda partida en servicios"
+  consigna="Tirá 'antifraude' sin protecciones y mirá qué le pasa a 'pagos' y al gateway. Después activá 'con timeouts y circuit breaker' y volvé a tirarlo."
+/>
+
+Con timeouts y circuit breaker, caído `antifraude` deja a `pagos` degradado (anda, pero sin esa verificación) y el gateway sigue ok. Esa protección no viene gratis: hay que diseñarla en cada llamada.
+
+<Ojo>
+
+Fowler advierte que la mayoría de los sistemas acumula tantas dependencias entre módulos que no se pueden partir con sentido, y que los intentos de hacerlo terminaron seguido en un lío<Cita f="fowler-monolith-first" />. En criollo: partir un monolito enredado no lo ordena, solo reparte el enredo por la red. El trabajo difícil es el mismo en los dos mundos: trazar bien los límites.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Las tres formas
+
+Un **monolito** (*monolithic architecture*) es una aplicación de un solo componente desplegable, con una única base de datos, que contiene todos los subdominios del negocio; todas las operaciones corren de forma local<Cita f="richardson-monolito" />.
+
+Una arquitectura de **microservicios** (*microservices*) es un conjunto de servicios pequeños y autónomos. Cada uno implementa una capacidad de negocio dentro de un contexto delimitado (*bounded context*), guarda sus propios datos y se despliega por separado; se hablan por APIs bien definidas<Cita f="azure-microservicios" loc="introducción y What are microservices?" />.
+
+El **monolito modular** (*modular monolith*) no es una tercera tecnología: sigue siendo un solo despliegue, pero con límites claros entre módulos tanto en las APIs internas como en el almacenamiento de datos, de modo que partirlo después sea relativamente simple<Cita f="fowler-monolith-first" />. Ojo con la letra chica: Fowler advierte que no cualquier sistema se puede partir, porque la mayoría acumula demasiadas dependencias cruzadas entre módulos<Cita f="fowler-monolith-first" />.
+
+### Qué ganás y qué pagás
+
+| Criterio | Monolito | Microservicios |
+|---|---|---|
+| Despliegue | Se construye y prueba todo junto; puede volverse lento | Cada servicio se despliega solo |
+| Equipos | Un solo código: más coordinación | Equipos más autónomos |
+| Escalado | Se escala la aplicación entera | Se escala solo lo que lo necesita |
+| Transacciones | ACID locales | Cada servicio con su base: consistencia eventual |
+| Operación | Más simple de depurar | Más piezas: descubrimiento de servicios, logs correlacionados, versionado de APIs |
+
+La columna del monolito sale de las ventajas y desventajas que lista Richardson<Cita f="richardson-monolito" loc="Resulting context" /> y la de microservicios, de los beneficios y desafíos del Azure Architecture Center<Cita f="azure-microservicios" loc="Benefits y Challenges" />. Fowler y Lewis agregan que los cambios chicos en un monolito atan todo el ciclo de despliegue y que se escala la aplicación completa<Cita f="fowler-microservices" loc="introducción" />.
+
+### El costo escondido: la red
+
+Reemplazar llamadas en memoria por llamadas remotas encarece cada interacción, así que las APIs entre servicios tienen que ser más gruesas; una conversión ingenua termina en comunicación "charlatana" (*chatty*) que rinde mal<Cita f="fowler-microservices" loc="Componentization via Services y Smart endpoints and dumb pipes" />. Si dos servicios se hablan todo el tiempo, puede ser síntoma de que el corte está mal hecho: demasiado acoplamiento y poca cohesión<Cita f="azure-microservicios" loc="Best practices" />.
+
+### Disponibilidad compuesta
+
+Cuando una operación depende de forma dura de varios sistemas en serie (si uno cae, la operación cae), su disponibilidad es el producto de las disponibilidades de cada uno<Cita f="aws-disponibilidad" loc="Calculating availability with hard dependencies" />.
+
+<Formula nombre="Disponibilidad en serie" tex="A_{\text{total}} = A_1 \times A_2 \times \dots \times A_n = \prod_{i=1}^{n} A_i">
+
+donde $A_i$ es la disponibilidad, entre 0 y 1, de cada componente del que depende la operación.
+
+</Formula>
+
+Con cinco servicios de 99,9 % cada uno: $0{,}999^5 \approx 0{,}9950$, o sea 99,50 %. En un año son unas 44 horas caído, contra unas 8,8 horas de un solo componente.
+
+<Ojo>
+
+La cuenta supone fallas **independientes**: AWS la presenta para sistemas independientes entre sí<Cita f="aws-disponibilidad" loc="Calculating availability with hard dependencies" />. Si los servicios comparten base, red o despliegue, la realidad puede ser peor que el producto; y si algunas dependencias son blandas (hay plan B), puede ser mejor.
+
+</Ojo>
+
+Fowler y Lewis lo llaman el efecto multiplicador de las llamadas síncronas encadenadas, y ofrecen dos salidas: hacerlas asíncronas o administrar esa caída<Cita f="fowler-microservices" loc="Synchronous calls considered harmful" />. El próximo tema trata la primera.
+
+### Cuándo conviene cada una
+
+Fowler observa que casi todas las historias exitosas de microservicios empezaron como un monolito que creció, mientras que los sistemas armados como microservicios desde cero solían terminar en graves problemas; de ahí su consejo de empezar por un monolito bien modularizado<Cita f="fowler-monolith-first" />. Es una observación basada en anécdotas, y el propio Fowler la da como tentativa: reconoce que es pronto para tener evidencia y que hay quienes prefieren arrancar con microservicios. Sus razones: al principio no sabés si el producto va a funcionar, y los límites entre servicios son difíciles de acertar y mucho más caros de corregir que los de un módulo.
+
+El "premium" de los microservicios es el costo extra de automatizar despliegues, monitorear, manejar fallas parciales y convivir con consistencia eventual; solo se justifica cuando la complejidad real lo pide (equipos grandes, necesidades de escalado distintas, tamaño)<Cita f="fowler-premium" />. Azure suma que exige una cultura DevOps madura y que conviene evaluar si el equipo tiene la experiencia<Cita f="azure-microservicios" loc="Challenges" />.
+
+Para el equipo del caso, entonces: primero módulos con límites claros y, si un borde duele de verdad (reportes, por ejemplo), sacar ese servicio solo; Fowler menciona justamente la estrategia de ir desprendiendo servicios desde los bordes<Cita f="fowler-monolith-first" />.
+
+<Profundizar titulo="¿Cómo se traza un buen límite?">
+
+El Azure Architecture Center recomienda modelar los servicios alrededor del dominio de negocio (con *domain-driven design*) y evitar servicios demasiado finos, que suben la complejidad y bajan el rendimiento. Lo que cambia junto debería vivir junto: si modificar una cosa te obliga a tocar dos servicios, están mal cortados<Cita f="azure-microservicios" loc="Best practices" />.
+
+</Profundizar>
+
+</Formal>

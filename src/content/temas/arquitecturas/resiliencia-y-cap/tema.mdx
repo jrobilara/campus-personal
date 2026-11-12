@@ -1,0 +1,213 @@
+---
+titulo: "Resiliencia: timeouts, reintentos, circuit breaker y CAP"
+area: arquitecturas
+orden: 4
+resumen: Cómo fallar rápido, reintentar sin empeorar las cosas, cortar el circuito cuando un servicio no responde y qué dice de verdad el teorema CAP sobre consistencia y disponibilidad cuando la red se parte.
+materias:
+  - carrera: ing-informatica
+    codigo: "3653"
+    nombre: Arquitecturas de Sistemas Software
+  - carrera: ing-informatica
+    codigo: "3660"
+    nombre: Sistemas Operativos Avanzados
+  - carrera: ing-informatica
+    codigo: "3658"
+    nombre: Programación Concurrente
+prerrequisitos:
+  - arquitecturas/sincrono-vs-asincrono
+nivel: avanzado
+minutos: 15
+fuentes:
+  - id: azure-circuit-breaker
+    tipo: doc-oficial
+    autor: Microsoft
+    titulo: Circuit Breaker pattern (Azure Architecture Center)
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker
+    edicion: página con fecha 2025-02-05
+  - id: azure-retry
+    tipo: doc-oficial
+    autor: Microsoft
+    titulo: Retry pattern (Azure Architecture Center)
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/retry
+    edicion: página con fecha 2024-07-18
+  - id: fowler-circuit-breaker
+    tipo: doc-oficial
+    autor: Martin Fowler
+    titulo: CircuitBreaker
+    url: https://martinfowler.com/bliki/CircuitBreaker.html
+    edicion: 6 de marzo de 2014
+  - id: sre-cascadas
+    tipo: libro
+    autor: Betsy Beyer, Chris Jones, Jennifer Petoff y Niall Richard Murphy (eds.)
+    titulo: Site Reliability Engineering
+    edicion: O'Reilly, 2016 (libre en sre.google)
+    editorial: O'Reilly
+    ubicacion: cap. 22, "Addressing Cascading Failures"
+    url: https://sre.google/sre-book/addressing-cascading-failures/
+  - id: sre-sobrecarga
+    tipo: libro
+    autor: Betsy Beyer, Chris Jones, Jennifer Petoff y Niall Richard Murphy (eds.)
+    titulo: Site Reliability Engineering
+    edicion: O'Reilly, 2016 (libre en sre.google)
+    editorial: O'Reilly
+    ubicacion: cap. 21, "Handling Overload"
+    url: https://sre.google/sre-book/handling-overload/
+  - id: rfc9110
+    tipo: doc-oficial
+    autor: IETF
+    titulo: "RFC 9110 — HTTP Semantics"
+    url: https://www.rfc-editor.org/rfc/rfc9110.html#name-idempotent-methods
+    edicion: "2022"
+    ubicacion: "§9.2.2 Idempotent Methods"
+  - id: azure-idempotente
+    tipo: doc-oficial
+    autor: Microsoft
+    titulo: Idempotent Consumer pattern (Azure Architecture Center)
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer
+    edicion: página con fecha 2026-08-13
+  - id: gilbert-lynch-cap
+    tipo: doc-oficial
+    autor: Seth Gilbert y Nancy A. Lynch
+    titulo: Perspectives on the CAP Theorem
+    url: https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf
+    edicion: Computer (IEEE) 45(2), feb. 2012, pp. 30–36
+    ubicacion: "§2 y §4"
+  - id: brewer-cap
+    tipo: doc-oficial
+    autor: Eric Brewer
+    titulo: "CAP Twelve Years Later: How the Rules Have Changed"
+    url: https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/
+    edicion: IEEE Computer, 2012 (reproducido por InfoQ)
+  - id: brooker-jitter
+    tipo: blog
+    autor: Marc Brooker (AWS Architecture Blog)
+    titulo: Exponential Backoff and Jitter
+    url: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+    edicion: 2015, actualizado en 2023
+    verMas: true
+  - id: kleppmann-cap
+    tipo: blog
+    autor: Martin Kleppmann
+    titulo: Please stop calling databases CP or AP
+    url: https://martin.kleppmann.com/2015/05/11/please-stop-calling-databases-cp-or-ap.html
+    edicion: 11 de mayo de 2015
+    verMas: true
+  - id: kleppmann-ddia
+    tipo: libro
+    autor: Martin Kleppmann
+    titulo: Designing Data-Intensive Applications
+    edicion: O'Reilly, 2017
+    editorial: O'Reilly
+    ubicacion: libro completo (capítulos no verificados)
+    verMas: true
+fechaVerificacion: 2026-11-11
+---
+
+<CasoReal titulo="El proveedor de pagos se cuelga y tus reintentos lo terminan de tirar">
+
+Viernes, 21:10. Tu checkout llama a la API de un proveedor de pagos que normalmente responde en 400 ms. De golpe empieza a tardar más de 20 segundos y a devolver errores 503. Tu servicio tiene un timeout de 30 segundos y reintenta 3 veces de inmediato. Entran 100 compras por segundo.
+
+Cada compra fallida genera ahora hasta 4 llamadas al proveedor, y además el gateway y la app móvil tienen sus propios reintentos. Mientras tanto, tus hilos están todos esperando respuesta. El proveedor, que ya venía al límite, recibe varias veces su tráfico normal y no se puede recuperar. (Números ilustrativos.)
+
+Tus propios reintentos se volvieron parte del problema. ¿Cómo hacés para no ser quien termina de tirar al otro?
+
+</CasoReal>
+
+<Intuicion>
+
+Cuando algo del otro lado falla, tu trabajo no es insistir con más fuerza: es fallar rápido, insistir con cuidado y dejar de golpear cuando no sirve.
+
+<Analogia titulo="El disyuntor de la casa y la pizzería después del corte de luz">
+
+El disyuntor del tablero corta el circuito cuando hay una sobrecarga, en lugar de dejar que se queme el cableado. Después, alguien lo vuelve a subir para probar: si la falla sigue, salta de nuevo. El *circuit breaker* de software hace lo mismo con las llamadas a un servicio: tras muchas fallas deja de mandar pedidos (abierto), pasado un rato deja pasar uno de prueba (semiabierto) y, si anda, vuelve a cerrar.
+
+Con los reintentos pasa lo de la pizzería después de un corte de luz: si todos los vecinos llaman cada diez segundos, la línea nunca se libera. Si cada uno espera un tiempo que crece y, además, un poco distinto del de los demás, las llamadas se desparraman y la pizzería puede atender.
+
+</Analogia>
+
+<SimMaquinaEstados
+  preset="circuit-breaker"
+  titulo="Un circuit breaker frente a un servicio que falla"
+  consigna="Subí la tasa de falla a 80 % con umbral de 50 % y mirá cuándo se abre el breaker y qué pasa con las llamadas al servicio. Después bajá la falla a 0 % y esperá: fijate que pasa por semiabierto antes de cerrar."
+/>
+
+Con la falla alta, el breaker pasa a abierto, las llamadas al servicio dejan de crecer y los rechazos rápidos suben: tu sistema deja de gastar hilos y de golpear al proveedor. Al bajar la falla, no vuelve de golpe: pasa por semiabierto y prueba con pocos pedidos.
+
+Hay otra decisión de fondo, que no depende de código: qué hacer cuando la red entre dos partes de tu sistema se corta.
+
+<Analogia titulo="Dos sucursales sin línea">
+
+Una biblioteca tiene dos sucursales que comparten el catálogo. Se corta la línea entre ellas. En cada una piden el último ejemplar de un libro. Si las dos atienden con lo que saben, pueden prestar el mismo ejemplar dos veces: respondieron (disponibilidad) pero se contradijeron (inconsistencia). Si una dice "esperá a que vuelva la línea", nunca prestó dos veces, pero no atendió. Mientras la línea funciona, no hay nada que elegir.
+
+</Analogia>
+
+<Ojo>
+
+El teorema CAP no dice "elegí dos de tres" como si fuera un menú. La elección real es entre consistencia y disponibilidad **mientras hay una partición**<Cita f="brewer-cap" loc="Why '2 of 3' is misleading" />.
+
+</Ojo>
+
+</Intuicion>
+
+<Formal>
+
+### Timeouts
+
+Sin un límite de espera, los pedidos bloqueados retienen hilos, memoria y conexiones, y pueden agotar recursos que necesitan otras partes del sistema<Cita f="azure-circuit-breaker" loc="Context and problem" />. El timeout tiene que ser corto, pero suficiente para que la operación funcione la mayoría de las veces<Cita f="azure-circuit-breaker" loc="Context and problem" />. Además conviene propagar el plazo restante hacia abajo: si el plazo total es de 30 segundos y arriba ya gastaron 7, el servicio siguiente recibe 23<Cita f="sre-cascadas" loc="Latency and Deadlines" />.
+
+### Reintentos
+
+El patrón de reintento (*retry*) maneja fallas transitorias: cancelar si no es transitoria, reintentar de inmediato si es rara, o reintentar tras una demora que puede crecer de forma exponencial<Cita f="azure-retry" loc="Retry strategies" />. Una política agresiva (poca demora, muchos reintentos) puede degradar más a un servicio que ya está al límite<Cita f="azure-retry" loc="Impact on performance" />. Google recomienda usar siempre un *backoff* exponencial aleatorizado: el azar (*jitter*) evita que los reintentos de muchos clientes se sincronicen<Cita f="sre-cascadas" loc="Retries" />.
+
+<Formula nombre="Espera con backoff exponencial y jitter" tex="\text{espera}_n = \text{aleatorio}\bigl(0,\ \min(\text{tope},\ \text{base} \cdot 2^{\,n})\bigr)">
+
+donde $n = 0, 1, 2, \dots$ es el número de reintento, `base` la espera inicial (por ejemplo 0,2 s) y `tope` la espera máxima. Es la variante que Brooker llama *full jitter* en el artículo de la lista "para ver más" (ver fuentes); hay otras variantes.
+
+</Formula>
+
+```python
+import random, time
+
+def con_reintentos(operacion, intentos=4, base=0.2, tope=5.0):
+    for n in range(intentos):
+        try:
+            return operacion()
+        except ErrorTransitorio:
+            if n == intentos - 1:
+                raise                     # se acabaron los reintentos
+            time.sleep(random.uniform(0, min(tope, base * 2 ** n)))
+```
+
+Los reintentos se **multiplican** entre capas: con 3 reintentos (4 intentos) en cada una de tres capas, la base de datos del fondo puede recibir $4^3 = 64$ intentos por cada pedido original<Cita f="sre-cascadas" loc="Retries" />. Por eso Google propone reintentar solo en la capa inmediatamente superior, con un máximo de tres intentos por pedido y un presupuesto por cliente (seguir reintentando solo mientras los reintentos sean menos del 10 % de los pedidos)<Cita f="sre-sobrecarga" loc="Deciding to Retry" />. Azure coincide: poné la lógica de reintento solo donde conocés todo el contexto, porque capas anidadas agregan demoras largas<Cita f="azure-retry" loc="General guidance" />.
+
+### Idempotencia: cuándo es seguro reintentar
+
+Una operación idempotente se puede reintentar sin riesgo; si no lo es, un reintento puede ejecutarla dos veces, por ejemplo cuando el servicio la procesó pero falló al responder<Cita f="azure-retry" loc="Idempotency" />. En HTTP, `PUT`, `DELETE` y los métodos seguros (`GET`, `HEAD`, `OPTIONS`, `TRACE`) son idempotentes; un cliente no debería reintentar automáticamente un método no idempotente, salvo que sepa que la operación lo es o que el pedido original no se aplicó<Cita f="rfc9110" loc="§9.2.2" />. Para un cobro, la salida es una clave de negocio estable (por ejemplo, el id de la orden) con la que el receptor descarta los duplicados, como en el consumidor idempotente del tema anterior<Cita f="azure-idempotente" loc="Choose a stable deduplication key" />.
+
+### Circuit breaker
+
+El *circuit breaker* es un *proxy* con tres estados<Cita f="azure-circuit-breaker" loc="Solution" />:
+
+| Estado | Qué hace |
+|---|---|
+| Cerrado (*closed*) | Deja pasar los pedidos y cuenta las fallas recientes; si superan el umbral en un período, pasa a abierto y arranca un temporizador. |
+| Abierto (*open*) | Rechaza el pedido de inmediato, sin llamar al servicio. Al vencer el temporizador, pasa a semiabierto. |
+| Semiabierto (*half-open*) | Deja pasar unos pocos pedidos de prueba. Si andan, vuelve a cerrado y reinicia el contador; si uno falla, vuelve a abierto y reinicia el temporizador. |
+
+El contador del estado cerrado es temporal (se reinicia cada tanto) para que fallas ocasionales no abran el breaker, y el estado semiabierto evita inundar a un servicio que se está recuperando<Cita f="azure-circuit-breaker" loc="Solution" />. No conviene usarlo para recursos locales ni como reemplazo del manejo de excepciones del negocio, y quien llama necesita un plan para cuando el breaker está abierto (degradar, usar una alternativa o avisar al usuario)<Cita f="azure-circuit-breaker" loc="Problems and considerations" />. Suele convenir una alerta de monitoreo cada vez que se abre, y los cambios de estado deberían registrarse<Cita f="fowler-circuit-breaker" />. En el simulador, el umbral se mide sobre los últimos 20 pedidos.
+
+### CAP, sin simplificar
+
+Gilbert y Lynch definen tres propiedades. **Consistencia** (atómica): el servicio se comporta como si hubiera un solo servidor. **Disponibilidad**: todo pedido recibe respuesta, tarde o temprano. **Tolerancia a particiones**: la red puede demorar o perder mensajes y dejar grupos de servidores incomunicados<Cita f="gilbert-lynch-cap" loc="§2" />. El teorema dice que en una red con fallas de comunicación es imposible que un servicio de ese tipo garantice respuesta a todos los pedidos y a la vez sea atómico: el servidor aislado no puede saber cuál fue la última escritura, así que o responde (y arriesga un dato viejo) o no responde<Cita f="gilbert-lynch-cap" loc="§2" />.
+
+Brewer lo aclara: "elegir dos de tres" engaña, porque solo hay que renunciar a una de las dos cuando hay partición; fuera de ella no hay motivo para sacrificar ninguna, y la partición, en la práctica, es un timeout: o cancelás (menos disponibilidad) o seguís (riesgo de inconsistencia)<Cita f="brewer-cap" loc="Why '2 of 3' is misleading y CAP-latency connection" />. La decisión se puede tomar por operación, dato o usuario, y se maneja detectando la partición, entrando en un modo que limita operaciones y recuperando después<Cita f="brewer-cap" loc="Managing partitions" />.
+
+Un ejemplo de e-commerce: el carrito puede ser muy disponible aunque a veces pierda una actualización, la información de producto puede estar algo desactualizada, pero el cobro y la facturación tienen que ser fuertemente consistentes<Cita f="gilbert-lynch-cap" loc="§4.4" />.
+
+<Profundizar titulo="¿CP y AP como etiqueta de productos?">
+
+Es tentador clasificar bases de datos como "CP" o "AP", pero las definiciones de CAP son estrechas: la consistencia que usa el teorema es la atómica, no la "C" de ACID<Cita f="gilbert-lynch-cap" loc="§2" /><Cita f="brewer-cap" loc="ACID, BASE, and CAP" />. Kleppmann argumenta que por eso muchos sistemas no entran en ninguna de las dos cajas; está en el artículo de la lista "para ver más" (ver fuentes). La salida práctica es la de arriba: decidir por operación qué hacer durante una partición.
+
+</Profundizar>
+
+</Formal>

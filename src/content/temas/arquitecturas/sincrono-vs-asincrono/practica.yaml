@@ -1,0 +1,176 @@
+tarjetas:
+  - id: t-broker-ventaja
+    frente: ¿Qué ventaja da el broker frente a una llamada REST directa entre dos servicios?
+    dorso: Emisor y consumidor no tienen que estar disponibles a la vez, porque el broker retiene los mensajes hasta que se puedan procesar.
+    fuente: richardson-mensajeria
+  - id: t-broker-costo
+    frente: ¿Qué costo operativo trae sumar un message broker?
+    dorso: Una pieza más que tiene que estar altamente disponible, y el pedido-respuesta se vuelve más complicado.
+    fuente: richardson-mensajeria
+  - id: t-cola-crece-sin-parar
+    frente: ¿Qué le pasa a una cola si, de promedio, llegan más mensajes por segundo de los que procesan los consumidores?
+    dorso: Crece sin parar y la latencia sube.
+    fuente: azure-colas
+  - id: t-tasa-consumo-calculo
+    frente: Dos consumidores tardan 0,5 s por mensaje. ¿Cuántos mensajes por segundo procesan entre los dos?
+    dorso: 4 por segundo ($2 / 0{,}5$).
+  - id: t-dead-letter
+    frente: ¿Para qué sirve una dead-letter queue?
+    dorso: Para apartar los mensajes que no se pueden procesar, así no bloquean la cola principal y alguien puede investigarlos.
+    fuente: azure-colas
+  - id: t-redelivery-crash
+    frente: Un consumidor procesó un mensaje pero se cayó antes de confirmarlo. ¿Qué hace el broker?
+    dorso: Lo vuelve a entregar, porque asume que no se procesó; por eso el consumidor tiene que tolerar duplicados.
+    fuente: rabbitmq-confirmaciones
+  - id: t-consumidor-idempotente
+    frente: ¿Qué es un consumidor idempotente?
+    dorso: Uno para el que procesar el mismo mensaje dos veces produce el mismo efecto que procesarlo una sola vez.
+    fuente: azure-idempotente
+  - id: t-exactly-once-limite
+    frente: ¿Por qué no alcanza con que el broker prometa exactly-once?
+    dorso: Porque solo controla lo que hace él, no los efectos que el consumidor causa en sistemas externos como una base o un cobro.
+    fuente: azure-idempotente
+  - id: t-kafka-no-borra
+    frente: En Kafka, ¿qué pasa con un evento cuando un consumidor lo lee?
+    dorso: Nada, sigue en el tópico hasta que venza la retención, y otros consumidores pueden leerlo o releerlo.
+    fuente: kafka-intro
+  - id: t-kafka-orden-particion
+    frente: ¿Dónde garantiza Kafka el orden de los eventos?
+    dorso: Solo dentro de una partición, no entre particiones distintas.
+    fuente: kafka-intro
+  - id: t-cuando-no-cola
+    frente: Si quien llama necesita la respuesta ya, con baja latencia, ¿conviene poner una cola entre los servicios?
+    dorso: No, porque la cola desacopla en el tiempo y la respuesta deja de ser inmediata.
+    fuente: azure-colas
+  - id: t-cuando-no-cola-carga-estable
+    frente: Si la carga es baja y estable, ¿qué aporta una cola entre dos servicios?
+    dorso: Poco, porque la complejidad que suma casi no se compensa con ningún beneficio.
+    fuente: azure-colas
+
+ejercicios:
+  - id: e-tiempo-llenar-cola
+    tipo: numerico
+    enunciado: |
+      Una cola con capacidad para 50 mensajes arranca vacía. Le llegan 5 mensajes por segundo y la atienden 2 consumidores que tardan 0,5 s por mensaje. ¿En cuántos segundos se llena?
+    respuesta: 50
+    tolerancia:
+      absoluta: 1
+    unidad: s
+    explicacion: |
+      Tasa de consumo: $\mu = 2 / 0{,}5 = 4$ mensajes/s. La cola crece $5 - 4 = 1$ mensaje por segundo, así que llenar 50 lugares lleva $50 / 1 = 50$ s.
+    erroresComunes:
+      - valor: 10
+        explicacion: Dividiste la capacidad por la tasa de llegada (50 / 5) sin descontar lo que los consumidores van sacando.
+      - valor: 12.5
+        explicacion: Dividiste la capacidad por la tasa de consumo (50 / 4). Lo que importa es la diferencia entre llegada y consumo.
+    fuente: azure-colas
+  - id: e-consumidores-necesarios
+    tipo: numerico
+    enunciado: |
+      Llegan 30 mensajes por segundo y cada consumidor tarda 0,4 s en procesar uno. ¿Cuántos consumidores hacen falta como mínimo para igualar la tasa de llegada?
+    respuesta: 12
+    tolerancia:
+      absoluta: 0
+    unidad: consumidores
+    explicacion: |
+      Cada consumidor procesa $1 / 0{,}4 = 2{,}5$ mensajes/s. Para llegar a 30 hacen falta $30 / 2{,}5 = 12$. Con exactamente 12 no hay margen: en la práctica conviene sumar algunos más para absorber picos.
+    erroresComunes:
+      - valor: 75
+        explicacion: Multiplicaste 30 por 2,5 en lugar de dividir. Cada consumidor ya procesa 2,5 mensajes/s.
+    fuente: azure-colas
+  - id: e-evitar-doble-cobro
+    tipo: opcion-multiple
+    enunciado: El broker entregó dos veces el mensaje "cobrar orden 8431". ¿Qué diseño evita cobrar dos veces?
+    opciones:
+      - texto: Confiar en que el broker nunca duplica mensajes.
+        explicacion: La mayoría de los brokers entrega al menos una vez; los duplicados son parte del contrato.
+      - texto: Guardar el id de la orden con restricción de unicidad, en la misma transacción que registra el cobro.
+        correcta: true
+        explicacion: Si el id ya existe, el segundo intento falla y se descarta como duplicado. Hacerlo en la misma transacción evita la ventana donde el cobro quedó aplicado pero la marca no.
+      - texto: Agregar una espera de 2 segundos antes de procesar cada mensaje.
+        explicacion: Una espera no distingue un mensaje nuevo de uno repetido; solo demora todo.
+      - texto: Procesar con un solo hilo.
+        explicacion: Un solo hilo no impide la reentrega, por ejemplo cuando el consumidor se cae antes de confirmar.
+    fuente: azure-idempotente
+  - id: e-vf-kafka-borra
+    tipo: verdadero-falso
+    enunciado: En Kafka, cuando el primer consumidor lee un evento, ese evento se elimina del tópico.
+    respuesta: false
+    justificacion: |
+      Kafka retiene los eventos según la configuración de retención, no según quién los leyó. Por eso varios consumidores independientes pueden leer lo mismo, y uno puede retroceder y releer.
+    fuente: kafka-intro
+
+casos:
+  - id: c-cola-mails-crece
+    titulo: La cola de mails crece y nadie recibe confirmaciones
+    rol: Sos quien atiende la guardia de una tienda online con una cola de mails.
+    contexto: |
+      Martes 14:20. Salta la alerta: la cola de mails de confirmación tiene 18.000 mensajes y sigue subiendo. Las compras andan bien, pero soporte recibe reclamos de "no me llegó el mail".
+      Hay 4 consumidores configurados; cada uno procesa unos 4 mensajes por segundo y registra el id de los mensajes que ya procesó.
+    inicio: primer-paso
+    nodos:
+      - id: primer-paso
+        tipo: decision
+        texto: ¿Qué hacés primero?
+        opciones:
+          - texto: Purgo la cola para empezar de cero.
+            va: final-mal
+            consecuencia: Se borran 18.000 confirmaciones que ya habían quedado registradas como pendientes de envío.
+          - texto: Comparo cuántos mensajes entran por segundo contra cuántos salen, y reviso el estado de los consumidores.
+            va: diagnostico
+            consecuencia: Entran 30 mensajes por segundo y salen 8, porque los 2 consumidores sanos procesan 4 por segundo cada uno. Los otros 2 están en un bucle de reinicios.
+          - texto: Subo los consumidores de 4 a 20 sin mirar nada más.
+            va: escalar-a-ciegas
+            consecuencia: Los consumidores nuevos arrancan y varios se caen enseguida, igual que dos de los que ya estaban.
+      - id: escalar-a-ciegas
+        tipo: decision
+        texto: Con 20 consumidores configurados la cola baja despacio (unos 10 mensajes por segundo, o sea unos 30 minutos para 18.000) porque la mitad está reiniciando. ¿Qué hacés?
+        opciones:
+          - texto: Reviso los logs de los consumidores que se caen.
+            va: diagnostico
+            consecuencia: Todos se caen al recibir el mismo mensaje. Gastaste recursos, pero ahora sabés dónde buscar.
+          - texto: Sigo subiendo consumidores hasta que la cola baje.
+            va: final-mal
+            consecuencia: Cada consumidor nuevo que recibe el mensaje problemático se cae; el sistema gasta cada vez más y la mejora es mínima.
+      - id: diagnostico
+        tipo: decision
+        texto: Hay un mensaje con un contenido mal formado que hace caer al consumidor cada vez que lo recibe. ¿Qué hacés?
+        opciones:
+          - texto: Muevo ese mensaje a la dead-letter queue, repongo los consumidores y los llevo a 12 mientras vigilo la profundidad de la cola.
+            va: final-bien
+            consecuencia: Los consumidores dejan de caerse. Con 12 sanos salen unos 48 mensajes por segundo contra 30 que entran, así que la cola baja unos 18 por segundo. El mensaje queda guardado para investigarlo.
+          - texto: Borro todos los mensajes de ese tipo para limpiar la cola.
+            va: final-regular
+            consecuencia: La cola se normaliza, pero borraste confirmaciones válidas que nunca se mandaron.
+          - texto: Dejo que se descarte ese mensaje sin guardarlo y no investigo.
+            va: final-regular
+            consecuencia: Se recupera el servicio, pero no sabés de dónde vino el mensaje ni si van a llegar más iguales.
+      - id: final-bien
+        tipo: desenlace
+        resultado: bien
+        texto: La cola se vacía en unos 17 minutos (18.000 mensajes a 18 por segundo son 1.000 segundos). Como los consumidores ignoran los ids ya procesados, nadie recibe mails duplicados, y el mensaje problemático queda aislado para que el equipo lo analice.
+      - id: final-regular
+        tipo: desenlace
+        resultado: regular
+        texto: El servicio se recuperó, pero perdiste mensajes válidos o la evidencia del origen del problema. Va a volver a pasar sin que sepas por qué.
+      - id: final-mal
+        tipo: desenlace
+        resultado: mal
+        texto: Perdiste confirmaciones reales o gastaste recursos escalando algo que fallaba por otra causa. La cola sigue sin consumirse.
+    leccion: |
+      Una cola que crece es una diferencia entre lo que entra y lo que sale: mirá las dos tasas y por qué los consumidores no consumen antes de escalar a ciegas. Los mensajes que no se pueden procesar van a una dead-letter queue, no a la basura.
+    fuente: azure-colas
+
+problemas:
+  - id: p-kafka-quickstart
+    enunciado: Siguiendo el Quickstart de Kafka, descargá la distribución del Paso 1 (trae los scripts de bin/), levantá el broker como prefieras (con esos scripts o con Docker, Paso 2), creá un tópico, escribí cinco eventos con el productor de consola y leelos con el consumidor de consola usando --from-beginning. Repetí la lectura en una segunda terminal y anotá qué pasa con los eventos ya leídos. Después dejá un consumidor abierto y escribí un evento nuevo desde otro lado.
+    fuente: kafka-quickstart
+    ubicacion: pasos 1 a 5 del Quickstart
+    url: https://kafka.apache.org/quickstart
+    dificultad: basico
+  - id: p-cola-python
+    enunciado: Con queue.Queue y threads de Python, simulá un productor que mete 5 mensajes por segundo y 2 consumidores que tardan 0,5 s por mensaje. Imprimí el tamaño de la cola cada segundo, comparalo con el cálculo del tema y repetilo con 3 consumidores. Agregá un tope de tamaño y decidí qué hace el productor cuando se llena.
+    fuente: azure-colas
+    ubicacion: sección "Problems and considerations" (tasa de producción contra tasa de consumo)
+    url: https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling
+    dificultad: intermedio
