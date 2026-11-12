@@ -35,8 +35,8 @@ export default function Buscador() {
 
   useEffect(() => {
     const texto = q.trim();
-    if (!texto) { setRes(null); return; }
-    const mio = ++pedido.current;
+    const mio = ++pedido.current; // también al vaciar: una búsqueda en vuelo no tiene que repoblar la lista de un campo ya vacío
+    if (!texto) { setRes(null); setEstado((e) => (e === 'buscando' ? 'listo' : e)); return; }
     const t = setTimeout(async () => {
       setEstado('buscando');
       try {
