@@ -198,7 +198,7 @@
 - `sre-cascadas` (cap. 22) y `sre-sobrecarga` (cap. 21, confirmado en el índice de sre.google): resumen.
 - `rfc9110`: IETF, RFC 9110 "HTTP Semantics" (2022), §9.2.2. Resumen de la sección.
 - `gilbert-lynch-cap`: Seth Gilbert y Nancy A. Lynch, "Perspectives on the CAP Theorem", 2012 (*Computer* (IEEE) 45(2), feb. 2012, pp. 30–36, dato aportado por el verificador F4; PDF en groups.csail.mit.edu). PDF leído completo. Nota: es el artículo de revisión de 2012, no el de 2002 (el PDF del paper original no pude extraerlo: la fuente embebida está codificada y no se lee). Por eso no cito el paper original.
-- `brewer-cap`: Eric Brewer, "CAP Twelve Years Later", IEEE Computer, 2012, reproducido por InfoQ. Resumen.
+- `brewer-cap`: Eric Brewer, "CAP Twelve Years Later", IEEE Computer, 2012, reproducido por InfoQ. Resumen. Datos bibliográficos (Computer 45(2), feb. 2012, pp. 23-29, DOI 10.1109/MC.2012.37) confirmados contra Crossref el 2026-11-12.
 - `brooker-jitter`, `kleppmann-cap` (blogs, para ver más), `kleppmann-ddia` (libro, para ver más, sin capítulo).
 
 ### Números y datos inventados para ejemplos
