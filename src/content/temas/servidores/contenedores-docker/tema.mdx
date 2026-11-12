@@ -20,7 +20,7 @@ fuentes:
     autor: Docker Inc.
     titulo: What is a container?
     url: https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/
-    ubicacion: sección What a container is (aislado, autocontenido, independiente, portable)
+    ubicacion: sección Explanation (contenedores como procesos aislados)
     edicion: documentación consultada el 2026-11-11
   - id: docker-image
     tipo: doc-oficial
@@ -55,7 +55,7 @@ fuentes:
     autor: Docker Inc.
     titulo: Volumes
     url: https://docs.docker.com/engine/storage/volumes/
-    ubicacion: persistencia de datos y capa de escritura
+    ubicacion: sección A volume's lifecycle (capa de escritura y persistencia)
     edicion: documentación consultada el 2026-11-11
   - id: docker-restart
     tipo: doc-oficial
@@ -76,14 +76,21 @@ fuentes:
     autor: The Kubernetes Authors
     titulo: Deployments
     url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
-    ubicacion: secciones Use Case y Creating a Deployment
+    ubicacion: introducción de la página (estado deseado y controlador)
+    edicion: documentación consultada el 2026-11-11
+  - id: k8s-replicaset
+    tipo: doc-oficial
+    autor: The Kubernetes Authors
+    titulo: ReplicaSet
+    url: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+    ubicacion: introducción (propósito de un ReplicaSet)
     edicion: documentación consultada el 2026-11-11
   - id: k8s-lifecycle
     tipo: doc-oficial
     autor: The Kubernetes Authors
     titulo: Pod Lifecycle
     url: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
-    ubicacion: secciones Container restarts, CrashLoopBackOff y Container probes
+    ubicacion: secciones Container restarts (restartPolicy y retardo), CrashLoopBackOff y Container probes
     edicion: documentación consultada el 2026-11-11
   - id: k8s-probes
     tipo: doc-oficial
@@ -153,7 +160,7 @@ Un contenedor en `Restarting` en loop no es un contenedor sano: es un proceso qu
 
 ### Imagen y contenedor
 
-Un contenedor es un proceso aislado que incluye todos los archivos que necesita; es autocontenido (no depende de lo que haya instalado el servidor), independiente (se administra solo) y portable (se comporta igual en una notebook, un data center o la nube)<Cita f="docker-container" loc="What a container is" />. Una imagen es el paquete de archivos, ejecutables, librerías y configuración a partir del cual se arranca; una vez construida no se modifica, y está formada por capas que registran cambios sobre el sistema de archivos<Cita f="docker-image" loc="Immutability y Layers" />.
+Un contenedor es un proceso aislado que incluye todos los archivos que necesita; es autocontenido (no depende de lo que haya instalado el servidor), independiente (se administra solo) y portable (se comporta igual en una notebook, un data center o la nube)<Cita f="docker-container" loc="Explanation" />. Una imagen es el paquete de archivos, ejecutables, librerías y configuración a partir del cual se arranca; una vez construida no se modifica, y está formada por capas que registran cambios sobre el sistema de archivos<Cita f="docker-image" loc="Immutability y Layers" />.
 
 La imagen se describe en un `Dockerfile`. `FROM` fija la imagen base, `WORKDIR` el directorio de trabajo, `COPY` trae archivos al paquete, `RUN` ejecuta un comando al construir y `CMD` fija el comando que corre el contenedor (solo vale el último `CMD`). `EXPOSE` documenta el puerto pero no lo publica<Cita f="dockerfile-ref" loc="FROM, RUN, CMD, EXPOSE" />.
 
@@ -182,7 +189,7 @@ docker stop turnos                   # pide que termine
 
 `-d` corre en segundo plano, `-p host:contenedor` publica un puerto, `--name` le pone nombre y `--rm` borra el contenedor al salir; `--rm` no se puede combinar con `--restart`<Cita f="docker-run" loc="-d, -p, --name, --rm, --restart" />. `docker stop` manda `SIGTERM` al proceso principal y, si a los 10 segundos sigue vivo, `SIGKILL`; con `-t` cambiás ese tiempo<Cita f="docker-stop" loc="timeout" />.
 
-Lo que el proceso escribe en la capa de escritura del contenedor se pierde cuando borrás el contenedor. Para que los datos sobrevivan se usa un volumen (*volume*): vive en el host, se monta en el contenedor y sigue ahí aunque el contenedor se elimine<Cita f="docker-volumes" loc="Data Survival After Container Removal" />.
+Lo que el proceso escribe en la capa de escritura del contenedor se pierde cuando borrás el contenedor. Para que los datos sobrevivan se usa un volumen (*volume*): vive en el host, se monta en el contenedor y sigue ahí aunque el contenedor se elimine<Cita f="docker-volumes" loc="A volume's lifecycle" />.
 
 ### Políticas de reinicio
 
@@ -195,13 +202,13 @@ Lo que el proceso escribe en la capa de escritura del contenedor se pierde cuand
 | `always` | Se reinicia | Vuelve a arrancar |
 | `unless-stopped` | Se reinicia | Queda detenido |
 
-La política solo rige después de que el contenedor arrancó con éxito, que Docker define como haber estado arriba al menos 10 segundos; así evita loops en contenedores que nunca llegan a arrancar<Cita f="docker-restart" loc="Restart policy details" />. El simulador no modela esos 10 segundos: es una simplificación. Si lo detenés a mano, la política se ignora hasta que se reinicie el daemon o lo reinicies vos. Docker también desaconseja combinar sus políticas con un administrador de procesos del host (como systemd), porque entran en conflicto<Cita f="docker-restart" loc="Use a process manager" />.
+La política solo rige después de que el contenedor arrancó con éxito, que Docker define como haber estado arriba al menos 10 segundos; así evita loops en contenedores que nunca llegan a arrancar<Cita f="docker-restart" loc="Restart policy details" />. El simulador no modela esos 10 segundos: es una simplificación. Con `always`, si lo detenés a mano la política se ignora hasta que se reinicie el daemon o lo reinicies vos; con `unless-stopped`, ni siquiera el reinicio del daemon lo levanta. Docker también desaconseja combinar sus políticas con un administrador de procesos del host (como systemd), porque entran en conflicto<Cita f="docker-restart" loc="Use a process manager" />.
 
 ### Orquestación básica con Kubernetes
 
-Cuando tenés muchos contenedores en varias máquinas, un orquestador (*orchestrator*) decide dónde corren y los mantiene vivos. En Kubernetes, un Pod es la unidad más chica que se despliega: uno o más contenedores que comparten almacenamiento y red. Los Pods son descartables y casi nunca se crean a mano<Cita f="k8s-pods" loc="What is a Pod? y Pods and controllers" />. Un Deployment declara el estado deseado (cuántas réplicas, con qué imagen) y su controlador ajusta lo real hasta igualarlo, apoyándose en un ReplicaSet que mantiene la cantidad de Pods<Cita f="k8s-deployment" loc="Use Case" />.
+Cuando tenés muchos contenedores en varias máquinas, un orquestador (*orchestrator*) decide dónde corren y los mantiene vivos. En Kubernetes, un Pod es la unidad más chica que se despliega: uno o más contenedores que comparten almacenamiento y red. Los Pods son descartables y casi nunca se crean a mano<Cita f="k8s-pods" loc="What is a Pod? y Pods and controllers" />. Un Deployment declara el estado deseado (cuántas réplicas, con qué imagen) y su controlador ajusta lo real hasta igualarlo<Cita f="k8s-deployment" loc="introducción" />. Para eso se apoya en un ReplicaSet, cuyo propósito es mantener estable la cantidad de Pods réplica que corren<Cita f="k8s-replicaset" loc="introducción" />.
 
-Si un contenedor de un Pod sale, el kubelet lo reinicia con una espera creciente (10 s, 20 s, 40 s, y así) que se frena en 300 segundos, y la espera vuelve a cero tras 10 minutos sin problemas. El estado `CrashLoopBackOff` indica que esa espera está activa porque el contenedor se cae una y otra vez<Cita f="k8s-lifecycle" loc="Container restarts y CrashLoopBackOff" />.
+El campo `restartPolicy` del Pod admite `Always`, `OnFailure` y `Never`, y vale `Always` por defecto. Con esos valores por defecto, cuando un contenedor sale el kubelet lo reinicia con una espera que se duplica (10 s, 20 s, 40 s, y así) y se frena en 300 segundos, y la espera vuelve a cero tras 10 minutos sin problemas. Ese tope es el predeterminado; la versión actual de la documentación indica que puede configurarse. El estado `CrashLoopBackOff` indica que esa espera está activa porque el contenedor se cae una y otra vez<Cita f="k8s-lifecycle" loc="Container restarts y CrashLoopBackOff" />.
 
 Para saber si una aplicación está bien, Kubernetes usa tres probes<Cita f="k8s-probes" loc="Liveness, Readiness y Startup probe" />:
 

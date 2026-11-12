@@ -7,17 +7,17 @@ tarjetas:
     frente: ¿Qué mide el RTO de un sistema?
     dorso: El máximo tiempo que el sistema puede estar fuera de servicio antes de causar un impacto inaceptable.
     fuente: nist-800-34
-  - id: t-rto-contra-mtd
-    frente: ¿Cómo tiene que ser el RTO respecto del MTD?
-    dorso: Normalmente menor, porque el RTO tiene que asegurar que no se supere el tiempo máximo tolerable.
+  - id: t-rto-incumplido
+    frente: Tu RTO objetivo es 2 horas y la restauración de prueba tardó 3. ¿Cumplís?
+    dorso: No; el tiempo real supera el objetivo, así que hay que acelerar la restauración o revisar el objetivo con el negocio.
     fuente: nist-800-34
-  - id: t-321-numeros
-    frente: En la regla 3-2-1, ¿qué significa cada número?
-    dorso: 3 copias de los datos, en 2 tipos de medios distintos, con 1 copia fuera del sitio.
+  - id: t-321-fuera-del-sitio
+    frente: ¿Cuántas copias fuera del sitio pide la regla 3-2-1?
+    dorso: Una.
     fuente: cisa-backup
-  - id: t-321-origen
-    frente: ¿Quién formuló la regla 3-2-1 según el documento de US-CERT sobre backups?
-    dorso: Peter Krogh, en su libro The DAM Book; es una práctica difundida, no una norma.
+  - id: t-321-falta-uno
+    frente: Tenés el original en el servidor y dos copias en discos de la misma sala. ¿Qué número de la regla 3-2-1 te falta cumplir?
+    dorso: El 1, una copia fuera del sitio; los discos tampoco son dos tipos de medios distintos.
     fuente: cisa-backup
   - id: t-nas-conectado
     frente: Tu NAS de backup está siempre montado en el servidor. ¿Qué riesgo corre ante un ransomware?
@@ -106,20 +106,20 @@ ejercicios:
     erroresComunes:
       - valor: 2000
         explicacion: Olvidaste los incrementales diarios.
-      - valor: 2650
-        explicacion: Sumaste 7 incrementales por semana; son 6, porque el domingo hay un completo.
+      - valor: 2700
+        explicacion: Sumaste 7 incrementales por semana (da 2700); son 6, porque el domingo hay un completo.
     fuente: cisa-backup
   - id: e-cumple-321
     tipo: opcion-multiple
-    enunciado: Una pyme guarda el original en el servidor, una copia en un disco externo en el mismo rack y otra copia en el NAS de la oficina, que está en la misma sala. ¿Cumple la regla 3-2-1?
+    enunciado: Una pyme guarda el original en el disco del servidor, una copia en cintas en el mismo rack y otra copia en el NAS (con discos) de la misma sala. ¿Cumple la regla 3-2-1?
     opciones:
-      - texto: Sí, tiene tres copias.
-        explicacion: Tiene tres copias, pero la regla pide también dos tipos de medios y una copia fuera del sitio.
+      - texto: Sí, tiene tres copias y dos tipos de medios (disco y cinta).
+        explicacion: Tres copias y dos medios sí hay, pero falta la tercera condición, una copia fuera del sitio.
       - texto: No, porque ninguna copia está fuera del sitio.
         correcta: true
         explicacion: Un incendio o una inundación en la sala se llevaría las tres. Falta la copia externa.
-      - texto: No, porque la regla pide exactamente cuatro copias.
-        explicacion: La regla pide tres copias (la original y dos respaldos).
+      - texto: No, porque la regla pide tres tipos de medios distintos.
+        explicacion: La regla pide dos tipos de medios, no tres.
     fuente: cisa-backup
   - id: e-vf-backup-exito
     tipo: verdadero-falso
@@ -140,43 +140,57 @@ casos:
         tipo: decision
         texto: El cifrado empezó antes de la copia de las 2:00. ¿Qué hacés primero?
         opciones:
-          - texto: Desconecto de la red el servidor y el NAS, sin restaurar nada todavía.
-            va: mirar-copias
-            consecuencia: El cifrado deja de propagarse a otros equipos y no seguís sobreescribiendo evidencia.
+          - texto: Desconecto de la red el servidor y el NAS, sin apagarlos y sin restaurar nada todavía.
+            va: tomar-evidencia
+            consecuencia: El cifrado deja de propagarse a otros equipos y los rastros de la infección quedan en memoria y en disco.
           - texto: Restauro ya mismo desde el NAS encima de las carpetas del servidor.
             va: final-restore-cifrado
             consecuencia: El NAS espejó los archivos ya cifrados en la corrida de las 2:00. Restaurás los mismos archivos cifrados.
           - texto: Busco cómo pagar el rescate, a ver si arreglo esto rápido.
             va: final-pagar
-            consecuencia: No tenés ninguna garantía de recuperar nada y quedás atado a quien te lo pide.
+            consecuencia: Pagás sin haber mirado qué copias tenías ni haber consultado a nadie; la guía de CISA recomienda consultar antes a las fuerzas de seguridad por posibles descifradores.
+      - id: tomar-evidencia
+        tipo: decision
+        texto: El servidor y el NAS están aislados. Antes de reconstruir nada, ¿qué hacés?
+        opciones:
+          - texto: Tomo una imagen del disco y una captura de memoria del servidor, aviso al responsable de seguridad y a gerencia, y recién después sigo.
+            va: mirar-copias
+            consecuencia: Conservás evidencia para entender cómo entró el ataque y dejás avisada a la gente que tiene que decidir.
+          - texto: Formateo el servidor enseguida para ganar tiempo.
+            va: final-sin-evidencia
+            consecuencia: El servidor queda limpio, pero perdiste todo rastro de cómo entraron.
       - id: mirar-copias
         tipo: decision
-        texto: Ya está aislado. El NAS tiene los archivos cifrados (por el espejo de las 2:00) y el USB de la caja fuerte tiene una copia de hace 22 días. ¿Cómo seguís?
+        texto: El NAS tiene los archivos cifrados (por el espejo de las 2:00) y el USB de la caja fuerte tiene una copia de hace 22 días. ¿Cómo seguís?
         opciones:
-          - texto: Restauro la copia del USB en un directorio de prueba de un equipo limpio y verifico que los archivos se abren.
+          - texto: Reconstruyo el servidor desde una imagen limpia, restauro el USB en una carpeta de prueba y verifico que los archivos abran.
             va: validar-restore
-            consecuencia: Tardás un rato, pero ahora sabés que la copia sirve y cuánto lleva restaurarla.
-          - texto: Restauro la copia del USB directo sobre el servidor sin revisar nada.
+            consecuencia: Tardás más, pero partís de un sistema limpio y sabés que la copia sirve y cuánto lleva restaurarla.
+          - texto: Restauro la copia del USB directo sobre el servidor infectado, sin revisar nada.
             va: final-sin-validar
             consecuencia: Si el servidor sigue comprometido, reinfectás lo que acabás de restaurar.
       - id: validar-restore
         tipo: decision
-        texto: La copia del USB se abre bien. Perdés 22 días de datos. ¿Qué hacés con lo que falta?
+        texto: El servidor está reconstruido y la copia del USB se abre bien. Perdés 22 días de datos. ¿Qué hacés ahora?
         opciones:
-          - texto: Le informo a gerencia el RPO real (22 días), junto con el tiempo de restauración, y pido a cada área los archivos recientes que tengan en sus PC.
+          - texto: Informo el RPO real (22 días) a gerencia, reporto el incidente al CERT.ar y pido archivos recientes a cada área para revisarlos antes de copiarlos.
             va: final-bien
-            consecuencia: Se recupera buena parte del trabajo reciente y la dirección entiende por qué la política de backup tiene que cambiar.
+            consecuencia: La dirección entiende por qué hay que cambiar la política de backup, el incidente queda reportado y recuperás trabajo reciente sin reinfectar.
           - texto: Copio la carpeta del NAS encima, por si hay algo más nuevo.
             va: final-mezcla
             consecuencia: Mezclás archivos cifrados con archivos sanos y es imposible separarlos después.
       - id: final-bien
         tipo: desenlace
         resultado: bien
-        texto: El servidor vuelve con 22 días de atraso, pero con datos sanos y verificados. Proponés una copia offline cada semana y una restauración de prueba por trimestre.
+        texto: El servidor vuelve con 22 días de atraso, pero reconstruido, con datos verificados, evidencia guardada e incidente reportado. Proponés una copia offline cada semana y una restauración de prueba por trimestre.
       - id: final-sin-validar
         tipo: desenlace
+        resultado: mal
+        texto: Los datos vuelven sobre un servidor que nadie limpió. A la semana vuelve a cifrarse y el trabajo de restauración se pierde.
+      - id: final-sin-evidencia
+        tipo: desenlace
         resultado: regular
-        texto: Los datos vuelven, pero sin verificar si el equipo estaba limpio. Pasás el fin de semana vigilando por si se cifra de nuevo.
+        texto: El servicio vuelve, pero nadie sabe cómo entraron los atacantes y la misma puerta sigue abierta para el próximo ataque.
       - id: final-restore-cifrado
         tipo: desenlace
         resultado: mal
@@ -190,7 +204,7 @@ casos:
         resultado: mal
         texto: Copiaste archivos cifrados sobre los sanos. Terminás restaurando de nuevo desde cero el domingo a la noche.
     leccion: |
-      Una copia que siempre está conectada también se cifra. Necesitás al menos una copia que el atacante no alcance (offline o fuera del sitio) y una restauración probada, para saber qué RPO y qué RTO tenés de verdad.
+      Una copia que siempre está conectada también se cifra. Necesitás al menos una copia que el atacante no alcance (offline o fuera del sitio), una restauración probada y un orden de respuesta: aislar, guardar evidencia, reconstruir limpio, restaurar y reportar.
     fuente: cisa-ransomware
 
 problemas:

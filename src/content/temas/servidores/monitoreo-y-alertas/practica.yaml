@@ -70,7 +70,7 @@ ejercicios:
     erroresComunes:
       - valor: 44
         explicacion: Ese es el espacio libre en GB. Falta dividirlo por el crecimiento diario.
-      - valor: 43.3
+      - valor: 44.4
         explicacion: Calculaste 200 / 4,5 (el disco entero) en vez del espacio libre.
     fuente: prom-practices
   - id: e-elegir-for-pico-backup
@@ -125,14 +125,14 @@ casos:
             consecuencia: El disco queda libre, pero perdiste los registros que explican qué pasó.
       - id: miras-crecimiento
         tipo: decision
-        texto: El disco quedó holgado, pero ves que un log de aplicación crece unos 10 GB por hora. ¿Y ahora?
+        texto: El disco quedó holgado, pero ves que un log de aplicación crece unos 5 GB por hora. ¿Y ahora?
         opciones:
           - texto: Miro qué escribe ese log y abro un incidente con la causa; mañana se agrega rotación y una alerta predictiva de disco.
             va: final-bien
             consecuencia: Entendés que un servicio en error escribe sin parar y que hace falta rotación de logs.
           - texto: Me voy a dormir, ya liberé espacio.
             va: final-regular
-            consecuencia: A ese ritmo, los 64 GB libres alcanzan para unas seis horas y media.
+            consecuencia: A ese ritmo, los 64 GB libres alcanzan para unas 13 horas.
       - id: final-bien
         tipo: desenlace
         resultado: bien
@@ -140,7 +140,7 @@ casos:
       - id: final-regular
         tipo: desenlace
         resultado: regular
-        texto: Apagaste el incendio, pero a media mañana el disco vuelve a llenarse y se cae el servicio con gente trabajando.
+        texto: Apagaste el incendio, pero a media tarde el disco vuelve a llenarse y se cae el servicio con gente trabajando.
       - id: final-borrar-todo
         tipo: desenlace
         resultado: mal
@@ -148,7 +148,7 @@ casos:
       - id: final-silenciar
         tipo: desenlace
         resultado: mal
-        texto: A las 4:05 el disco se llena, la aplicación deja de escribir y a las 8 los usuarios no pueden guardar. Silenciar sin mirar nada fue lo peor.
+        texto: A las 4:00 el disco se llena, la aplicación deja de escribir y a las 8 los usuarios no pueden guardar. Silenciar sin mirar nada fue lo peor.
     leccion: |
       El ruido de las alertas esconde las que importan: ajustá la duración de las que saltan por picos cortos. Y ante un disco que se llena, mirá primero qué crece y a qué ritmo antes de liberar espacio.
     fuente: sre-alerting

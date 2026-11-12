@@ -19,7 +19,7 @@ fuentes:
     autor: Marianne Swanson, Pauline Bowen, Amy Wohl Phillips, Dean Gallup y David Lynes (NIST)
     titulo: Contingency Planning Guide for Federal Information Systems (SP 800-34 Rev. 1)
     url: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-34r1.pdf
-    ubicacion: §3.2.1 (p. 16, MTD, RTO y RPO); §3.4.2 (p. 21, backups, almacenamiento externo y nota 25 sobre probar los backups); §3.5.1 (p. 27, pruebas)
+    ubicacion: §3.2.1 (p. 17, MTD, RTO y RPO); §3.4.2 (p. 21, backups, almacenamiento externo y nota 25 sobre probar los backups); §3.5.1 (p. 28, pruebas)
     edicion: Rev. 1, mayo de 2010
   - id: cisa-backup
     tipo: doc-oficial
@@ -33,8 +33,15 @@ fuentes:
     autor: CISA
     titulo: "#StopRansomware Guide"
     url: https://www.cisa.gov/stopransomware/ransomware-guide
-    ubicacion: Parte 1 (Preparing for Ransomware and Data Extortion Incidents) y Parte 2 (Recovery and Post Incident Activity)
+    ubicacion: Parte 1 (Preparing for Ransomware and Data Extortion Incidents) y Parte 2 (Detection and Analysis; Reporting and Notification; Containment and Eradication; Recovery and Post Incident Activity)
     edicion: versión web consultada el 2026-11-11 (la guía completa enlazada es de septiembre de 2023)
+  - id: cert-ar
+    tipo: doc-oficial
+    autor: Dirección Nacional de Ciberseguridad, Argentina (argentina.gob.ar)
+    titulo: CERT.ar, Centro Nacional de Respuesta a Incidentes Informáticos
+    url: https://www.argentina.gob.ar/jefatura/innovacion-ciencia-y-tecnologia/centro-nacional-de-ciberseguridad/certar
+    ubicacion: formulario "Reportar un incidente" y correo de contacto
+    edicion: página consultada el 2026-11-11
   - id: rsync-man
     tipo: doc-oficial
     autor: Equipo de rsync (Samba)
@@ -111,7 +118,6 @@ Un paracaídas que nadie abrió en tierra, plegado hace dos años, puede estar p
   rpoObjetivoHoras={4}
   rtoObjetivoHoras={2}
   duracionRestauracionHoras={3}
-  respaldoProbado={false}
   titulo="Un respaldo que nadie probó"
 />
 
@@ -127,7 +133,7 @@ Una copia que está siempre conectada al servidor también se puede cifrar. Much
 
 ### RPO, RTO y MTD
 
-La guía de planificación de contingencias del NIST define tres tiempos<Cita f="nist-800-34" loc="§3.2.1, p. 16" />:
+La guía de planificación de contingencias del NIST define tres tiempos<Cita f="nist-800-34" loc="§3.2.1, p. 17" />:
 
 - **MTD** (*maximum tolerable downtime*): el tiempo total de interrupción que el dueño del sistema está dispuesto a aceptar para un proceso del negocio.
 - **RTO** (*recovery time objective*): el máximo que un recurso puede estar fuera de servicio antes de causar un impacto inaceptable; normalmente tiene que ser menor que el MTD.
@@ -147,9 +153,13 @@ El documento de US-CERT (hoy CISA) *Data Backup Options* la plantea así: tener 
 
 La regla no alcanza sola contra ransomware. La guía #StopRansomware de CISA recomienda mantener respaldos offline y cifrados, porque muchas variantes buscan los respaldos accesibles para borrarlos o cifrarlos, y verificar cada tanto que estén disponibles y íntegros<Cita f="cisa-ransomware" loc="Parte 1" />. La recuperación se hace desde esos respaldos offline, cuidando de no reinfectar sistemas limpios<Cita f="cisa-ransomware" loc="Parte 2" />.
 
+### Cuando ya pasó: el orden de la respuesta
+
+La guía #StopRansomware ordena la respuesta así: primero detectar y aislar de inmediato los sistemas afectados (si no se pueden desconectar, apagarlos pierde rastros de la infección); después reportar y notificar; en la contención y erradicación, tomar una imagen del sistema y una captura de memoria de una muestra de equipos afectados y reconstruir los sistemas, si se puede, desde imágenes estándar preconfiguradas; y recién en la recuperación, reconectar y restaurar desde respaldos offline y cifrados, cuidando de no reinfectar equipos limpios<Cita f="cisa-ransomware" loc="Parte 2" />. Sobre pagar o no el rescate esa guía no da una pauta; sí recomienda consultar a las fuerzas de seguridad por posibles descifradores. En Argentina, el CERT.ar ofrece un formulario de "Reportar un incidente" para el reporte público de un incidente o posible ciberataque, y un correo de contacto<Cita f="cert-ar" loc="Reportar un incidente" />.
+
 ### Qué decir en la política de backup
 
-El NIST pide que la política fije la frecuencia mínima y el alcance de los respaldos (diario o semanal, completo o incremental), dónde se guardan, cómo se rota el medio y cómo se lleva afuera del sitio<Cita f="nist-800-34" loc="§3.4.2, p. 21" />. Guardar los datos fuera del sitio es una buena práctica; al elegir el lugar conviene considerar si un mismo desastre lo alcanzaría junto con el sitio principal<Cita f="nist-800-34" loc="§3.4.2, p. 21" />. Y los respaldos deben probarse con regularidad para asegurar que los datos se guardan bien y los archivos se pueden recuperar sin errores (la nota habla de cintas, pero el criterio vale para cualquier medio)<Cita f="nist-800-34" loc="nota 25, p. 21" />. Las pruebas del plan suelen centrarse justamente en la recuperación y los backups<Cita f="nist-800-34" loc="§3.5.1, p. 27" />.
+El NIST pide que la política fije la frecuencia mínima y el alcance de los respaldos (diario o semanal, completo o incremental), dónde se guardan, cómo se rota el medio y cómo se lleva afuera del sitio<Cita f="nist-800-34" loc="§3.4.2, p. 21" />. Guardar los datos fuera del sitio es una buena práctica; al elegir el lugar conviene considerar si un mismo desastre lo alcanzaría junto con el sitio principal<Cita f="nist-800-34" loc="§3.4.2, p. 21" />. Y los respaldos deben probarse con regularidad para asegurar que los datos se guardan bien y los archivos se pueden recuperar sin errores (la nota habla de cintas, pero el criterio vale para cualquier medio)<Cita f="nist-800-34" loc="nota 25, p. 21" />. Las pruebas del plan suelen centrarse justamente en la recuperación y los backups<Cita f="nist-800-34" loc="§3.5.1, p. 28" />.
 
 ### Herramientas
 

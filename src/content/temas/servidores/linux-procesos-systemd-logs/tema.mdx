@@ -19,7 +19,14 @@ fuentes:
     autor: systemd project (freedesktop.org)
     titulo: systemd.service(5)
     url: https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
-    ubicacion: opciones Restart=, RestartSec= y tabla de valores de Result
+    ubicacion: opciones Restart= y RestartSec=
+    edicion: versión "latest" consultada el 2026-11-11; contrastada con la man page de systemd 255
+  - id: systemd-exec
+    tipo: doc-oficial
+    autor: systemd project (freedesktop.org)
+    titulo: systemd.exec(5)
+    url: https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html
+    ubicacion: tabla de valores definidos de $SERVICE_RESULT (start-limit-hit)
     edicion: versión "latest" consultada el 2026-11-11; contrastada con la man page de systemd 255
   - id: systemd-unit
     tipo: doc-oficial
@@ -120,7 +127,7 @@ Cuando un proceso termina, el kernel libera casi todo, pero guarda una fila con 
 
 <Ojo>
 
-Un proceso en estado `D` (espera de disco, no interrumpible) no responde ni a `kill -9` hasta que sale de ese estado. Si hay muchos en `D`, el problema suele estar abajo: un disco lento, un montaje de red colgado. Reiniciar el servicio no lo arregla.
+Un proceso en estado `D` (espera de disco, no interrumpible) puede no responder ni a `kill -9` hasta que sale de ese estado. Desde el kernel 2.6.25 existe además un estado parecido, `TASK_KILLABLE`, que sí despierta ante una señal fatal, así que no todo lo que ves en `D` es inmortal<Cita f="tlpi" loc="§22.3" />. Si hay muchos en `D`, el problema suele estar abajo: un disco lento, un montaje de red colgado. Reiniciar el servicio no lo arregla.
 
 </Ojo>
 
@@ -153,13 +160,13 @@ ps -eo stat,pid,ppid,comm | awk '$1 ~ /^[DZ]/'
 
 Para una unidad, `systemctl` distingue los estados `active`, `reloading`, `inactive`, `failed`, `activating` y `deactivating`; `failed` significa que el servicio falló de alguna forma (se cayó, salió con error o venció un tiempo) y la causa queda registrada<Cita f="systemctl-man" loc="list-units y status" />.
 
-La opción `Restart=` define cuándo systemd lo vuelve a levantar. Vale `no` por defecto; con `on-failure` se reinicia si el proceso sale con código distinto de cero, muere por una señal o vence un tiempo; con `always` se reinicia aunque haya salido bien. Si la muerte la causó una operación de systemd (un `stop` o un `restart`), no se reinicia<Cita f="systemd-service" loc="Restart=" />. La espera entre un intento y el siguiente es `RestartSec=`, que por defecto vale 100 ms<Cita f="systemd-service" loc="RestartSec=" />.
+La opción `Restart=` define cuándo systemd lo vuelve a levantar. Vale `no` por defecto; con `on-failure` se reinicia si el proceso sale con código distinto de cero, muere por una señal anormal (no cuentan SIGHUP, SIGINT, SIGTERM ni SIGPIPE, que se toman como salida limpia) o vence un tiempo; con `always` se reinicia aunque haya salido bien. Si la muerte la causó una operación de systemd (un `stop` o un `restart`), no se reinicia<Cita f="systemd-service" loc="Restart=" />. La espera entre un intento y el siguiente es `RestartSec=`, que por defecto vale 100 ms<Cita f="systemd-service" loc="RestartSec=" />.
 
 ### Por qué se rinde: el límite de arranques
 
-Una unidad que arranca más de `StartLimitBurst=` veces dentro de `StartLimitIntervalSec=` deja de poder arrancar. Los valores por defecto del manager son 5 arranques en 10 s<Cita f="systemd-system-conf" loc="DefaultStartLimitBurst=" />. Si la unidad tenía `Restart=`, systemd no la reinicia más; igual la podés arrancar a mano o por un timer cuando pase el intervalo. `systemctl reset-failed` limpia el contador<Cita f="systemd-unit" loc="StartLimitIntervalSec=, StartLimitBurst=" />. El motivo se registra como `start-limit-hit`<Cita f="systemd-service" loc="tabla de Result" />.
+Una unidad que arranca más de `StartLimitBurst=` veces dentro de `StartLimitIntervalSec=` deja de poder arrancar. Los valores por defecto del manager son 5 arranques en 10 s<Cita f="systemd-system-conf" loc="DefaultStartLimitBurst=" />. Si la unidad tenía `Restart=`, systemd no la reinicia más; igual la podés arrancar a mano o por un timer cuando pase el intervalo. `systemctl reset-failed` limpia el contador<Cita f="systemd-unit" loc="StartLimitIntervalSec=, StartLimitBurst=" />. El motivo se registra como resultado `start-limit-hit`: se definió un límite de arranques y se alcanzó<Cita f="systemd-exec" loc="tabla de $SERVICE_RESULT" />.
 
-Hacé la cuenta con los valores de la unidad de ejemplo. Con `RestartSec=100ms` y un proceso que muere al instante, los seis arranques caben en menos de un segundo y se activa el límite. Con `RestartSec=5`, en una ventana de 10 s caben a lo sumo dos arranques: nunca se llega a 5 y el servicio queda reiniciándose en loop para siempre, sin pasar a `failed`. Son dos síntomas distintos y se diagnostican igual: con el log.
+Hacé la cuenta con la unidad de ejemplo de abajo, que deja `RestartSec` en su valor por defecto (100 ms). Si el proceso muere al instante, los seis arranques caben en menos de un segundo y se activa el límite: es exactamente el síntoma del caso. Ahora cambiá una sola línea y poné `RestartSec=5`: en una ventana de 10 s caben a lo sumo dos arranques, nunca se llega a 5 y el servicio queda reiniciándose en loop para siempre, sin pasar a `failed`. Son dos síntomas distintos y se diagnostican igual: con el log.
 
 ```ini
 # /etc/systemd/system/facturacion.service
@@ -172,7 +179,7 @@ StartLimitBurst=5
 Type=exec
 ExecStart=/opt/facturacion/bin/facturacion --config /etc/facturacion/app.conf
 Restart=on-failure
-RestartSec=5
+# RestartSec sin definir: vale 100 ms. Con RestartSec=5 nunca se llegaría al límite.
 
 [Install]
 WantedBy=multi-user.target

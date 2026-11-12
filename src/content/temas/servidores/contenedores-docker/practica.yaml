@@ -5,23 +5,31 @@ tarjetas:
     fuente: docker-container
   - id: t-imagen-inmutable
     frente: Una vez construida una imagen de Docker, ¿se puede modificar?
-    dorso: No. Para cambiarla se crea otra imagen o se agregan cambios encima en una capa nueva.
+    dorso: No. Para cambiar algo se construye otra imagen.
     fuente: docker-image
   - id: t-expose-no-publica
     frente: ¿Qué hace la instrucción `EXPOSE 8080` en un Dockerfile?
     dorso: Solo documenta el puerto; no lo publica. Para abrirlo al host hay que usar `-p` al correr.
     fuente: dockerfile-ref
   - id: t-stop-senal
-    frente: ¿Qué hace `docker stop` por defecto y cuánto espera antes de forzar?
-    dorso: Manda SIGTERM al proceso principal y, pasados 10 segundos, SIGKILL.
+    frente: ¿Qué señal manda `docker stop` al proceso principal del contenedor?
+    dorso: SIGTERM.
+    fuente: docker-stop
+  - id: t-stop-plazo
+    frente: Tu contenedor tarda 25 segundos en cerrar limpio. ¿Qué pasa con un `docker stop` sin opciones?
+    dorso: A los 10 segundos le llega SIGKILL y se corta; para darle más tiempo usás `-t`.
     fuente: docker-stop
   - id: t-rm-restart
     frente: ¿Se pueden combinar `--rm` y `--restart` en un mismo `docker run`?
     dorso: No, da error.
     fuente: docker-run
+  - id: t-capa-escritura-se-pierde
+    frente: Borrás un contenedor con `docker rm`. ¿Qué pasa con lo que escribió en su capa de escritura?
+    dorso: Se pierde, porque esa capa se destruye junto con el contenedor.
+    fuente: docker-volumes
   - id: t-volumen-sobrevive
-    frente: Borrás un contenedor con `docker rm`. ¿Qué pasa con los datos que escribió en su capa de escritura y con los de un volumen?
-    dorso: Los de la capa de escritura se pierden; los del volumen siguen ahí.
+    frente: Tu base corre en un contenedor con un volumen montado y borrás el contenedor. ¿Qué pasa con los datos del volumen?
+    dorso: Siguen ahí, en el host.
     fuente: docker-volumes
   - id: t-restart-default
     frente: ¿Qué política de reinicio tiene un contenedor de Docker si no indicás `--restart`?
@@ -35,17 +43,17 @@ tarjetas:
     frente: ¿Cuándo empieza a regir una política de reinicio de Docker sobre un contenedor?
     dorso: Cuando ya arrancó con éxito, es decir, cuando estuvo arriba al menos 10 segundos.
     fuente: docker-restart
-  - id: t-pod-definicion
-    frente: ¿Qué es un Pod en Kubernetes?
-    dorso: La unidad más chica que se despliega, formada por uno o más contenedores que comparten almacenamiento y red.
+  - id: t-pod-efimero
+    frente: Un Pod de tu servicio desaparece cuando se cae su nodo. ¿Por qué no deberías haberlo creado a mano?
+    dorso: Porque los Pods son descartables; un Deployment es lo que vuelve a crearlos para mantener el estado deseado.
     fuente: k8s-pods
   - id: t-readiness-que-hace
     frente: Si falla el readiness probe de un contenedor, ¿qué hace Kubernetes?
     dorso: Saca su IP de los Services que apuntan a él, para que no reciba tráfico; no lo reinicia.
     fuente: k8s-probes
   - id: t-crashloop
-    frente: ¿Qué indica el estado `CrashLoopBackOff` en un Pod?
-    dorso: Que el contenedor se cae y reinicia una y otra vez, y que la espera creciente entre intentos está activa.
+    frente: Ves un Pod en `CrashLoopBackOff`. ¿Qué te está diciendo ese estado?
+    dorso: Que su contenedor se cae y reinicia una y otra vez, con la espera creciente entre intentos activa.
     fuente: k8s-lifecycle
 
 ejercicios:
@@ -64,7 +72,7 @@ ejercicios:
   - id: e-espera-total-backoff
     tipo: numerico
     enunciado: |
-      Un contenedor en un Pod se cae al arrancar una y otra vez. El kubelet espera 10 s, 20 s, 40 s, 80 s, 160 s y así, duplicando cada vez, con un tope de 300 s. ¿Cuántos segundos de espera acumulás entre los primeros 6 reinicios?
+      Un contenedor en un Pod se cae al arrancar una y otra vez. Con los valores por defecto, el kubelet espera 10 s, 20 s, 40 s, 80 s, 160 s y así, duplicando cada vez, con un tope de 300 s. ¿Cuántos segundos de espera acumulás entre los primeros 6 reinicios?
     respuesta: 610
     tolerancia:
       absoluta: 0
@@ -133,9 +141,9 @@ casos:
         tipo: decision
         texto: El log dice que falta la variable de entorno `DATABASE_URL`, que la versión 1.4 empezó a exigir. ¿Cómo seguís?
         opciones:
-          - texto: Vuelvo a levantar la versión 1.3 con el mismo comando y las mismas variables de antes.
+          - texto: Paro el contenedor roto con `docker stop turnos` y lo renombro (así conservo su log), y levanto la 1.3 con el comando y las variables de antes.
             va: despues-rollback
-            consecuencia: La API responde en menos de un minuto con la versión anterior.
+            consecuencia: El nombre y el puerto quedan libres, el log del contenedor roto se conserva y la API responde en menos de un minuto con la versión anterior.
           - texto: Invento una cadena de conexión que parezca correcta y arranco la 1.4.
             va: final-inventada
             consecuencia: Arranca, pero apunta a una base equivocada.

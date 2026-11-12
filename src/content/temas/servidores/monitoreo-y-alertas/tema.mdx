@@ -22,7 +22,7 @@ fuentes:
     tipo: libro
     autor: Betsy Beyer, Chris Jones, Jennifer Petoff y Niall Richard Murphy (eds.)
     titulo: Site Reliability Engineering
-    edicion: edición online libre en sre.google (el sitio indica © 2017 Google, publicado por O'Reilly)
+    edicion: 1.ª ed., O'Reilly, 2016 (edición online libre en sre.google, © 2017 Google)
     editorial: O'Reilly Media
     ubicacion: cap. 6, "Monitoring Distributed Systems" (secciones Definitions, Symptoms Versus Causes, The Four Golden Signals, Worrying About Your Tail)
     url: https://sre.google/sre-book/monitoring-distributed-systems/
@@ -30,7 +30,7 @@ fuentes:
     tipo: libro
     autor: Betsy Beyer, Chris Jones, Jennifer Petoff y Niall Richard Murphy (eds.)
     titulo: Site Reliability Engineering
-    edicion: edición online libre en sre.google (el sitio indica © 2017 Google, publicado por O'Reilly)
+    edicion: 1.ª ed., O'Reilly, 2016 (edición online libre en sre.google, © 2017 Google)
     editorial: O'Reilly Media
     ubicacion: cap. 10, "Practical Alerting from Time-Series Data" (sección Alerting)
     url: https://sre.google/sre-book/practical-alerting/
@@ -55,6 +55,13 @@ fuentes:
     url: https://prometheus.io/docs/guides/node-exporter/
     ubicacion: guía completa (métricas node_*)
     edicion: versión consultada el 2026-11-11
+  - id: node-exporter-cpu
+    tipo: doc-oficial
+    autor: Prometheus Authors
+    titulo: node_exporter, collector/cpu_linux.go
+    url: https://github.com/prometheus/node_exporter/blob/master/collector/cpu_linux.go
+    ubicacion: función que emite las series con las etiquetas cpu y mode (valores idle, iowait, system, user)
+    edicion: rama master consultada el 2026-11-11
   - id: uptime-man
     tipo: doc-oficial
     autor: procps-ng (man7.org)
@@ -118,7 +125,7 @@ ejemplo: false
 
 Lunes, 9:00. Abrís el correo de alertas del servidor de archivos de la oficina y tenés 41 mensajes de la madrugada. Cuarenta son "CPU mayor a 90 %" que dura dos o tres minutos y se resuelve sola. Es el backup nocturno. Hace meses que nadie los abre.
 
-La número 41 decía "disco `/var` al 96 %". Llegó a las 3:12. El disco se llenó a las 4:05, la base dejó de escribir y a las 8 los usuarios no podían guardar nada.
+La número 41 decía "disco `/var` al 96 %". Llegó a las 3:12, cuando al disco de 100 GB le quedaban 4 GB libres y un log crecía unos 5 GB por hora. El disco se llenó a las 4:00, la base dejó de escribir y a las 8 los usuarios no podían guardar nada.
 
 Nadie falló por vago: el sistema de alertas les enseñó a ignorarlas. ¿Qué había que medir distinto, y cuándo vale la pena que un mensaje despierte a una persona?
 
@@ -229,7 +236,7 @@ groups:
           resumen: "CPU por encima de 90 % durante 10 minutos"
 ```
 
-Las métricas `node_*` (como `node_cpu_seconds_total`) las expone el *node exporter* de Prometheus<Cita f="prom-node-exporter" />. Con `for: 10m` los picos de tres minutos del backup no despiertan a nadie. La opción `keep_firing_for` mantiene disparada una alerta un rato después de que la condición se apaga, útil si la métrica parpadea<Cita f="prom-rules" loc="keep_firing_for" />.
+Las métricas `node_*` (como `node_cpu_seconds_total`) las expone el *node exporter* de Prometheus<Cita f="prom-node-exporter" />, y esa métrica trae una serie por núcleo y por modo, entre ellos `idle`<Cita f="node-exporter-cpu" loc="emisión de c.cpu con cpu y mode" />. Con `for: 10m` los picos de tres minutos del backup no despiertan a nadie. La opción `keep_firing_for` mantiene disparada una alerta un rato después de que la condición se apaga, útil si la métrica parpadea<Cita f="prom-rules" loc="keep_firing_for" />.
 
 <Profundizar titulo="El costo de esperar: for contra tiempo de detección">
 

@@ -20,8 +20,8 @@ tarjetas:
     dorso: "`systemctl reset-failed` sobre esa unidad."
     fuente: systemctl-man
   - id: t-estado-d
-    frente: ¿Qué letra muestra `ps` para un proceso que espera disco y no se puede interrumpir?
-    dorso: La `D`.
+    frente: En `ps` ves un proceso en estado `D` y un `kill` no le hace nada. ¿Qué suele estar pasando?
+    dorso: Espera una operación de entrada/salida (disco, montaje de red) sin poder interrumpirse; el problema suele estar en el dispositivo, no en el proceso.
     fuente: ps-man
   - id: t-zombi-no-se-mata
     frente: ¿Por qué un `kill -9` no elimina un proceso zombi?
